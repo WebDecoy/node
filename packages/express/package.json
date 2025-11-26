@@ -1,0 +1,60 @@
+{
+  "name": "@webdecoy/express",
+  "version": "0.1.0",
+  "description": "Web Decoy middleware for Express.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "web-decoy",
+    "express",
+    "middleware",
+    "bot-detection",
+    "security"
+  ],
+  "author": "Web Decoy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/webdecoy/webdecoy-node.git",
+    "directory": "packages/express"
+  },
+  "dependencies": {
+    "@webdecoy/node": "workspace:*"
+  },
+  "peerDependencies": {
+    "express": "^4.18.0 || ^5.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.11",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^6.18.1",
+    "@typescript-eslint/parser": "^6.18.1",
+    "eslint": "^8.56.0",
+    "express": "^4.18.2",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
