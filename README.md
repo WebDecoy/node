@@ -7,13 +7,20 @@ Advanced bot detection and protection for Node.js applications with TLS fingerpr
 
 ## Features
 
-- 🤖 **Advanced Bot Detection** - Detect automated tools, scrapers, and malicious bots
-- 🔐 **TLS Fingerprinting** - JA3 and JA4 fingerprint analysis for deeper inspection
-- ⚡ **Two-Tier Analysis** - Fast local checks + comprehensive server-side verification
-- 🎯 **Smart Decision Making** - Allow, block, or challenge based on threat level
-- 🔌 **Framework Integrations** - Ready-to-use middleware for Express, Next.js, and more
-- 📊 **Real-time Analytics** - Track detections in your Web Decoy dashboard
-- 🛡️ **Fail-Safe Design** - Fail open to avoid blocking legitimate users
+- **Advanced Bot Detection** - Detect automated tools, scrapers, and malicious bots
+- **TLS Fingerprinting** - JA3 and JA4 fingerprint analysis for deeper inspection
+- **Two-Tier Analysis** - Fast local checks + comprehensive server-side verification
+- **Smart Decision Making** - Allow, block, or challenge based on threat level
+- **Framework Integrations** - Ready-to-use middleware for Express.js
+- **Real-time Analytics** - Track detections in your Web Decoy dashboard
+- **Fail-Safe Design** - Fail open to avoid blocking legitimate users
+
+## Packages
+
+| Package | Version | Description |
+|---------|---------|-------------|
+| [@webdecoy/node](https://www.npmjs.com/package/@webdecoy/node) | [![npm](https://img.shields.io/npm/v/@webdecoy/node.svg)](https://www.npmjs.com/package/@webdecoy/node) | Core SDK for Node.js |
+| [@webdecoy/express](https://www.npmjs.com/package/@webdecoy/express) | [![npm](https://img.shields.io/npm/v/@webdecoy/express.svg)](https://www.npmjs.com/package/@webdecoy/express) | Express.js middleware |
 
 ## Quick Start
 
@@ -81,16 +88,6 @@ app.get('/api/data', (req, res) => {
 });
 ```
 
-### Next.js (Coming Soon)
-
-```typescript
-import { withWebDecoy } from '@webdecoy/nextjs';
-
-export default withWebDecoy({
-  apiKey: process.env.WEBDECOY_API_KEY,
-})(handler);
-```
-
 ## Configuration
 
 ### SDK Options
@@ -115,6 +112,10 @@ const webdecoy = new WebDecoy({
 
   // Optional: Enable debug logging (default: false)
   debug: true,
+
+  // Optional: Reject unauthorized TLS certificates (default: true)
+  // Set to false for development with self-signed certs
+  tlsRejectUnauthorized: true,
 });
 ```
 
@@ -157,6 +158,7 @@ interface ProtectResult {
     detection_id: string; // Unique ID for tracking
     rule_enforced: boolean; // true if response rule triggered
   };
+  error?: string; // Present if an error occurred
 }
 ```
 
@@ -165,9 +167,6 @@ interface ProtectResult {
 See the [examples](./examples) directory for complete working examples:
 
 - **[express-basic](./examples/express-basic)** - Basic Express.js integration
-- **[express-advanced](./examples/express-advanced)** - Advanced patterns (Coming Soon)
-- **[nextjs-app-router](./examples/nextjs-app-router)** - Next.js App Router (Coming Soon)
-- **[nextjs-pages-router](./examples/nextjs-pages-router)** - Next.js Pages Router (Coming Soon)
 
 ## API Reference
 
@@ -186,12 +185,19 @@ Analyze and protect a request.
 **Parameters:**
 - `metadata` - Request information (IP, headers, etc.)
 - `options` - Optional settings for this request
+  - `threshold` - Custom threat score threshold for this request
+  - `skipLocalAnalysis` - Skip local analysis and only use server-side detection
+  - `metadata` - Additional metadata to include in the detection
 
 **Returns:** Protection result with decision
 
 #### `validateConfig(): Promise<{ valid: boolean; error?: string }>`
 
 Validate your API key and configuration.
+
+#### `getConfig(): Readonly<Required<WebDecoyConfig>>`
+
+Get the current configuration.
 
 ### Types
 
@@ -203,16 +209,19 @@ import type {
   RequestMetadata,
   SDKDetectionResponse,
   ProtectResult,
+  ProtectOptions,
   TLSInfo,
+  LocalAnalysis,
+  SDKDetectionRequest,
 } from '@webdecoy/node';
 ```
 
 ## Getting an API Key
 
-1. Sign up at [webdecoy.com](https://webdecoy.com)
+1. Sign up at [app.webdecoy.com](https://app.webdecoy.com)
 2. Create a new organization
-3. Go to Settings → API Keys
-4. Generate a new API key with `detections:read` and `detections:write` scopes
+3. Create a property for your application
+4. Go to Settings to generate an API key
 
 API keys start with `sk_live_` for production or `sk_test_` for testing.
 
@@ -235,15 +244,12 @@ A: The SDK fails open by default, allowing requests to continue. You'll see erro
 **Q: Can I use this behind a CDN or load balancer?**
 A: Yes! The Express middleware automatically handles `X-Forwarded-For` and similar headers. Make sure to configure your proxy correctly.
 
-**Q: How much does it cost?**
-A: See pricing at [webdecoy.com/pricing](https://webdecoy.com/pricing). Free tier includes 10,000 requests/month.
-
 ## Support
 
-- 📚 **Documentation**: [docs.webdecoy.com](https://docs.webdecoy.com)
-- 💬 **Discord**: [discord.gg/webdecoy](https://discord.gg/webdecoy)
-- 📧 **Email**: support@webdecoy.com
-- 🐛 **Issues**: [GitHub Issues](https://github.com/webdecoy/webdecoy-node/issues)
+- **Website**: [webdecoy.com](https://webdecoy.com)
+- **Dashboard**: [app.webdecoy.com](https://app.webdecoy.com)
+- **Issues**: [GitHub Issues](https://github.com/webdecoy/webdecoy-node/issues)
+- **Email**: support@webdecoy.com
 
 ## Contributing
 
@@ -252,9 +258,3 @@ Contributions are welcome! Please read our [Contributing Guide](./CONTRIBUTING.m
 ## License
 
 MIT License - see [LICENSE](./LICENSE) for details.
-
-## Learn More
-
-- [Blog: TLS Fingerprinting for Bot Detection](https://webdecoy.com/blog/webdecoy-sdk-release-tls-fingerprinting/)
-- [How JA3 Fingerprinting Works](https://engineering.salesforce.com/tls-fingerprinting-with-ja3-and-ja3s-247362855967)
-- [Web Decoy Platform](https://webdecoy.com)

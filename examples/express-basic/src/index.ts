@@ -34,6 +34,7 @@ app.use(
     threatScoreThreshold: 70, // Block requests with score >= 70
     skipPaths: ['/health'], // Don't protect health checks
     debug: process.env.NODE_ENV === 'development',
+    tlsRejectUnauthorized: process.env.NODE_ENV !== 'development', // Allow self-signed certs in dev
   })
 );
 

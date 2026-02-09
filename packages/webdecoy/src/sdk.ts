@@ -5,6 +5,10 @@
 
 import { WebDecoyClient } from './client';
 import { analyzeRequest } from './local-analysis';
+import { RuleEngine } from './rules/rule-engine';
+import { ViolationReporter } from './violation-reporter';
+import { IPEnrichmentClient } from './ip-enrichment';
+import type { RuleContext, RuleEngineResult, ViolationEvent } from './rules/types';
 import {
   WebDecoyConfig,
   RequestMetadata,
@@ -14,19 +18,25 @@ import {
 } from './types';
 
 export class WebDecoy {
-  private client: WebDecoyClient;
-  private config: Required<WebDecoyConfig>;
+  private client: WebDecoyClient | null;
+  private config: Omit<Required<WebDecoyConfig>, 'apiKey' | 'rules'> & {
+    apiKey?: string;
+  };
+  private ruleEngine: RuleEngine | null;
+  private violationReporter: { report(violations: ViolationEvent[]): void; flush(): Promise<void>; destroy(): Promise<void> } | null = null;
+  private ipEnrichmentClient: IPEnrichmentClient | null = null;
+  private _hasFilterRules = false;
 
   constructor(config: WebDecoyConfig) {
-    // Validate required config
-    if (!config.apiKey) {
-      throw new Error('API key is required. Please provide a valid Web Decoy API key.');
-    }
+    const hasApiKey = !!config.apiKey;
 
-    if (!config.apiKey.startsWith('sk_live_') && !config.apiKey.startsWith('sk_test_')) {
-      throw new Error(
-        'Invalid API key format. API key should start with "sk_live_" or "sk_test_".'
-      );
+    // Validate API key format if provided
+    if (hasApiKey) {
+      if (!config.apiKey!.startsWith('sk_live_') && !config.apiKey!.startsWith('sk_test_')) {
+        throw new Error(
+          'Invalid API key format. API key should start with "sk_live_" or "sk_test_".'
+        );
+      }
     }
 
     // Set defaults
@@ -37,23 +47,125 @@ export class WebDecoy {
       threatScoreThreshold: config.threatScoreThreshold ?? 80,
       timeout: config.timeout ?? 5000,
       debug: config.debug ?? false,
+      tlsRejectUnauthorized: config.tlsRejectUnauthorized ?? true,
     };
 
-    // Initialize API client
-    this.client = new WebDecoyClient({
-      apiKey: this.config.apiKey,
-      apiUrl: this.config.apiUrl,
-      timeout: this.config.timeout,
-      debug: this.config.debug,
-    });
+    // Initialize API client only when apiKey is provided
+    if (hasApiKey) {
+      this.client = new WebDecoyClient({
+        apiKey: config.apiKey!,
+        apiUrl: this.config.apiUrl,
+        timeout: this.config.timeout,
+        debug: this.config.debug,
+        tlsRejectUnauthorized: this.config.tlsRejectUnauthorized,
+      });
+    } else {
+      this.client = null;
+      if (this.config.debug) {
+        console.log('[WebDecoy] Running in local-only mode (no API key). Rules will still evaluate.');
+      }
+    }
+
+    // Initialize rule engine if rules are provided
+    if (config.rules && config.rules.length > 0) {
+      this.ruleEngine = new RuleEngine(config.rules);
+      // Check if any filter rules exist (they need async enrichment)
+      this._hasFilterRules = config.rules.some(
+        (r) => r.name.startsWith('filter:')
+      );
+    } else {
+      this.ruleEngine = null;
+    }
+
+    // Auto-create IP enrichment client when apiKey + filter rules exist
+    if (this.client && this._hasFilterRules) {
+      this.ipEnrichmentClient = new IPEnrichmentClient(this.client);
+    }
+
+    // Auto-create violation reporter when apiKey + rules are both present
+    if (this.client && this.ruleEngine) {
+      const reporter = new ViolationReporter(this.client, {
+        debug: this.config.debug,
+      });
+      this.setViolationReporter(reporter);
+    }
 
     if (this.config.debug) {
       console.log('[WebDecoy] Initialized with config:', {
         apiUrl: this.config.apiUrl,
         enableTLSFingerprinting: this.config.enableTLSFingerprinting,
         threatScoreThreshold: this.config.threatScoreThreshold,
+        hasApiKey,
+        rulesCount: config.rules?.length ?? 0,
       });
     }
+  }
+
+  /**
+   * Evaluate rules against request metadata (synchronous).
+   * Returns null if no rules are configured.
+   */
+  evaluateRules(metadata: RequestMetadata): RuleEngineResult | null {
+    if (!this.ruleEngine) return null;
+
+    const context: RuleContext = {
+      ip: metadata.ip,
+      path: metadata.path,
+      method: metadata.method,
+      userAgent: metadata.user_agent,
+      headers: metadata.headers,
+      timestamp: metadata.timestamp || Date.now(),
+    };
+
+    const result = this.ruleEngine.evaluate(context);
+
+    // Report violations asynchronously if reporter is attached
+    if (result.violations.length > 0 && this.violationReporter) {
+      this.violationReporter.report(result.violations);
+    }
+
+    return result;
+  }
+
+  /**
+   * Evaluate rules with async IP enrichment pre-fetch.
+   * Use this instead of evaluateRules() when filter rules are present.
+   */
+  async evaluateRulesAsync(metadata: RequestMetadata): Promise<RuleEngineResult | null> {
+    if (!this.ruleEngine) return null;
+
+    const context: RuleContext = {
+      ip: metadata.ip,
+      path: metadata.path,
+      method: metadata.method,
+      userAgent: metadata.user_agent,
+      headers: metadata.headers,
+      timestamp: metadata.timestamp || Date.now(),
+    };
+
+    // Pre-fetch IP enrichment if we have filter rules and an enrichment client
+    if (this._hasFilterRules && this.ipEnrichmentClient) {
+      const enrichment = await this.ipEnrichmentClient.enrich(metadata.ip);
+      if (enrichment) {
+        context.enrichment = enrichment;
+      }
+    }
+
+    const result = this.ruleEngine.evaluate(context);
+
+    // Report violations asynchronously if reporter is attached
+    if (result.violations.length > 0 && this.violationReporter) {
+      this.violationReporter.report(result.violations);
+    }
+
+    return result;
+  }
+
+  /**
+   * Whether this SDK instance has filter rules that need async enrichment
+   */
+  get hasFilterRules(): boolean {
+    return this._hasFilterRules;
   }
 
   /**
@@ -76,6 +188,60 @@ export class WebDecoy {
       // Ensure timestamp is set
       if (!metadata.timestamp) {
         metadata.timestamp = Date.now();
+      }
+
+      // Evaluate rules first (if configured)
+      // Use async evaluation if filter rules exist (needs IP enrichment)
+      const ruleResult = this._hasFilterRules
+        ? await this.evaluateRulesAsync(metadata)
+        : this.evaluateRules(metadata);
+
+      // If rules denied the request, return immediately without API call
+      if (ruleResult && ruleResult.action === 'DENY') {
+        return {
+          allowed: false,
+          detection: {
+            decision: 'block',
+            confidence: 100,
+            threat_level: 'HIGH',
+            bot_detected: false,
+            detection_id: 'rule_' + Date.now(),
+            rule_enforced: true,
+          },
+          ruleResult,
+        };
+      }
+
+      // If rules throttled, return a throttle response
+      if (ruleResult && ruleResult.action === 'THROTTLE') {
+        return {
+          allowed: false,
+          detection: {
+            decision: 'block',
+            confidence: 100,
+            threat_level: 'MEDIUM',
+            bot_detected: false,
+            detection_id: 'rule_' + Date.now(),
+            rule_enforced: true,
+          },
+          ruleResult,
+        };
+      }
+
+      // No API client — return fail-open default
+      if (!this.client) {
+        return {
+          allowed: true,
+          detection: {
+            decision: 'allow',
+            confidence: 0,
+            threat_level: 'MINIMAL',
+            bot_detected: false,
+            detection_id: 'local_' + Date.now(),
+            rule_enforced: false,
+          },
+          ruleResult: ruleResult ?? undefined,
+        };
       }
 
       // Perform local analysis (unless explicitly skipped)
@@ -117,6 +283,7 @@ export class WebDecoy {
             detection_id: 'local_' + Date.now(),
             rule_enforced: false,
           },
+          ruleResult: ruleResult ?? undefined,
         };
       }
 
@@ -138,6 +305,7 @@ export class WebDecoy {
       return {
         allowed,
         detection,
+        ruleResult: ruleResult ?? undefined,
       };
     } catch (error) {
       // Log error if debug is enabled
@@ -166,6 +334,9 @@ export class WebDecoy {
    * Useful for testing integration during setup
    */
   async validateConfig(): Promise<{ valid: boolean; error?: string }> {
+    if (!this.client) {
+      return { valid: false, error: 'No API key configured' };
+    }
     try {
       const isValid = await this.client.validateAPIKey();
       return { valid: isValid };
@@ -178,9 +349,34 @@ export class WebDecoy {
   }
 
   /**
+   * Attach a violation reporter for sending violations to the backend.
+   * Called internally when apiKey is present and rules are configured.
+   */
+  setViolationReporter(reporter: { report(violations: ViolationEvent[]): void; flush(): Promise<void>; destroy(): Promise<void> }): void {
+    this.violationReporter = reporter;
+  }
+
+  /**
+   * Get the API client (for use by violation reporter, enrichment, etc.)
+   */
+  getClient(): WebDecoyClient | null {
+    return this.client;
+  }
+
+  /**
    * Get the current configuration
    */
-  getConfig(): Readonly<Required<WebDecoyConfig>> {
+  getConfig(): Readonly<typeof this.config> {
     return { ...this.config };
+  }
+
+  /**
+   * Clean up resources (timers, flush pending violations)
+   */
+  async destroy(): Promise<void> {
+    this.ruleEngine?.destroy();
+    if (this.violationReporter) {
+      await this.violationReporter.destroy();
+    }
   }
 }

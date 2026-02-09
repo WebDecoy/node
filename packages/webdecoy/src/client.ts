@@ -4,13 +4,16 @@
  */
 
 import axios, { AxiosInstance, AxiosError } from 'axios';
+import https from 'https';
 import { SDKDetectionRequest, SDKDetectionResponse } from './types';
+import type { ViolationEvent, IPEnrichmentData } from './rules/types';
 
 export interface ClientConfig {
   apiKey: string;
   apiUrl: string;
   timeout: number;
   debug: boolean;
+  tlsRejectUnauthorized: boolean;
 }
 
 export class WebDecoyClient {
@@ -20,6 +23,11 @@ export class WebDecoyClient {
   constructor(config: ClientConfig) {
     this.config = config;
 
+    // Create HTTPS agent with TLS configuration
+    const httpsAgent = new https.Agent({
+      rejectUnauthorized: config.tlsRejectUnauthorized,
+    });
+
     this.axios = axios.create({
       baseURL: config.apiUrl,
       timeout: config.timeout,
@@ -28,6 +36,7 @@ export class WebDecoyClient {
         Authorization: `Bearer ${config.apiKey}`,
         'User-Agent': 'webdecoy-node-sdk/0.1.0',
       },
+      httpsAgent,
     });
 
     // Add request interceptor for debugging
@@ -104,6 +113,37 @@ export class WebDecoyClient {
 
       // Unknown error
       throw error;
+    }
+  }
+
+  /**
+   * Send violation events to the ingest service
+   */
+  async sendViolations(events: ViolationEvent[]): Promise<void> {
+    try {
+      await this.axios.post('/api/v1/sdk/violations/batch', { events });
+    } catch (error) {
+      if (this.config.debug) {
+        console.error('[WebDecoy] Failed to send violations:', error);
+      }
+      // Silently fail — violations are best-effort
+    }
+  }
+
+  /**
+   * Get IP enrichment data from the ingest service
+   */
+  async getIPEnrichment(ip: string): Promise<IPEnrichmentData | null> {
+    try {
+      const response = await this.axios.get<IPEnrichmentData>(
+        `/api/v1/sdk/ip/${encodeURIComponent(ip)}/enrichment`
+      );
+      return response.data;
+    } catch (error) {
+      if (this.config.debug) {
+        console.error('[WebDecoy] Failed to get IP enrichment:', error);
+      }
+      return null;
     }
   }
 

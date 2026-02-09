@@ -100,12 +100,20 @@ function shouldSkipPath(path: string, skipPaths?: string[] | RegExp[]): boolean 
  * ```typescript
  * import express from 'express';
  * import { webdecoy } from '@webdecoy/express';
+ * import { rateLimit } from '@webdecoy/node';
  *
  * const app = express();
  *
+ * // Rate limiting only (no API key required)
+ * app.use(webdecoy({
+ *   rules: [rateLimit({ max: 100, window: 60 })],
+ *   skipPaths: ['/health', '/static'],
+ * }));
+ *
+ * // Full protection with API key
  * app.use(webdecoy({
  *   apiKey: process.env.WEBDECOY_API_KEY,
- *   skipPaths: ['/health', '/static'],
+ *   rules: [rateLimit({ max: 100, window: 60 })],
  * }));
  * ```
  */
@@ -136,16 +144,37 @@ export function webdecoy(
         timestamp: Date.now(),
       };
 
-      // TODO: Extract TLS info if available
-      // This would require custom setup with the underlying socket
-      // For now, we skip TLS extraction in Express
-
-      // Protect the request
+      // Protect the request (rules are evaluated inside protect())
       const result = await sdk.protect(metadata, {
         threshold: config.threshold,
         skipLocalAnalysis: config.skipLocalAnalysis,
         metadata: config.metadata,
       });
+
+      // Handle rule engine results for specific HTTP responses
+      if (!result.allowed && result.ruleResult) {
+        const rr = result.ruleResult;
+
+        if (rr.action === 'THROTTLE') {
+          const retryAfter = rr.metadata?.retryAfter ?? 60;
+          res.setHeader('Retry-After', String(retryAfter));
+          res.status(429).json({
+            error: 'Too Many Requests',
+            message: rr.reason || 'Rate limit exceeded',
+            retry_after: retryAfter,
+          });
+          return;
+        }
+
+        if (rr.action === 'DENY') {
+          res.status(403).json({
+            error: 'Forbidden',
+            message: rr.reason || 'Access denied by rule',
+            rule: rr.rule,
+          });
+          return;
+        }
+      }
 
       // Handle the result
       if (result.allowed) {

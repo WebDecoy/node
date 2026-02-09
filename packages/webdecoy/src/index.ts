@@ -1,28 +1,26 @@
 /**
  * Web Decoy SDK for Node.js
  *
- * Advanced bot detection with TLS fingerprinting
+ * Advanced bot detection with TLS fingerprinting and rules engine
  *
  * @example
  * ```typescript
- * import { WebDecoy } from '@webdecoy/node';
+ * import { WebDecoy, rateLimit } from '@webdecoy/node';
  *
+ * // Works without API key (rate limiting only)
+ * const webdecoy = new WebDecoy({
+ *   rules: [
+ *     rateLimit({ max: 100, window: 60 }),
+ *   ],
+ * });
+ *
+ * // Full power with API key
  * const webdecoy = new WebDecoy({
  *   apiKey: process.env.WEBDECOY_API_KEY,
+ *   rules: [
+ *     rateLimit({ max: 100, window: 60 }),
+ *   ],
  * });
- *
- * const result = await webdecoy.protect({
- *   method: req.method,
- *   path: req.path,
- *   ip: req.ip,
- *   user_agent: req.headers['user-agent'],
- *   headers: req.headers,
- *   timestamp: Date.now(),
- * });
- *
- * if (!result.allowed) {
- *   return res.status(403).json({ error: 'Access denied' });
- * }
  * ```
  */
 
@@ -38,3 +36,17 @@ export type {
   ProtectResult,
   ProtectOptions,
 } from './types';
+
+// Rules engine exports
+export { rateLimit, filter, RuleEngine, RateLimitRule, FilterRule } from './rules';
+
+export type {
+  Rule,
+  RuleContext,
+  RuleResult,
+  RuleEngineResult,
+  RateLimitConfig,
+  FilterConfig,
+  ViolationEvent,
+  IPEnrichmentData,
+} from './rules';

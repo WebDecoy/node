@@ -3,6 +3,8 @@
  * Based on the ingest service API contract
  */
 
+import type { Rule } from './rules/types';
+
 /**
  * Configuration options for the Web Decoy SDK
  */
@@ -10,8 +12,9 @@ export interface WebDecoyConfig {
   /**
    * API key for authentication (sk_live_xxxxx format)
    * Get this from your Web Decoy dashboard
+   * Optional — when omitted, SDK runs in local-only mode (rules still evaluate)
    */
-  apiKey: string;
+  apiKey?: string;
 
   /**
    * API URL for the Web Decoy ingest service
@@ -43,6 +46,19 @@ export interface WebDecoyConfig {
    * @default false
    */
   debug?: boolean;
+
+  /**
+   * Whether to reject unauthorized TLS certificates
+   * Set to false for development/testing with self-signed certificates
+   * @default true
+   */
+  tlsRejectUnauthorized?: boolean;
+
+  /**
+   * Rules to evaluate before calling the detection API
+   * Rules are evaluated in order; first DENY/THROTTLE wins
+   */
+  rules?: Rule[];
 }
 
 /**
@@ -169,6 +185,9 @@ export interface ProtectResult {
 
   /** Error message if the request failed */
   error?: string;
+
+  /** Rule engine result (if rules were evaluated) */
+  ruleResult?: import('./rules/types').RuleEngineResult;
 }
 
 /**
