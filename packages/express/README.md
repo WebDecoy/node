@@ -2,7 +2,7 @@
 
 Web Decoy middleware for Express.js applications - Advanced bot detection with TLS fingerprinting.
 
-[![npm version](https://badge.fury.io/js/%40webdecoy%2Fexpress.svg)](https://www.npmjs.com/package/@webdecoy/express)
+[![npm version](https://img.shields.io/npm/v/@webdecoy/express.svg)](https://www.npmjs.com/package/@webdecoy/express)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Installation

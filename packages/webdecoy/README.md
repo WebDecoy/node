@@ -2,7 +2,7 @@
 
 Core Web Decoy SDK for Node.js applications - Advanced bot detection with TLS fingerprinting.
 
-[![npm version](https://badge.fury.io/js/%40webdecoy%2Fnode.svg)](https://www.npmjs.com/package/@webdecoy/node)
+[![npm version](https://img.shields.io/npm/v/@webdecoy/node.svg)](https://www.npmjs.com/package/@webdecoy/node)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Installation
