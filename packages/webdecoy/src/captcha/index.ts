@@ -16,6 +16,14 @@ export type { TokenManagerOptions, TokenStore } from './token';
 
 export { resolveSecret, INSECURE_DEFAULT_SECRET } from './secret';
 
+export { createCaptchaEndpoints } from './http';
+export type {
+  CaptchaEndpoints,
+  CaptchaEndpointsOptions,
+  CaptchaRequest,
+  CaptchaHttpResponse,
+} from './http';
+
 export type {
   ChallengeData,
   StoredChallenge,

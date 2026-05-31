@@ -19,6 +19,11 @@
 export { withWebDecoy, withBotProtection } from './middleware';
 export type { WebDecoyMiddlewareOptions, WithBotProtectionOptions } from './middleware';
 
+// Self-hosted captcha route handlers (PoW + detection + tokens)
+export { createCaptchaHandler } from './captcha';
+export type { NextCaptchaHandlers } from './captcha';
+export type { CaptchaEndpointsOptions } from '@webdecoy/node';
+
 // Re-export core types for convenience
 export type {
   WebDecoyConfig,

@@ -24,6 +24,10 @@
 export { default, webdecoyPlugin } from './plugin';
 export type { WebDecoyPluginOptions } from './plugin';
 
+// Self-hosted captcha endpoints (PoW + detection + tokens)
+export { webdecoyCaptchaPlugin } from './captcha';
+export type { CaptchaEndpointsOptions } from '@webdecoy/node';
+
 // Re-export core types for convenience
 export type {
   WebDecoyConfig,

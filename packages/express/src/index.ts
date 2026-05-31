@@ -24,6 +24,10 @@
 export { webdecoy } from './middleware';
 export type { WebDecoyMiddlewareOptions } from './middleware';
 
+// Self-hosted captcha endpoints (PoW + detection + tokens)
+export { webdecoyCaptcha } from './captcha';
+export type { CaptchaEndpointsOptions } from '@webdecoy/node';
+
 // Re-export core types for convenience
 export type {
   WebDecoyConfig,

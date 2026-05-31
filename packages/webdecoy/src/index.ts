@@ -91,6 +91,7 @@ export {
   TokenManager,
   InMemoryTokenStore,
   resolveSecret,
+  createCaptchaEndpoints,
 } from './captcha';
 
 export type {
@@ -107,4 +108,8 @@ export type {
   VerifyInput,
   VerifyResult,
   ScoreResult,
+  CaptchaEndpoints,
+  CaptchaEndpointsOptions,
+  CaptchaRequest,
+  CaptchaHttpResponse,
 } from './captcha';
