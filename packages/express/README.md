@@ -46,7 +46,7 @@ interface WebDecoyMiddlewareOptions {
   // Required: Web Decoy API key
   apiKey: string;
 
-  // Optional: API endpoint (default: 'https://api.webdecoy.com')
+  // Optional: API endpoint (default: 'https://ingest.webdecoy.com')
   apiUrl?: string;
 
   // Optional: Threat score threshold for blocking (default: 80)

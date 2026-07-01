@@ -42,7 +42,7 @@ export class WebDecoy {
     // Set defaults
     this.config = {
       apiKey: config.apiKey,
-      apiUrl: config.apiUrl || 'https://api.webdecoy.com',
+      apiUrl: config.apiUrl || 'https://ingest.webdecoy.com',
       enableTLSFingerprinting: config.enableTLSFingerprinting ?? true,
       threatScoreThreshold: config.threatScoreThreshold ?? 80,
       timeout: config.timeout ?? 5000,

@@ -1,6 +1,6 @@
 {
   "name": "@webdecoy/node",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Web Decoy SDK for Node.js - Bot detection with TLS fingerprinting",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

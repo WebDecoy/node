@@ -45,7 +45,7 @@ const webdecoy = new WebDecoy({
   apiKey: 'sk_live_xxxxx',
 
   // Optional: API endpoint (defaults to production)
-  apiUrl: 'https://api.webdecoy.com',
+  apiUrl: 'https://ingest.webdecoy.com',
 
   // Optional: Enable TLS fingerprinting (default: true)
   enableTLSFingerprinting: true,

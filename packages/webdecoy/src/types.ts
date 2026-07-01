@@ -18,7 +18,7 @@ export interface WebDecoyConfig {
 
   /**
    * API URL for the Web Decoy ingest service
-   * @default 'https://api.webdecoy.com'
+   * @default 'https://ingest.webdecoy.com'
    */
   apiUrl?: string;
 
