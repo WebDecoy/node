@@ -36,3 +36,6 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# harness (botasaurus) run artifacts
+packages/webdecoy/output/
