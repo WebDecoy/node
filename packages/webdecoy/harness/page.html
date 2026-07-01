@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WebDecoy stealth-detection harness</title>
+  <style>
+    body { font: 14px/1.5 -apple-system, system-ui, sans-serif; margin: 2rem; max-width: 60rem; }
+    h1 { font-size: 1.3rem; }
+    pre { background: #0b1021; color: #d6e2ff; padding: 1rem; border-radius: .5rem; overflow: auto; }
+    .verdict { font-size: 1.1rem; font-weight: 700; }
+    .allow { color: #2e7d32; } .challenge { color: #b26a00; } .block { color: #c62828; }
+  </style>
+</head>
+<body>
+  <h1>WebDecoy stealth-detection harness</h1>
+  <p>Loads the real <code>@webdecoy/client</code> bundle, collects signals in <em>this</em> browser,
+     and scores them with the real <code>DetectionEngine</code>. Open in a normal browser (baseline)
+     or point botasaurus at it (target).</p>
+  <p class="verdict" id="verdict">collecting…</p>
+  <pre id="result">…</pre>
+
+  <script src="/webdecoy.global.js"></script>
+  <script>
+    (async () => {
+      const verdictEl = document.getElementById('verdict');
+      const resultEl = document.getElementById('result');
+      try {
+        // getSignals() returns the sync environmental collector output, which now
+        // includes lieDetection + audioInfo + webglInfo + cdp + automationFlags.
+        const signals = window.WebDecoyCaptcha.getSignals();
+        const resp = await fetch('/score', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ signals, userAgent: navigator.userAgent, label: 'LIVE BROWSER (/score)' }),
+        });
+        const verdict = await resp.json();
+        const rec = verdict.recommendation || 'unknown';
+        verdictEl.textContent = `score ${(verdict.score * 100).toFixed(0)}%  →  ${rec.toUpperCase()}`;
+        verdictEl.className = 'verdict ' + rec;
+        resultEl.textContent = JSON.stringify(verdict, null, 2);
+        // Expose for automation (botasaurus reads these).
+        window.__verdict = verdict;
+        document.title = 'verdict:' + rec + ':' + Math.round(verdict.score * 100);
+      } catch (e) {
+        verdictEl.textContent = 'error';
+        resultEl.textContent = 'error: ' + (e && e.message ? e.message : e);
+      }
+    })();
+  </script>
+</body>
+</html>

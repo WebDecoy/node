@@ -3,11 +3,12 @@
 import type { Detection, Signals } from '../types';
 import { AUTOMATION_UA_PATTERNS } from '../weights';
 
+// `webdriver_configurable` and `chrome_runtime_missing` were removed: both fire
+// on genuine Chrome (configurable webdriver descriptor; no chrome.runtime on
+// ordinary pages) and caused false positives confirmed via the live harness.
 const PLAYWRIGHT_SCORE_MAP: Record<string, number> = {
   playwright_globals: 0.95,
   webdriver_deleted: 0.8,
-  webdriver_configurable: 0.7,
-  chrome_runtime_missing: 0.6,
 };
 
 export function detectHeadless(signals: Signals, userAgent: string): Detection[] {

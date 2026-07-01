@@ -127,20 +127,14 @@ export class EnvironmentalCollector {
       );
       if (pwKeys.length > 0) signals.push('playwright_globals');
 
-      // Check if navigator.webdriver was deleted or reconfigured
+      // navigator.webdriver *deleted* from the prototype is a genuine automation
+      // tell. NOTE: a merely *configurable* descriptor is normal in real Chrome,
+      // and chrome.runtime is absent on ordinary pages in real Chrome — both
+      // fired on a real browser in live testing, so neither is a signal here.
       const proto = Object.getPrototypeOf(navigator);
       const desc = Object.getOwnPropertyDescriptor(proto, 'webdriver');
       if (!desc) {
-        // Property was deleted from prototype — browsers always have it
         signals.push('webdriver_deleted');
-      } else if (desc.configurable !== false) {
-        signals.push('webdriver_configurable');
-      }
-
-      // Check for missing chrome.runtime in Chrome UA
-      const isChrome = /Chrome\//.test(navigator.userAgent) && !/Edg\//.test(navigator.userAgent);
-      if (isChrome && w.chrome && !w.chrome.runtime) {
-        signals.push('chrome_runtime_missing');
       }
 
       return { detected: signals.length > 0, signals };
