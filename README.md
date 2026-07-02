@@ -1,52 +1,144 @@
-# Web Decoy Node.js SDK
+# Stealth-scraper tripwires for Node.js
 
-Advanced bot detection and protection for Node.js applications with TLS fingerprinting.
+**Catch scrapers with honeypot paths, not fingerprinting.** Deterministic, zero-false-positive bot detection for Express, Fastify, and Next.js — **no account, no API key, three lines of code.**
 
-[![npm version](https://badge.fury.io/js/%40webdecoy%2Fnode.svg)](https://www.npmjs.com/package/@webdecoy/node)
+Fingerprint- and challenge-based detection loses to purpose-built stealth scrapers ([botasaurus](https://github.com/omkarcloud/botasaurus), undetected-chromedriver, SeleniumBase-UC) that present a genuine browser fingerprint. Tripwires win a different fight: a hidden honeypot path a real user can never reach, so **any request for it is automated by construction** — it detects *intent*, which a better fingerprint can't spoof away.
+
+[![npm version](https://img.shields.io/npm/v/@webdecoy/node.svg)](https://www.npmjs.com/package/@webdecoy/node)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Features
+<!-- TODO: add a short terminal GIF here — a scraper follows the hidden link and gets 403'd.
+![A scraper hits a tripwire and gets blocked](docs/tripwire-demo.gif) -->
 
-- **Advanced Bot Detection** - Detect automated tools, scrapers, and malicious bots
-- **Tripwire Deception** - Deterministic, zero-false-positive honeypot links & paths that catch stealth scrapers by *intent* (going where a human can't) — even ones built to defeat browser fingerprinting
-- **TLS Fingerprinting** - JA3 and JA4 fingerprint analysis for deeper inspection
-- **Two-Tier Analysis** - Fast local checks + comprehensive server-side verification
-- **Smart Decision Making** - Allow, block, or challenge based on threat level
-- **Framework Integrations** - Ready-to-use middleware for Express.js
-- **Real-time Analytics** - Track detections in your Web Decoy dashboard
-- **Fail-Safe Design** - Fail open to avoid blocking legitimate users
-
-## Packages
-
-| Package | Version | Description |
-|---------|---------|-------------|
-| [@webdecoy/node](https://www.npmjs.com/package/@webdecoy/node) | [![npm](https://img.shields.io/npm/v/@webdecoy/node.svg)](https://www.npmjs.com/package/@webdecoy/node) | Core SDK for Node.js |
-| [@webdecoy/express](https://www.npmjs.com/package/@webdecoy/express) | [![npm](https://img.shields.io/npm/v/@webdecoy/express.svg)](https://www.npmjs.com/package/@webdecoy/express) | Express.js middleware |
-| [@webdecoy/fastify](https://www.npmjs.com/package/@webdecoy/fastify) | [![npm](https://img.shields.io/npm/v/@webdecoy/fastify.svg)](https://www.npmjs.com/package/@webdecoy/fastify) | Fastify plugin |
-| [@webdecoy/nextjs](https://www.npmjs.com/package/@webdecoy/nextjs) | [![npm](https://img.shields.io/npm/v/@webdecoy/nextjs.svg)](https://www.npmjs.com/package/@webdecoy/nextjs) | Next.js middleware |
-| [@webdecoy/client](https://www.npmjs.com/package/@webdecoy/client) | [![npm](https://img.shields.io/npm/v/@webdecoy/client.svg)](https://www.npmjs.com/package/@webdecoy/client) | Browser-side signal collector |
-
-## Quick Start
-
-### Installation
+## Quick start — no API key
 
 ```bash
 npm install @webdecoy/node
-# or
-yarn add @webdecoy/node
 ```
 
-### Basic Usage
+```typescript
+import { WebDecoy, tripwire, honeytoken } from '@webdecoy/node';
+
+// A hidden decoy link + the secret path it points at.
+const trap = honeytoken();
+
+const wd = new WebDecoy({
+  rules: [
+    // Block any request to the honeytoken path, plus built-in scanner-bait
+    // paths (/.env, /.git/config, /wp-config.php, …). Runs locally — no key.
+    tripwire({ paths: [trap.path] }),
+  ],
+});
+
+// Inject the invisible, rel=nofollow decoy link into your HTML. Real users
+// never see or follow it; a link-following scraper requests it and is blocked.
+html = html.replace('</body>', `${trap.linkHtml}</body>`);
+```
+
+That's the whole thing. Runs entirely on your server, in memory, with no account and no outbound calls. With the [framework middleware](#framework-integration-still-no-api-key), a tripwire hit becomes a `403` automatically.
+
+Register your own paths, prefixes, or patterns too:
+
+```typescript
+tripwire({
+  paths: ['/admin-backup.zip'],
+  prefixes: ['/.git/'],
+  patterns: [/\/wp-admin\//],
+  includeDefaults: true, // built-in scanner-bait paths (default: true)
+  action: 'DENY',        // or 'THROTTLE'
+  dryRun: false,         // log only, don't block (observe before enforcing)
+});
+```
+
+## Why tripwires beat fingerprinting
+
+Modern scraping frameworks are built specifically to defeat fingerprint- and challenge-based bot management. They run a real Chrome, strip `navigator.webdriver`, spoof canvas/WebGL/audio, and solve CAPTCHAs. Independent data: residential-proxy scrapers bypass major CDNs 80–99% of the time. Fingerprinting is an arms race you re-run every release.
+
+A tripwire sidesteps the arms race. It doesn't ask *"does this look like a bot?"* — it exploits the one thing automation does that humans don't: **following links and hitting paths a person can never see.**
+
+- **Deterministic.** A hit isn't a probability; it's a request for a path that only exists to trap automation.
+- **Zero-false-positive by design.** The decoy link is invisible and `rel=nofollow`; the default bait paths (`/.env`, `/.git/config`, `/wp-config.php`, …) are never requested by real traffic. (See [false positives](#what-counts-as-a-false-positive) for the honest edge cases.)
+- **Unspoofable.** It catches *intent*, not a fingerprint — so a stealthier browser doesn't help the scraper.
+- **Instant.** Evaluated locally before any scoring, model, or network call.
+
+## Framework integration (still no API key)
+
+Tripwires (and the other [local rules](#more-local-rules)) are enforced automatically by the middleware — a hit returns `403`, no extra code.
+
+### Express
+
+```bash
+npm install @webdecoy/express
+```
+
+```typescript
+import express from 'express';
+import { webdecoy } from '@webdecoy/express';
+import { tripwire, rateLimit } from '@webdecoy/node';
+
+const app = express();
+
+app.use(
+  webdecoy({
+    // No apiKey → purely local rules (tripwires + rate limiting).
+    rules: [
+      tripwire({ paths: ['/.env', '/wp-config.php'] }),
+      rateLimit({ max: 100, window: 60 }),
+    ],
+    skipPaths: ['/health', '/public'],
+  })
+);
+```
+
+Fastify (`@webdecoy/fastify`) and Next.js (`@webdecoy/nextjs`) expose the same rule-based middleware.
+
+## More local rules
+
+Rules run locally (no API key) before any server verification; the first `DENY`/`THROTTLE` wins and short-circuits the request.
+
+```typescript
+import { WebDecoy, rateLimit, tripwire, filter } from '@webdecoy/node';
+
+const wd = new WebDecoy({
+  rules: [
+    rateLimit({ max: 100, window: 60 }),                        // 100 req / 60s per IP
+    tripwire({ paths: ['/.env', '/wp-config.php'] }),           // honeypot paths
+    filter({ expression: 'ip.tor or ip.vpn', action: 'DENY' }), // needs an API key (IP enrichment)
+  ],
+});
+```
+
+- **`rateLimit({ max, window, algorithm?, action?, keyBy? })`** — fixed or sliding window, keyed by IP (or a custom function). No key.
+- **`tripwire({ paths?, prefixes?, patterns?, includeDefaults? })`** — deterministic honeypot-path detection. No key.
+- **`filter({ expression, action? })`** — an expression language over IP reputation/geo (e.g. `ip.tor`, `ip.country in ["CN", "RU"]`). Requires an API key for enrichment.
+
+## What counts as a false positive?
+
+The zero-false-positive claim is about *design*, and it holds if you know the edge cases:
+
+- **The honeytoken link** is rendered hidden and `rel=nofollow`, and isn't in your sitemap or nav — so real users and well-behaved crawlers (Googlebot respects `nofollow`) never follow it. A scraper that ignores `nofollow` and follows every link does.
+- **Aggressive link-prefetchers and unfurl/preview bots** (e.g. some browsers' speculative prefetch, chat link previews) *can* fetch a hidden link. If you serve link previews or use prefetching, start with `dryRun: true` to measure before enforcing, or scope the trap to paths those bots won't touch.
+- **The default scanner-bait paths** (`/.env`, `/.git/config`, …) are never hit by legitimate traffic — but *your own* security scanners or uptime checks might. Exclude them or run `dryRun` first.
+
+The honest rule of thumb: enforce tripwires you control the surface of, and use `dryRun` to observe any path you're unsure about.
+
+## Optional: the WebDecoy platform (API key)
+
+Everything above runs locally and free, forever. Add an API key to turn on the hosted platform when you want deeper detection and visibility:
+
+- **`protect()`** — full server-side analysis (a threat score + allow/block/challenge decision), not just local rules.
+- **TLS fingerprinting** — JA3/JA4 hashing and matching against known automation (curl, wget, Selenium, …) and spoofed-browser (TLS↔UA mismatch) detection.
+- **IP enrichment** — reputation, geo, and Tor/VPN/proxy/hosting detection that powers `filter()` expressions.
+- **Dashboard & analytics** — every tripwire hit and violation, tracked over time.
 
 ```typescript
 import { WebDecoy } from '@webdecoy/node';
 
-const webdecoy = new WebDecoy({
-  apiKey: process.env.WEBDECOY_API_KEY, // Get from dashboard
+const wd = new WebDecoy({
+  apiKey: process.env.WEBDECOY_API_KEY, // from app.webdecoy.com
 });
 
-// Protect a request
-const result = await webdecoy.protect({
+const result = await wd.protect({
   method: 'GET',
   path: '/api/data',
   ip: '203.0.113.42',
@@ -60,284 +152,99 @@ if (!result.allowed) {
 }
 ```
 
-## Tripwire Deception
+### Getting an API key
 
-Fingerprint-based detection loses to purpose-built stealth scrapers (e.g. [botasaurus](https://github.com/omkarcloud/botasaurus)) that present a genuine browser fingerprint. **Tripwires win a different fight:** a hidden honeypot link or path that a real user can never reach — so any request for it is automated *by construction*. It's deterministic, **zero-false-positive**, and needs **no API key**.
+1. Sign up at [app.webdecoy.com](https://app.webdecoy.com)
+2. Create an organization and a property for your app
+3. Generate an API key in Settings (`sk_live_` for production, `sk_test_` for testing)
 
-```typescript
-import { WebDecoy, tripwire, honeytoken } from '@webdecoy/node';
+## How it works
 
-// A hidden decoy link + the path it points at
-const trap = honeytoken();
+| Tier | What | Needs a key? |
+|------|------|:---:|
+| **0 — Tripwires** | Requests for hidden honeypot paths are blocked immediately, before any scoring. Deterministic, zero-FP. | No |
+| **1 — Local analysis** | Fast on-server heuristics: suspicious/missing headers, datacenter IPs, known bot user-agents, missing `Sec-CH-UA`. | No |
+| **2 — Server verification** | JA3/JA4 TLS fingerprinting, known-bot database, TLS↔UA mismatch, IP reputation, GeoIP (Tor/VPN/proxy). | Yes |
 
-const webdecoy = new WebDecoy({
-  rules: [
-    // Block any request to the honeytoken path, plus built-in scanner-bait
-    // paths (/.env, /.git/config, /wp-config.php, ...)
-    tripwire({ paths: [trap.path] }),
-  ],
-});
+## Packages
 
-// Inject the (invisible, nofollow) decoy link into your HTML. Real users never
-// see or click it; a link-following scraper requests it and is blocked.
-html = html.replace('</body>', `${trap.linkHtml}</body>`);
-```
+| Package | Version | Description |
+|---------|---------|-------------|
+| [@webdecoy/node](https://www.npmjs.com/package/@webdecoy/node) | [![npm](https://img.shields.io/npm/v/@webdecoy/node.svg)](https://www.npmjs.com/package/@webdecoy/node) | Core SDK + local rules (tripwire, rateLimit, filter) |
+| [@webdecoy/express](https://www.npmjs.com/package/@webdecoy/express) | [![npm](https://img.shields.io/npm/v/@webdecoy/express.svg)](https://www.npmjs.com/package/@webdecoy/express) | Express.js middleware |
+| [@webdecoy/fastify](https://www.npmjs.com/package/@webdecoy/fastify) | [![npm](https://img.shields.io/npm/v/@webdecoy/fastify.svg)](https://www.npmjs.com/package/@webdecoy/fastify) | Fastify plugin |
+| [@webdecoy/nextjs](https://www.npmjs.com/package/@webdecoy/nextjs) | [![npm](https://img.shields.io/npm/v/@webdecoy/nextjs.svg)](https://www.npmjs.com/package/@webdecoy/nextjs) | Next.js middleware |
+| [@webdecoy/client](https://www.npmjs.com/package/@webdecoy/client) | [![npm](https://img.shields.io/npm/v/@webdecoy/client.svg)](https://www.npmjs.com/package/@webdecoy/client) | Browser-side signal collector |
 
-A tripwire hit makes `protect()` return `allowed: false` and reports a violation — enforced automatically by the Express/Fastify/Next middleware (403), no extra code. Register your own paths, prefixes, or patterns too:
-
-```typescript
-tripwire({
-  paths: ['/admin-backup.zip'],
-  prefixes: ['/.git/'],
-  patterns: [/\/wp-admin\//],
-  includeDefaults: true, // built-in scanner-bait paths (default: true)
-  action: 'DENY',        // or 'THROTTLE'
-  dryRun: false,         // log only, don't block (observe before enforcing)
-});
-```
-
-> Tripwires are one of the SDK's **rules**, alongside [`rateLimit()`](#rules) and `filter()` — all evaluated locally before any server call.
-
-## Rules
-
-Rules run locally (no API key required) before any server verification; the first `DENY`/`THROTTLE` wins and short-circuits the request.
+## Configuration (platform options)
 
 ```typescript
-import { WebDecoy, rateLimit, tripwire, filter } from '@webdecoy/node';
-
-const webdecoy = new WebDecoy({
-  rules: [
-    rateLimit({ max: 100, window: 60 }),                        // 100 req / 60s per IP
-    tripwire({ paths: ['/.env', '/wp-config.php'] }),           // honeypot paths
-    filter({ expression: 'ip.tor or ip.vpn', action: 'DENY' }), // needs apiKey (IP enrichment)
-  ],
+const wd = new WebDecoy({
+  apiKey: 'sk_live_xxxxx',                 // optional — only for platform features
+  apiUrl: 'https://ingest.webdecoy.com',   // optional (defaults to production)
+  enableTLSFingerprinting: true,           // optional (default: true)
+  threatScoreThreshold: 70,                // optional, 0–100 (default: 80)
+  timeout: 5000,                           // optional, ms (default: 5000)
+  debug: false,                            // optional (default: false)
+  tlsRejectUnauthorized: true,             // optional (default: true)
 });
 ```
 
-- **`rateLimit({ max, window, algorithm?, action?, keyBy? })`** — fixed or sliding window, keyed by IP (or a custom function).
-- **`tripwire({ paths?, prefixes?, patterns?, includeDefaults? })`** — deterministic honeypot-path detection (see [Tripwire Deception](#tripwire-deception)).
-- **`filter({ expression, action? })`** — an expression language over IP reputation/geo (e.g. `ip.tor`, `ip.country in ["CN", "RU"]`); requires an API key for enrichment.
-
-## Framework Integrations
-
-### Express.js
-
-```bash
-npm install @webdecoy/express
-```
-
-```typescript
-import express from 'express';
-import { webdecoy } from '@webdecoy/express';
-
-const app = express();
-
-app.use(
-  webdecoy({
-    apiKey: process.env.WEBDECOY_API_KEY,
-    threatScoreThreshold: 70,
-    skipPaths: ['/health', '/public'],
-  })
-);
-
-app.get('/api/data', (req, res) => {
-  // Request is protected automatically
-  // Access detection info via req.webdecoy
-  res.json({
-    data: 'protected',
-    bot_detected: req.webdecoy?.bot_detected,
-  });
-});
-```
-
-## Configuration
-
-### SDK Options
-
-```typescript
-const webdecoy = new WebDecoy({
-  // Required: Your API key from the dashboard
-  apiKey: 'sk_live_xxxxx',
-
-  // Optional: API endpoint (defaults to production)
-  apiUrl: 'https://ingest.webdecoy.com',
-
-  // Optional: Enable TLS fingerprinting (default: true)
-  enableTLSFingerprinting: true,
-
-  // Optional: Threat score threshold for blocking (default: 80)
-  // Scores range from 0-100
-  threatScoreThreshold: 70,
-
-  // Optional: Request timeout in milliseconds (default: 5000)
-  timeout: 5000,
-
-  // Optional: Enable debug logging (default: false)
-  debug: true,
-
-  // Optional: Reject unauthorized TLS certificates (default: true)
-  // Set to false for development with self-signed certs
-  tlsRejectUnauthorized: true,
-});
-```
-
-## How It Works
-
-Web Decoy uses a layered detection system:
-
-### Tier 0: Tripwires (Deterministic)
-
-Requests for hidden honeypot paths are blocked immediately, before any scoring — a zero-false-positive signal that catches stealth scrapers fingerprinting misses. See [Tripwire Deception](#tripwire-deception).
-
-### Tier 1: Local Analysis (Fast)
-
-The SDK performs lightweight checks on your server:
-
-- **Suspicious Headers** - Missing or unusual browser headers
-- **Datacenter IPs** - Requests from AWS, GCP, Azure, etc.
-- **User-Agent Analysis** - Known bot signatures
-- **Missing Security Headers** - Absence of `Sec-CH-UA` and similar
-
-### Tier 2: Server-Side Verification (Deep)
-
-When needed, requests are sent to Web Decoy's servers for:
-
-- **TLS Fingerprinting** - JA3/JA4 hash generation and matching
-- **Known Bot Database** - Comparison against fingerprints of curl, wget, Selenium, etc.
-- **TLS/User-Agent Mismatch** - Detect spoofed browsers
-- **IP Reputation** - Check against threat databases
-- **GeoIP Intelligence** - Tor, VPN, proxy, hosting provider detection
-
-## Detection Response
-
-Every protected request returns a decision:
-
-```typescript
-interface ProtectResult {
-  allowed: boolean; // true = allow, false = block
-  detection: {
-    decision: 'allow' | 'block' | 'challenge';
-    confidence: number; // 0-100 threat score
-    threat_level: 'MINIMAL' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-    bot_detected: boolean;
-    bot_type?: string; // e.g., "curl", "selenium"
-    detection_id: string; // Unique ID for tracking
-    rule_enforced: boolean; // true if response rule triggered
-  };
-  error?: string; // Present if an error occurred
-}
-```
-
-## Examples
-
-See the [examples](./examples) directory for complete working examples:
-
-- **[express-basic](./examples/express-basic)** - Basic Express.js integration
-
-## API Reference
-
-### `WebDecoy`
-
-Main SDK class for bot detection.
-
-#### `constructor(config: WebDecoyConfig)`
-
-Create a new Web Decoy instance.
-
-#### `protect(metadata: RequestMetadata, options?: ProtectOptions): Promise<ProtectResult>`
-
-Analyze and protect a request.
-
-**Parameters:**
-- `metadata` - Request information (IP, headers, etc.)
-- `options` - Optional settings for this request
-  - `threshold` - Custom threat score threshold for this request
-  - `skipLocalAnalysis` - Skip local analysis and only use server-side detection
-  - `metadata` - Additional metadata to include in the detection
-
-**Returns:** Protection result with decision
-
-#### `validateConfig(): Promise<{ valid: boolean; error?: string }>`
-
-Validate your API key and configuration.
-
-#### `getConfig(): Readonly<Required<WebDecoyConfig>>`
-
-Get the current configuration.
-
-### Types
-
-All TypeScript types are exported for your convenience:
-
-```typescript
-import type {
-  WebDecoyConfig,
-  RequestMetadata,
-  SDKDetectionResponse,
-  ProtectResult,
-  ProtectOptions,
-  TLSInfo,
-  LocalAnalysis,
-  SDKDetectionRequest,
-  // Rules & deception
-  Rule,
-  RateLimitConfig,
-  FilterConfig,
-  TripwireConfig,
-  Honeytoken,
-  HoneytokenOptions,
-} from '@webdecoy/node';
-```
+## API reference
 
 ### `tripwire(config?)` / `honeytoken(options?)`
 
-Deterministic honeypot-path detection. `tripwire()` returns a `Rule` for the
-`rules` array; `honeytoken()` returns `{ path, linkHtml }` — a hidden decoy link
-and the tripwire path it points at. See [Tripwire Deception](#tripwire-deception).
+Deterministic honeypot-path detection. `tripwire()` returns a `Rule` for the `rules` array; `honeytoken()` returns `{ path, linkHtml }` — a hidden decoy link and the tripwire path it points at.
 
 ### `rateLimit(config)` / `filter(config)`
 
-Additional local rules for the `rules` array. See [Rules](#rules).
+Additional local rules for the `rules` array. `filter()` requires an API key for IP enrichment.
 
-## Getting an API Key
+### `protect(metadata, options?): Promise<ProtectResult>`
 
-1. Sign up at [app.webdecoy.com](https://app.webdecoy.com)
-2. Create a new organization
-3. Create a property for your application
-4. Go to Settings to generate an API key
+Full analysis of a request (platform feature). Returns a decision:
 
-API keys start with `sk_live_` for production or `sk_test_` for testing.
+```typescript
+interface ProtectResult {
+  allowed: boolean;
+  detection: {
+    decision: 'allow' | 'block' | 'challenge';
+    confidence: number;      // 0–100 threat score
+    threat_level: 'MINIMAL' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    bot_detected: boolean;
+    bot_type?: string;       // e.g. "curl", "selenium"
+    detection_id: string;
+    rule_enforced: boolean;
+  };
+  error?: string;
+}
+```
 
-## Security Best Practices
+All TypeScript types are exported (`WebDecoyConfig`, `RequestMetadata`, `ProtectResult`, `Rule`, `TripwireConfig`, `RateLimitConfig`, `FilterConfig`, `Honeytoken`, …).
 
-1. **Never commit API keys** - Use environment variables
-2. **Use appropriate thresholds** - Start with 70-80 for most applications
-3. **Monitor your dashboard** - Review detections regularly
-4. **Skip health checks** - Don't protect monitoring endpoints
-5. **Fail open** - The SDK fails open by default to avoid blocking legitimate users on errors
+## Examples
+
+See [examples](./examples) for complete working setups — e.g. [express-basic](./examples/express-basic).
 
 ## FAQ
 
-**Q: Will this slow down my application?**
-A: Local analysis adds <1ms. Server verification typically takes 50-200ms but runs asynchronously for low-risk requests.
+**Will this slow down my app?** Local rules (tripwires, rate limiting) add <1ms and make no network calls. Server verification (with a key) typically takes 50–200ms and runs asynchronously for low-risk requests.
 
-**Q: What happens if the Web Decoy service is down?**
-A: The SDK fails open by default, allowing requests to continue. You'll see errors in logs but users won't be affected.
+**What if the WebDecoy service is down?** Local rules are unaffected (they never call out). Platform `protect()` fails open by default, so requests continue.
 
-**Q: Can I use this behind a CDN or load balancer?**
-A: Yes! The Express middleware automatically handles `X-Forwarded-For` and similar headers. Make sure to configure your proxy correctly.
+**Behind a CDN or load balancer?** Yes — the middleware handles `X-Forwarded-For` and similar. Configure your proxy's trusted-IP settings correctly.
 
 ## Support
 
 - **Website**: [webdecoy.com](https://webdecoy.com)
 - **Dashboard**: [app.webdecoy.com](https://app.webdecoy.com)
-- **Issues**: [GitHub Issues](https://github.com/webdecoy/webdecoy-node/issues)
+- **Issues**: [github.com/WebDecoy/node-sdk/issues](https://github.com/WebDecoy/node-sdk/issues)
 - **Email**: support@webdecoy.com
 
 ## Contributing
 
-Contributions are welcome! Please read our [Contributing Guide](./CONTRIBUTING.md) first.
+Contributions welcome — please read the [Contributing Guide](./CONTRIBUTING.md) first.
 
 ## License
 
-MIT License - see [LICENSE](./LICENSE) for details.
+MIT — see [LICENSE](./LICENSE).
