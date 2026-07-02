@@ -34,14 +34,14 @@
   ],
   "author": "Web Decoy",
   "license": "MIT",
-  "homepage": "https://github.com/WebDecoy/node-sdk#readme",
+  "homepage": "https://github.com/WebDecoy/node#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WebDecoy/node-sdk.git",
+    "url": "git+https://github.com/WebDecoy/node.git",
     "directory": "packages/client"
   },
   "bugs": {
-    "url": "https://github.com/WebDecoy/node-sdk/issues"
+    "url": "https://github.com/WebDecoy/node/issues"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",

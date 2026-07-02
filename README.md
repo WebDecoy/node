@@ -238,7 +238,7 @@ See [examples](./examples) for complete working setups — e.g. [express-basic](
 
 - **Website**: [webdecoy.com](https://webdecoy.com)
 - **Dashboard**: [app.webdecoy.com](https://app.webdecoy.com)
-- **Issues**: [github.com/WebDecoy/node-sdk/issues](https://github.com/WebDecoy/node-sdk/issues)
+- **Issues**: [github.com/WebDecoy/node/issues](https://github.com/WebDecoy/node/issues)
 - **Email**: support@webdecoy.com
 
 ## Contributing

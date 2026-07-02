@@ -176,7 +176,7 @@ API keys start with `sk_live_` for production or `sk_test_` for testing.
 
 ## Documentation
 
-For full documentation, visit the [GitHub repository](https://github.com/webdecoy/webdecoy-node).
+For full documentation, visit the [GitHub repository](https://github.com/WebDecoy/node).
 
 ## License
 

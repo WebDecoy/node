@@ -31,14 +31,14 @@
   ],
   "author": "Web Decoy",
   "license": "MIT",
-  "homepage": "https://github.com/WebDecoy/node-sdk#readme",
+  "homepage": "https://github.com/WebDecoy/node#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WebDecoy/node-sdk.git",
+    "url": "git+https://github.com/WebDecoy/node.git",
     "directory": "packages/nextjs"
   },
   "bugs": {
-    "url": "https://github.com/WebDecoy/node-sdk/issues"
+    "url": "https://github.com/WebDecoy/node/issues"
   },
   "dependencies": {
     "@webdecoy/node": "^0.4.1"

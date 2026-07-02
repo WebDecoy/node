@@ -1,6 +1,6 @@
 # @webdecoy/client
 
-Browser widget for [WebDecoy](https://github.com/WebDecoy/node-sdk) captcha — collects behavioral, environmental, and fingerprint signals, solves a SHA-256 proof-of-work, and submits to your WebDecoy-protected server.
+Browser widget for [WebDecoy](https://github.com/WebDecoy/node) captcha — collects behavioral, environmental, and fingerprint signals, solves a SHA-256 proof-of-work, and submits to your WebDecoy-protected server.
 
 [![npm version](https://img.shields.io/npm/v/@webdecoy/client.svg)](https://www.npmjs.com/package/@webdecoy/client)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

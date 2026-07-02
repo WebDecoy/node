@@ -7,8 +7,8 @@ Thank you for your interest in contributing to the Web Decoy Node.js SDK! This g
 1. **Fork and clone the repository:**
 
 ```bash
-git clone https://github.com/your-username/webdecoy-node.git
-cd webdecoy-node
+git clone https://github.com/your-username/node.git
+cd node
 ```
 
 2. **Install dependencies:**
@@ -26,7 +26,7 @@ npm run build
 ## Project Structure
 
 ```
-webdecoy-node/
+node/
 ├── packages/
 │   ├── webdecoy/        # Core SDK
 │   └── express/         # Express middleware
