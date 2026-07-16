@@ -25,6 +25,8 @@ export { EnvironmentalCollector } from './collectors/environment';
 export { SensorCollector } from './collectors/sensor';
 export { FormAnalyzer, getFormAnalyzer } from './collectors/form';
 export { sha256 } from './sha256';
+export { startClearance, computeDeviceFP, CLEARANCE_COOKIE, FP_VERSION, DEFAULT_INGEST_URL } from './clearance';
+export type { ClearanceOptions, DeviceFPInputs } from './clearance';
 
 export type {
   CollectedSignals,
