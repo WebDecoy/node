@@ -115,6 +115,13 @@ export interface ViolationEvent {
   userAgent?: string;
   /** Reason for the violation */
   reason?: string;
+  /**
+   * The request's wd_clearance token, when present. Lets the backend bind a
+   * tripwire hit to the actor's device fingerprint and deny it — the same
+   * durable lockout a decoy hit produces (enforcement issue #136). Only carried
+   * for deception rules (tripwires); undefined otherwise.
+   */
+  clearance?: string;
   /** Additional metadata */
   metadata?: Record<string, any>;
   /** Whether this was a dry run */

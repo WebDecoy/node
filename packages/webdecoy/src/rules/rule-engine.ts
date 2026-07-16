@@ -5,6 +5,20 @@
 
 import { Rule, RuleContext, RuleResult, RuleEngineResult, ViolationEvent } from './types';
 
+/** Pull the wd_clearance token from a request's Cookie header, if present. */
+function extractClearance(headers: Record<string, string>): string | undefined {
+  const cookie = headers['cookie'];
+  if (!cookie) return undefined;
+  for (const part of cookie.split(';')) {
+    const eq = part.indexOf('=');
+    if (eq < 0) continue;
+    if (part.slice(0, eq).trim() === 'wd_clearance') {
+      return part.slice(eq + 1).trim() || undefined;
+    }
+  }
+  return undefined;
+}
+
 export class RuleEngine {
   private rules: Rule[];
 
@@ -24,7 +38,9 @@ export class RuleEngine {
       const result = rule.evaluate(context);
 
       if (result.action !== 'ALLOW') {
-        // Record violation
+        // Record violation. Tripwire hits (a real user can't reach a honeypot
+        // path) carry the actor's wd_clearance token so the backend can deny its
+        // device fingerprint — the deception signal driving enforcement (#136).
         violations.push({
           rule: result.rule,
           action: result.action,
@@ -33,6 +49,7 @@ export class RuleEngine {
           method: context.method,
           userAgent: context.userAgent,
           reason: result.reason,
+          clearance: result.rule === 'tripwire' ? extractClearance(context.headers) : undefined,
           metadata: result.metadata,
           dryRun: result.metadata?.dryRun === true,
           timestamp: new Date(context.timestamp).toISOString(),
