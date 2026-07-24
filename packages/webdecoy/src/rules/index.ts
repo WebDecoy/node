@@ -6,6 +6,7 @@ export { RuleEngine } from './rule-engine';
 export { RateLimitRule } from './rate-limit-rule';
 export { FilterRule } from './filter-rule';
 export { TripwireRule, DEFAULT_TRIPWIRE_PATHS } from './tripwire-rule';
+export { WebBotAuthRule, webBotAuth } from './web-bot-auth-rule';
 export { honeytoken } from './honeytoken';
 export { InMemoryRateLimiter } from './rate-limiter';
 
@@ -20,6 +21,7 @@ export type {
   ViolationEvent,
   IPEnrichmentData,
 } from './types';
+export type { WebBotAuthConfig } from './web-bot-auth-rule';
 export type { HoneytokenOptions, Honeytoken } from './honeytoken';
 
 import { RateLimitRule } from './rate-limit-rule';

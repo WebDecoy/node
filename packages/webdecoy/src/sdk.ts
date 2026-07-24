@@ -8,6 +8,8 @@ import { analyzeRequest } from './local-analysis';
 import { RuleEngine } from './rules/rule-engine';
 import { ViolationReporter } from './violation-reporter';
 import { IPEnrichmentClient } from './ip-enrichment';
+import { AgentVerifier } from './agent/verifier';
+import type { AgentRequestInput, AgentVerdict } from './agent/types';
 import type { RuleContext, RuleEngineResult, ViolationEvent } from './rules/types';
 import {
   WebDecoyConfig,
@@ -19,13 +21,16 @@ import {
 
 export class WebDecoy {
   private client: WebDecoyClient | null;
-  private config: Omit<Required<WebDecoyConfig>, 'apiKey' | 'rules'> & {
+  private config: Omit<Required<WebDecoyConfig>, 'apiKey' | 'rules' | 'webBotAuth'> & {
     apiKey?: string;
   };
   private ruleEngine: RuleEngine | null;
   private violationReporter: { report(violations: ViolationEvent[]): void; flush(): Promise<void>; destroy(): Promise<void> } | null = null;
   private ipEnrichmentClient: IPEnrichmentClient | null = null;
   private _hasFilterRules = false;
+  private _hasAgentRules = false;
+  private agentVerifier: AgentVerifier | null = null;
+  private readonly webBotAuthOptions?: WebDecoyConfig['webBotAuth'];
 
   constructor(config: WebDecoyConfig) {
     const hasApiKey = !!config.apiKey;
@@ -66,6 +71,8 @@ export class WebDecoy {
       }
     }
 
+    this.webBotAuthOptions = config.webBotAuth;
+
     // Initialize rule engine if rules are provided
     if (config.rules && config.rules.length > 0) {
       this.ruleEngine = new RuleEngine(config.rules);
@@ -73,6 +80,13 @@ export class WebDecoy {
       this._hasFilterRules = config.rules.some(
         (r) => r.name.startsWith('filter:')
       );
+      // Web Bot Auth rules need the agent verdict precomputed (async) before
+      // the synchronous rule can act on it — same pattern as filter rules.
+      this._hasAgentRules = config.rules.some((r) => r.name === 'web-bot-auth');
+      if (this._hasAgentRules) {
+        // Warm the directory cache so the first protected request verifies warm.
+        this.getAgentVerifier().warmup();
+      }
     } else {
       this.ruleEngine = null;
     }
@@ -107,34 +121,23 @@ export class WebDecoy {
    */
   evaluateRules(metadata: RequestMetadata): RuleEngineResult | null {
     if (!this.ruleEngine) return null;
-
-    const context: RuleContext = {
-      ip: metadata.ip,
-      path: metadata.path,
-      method: metadata.method,
-      userAgent: metadata.user_agent,
-      headers: metadata.headers,
-      timestamp: metadata.timestamp || Date.now(),
-    };
-
-    const result = this.ruleEngine.evaluate(context);
-
-    // Report violations asynchronously if reporter is attached
-    if (result.violations.length > 0 && this.violationReporter) {
-      this.violationReporter.report(result.violations);
-    }
-
-    return result;
+    return this.runRules(this.buildContext(metadata));
   }
 
   /**
-   * Evaluate rules with async IP enrichment pre-fetch.
-   * Use this instead of evaluateRules() when filter rules are present.
+   * Evaluate rules with async pre-fetch (IP enrichment, Web Bot Auth
+   * verification). Use this instead of evaluateRules() when filter rules or
+   * webBotAuth() rules are present.
    */
   async evaluateRulesAsync(metadata: RequestMetadata): Promise<RuleEngineResult | null> {
     if (!this.ruleEngine) return null;
+    const context = await this.buildAsyncContext(metadata);
+    return this.runRules(context);
+  }
 
-    const context: RuleContext = {
+  /** Build the base (synchronous) rule context from request metadata. */
+  private buildContext(metadata: RequestMetadata): RuleContext {
+    return {
       ip: metadata.ip,
       path: metadata.path,
       method: metadata.method,
@@ -142,6 +145,14 @@ export class WebDecoy {
       headers: metadata.headers,
       timestamp: metadata.timestamp || Date.now(),
     };
+  }
+
+  /**
+   * Build a rule context with async signals resolved: IP enrichment (for
+   * filter rules) and the Web Bot Auth verdict (for webBotAuth() rules).
+   */
+  private async buildAsyncContext(metadata: RequestMetadata): Promise<RuleContext> {
+    const context = this.buildContext(metadata);
 
     // Pre-fetch IP enrichment if we have filter rules and an enrichment client
     if (this._hasFilterRules && this.ipEnrichmentClient) {
@@ -151,14 +162,64 @@ export class WebDecoy {
       }
     }
 
-    const result = this.ruleEngine.evaluate(context);
+    // Verify Web Bot Auth signature locally so the sync rule can act on it.
+    if (this._hasAgentRules) {
+      context.agent = await this.computeAgentVerdict(metadata);
+    }
 
-    // Report violations asynchronously if reporter is attached
+    return context;
+  }
+
+  /** Evaluate rules against a prepared context and report any violations. */
+  private runRules(context: RuleContext): RuleEngineResult | null {
+    if (!this.ruleEngine) return null;
+    const result = this.ruleEngine.evaluate(context);
     if (result.violations.length > 0 && this.violationReporter) {
       this.violationReporter.report(result.violations);
     }
-
     return result;
+  }
+
+  /** Lazily construct the shared Web Bot Auth verifier (one directory cache). */
+  private getAgentVerifier(): AgentVerifier {
+    if (!this.agentVerifier) {
+      this.agentVerifier = new AgentVerifier({
+        debug: this.config.debug,
+        ...this.webBotAuthOptions,
+      });
+    }
+    return this.agentVerifier;
+  }
+
+  /**
+   * Verify a request's Web Bot Auth signature locally, deriving the request
+   * URL/authority from its metadata. Returns undefined when the request lacks
+   * the host information needed to verify (verdict is then simply absent).
+   */
+  private async computeAgentVerdict(metadata: RequestMetadata): Promise<AgentVerdict | undefined> {
+    const input = agentInputFromMetadata(metadata);
+    if (!input) return undefined;
+    return this.getAgentVerifier().verify(input);
+  }
+
+  /**
+   * Verify an inbound request's Web Bot Auth signature locally (RFC 9421, tag
+   * "web-bot-auth"). Returns whether it is a cryptographically `verified`
+   * agent, an `impersonation` of a known one, an unverifiable `claimed`
+   * signature, or `none`. No network on the warm path.
+   *
+   * Accepts a WHATWG `Request` (edge/Next.js) or a `{ method, url, headers }`
+   * object (Node).
+   *
+   * @example
+   * ```ts
+   * const verdict = await webdecoy.detectBot(request);
+   * if (verdict.status === 'impersonation') return new Response('Forbidden', { status: 403 });
+   * if (verdict.status === 'verified') console.log('verified agent:', verdict.agentName);
+   * ```
+   */
+  async detectBot(request: AgentRequestInput): Promise<AgentVerdict> {
+    return this.getAgentVerifier().verify(request);
   }
 
   /**
@@ -166,6 +227,14 @@ export class WebDecoy {
    */
   get hasFilterRules(): boolean {
     return this._hasFilterRules;
+  }
+
+  /**
+   * Whether this SDK instance has Web Bot Auth rules that need async
+   * verification before evaluation.
+   */
+  get hasAgentRules(): boolean {
+    return this._hasAgentRules;
   }
 
   /**
@@ -190,11 +259,19 @@ export class WebDecoy {
         metadata.timestamp = Date.now();
       }
 
-      // Evaluate rules first (if configured)
-      // Use async evaluation if filter rules exist (needs IP enrichment)
-      const ruleResult = this._hasFilterRules
-        ? await this.evaluateRulesAsync(metadata)
-        : this.evaluateRules(metadata);
+      // Evaluate rules first (if configured). Use async evaluation when a rule
+      // needs a pre-fetched signal — IP enrichment (filter rules) or Web Bot
+      // Auth verification (webBotAuth rules). Capture the agent verdict so it
+      // can be surfaced on the result for downstream allow decisions.
+      let ruleResult: RuleEngineResult | null;
+      let agentVerdict: AgentVerdict | undefined;
+      if (this.ruleEngine && (this._hasFilterRules || this._hasAgentRules)) {
+        const context = await this.buildAsyncContext(metadata);
+        agentVerdict = context.agent;
+        ruleResult = this.runRules(context);
+      } else {
+        ruleResult = this.evaluateRules(metadata);
+      }
 
       // If rules denied the request, return immediately without API call
       if (ruleResult && ruleResult.action === 'DENY') {
@@ -209,6 +286,7 @@ export class WebDecoy {
             rule_enforced: true,
           },
           ruleResult,
+          agent: agentVerdict,
         };
       }
 
@@ -225,6 +303,7 @@ export class WebDecoy {
             rule_enforced: true,
           },
           ruleResult,
+          agent: agentVerdict,
         };
       }
 
@@ -241,6 +320,7 @@ export class WebDecoy {
             rule_enforced: false,
           },
           ruleResult: ruleResult ?? undefined,
+          agent: agentVerdict,
         };
       }
 
@@ -284,6 +364,7 @@ export class WebDecoy {
             rule_enforced: false,
           },
           ruleResult: ruleResult ?? undefined,
+          agent: agentVerdict,
         };
       }
 
@@ -306,6 +387,7 @@ export class WebDecoy {
         allowed,
         detection,
         ruleResult: ruleResult ?? undefined,
+        agent: agentVerdict,
       };
     } catch (error) {
       // Log error if debug is enabled
@@ -378,5 +460,41 @@ export class WebDecoy {
     if (this.violationReporter) {
       await this.violationReporter.destroy();
     }
+  }
+}
+
+/**
+ * Reconstruct a Web Bot Auth verification input from request metadata.
+ *
+ * Signature verification needs the request's scheme, authority, and path.
+ * Metadata carries the path and headers but not a full URL, so the authority
+ * comes from the `Host` / `:authority` header and the scheme from
+ * `X-Forwarded-Proto` (defaulting to https). Returns null when no host is
+ * available — without it `@authority` can't be verified, so we simply skip
+ * agent verification rather than guess.
+ */
+function agentInputFromMetadata(metadata: RequestMetadata): AgentRequestInput | null {
+  const headers = metadata.headers || {};
+  const host =
+    headers['host'] ||
+    headers[':authority'] ||
+    headers['x-forwarded-host'] ||
+    headers['Host'];
+  if (!host) return null;
+
+  const proto = headers['x-forwarded-proto'] || headers['X-Forwarded-Proto'];
+  const scheme = (proto ? proto.split(',')[0].trim() : 'https') || 'https';
+
+  const rawPath = metadata.path || '/';
+  const path = rawPath.startsWith('/') ? rawPath : `/${rawPath}`;
+
+  try {
+    return {
+      method: metadata.method,
+      url: `${scheme}://${host}${path}`,
+      headers,
+    };
+  } catch {
+    return null;
   }
 }

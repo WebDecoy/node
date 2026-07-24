@@ -73,6 +73,62 @@ describe('Edge Runtime compatibility', () => {
     expect(result.honeytokenPathOk).toBe(true);
   });
 
+  it('verifies a Web Bot Auth signature via detectBot() in an Edge VM', async () => {
+    // Generate a key and sign a request in the Node test context, then verify
+    // it entirely inside the Edge VM (WebCrypto Ed25519 + directory cache).
+    const enc = new TextEncoder();
+    const kp = (await crypto.subtle.generateKey({ name: 'Ed25519' }, true, [
+      'sign',
+      'verify',
+    ])) as CryptoKeyPair;
+    const pub = await crypto.subtle.exportKey('jwk', kp.publicKey);
+    const dirJwk = { kty: 'OKP', crv: 'Ed25519', x: pub.x };
+
+    const digest = await crypto.subtle.digest(
+      'SHA-256',
+      enc.encode(`{"crv":"Ed25519","kty":"OKP","x":${JSON.stringify(pub.x)}}`),
+    );
+    const keyid = Buffer.from(new Uint8Array(digest))
+      .toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    const created = Math.floor(Date.now() / 1000);
+    const sigParams = `("@authority");created=${created};expires=${created + 300};keyid="${keyid}";tag="web-bot-auth"`;
+    const base = `"@authority": bot.example\n"@signature-params": ${sigParams}`;
+    const sig = await crypto.subtle.sign({ name: 'Ed25519' }, kp.privateKey, enc.encode(base));
+    const sigHeader = `sig1=:${Buffer.from(new Uint8Array(sig)).toString('base64')}:`;
+    const sigInput = `sig1=${sigParams}`;
+
+    const bundle = bundleForEdge();
+    const vm = new EdgeVM();
+    vm.evaluate('var module = { exports: {} }; var exports = module.exports;');
+    vm.evaluate(bundle);
+
+    const result = await vm.evaluate<Promise<{ status: string; name: string | undefined }>>(`
+      (async () => {
+        const { createAgentVerifier } = module.exports;
+        const dirJwk = ${JSON.stringify(dirJwk)};
+        const verifier = createAgentVerifier({
+          directories: [{ name: 'EdgeBot', category: 'ai_crawlers', directory: 'https://bot.example' }],
+          fetchImpl: async () => new Response(JSON.stringify({ keys: [dirJwk] }), { status: 200 }),
+        });
+        const req = new Request('https://bot.example/foo', {
+          headers: {
+            'signature-input': ${JSON.stringify(sigInput)},
+            'signature': ${JSON.stringify(sigHeader)},
+          },
+        });
+        const verdict = await verifier.verify(req);
+        return { status: verdict.status, name: verdict.agentName };
+      })()
+    `);
+
+    expect(result.status).toBe('verified');
+    expect(result.name).toBe('EdgeBot');
+  });
+
   it('captcha token issue/verify works in an Edge VM (Web Crypto path)', async () => {
     const bundle = bundleForEdge();
 
