@@ -33,13 +33,13 @@ app.use(webdecoyCaptcha({ secret: SECRET }));
 // this check so single-use replay protection spans both.)
 const captcha = new Captcha({ secret: SECRET });
 
-app.post('/login', (req: Request, res: Response) => {
+app.post('/login', async (req: Request, res: Response) => {
   const token = req.body?.webdecoy_token as string | undefined;
   if (!token) {
     res.status(400).json({ ok: false, error: 'missing token' });
     return;
   }
-  const result = captcha.verifyToken(token, req.ip);
+  const result = await captcha.verifyToken(token, req.ip);
   if (!result.valid) {
     res.status(403).json({ ok: false, error: `captcha failed: ${result.reason}` });
     return;

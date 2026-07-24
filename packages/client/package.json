@@ -1,6 +1,6 @@
 {
   "name": "@webdecoy/client",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Web Decoy browser widget - signal collection, proof-of-work, and captcha UI",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

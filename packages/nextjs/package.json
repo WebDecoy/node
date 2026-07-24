@@ -1,6 +1,6 @@
 {
   "name": "@webdecoy/nextjs",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Web Decoy middleware for Next.js",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -17,9 +17,10 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "lint": "eslint src/**/*.ts",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "check:edge": "node ../../scripts/check-edge.mjs src/index.ts"
   },
   "keywords": [
     "web-decoy",
@@ -41,7 +42,7 @@
     "url": "https://github.com/WebDecoy/node/issues"
   },
   "dependencies": {
-    "@webdecoy/node": "^0.4.1"
+    "@webdecoy/node": "^0.5.0"
   },
   "peerDependencies": {
     "next": ">=13.0.0"

@@ -1,6 +1,6 @@
 {
   "name": "@webdecoy/fastify",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Web Decoy plugin for Fastify",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "lint": "eslint src/**/*.ts",
     "clean": "rm -rf dist"
   },
@@ -40,7 +40,7 @@
     "url": "https://github.com/WebDecoy/node/issues"
   },
   "dependencies": {
-    "@webdecoy/node": "^0.4.1",
+    "@webdecoy/node": "^0.5.0",
     "fastify-plugin": "^4.5.1"
   },
   "peerDependencies": {

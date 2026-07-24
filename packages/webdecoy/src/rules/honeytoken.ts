@@ -9,7 +9,7 @@
  * genuine users are never affected.
  */
 
-import { randomBytes } from 'crypto';
+import { randomHex } from '../webcrypto';
 
 export interface HoneytokenOptions {
   /** Base path under which honeytoken tripwires are generated. Default `/__wd`. */
@@ -40,7 +40,7 @@ export interface Honeytoken {
  */
 export function honeytoken(options: HoneytokenOptions = {}): Honeytoken {
   const base = (options.basePath ?? '/__wd').replace(/\/+$/, '');
-  const token = options.token ?? randomBytes(6).toString('hex');
+  const token = options.token ?? randomHex(6);
   const path = `${base}/${token}`;
   const text = options.text ?? '.';
   const linkHtml =

@@ -6,7 +6,12 @@
  * api.webdecoy.com enrichment endpoint.
  */
 
-import { isIPv4 } from 'net';
+/** Strict dotted-quad check (no leading zeros), matching `net.isIPv4` semantics. */
+const IPV4_RE = /^(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}$/;
+
+function isIPv4(ip: string): boolean {
+  return IPV4_RE.test(ip);
+}
 
 /** Coarse datacenter CIDR blocks (AWS, GCP, Azure, DO, Linode, Vultr, Hetzner, OVH). */
 export const DATACENTER_CIDRS: string[] = [

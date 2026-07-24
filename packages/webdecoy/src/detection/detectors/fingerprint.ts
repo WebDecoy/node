@@ -1,6 +1,6 @@
 /** Fingerprint correlation: cross-IP reuse + canvas anomalies. */
 
-import { createHash } from 'crypto';
+import { fnv1a64Hex } from '../../webcrypto';
 import type { Detection, Signals } from '../types';
 import type { FingerprintStore } from '../stores';
 
@@ -20,7 +20,10 @@ export function detectFingerprint(
     String(automation.platform ?? ''),
     String(automation.hardwareConcurrency ?? ''),
   ];
-  const fp = createHash('sha256').update(components.join('|')).digest('hex').slice(0, 16);
+  // Correlation key only — an adversary fully controls their own signals, so
+  // collision resistance buys nothing; a non-crypto hash keeps this sync and
+  // edge-runtime compatible.
+  const fp = fnv1a64Hex(components.join('|'));
 
   store.record(fp, ip, siteKey);
 

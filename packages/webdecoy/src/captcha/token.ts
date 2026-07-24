@@ -6,7 +6,13 @@
  * an IP-hash binding, and single-use replay protection.
  */
 
-import { createHash, createHmac, timingSafeEqual } from 'crypto';
+import {
+  sha256Hex,
+  hmacSha256Hex,
+  timingSafeEqualStr,
+  base64urlEncode,
+  base64urlDecode,
+} from '../webcrypto';
 import type { TokenVerification } from './types';
 
 const TOKEN_TTL_SECONDS = 300;
@@ -56,25 +62,25 @@ export class TokenManager {
   }
 
   /** Issue a signed, IP-bound token for a passing request. */
-  issue(ip: string, siteKey: string, score: number): string {
+  async issue(ip: string, siteKey: string, score: number): Promise<string> {
     const data: TokenPayload = {
       site_key: siteKey,
       timestamp: Math.floor(Date.now() / 1000),
       score: Math.round(score * 1000) / 1000,
-      ip_hash: createHash('sha256').update(ip).digest('hex').slice(0, 8),
+      ip_hash: (await sha256Hex(ip)).slice(0, 8),
     };
 
     const payload = JSON.stringify(data, Object.keys(data).sort());
-    data.sig = createHmac('sha256', this.secret).update(payload).digest('hex');
+    data.sig = await hmacSha256Hex(this.secret, payload);
 
-    return Buffer.from(JSON.stringify(data)).toString('base64url');
+    return base64urlEncode(JSON.stringify(data));
   }
 
   /** Verify a token: signature, expiry, replay, and optional IP binding. */
-  verify(token: string, ip: string | null = null): TokenVerification {
+  async verify(token: string, ip: string | null = null): Promise<TokenVerification> {
     let decoded: TokenPayload;
     try {
-      decoded = JSON.parse(Buffer.from(token, 'base64url').toString());
+      decoded = JSON.parse(base64urlDecode(token));
     } catch (e) {
       return { valid: false, reason: e instanceof Error ? e.message : 'invalid_token' };
     }
@@ -88,11 +94,9 @@ export class TokenManager {
     delete decoded.sig;
 
     const payload = JSON.stringify(decoded, Object.keys(decoded).sort());
-    const expectedSig = createHmac('sha256', this.secret).update(payload).digest('hex');
+    const expectedSig = await hmacSha256Hex(this.secret, payload);
 
-    const sigBuf = Buffer.from(sig);
-    const expectedBuf = Buffer.from(expectedSig);
-    if (sigBuf.length !== expectedBuf.length || !timingSafeEqual(sigBuf, expectedBuf)) {
+    if (!timingSafeEqualStr(sig, expectedSig)) {
       return { valid: false, reason: 'invalid_signature' };
     }
 
@@ -101,7 +105,7 @@ export class TokenManager {
     }
 
     if (ip) {
-      const expectedIpHash = createHash('sha256').update(ip).digest('hex').slice(0, 8);
+      const expectedIpHash = (await sha256Hex(ip)).slice(0, 8);
       if (decoded.ip_hash !== expectedIpHash) {
         return { valid: false, reason: 'ip_mismatch' };
       }

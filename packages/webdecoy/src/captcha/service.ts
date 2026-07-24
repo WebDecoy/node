@@ -8,7 +8,7 @@
  * the SDK.
  */
 
-import { createHash } from 'crypto';
+import { sha256Hex } from '../webcrypto';
 import { DetectionEngine } from '../detection/engine';
 import type { Detection, PoWOutcome, Signals } from '../detection/types';
 import {
@@ -67,7 +67,7 @@ export class Captcha {
   }
 
   /** Issue a PoW challenge for the client to solve (difficulty auto-scaled). */
-  issueChallenge(siteKey: string, ip: string, difficulty?: number): ChallengeData {
+  async issueChallenge(siteKey: string, ip: string, difficulty?: number): Promise<ChallengeData> {
     return this.pow.generate(siteKey, ip, difficulty);
   }
 
@@ -75,7 +75,7 @@ export class Captcha {
    * Verify a submission: checks the signals commitment, verifies PoW, scores the
    * signals, and issues a session token on success. Mirrors `runVerification`.
    */
-  verify(input: VerifyInput): VerifyResult {
+  async verify(input: VerifyInput): Promise<VerifyResult> {
     const { siteKey, ip, userAgent } = input;
     const headers = input.headers ?? {};
     let signals: Signals = input.signals ?? {};
@@ -84,7 +84,7 @@ export class Captcha {
     // 1. Signals commitment: the solution may bind a hash of the raw signals.
     const clientSignalsHash = input.powSolution?.signalsHash ?? null;
     if (input.signalsJson && clientSignalsHash) {
-      const computed = createHash('sha256').update(input.signalsJson).digest('hex');
+      const computed = await sha256Hex(input.signalsJson);
       if (computed !== clientSignalsHash) {
         extraDetections.push({
           category: 'bot',
@@ -108,7 +108,7 @@ export class Captcha {
     // 3. Verify proof of work → outcome consumed by the engine.
     let pow: PoWOutcome;
     if (input.powSolution && input.powSolution.challengeId) {
-      const result = this.pow.verify(input.powSolution, siteKey, clientSignalsHash);
+      const result = await this.pow.verify(input.powSolution, siteKey, clientSignalsHash);
       pow = {
         provided: true,
         valid: result.valid,
@@ -133,14 +133,14 @@ export class Captcha {
     });
 
     // 5. Issue a token on success.
-    const token = verdict.success ? this.tokens.issue(ip, siteKey, verdict.score) : null;
+    const token = verdict.success ? await this.tokens.issue(ip, siteKey, verdict.score) : null;
 
     return { ...verdict, token };
   }
 
   /** Invisible-mode scoring — same pipeline, returns a compact result + action. */
-  score(input: VerifyInput & { action?: string }): ScoreResult {
-    const result = this.verify(input);
+  async score(input: VerifyInput & { action?: string }): Promise<ScoreResult> {
+    const result = await this.verify(input);
     return {
       success: result.success,
       score: result.score,
@@ -151,7 +151,7 @@ export class Captcha {
   }
 
   /** Verify a previously issued token (single-use, optionally IP-bound). */
-  verifyToken(token: string, ip: string | null = null): TokenVerification {
+  async verifyToken(token: string, ip: string | null = null): Promise<TokenVerification> {
     return this.tokens.verify(token, ip);
   }
 }

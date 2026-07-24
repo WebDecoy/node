@@ -1,6 +1,6 @@
 {
   "name": "@webdecoy/node",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Web Decoy SDK for Node.js - Bot detection with TLS fingerprinting",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -19,7 +19,8 @@
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "check:edge": "node ../../scripts/check-edge.mjs src/index.ts"
   },
   "keywords": [
     "web-decoy",
@@ -40,9 +41,6 @@
   },
   "bugs": {
     "url": "https://github.com/WebDecoy/node/issues"
-  },
-  "dependencies": {
-    "axios": "^1.6.5"
   },
   "devDependencies": {
     "@types/jest": "^29.5.11",

@@ -83,13 +83,13 @@ export function createCaptchaEndpoints(options: CaptchaEndpointsOptions = {}) {
     // GET {base}/challenge
     if (sub === '/challenge' && method === 'GET') {
       const siteKey = req.query.siteKey ?? 'default';
-      return json(200, captcha.issueChallenge(siteKey, req.ip));
+      return json(200, await captcha.issueChallenge(siteKey, req.ip));
     }
 
     // POST {base}/verify
     if (sub === '/verify' && method === 'POST') {
       const b = (req.body ?? {}) as VerifyBody;
-      const result = captcha.verify({
+      const result = await captcha.verify({
         siteKey: b.siteKey ?? 'default',
         ip: req.ip,
         userAgent,
@@ -106,7 +106,7 @@ export function createCaptchaEndpoints(options: CaptchaEndpointsOptions = {}) {
     // POST {base}/score (invisible mode)
     if (sub === '/score' && method === 'POST') {
       const b = (req.body ?? {}) as VerifyBody;
-      const result = captcha.score({
+      const result = await captcha.score({
         siteKey: b.siteKey ?? 'default',
         ip: req.ip,
         userAgent,
@@ -125,7 +125,7 @@ export function createCaptchaEndpoints(options: CaptchaEndpointsOptions = {}) {
     if (sub === '/token/verify' && method === 'POST') {
       const b = (req.body ?? {}) as VerifyBody;
       if (!b.token) return json(400, { valid: false, reason: 'missing_token' });
-      return json(200, captcha.verifyToken(b.token, req.ip));
+      return json(200, await captcha.verifyToken(b.token, req.ip));
     }
 
     return json(404, { error: 'not_found' });

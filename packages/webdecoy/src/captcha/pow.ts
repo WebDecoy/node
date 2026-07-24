@@ -8,7 +8,7 @@
  * Redis for serverless / multi-instance deployments.
  */
 
-import { createHash, createHmac, randomBytes } from 'crypto';
+import { sha256Hex, hmacSha256Hex, randomHex } from '../webcrypto';
 import { isDatacenterIP } from '../detection/ip';
 import type { RateLimiter } from '../detection/stores';
 import { InMemoryRateLimiter } from '../detection/stores';
@@ -88,10 +88,10 @@ export class PoWManager {
   }
 
   /** Generate and store a signed challenge. */
-  generate(siteKey: string, ip: string, difficulty?: number): ChallengeData {
+  async generate(siteKey: string, ip: string, difficulty?: number): Promise<ChallengeData> {
     const resolvedDifficulty = difficulty ?? this.scaleDifficulty(siteKey, ip);
-    const challengeId = randomBytes(16).toString('hex');
-    const nonce = randomBytes(16).toString('hex');
+    const challengeId = randomHex(16);
+    const nonce = randomHex(16);
     const timestamp = Date.now();
     const expiresAt = timestamp + EXPIRATION_MS;
 
@@ -109,14 +109,18 @@ export class PoWManager {
     // Sign over the challenge (excluding the not-yet-set sig field — it's '').
     const { sig: _omit, ...toSign } = challengeData;
     void _omit;
-    challengeData.sig = createHmac('sha256', this.secret).update(JSON.stringify(toSign)).digest('hex');
+    challengeData.sig = await hmacSha256Hex(this.secret, JSON.stringify(toSign));
 
     this.store.put({ ...challengeData, ip, createdAt: timestamp });
     return challengeData;
   }
 
   /** Verify a submitted solution. `signalsHash` binds it to the signals. */
-  verify(solution: PoWSolution, siteKey: string, signalsHash: string | null = null): PoWVerification {
+  async verify(
+    solution: PoWSolution,
+    siteKey: string,
+    signalsHash: string | null = null,
+  ): Promise<PoWVerification> {
     const challenge = this.store.get(solution.challengeId);
     if (!challenge) return { valid: false, reason: 'challenge_not_found' };
 
@@ -134,7 +138,7 @@ export class PoWManager {
     const input = signalsHash
       ? `${challenge.prefix}:${signalsHash}:${solution.nonce}`
       : `${challenge.prefix}:${solution.nonce}`;
-    const expectedHash = createHash('sha256').update(input).digest('hex');
+    const expectedHash = await sha256Hex(input);
 
     if (solution.hash !== expectedHash) {
       return { valid: false, reason: 'invalid_hash' };

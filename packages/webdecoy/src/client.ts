@@ -1,10 +1,12 @@
 /**
  * Web Decoy API Client
- * Handles communication with the ingest service
+ * Handles communication with the ingest service.
+ *
+ * Uses the Web-standard `fetch` API (no axios, no `node:` imports) so the SDK
+ * runs in Node >= 18 and edge runtimes (Vercel Edge Middleware, Cloudflare
+ * Workers) alike.
  */
 
-import axios, { AxiosInstance, AxiosError } from 'axios';
-import https from 'https';
 import { SDKDetectionRequest, SDKDetectionResponse } from './types';
 import type { ViolationEvent, IPEnrichmentData } from './rules/types';
 
@@ -13,59 +15,91 @@ export interface ClientConfig {
   apiUrl: string;
   timeout: number;
   debug: boolean;
+  /**
+   * Kept for API compatibility; the fetch transport does not support disabling
+   * TLS verification. For local self-signed certs in Node, trust the CA
+   * instead: `NODE_EXTRA_CA_CERTS=/path/to/ca.pem`.
+   */
   tlsRejectUnauthorized: boolean;
 }
 
+interface ApiErrorBody {
+  error?: string;
+  message?: string;
+}
+
+interface ApiResponse<T> {
+  status: number;
+  data: T | undefined;
+}
+
 export class WebDecoyClient {
-  private axios: AxiosInstance;
   private config: ClientConfig;
+  private baseUrl: string;
+  private headers: Record<string, string>;
 
   constructor(config: ClientConfig) {
     this.config = config;
+    this.baseUrl = config.apiUrl.replace(/\/+$/, '');
+    this.headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${config.apiKey}`,
+      'User-Agent': 'webdecoy-node-sdk/0.1.0',
+    };
 
-    // Create HTTPS agent with TLS configuration
-    const httpsAgent = new https.Agent({
-      rejectUnauthorized: config.tlsRejectUnauthorized,
-    });
+    if (config.tlsRejectUnauthorized === false && config.debug) {
+      console.warn(
+        '[WebDecoy] tlsRejectUnauthorized=false is not supported by the fetch transport and is ignored; ' +
+          'for local self-signed certs, trust your CA via NODE_EXTRA_CA_CERTS=/path/to/ca.pem.',
+      );
+    }
+  }
 
-    this.axios = axios.create({
-      baseURL: config.apiUrl,
-      timeout: config.timeout,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${config.apiKey}`,
-        'User-Agent': 'webdecoy-node-sdk/0.1.0',
-      },
-      httpsAgent,
-    });
+  private async request<T>(method: 'GET' | 'POST', path: string, body?: unknown): Promise<ApiResponse<T>> {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), this.config.timeout);
+    // Node returns a Timeout object that would otherwise hold the process open;
+    // edge runtimes return a number with no unref.
+    if (typeof (timer as { unref?: () => void }).unref === 'function') {
+      (timer as unknown as { unref: () => void }).unref();
+    }
 
-    // Add request interceptor for debugging
-    if (config.debug) {
-      this.axios.interceptors.request.use((request) => {
-        console.log('[WebDecoy] Request:', {
-          method: request.method,
-          url: request.url,
-          data: request.data,
-        });
-        return request;
+    if (this.config.debug) {
+      console.log('[WebDecoy] Request:', { method, url: this.baseUrl + path, data: body });
+    }
+
+    try {
+      const response = await fetch(this.baseUrl + path, {
+        method,
+        headers: this.headers,
+        body: body === undefined ? undefined : JSON.stringify(body),
+        signal: controller.signal,
       });
 
-      this.axios.interceptors.response.use(
-        (response) => {
-          console.log('[WebDecoy] Response:', {
-            status: response.status,
-            data: response.data,
-          });
-          return response;
-        },
-        (error) => {
-          console.error('[WebDecoy] Error:', {
-            message: error.message,
-            response: error.response?.data,
-          });
-          return Promise.reject(error);
+      let data: T | undefined;
+      const text = await response.text();
+      if (text) {
+        try {
+          data = JSON.parse(text) as T;
+        } catch {
+          data = undefined;
         }
-      );
+      }
+
+      if (this.config.debug) {
+        console.log('[WebDecoy] Response:', { status: response.status, data });
+      }
+
+      return { status: response.status, data };
+    } catch (error) {
+      if (this.config.debug) {
+        console.error('[WebDecoy] Error:', {
+          message: error instanceof Error ? error.message : String(error),
+        });
+      }
+      throw error;
+    } finally {
+      clearTimeout(timer);
     }
   }
 
@@ -73,47 +107,40 @@ export class WebDecoyClient {
    * Send a detection request to the ingest service
    */
   async detect(request: SDKDetectionRequest): Promise<SDKDetectionResponse> {
+    let response: ApiResponse<SDKDetectionResponse & ApiErrorBody>;
     try {
-      const response = await this.axios.post<SDKDetectionResponse>(
+      response = await this.request<SDKDetectionResponse & ApiErrorBody>(
+        'POST',
         '/api/v1/sdk/detect',
-        request
+        request,
       );
-
-      return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError = error as AxiosError<{ error?: string; message?: string }>;
-
-        // Handle specific error cases
-        if (axiosError.response?.status === 401) {
-          throw new Error('Invalid API key. Please check your Web Decoy configuration.');
-        }
-
-        if (axiosError.response?.status === 429) {
-          throw new Error('Rate limit exceeded. Please try again later.');
-        }
-
-        if (axiosError.response?.data?.error || axiosError.response?.data?.message) {
-          throw new Error(
-            axiosError.response.data.error || axiosError.response.data.message || 'API error'
-          );
-        }
-
-        // Network or timeout errors
-        if (axiosError.code === 'ECONNABORTED') {
-          throw new Error('Request timeout. The Web Decoy service did not respond in time.');
-        }
-
-        if (axiosError.code === 'ENOTFOUND' || axiosError.code === 'ECONNREFUSED') {
-          throw new Error('Unable to connect to Web Decoy service. Please check your network.');
-        }
-
-        throw new Error(`API request failed: ${axiosError.message}`);
+      if (error instanceof Error && (error.name === 'AbortError' || error.name === 'TimeoutError')) {
+        throw new Error('Request timeout. The Web Decoy service did not respond in time.');
       }
-
-      // Unknown error
+      if (error instanceof TypeError) {
+        // fetch signals DNS/connection failures as TypeError
+        throw new Error('Unable to connect to Web Decoy service. Please check your network.');
+      }
       throw error;
     }
+
+    if (response.status === 401) {
+      throw new Error('Invalid API key. Please check your Web Decoy configuration.');
+    }
+
+    if (response.status === 429) {
+      throw new Error('Rate limit exceeded. Please try again later.');
+    }
+
+    if (response.status >= 400) {
+      if (response.data?.error || response.data?.message) {
+        throw new Error(response.data.error || response.data.message || 'API error');
+      }
+      throw new Error(`API request failed: HTTP ${response.status}`);
+    }
+
+    return response.data as SDKDetectionResponse;
   }
 
   /**
@@ -121,7 +148,7 @@ export class WebDecoyClient {
    */
   async sendViolations(events: ViolationEvent[]): Promise<void> {
     try {
-      await this.axios.post('/api/v1/sdk/violations/batch', { events });
+      await this.request('POST', '/api/v1/sdk/violations/batch', { events });
     } catch (error) {
       if (this.config.debug) {
         console.error('[WebDecoy] Failed to send violations:', error);
@@ -135,10 +162,12 @@ export class WebDecoyClient {
    */
   async getIPEnrichment(ip: string): Promise<IPEnrichmentData | null> {
     try {
-      const response = await this.axios.get<IPEnrichmentData>(
-        `/api/v1/sdk/ip/${encodeURIComponent(ip)}/enrichment`
+      const response = await this.request<IPEnrichmentData>(
+        'GET',
+        `/api/v1/sdk/ip/${encodeURIComponent(ip)}/enrichment`,
       );
-      return response.data;
+      if (response.status >= 400) return null;
+      return response.data ?? null;
     } catch (error) {
       if (this.config.debug) {
         console.error('[WebDecoy] Failed to get IP enrichment:', error);
