@@ -16,6 +16,7 @@
 
 import { sha256 } from './sha256';
 import { EnvironmentalCollector } from './collectors/environment';
+import { watchInteraction, type BehaviorAggregate } from './clearance-behavior';
 
 export const CLEARANCE_COOKIE = 'wd_clearance';
 
@@ -75,12 +76,15 @@ interface MintResponse {
   expires_in?: number;
 }
 
-/** Call the public issuance endpoint. Returns null on any failure (fail open). */
+/** Call the public issuance endpoint. Returns null on any failure (fail open).
+ *  `behavior`, when present, carries the session's interaction aggregates and
+ *  can earn the token a graded 'human-likely' trust level (#328). */
 async function mint(
   ingestUrl: string,
   siteKey: string,
   fp: string,
   scope: string,
+  behavior?: BehaviorAggregate,
 ): Promise<{ token: string; expiresIn: number } | null> {
   try {
     const res = await fetch(ingestUrl.replace(/\/$/, '') + '/api/v1/clearance', {
@@ -93,6 +97,7 @@ async function mint(
         ua: navigator.userAgent,
         webdriver: (navigator as unknown as { webdriver?: boolean }).webdriver === true,
         headless: /HeadlessChrome/.test(navigator.userAgent),
+        ...(behavior ? { behavior } : {}),
       }),
     });
     const out = (await res.json()) as MintResponse;
@@ -137,6 +142,51 @@ export interface ClearanceOptions {
   ingestUrl?: string;
   /** Route-group scope; '' = tenant-wide (default), valid on every route. */
   scope?: string;
+  /**
+   * Collect interaction aggregates and upgrade the token to a graded
+   * 'human-likely' trust level once the visitor actually interacts (#328).
+   * Default true. Set false to mint clean tokens only — routes that require a
+   * minimum trust level will then always challenge.
+   *
+   * See clearance-behavior.ts for exactly what is collected; it is aggregate
+   * counts and variances, never coordinates, keys or content.
+   */
+  behavior?: boolean;
+}
+
+/** One behavioral upgrade per page load, no matter how many times clearance is
+ *  started or refreshed — the token refresh loop re-enters startClearance, and
+ *  each entry must not attach another set of listeners. */
+let upgradeStarted = false;
+
+/**
+ * Watch for real interaction and, once there is enough of it, re-mint the
+ * session's token with the behavioral evidence attached.
+ *
+ * The device fingerprint is computed INSIDE the callback, not up front: it is
+ * the only expensive step (one canvas + one WebGL read), and a session that
+ * never interacts must never pay for it. A failed upgrade leaves the existing
+ * clean token untouched.
+ */
+function startBehavioralUpgrade(ingestUrl: string, siteKey: string, scope: string): void {
+  if (upgradeStarted) return;
+  upgradeStarted = true;
+
+  watchInteraction((behavior) => {
+    void (async () => {
+      try {
+        const env = new EnvironmentalCollector();
+        const fp = await computeDeviceFP({
+          canvasHash: env._getCanvasHash(),
+          webglInfo: env._getWebGLInfo(),
+        });
+        const minted = await mint(ingestUrl, siteKey, fp, scope, behavior);
+        if (minted) setClearanceCookie(minted.token, minted.expiresIn);
+      } catch {
+        /* fail open — the session keeps whatever token it already had */
+      }
+    })();
+  });
 }
 
 /**
@@ -172,4 +222,16 @@ export function startClearance(opts: ClearanceOptions): void {
   whenIdle(() => {
     void run();
   });
+
+  // Independent of the mint above: a session that already holds a token can
+  // still upgrade it once the visitor interacts, and one that mints a fresh
+  // clean token upgrades that. Never blocks, never fires without interaction.
+  if (opts.behavior !== false) {
+    startBehavioralUpgrade(ingestUrl, opts.siteKey, scope);
+  }
+}
+
+/** Reset the once-per-page-load upgrade guard. Test-only. */
+export function _resetBehavioralUpgradeForTests(): void {
+  upgradeStarted = false;
 }
