@@ -110,7 +110,35 @@ const wd = new WebDecoy({
 
 - **`rateLimit({ max, window, algorithm?, action?, keyBy? })`** — fixed or sliding window, keyed by IP (or a custom function). No key.
 - **`tripwire({ paths?, prefixes?, patterns?, includeDefaults? })`** — deterministic honeypot-path detection. No key.
+- **`webBotAuth({ onImpersonation?, onClaimed?, allowCategories? })`** — verify AI-agent signatures (Web Bot Auth / RFC 9421) locally; deny impersonators of known agents. No key.
 - **`filter({ expression, action? })`** — an expression language over IP reputation/geo (e.g. `ip.tor`, `ip.country in ["CN", "RU"]`). Requires an API key for enrichment.
+
+## Verify AI agents (Web Bot Auth)
+
+AI agents like OpenAI's Operator now **cryptographically sign** their requests
+([Web Bot Auth](https://datatracker.ietf.org/wg/webbotauth/about/), RFC 9421).
+WebDecoy verifies those signatures **locally** — on Node and on the edge, with no
+API key and no network on the warm path — so you can tell a real verified agent
+from someone forging its identity.
+
+```typescript
+import { WebDecoy } from '@webdecoy/node';
+
+const wd = new WebDecoy();
+
+const verdict = await wd.detectBot(request); // a WHATWG Request, or { method, url, headers }
+// verdict.status: 'verified' | 'impersonation' | 'claimed' | 'none'
+if (verdict.status === 'impersonation') return new Response('Forbidden', { status: 403 });
+if (verdict.status === 'verified') console.log('verified agent:', verdict.agentName, verdict.category);
+```
+
+Or drop it into the rules engine to deny impersonation automatically:
+
+```typescript
+const wd = new WebDecoy({ rules: [webBotAuth()] }); // denies known-agent impersonation
+```
+
+Full guide: [**Verify AI agents with Web Bot Auth in Next.js**](docs/verify-ai-agents-web-bot-auth.md).
 
 ## What counts as a false positive?
 
@@ -199,6 +227,10 @@ Deterministic honeypot-path detection. `tripwire()` returns a `Rule` for the `ru
 ### `rateLimit(config)` / `filter(config)`
 
 Additional local rules for the `rules` array. `filter()` requires an API key for IP enrichment.
+
+### `webBotAuth(config?)` / `detectBot(request)`
+
+Local Web Bot Auth verification (RFC 9421). `webBotAuth()` returns a `Rule` that denies agent impersonation; `detectBot(request)` returns the verdict directly for custom handling. See the [Web Bot Auth guide](docs/verify-ai-agents-web-bot-auth.md). Exported types: `AgentVerdict`, `AgentStatus`, `AgentCategory`, `WebBotAuthConfig`, `AgentVerifierOptions`, `SignedAgentDirectory`.
 
 ### `protect(metadata, options?): Promise<ProtectResult>`
 

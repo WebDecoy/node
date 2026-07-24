@@ -42,11 +42,13 @@ export {
   rateLimit,
   filter,
   tripwire,
+  webBotAuth,
   honeytoken,
   RuleEngine,
   RateLimitRule,
   FilterRule,
   TripwireRule,
+  WebBotAuthRule,
   DEFAULT_TRIPWIRE_PATHS,
 } from './rules';
 
@@ -58,11 +60,29 @@ export type {
   RateLimitConfig,
   FilterConfig,
   TripwireConfig,
+  WebBotAuthConfig,
   HoneytokenOptions,
   Honeytoken,
   ViolationEvent,
   IPEnrichmentData,
 } from './rules';
+
+// Local Web Bot Auth verification (RFC 9421, tag "web-bot-auth")
+export {
+  AgentVerifier,
+  createAgentVerifier,
+  DirectoryCache,
+  DEFAULT_SIGNED_AGENT_DIRECTORIES,
+} from './agent';
+
+export type {
+  AgentStatus,
+  AgentCategory,
+  AgentVerdict,
+  AgentRequestInput,
+  AgentVerifierOptions,
+  SignedAgentDirectory,
+} from './agent';
 
 // In-process detection engine (ported from FCaptcha)
 export {

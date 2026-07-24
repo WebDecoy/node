@@ -4,6 +4,7 @@
  */
 
 import type { Rule } from './rules/types';
+import type { AgentVerifierOptions, AgentVerdict } from './agent/types';
 
 /**
  * Configuration options for the Web Decoy SDK
@@ -59,6 +60,13 @@ export interface WebDecoyConfig {
    * Rules are evaluated in order; first DENY/THROTTLE wins
    */
   rules?: Rule[];
+
+  /**
+   * Options for local Web Bot Auth agent verification (used by `detectBot()`
+   * and the `webBotAuth()` rule) — trusted directories, cache TTL, etc.
+   * Defaults are sensible; override only to curate your own agent allowlist.
+   */
+  webBotAuth?: AgentVerifierOptions;
 }
 
 /**
@@ -188,6 +196,13 @@ export interface ProtectResult {
 
   /** Rule engine result (if rules were evaluated) */
   ruleResult?: import('./rules/types').RuleEngineResult;
+
+  /**
+   * Web Bot Auth verdict, present when a `webBotAuth()` rule triggered the
+   * local agent verification for this request. Lets middleware treat a
+   * `verified` agent specially (e.g. allow) without re-verifying.
+   */
+  agent?: AgentVerdict;
 }
 
 /**

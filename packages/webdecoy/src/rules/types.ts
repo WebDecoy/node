@@ -3,6 +3,8 @@
  * Core interfaces for the WebDecoy rules engine
  */
 
+import type { AgentVerdict } from '../agent/types';
+
 /**
  * Context available to rules during evaluation
  */
@@ -21,6 +23,12 @@ export interface RuleContext {
   timestamp: number;
   /** IP enrichment data (populated async when available) */
   enrichment?: IPEnrichmentData;
+  /**
+   * Web Bot Auth verdict (populated async before evaluation when a
+   * {@link https://github.com/WebDecoy/app/issues/323 webBotAuth} rule is
+   * present). Lets a synchronous rule act on cryptographic agent verification.
+   */
+  agent?: AgentVerdict;
 }
 
 /**
