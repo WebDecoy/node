@@ -21,12 +21,24 @@ import { watchInteraction, type BehaviorAggregate } from './clearance-behavior';
 export const CLEARANCE_COOKIE = 'wd_clearance';
 
 /**
- * Canonical device-fp algorithm version. The fp is the deny-list key, so this
- * string is a CONTRACT: it MUST stay byte-identical to the edge challenge page
- * (app repo: edge/clearance-worker challengePage()). If normal-mode minting and
- * the challenge page computed different fps for the same browser, a decoy-
- * triggered deny would catch one token but not the other — the lockout would
- * leak. Bump the version prefix (never edit in place) to evolve the algorithm.
+ * Canonical device-fp algorithm version. This fp is the ENFORCEMENT identity —
+ * the clearance token binds to it and the deny-list keys on it — so the string
+ * is a CONTRACT. Three implementations must agree byte-for-byte:
+ *
+ *   1. this function
+ *   2. app repo `edge/clearance-worker/src/device-fp.ts` (the interstitial)
+ *   3. app repo `cdn/pro/bot-detection-pro.js` computeClearanceFP()
+ *
+ * If two of them computed different fps for the same browser, a decoy-triggered
+ * deny would catch one and not the other — the lockout would leak, silently.
+ * All three are pinned to the same golden vector (see clearance.test.ts here,
+ * and the device-fp tests in the app repo).
+ *
+ * Do NOT confuse this with the `device_fp` the scoring pipeline composes
+ * server-side: that is a correlation key that works without any token, this is
+ * what a deny actually locks out. They are different identity spaces.
+ *
+ * Bump the version prefix (never edit in place) to evolve the algorithm.
  */
 export const FP_VERSION = 'wdfp1';
 
