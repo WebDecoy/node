@@ -1,6 +1,6 @@
 {
   "name": "@webdecoy/nextjs",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Web Decoy middleware for Next.js",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -42,7 +42,7 @@
     "url": "https://github.com/WebDecoy/node/issues"
   },
   "dependencies": {
-    "@webdecoy/node": "^0.6.0"
+    "@webdecoy/node": "^0.7.0"
   },
   "peerDependencies": {
     "next": ">=13.0.0"
