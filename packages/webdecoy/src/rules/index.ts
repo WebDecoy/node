@@ -90,3 +90,14 @@ export function filter(config: FilterConfig): Rule {
 export function tripwire(config: TripwireConfig = {}): Rule {
   return new TripwireRule(config);
 }
+export {
+  siteHoneytoken,
+  injectHoneytokenLink,
+  isInjectableHtml,
+  HONEYTOKEN_BASE_PATH,
+} from './honeytoken-site';
+export type {
+  SiteHoneytoken,
+  SiteHoneytokenOptions,
+  HoneytokenLinkProps,
+} from './honeytoken-site';

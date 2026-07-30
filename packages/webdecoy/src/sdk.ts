@@ -155,6 +155,24 @@ export class WebDecoy {
     return this.runRules(context);
   }
 
+  /**
+   * Register a rule after construction.
+   *
+   * For signals whose definition is not available synchronously — the site
+   * honeytoken's path is derived by async HMAC, so the adapter arms it once the
+   * derivation settles. Creates the engine if there was none, so an SDK built
+   * with `rules: []` can still gain one.
+   */
+  addRule(rule: import('./rules/types').Rule): void {
+    if (!this.ruleEngine) {
+      this.ruleEngine = new RuleEngine([rule]);
+    } else {
+      this.ruleEngine.add(rule);
+    }
+    if (rule.name.startsWith('filter:')) this._hasFilterRules = true;
+    if (rule.name === 'web-bot-auth') this._hasAgentRules = true;
+  }
+
   /** Build the base (synchronous) rule context from request metadata. */
   private buildContext(metadata: RequestMetadata): RuleContext {
     return {

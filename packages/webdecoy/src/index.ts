@@ -57,6 +57,10 @@ export {
   TripwireRule,
   WebBotAuthRule,
   DEFAULT_TRIPWIRE_PATHS,
+  siteHoneytoken,
+  injectHoneytokenLink,
+  isInjectableHtml,
+  HONEYTOKEN_BASE_PATH,
 } from './rules';
 
 export type {
@@ -70,6 +74,9 @@ export type {
   WebBotAuthConfig,
   HoneytokenOptions,
   Honeytoken,
+  SiteHoneytoken,
+  SiteHoneytokenOptions,
+  HoneytokenLinkProps,
   ViolationEvent,
   IPEnrichmentData,
 } from './rules';
