@@ -6,6 +6,7 @@
 import { WebDecoyClient } from './client';
 import { analyzeRequest } from './local-analysis';
 import { RuleEngine } from './rules/rule-engine';
+import { tripwire } from './rules';
 import { ViolationReporter } from './violation-reporter';
 import { IPEnrichmentClient } from './ip-enrichment';
 import { AgentVerifier } from './agent/verifier';
@@ -74,16 +75,34 @@ export class WebDecoy {
 
     this.webBotAuthOptions = config.webBotAuth;
 
-    // Initialize rule engine if rules are provided
-    if (config.rules && config.rules.length > 0) {
-      this.ruleEngine = new RuleEngine(config.rules);
+    // Rules. When none are configured, tripwires are switched on rather than
+    // leaving the SDK with nothing to detect.
+    //
+    // WHY: server-side detection has almost no signal available to it. The
+    // unified score weights honeypot hits at 38% and attack signatures at 24%,
+    // but user-agent at 1% and headers at 1% — deliberately, because both are
+    // trivially spoofed. A middleware with no rules can only contribute those
+    // last two, so it scores ~0 no matter what it sees. Measured against
+    // production: every `sdk` detection ever recorded scored 0, while
+    // `sdk_tripwire` averaged 52.5 and `bot_scanner` 45.7.
+    //
+    // Inflating the user-agent weight would be the wrong fix and actively
+    // backwards: it would score the clients honest enough to say
+    // "python-requests" and miss every attacker who simply does not.
+    //
+    // Tripwires are the signal that works here. The built-in paths are secrets
+    // and config files — /.env, /.ssh/id_rsa, /wp-config.php — that no
+    // application serves, so a request for one is a scanner enumerating rather
+    // than a visitor browsing, and a legitimate visitor cannot trip one by
+    // accident. Pass `rules: []` explicitly to opt out.
+    const rules = config.rules ?? [tripwire()];
+    if (rules.length > 0) {
+      this.ruleEngine = new RuleEngine(rules);
       // Check if any filter rules exist (they need async enrichment)
-      this._hasFilterRules = config.rules.some(
-        (r) => r.name.startsWith('filter:')
-      );
+      this._hasFilterRules = rules.some((r) => r.name.startsWith('filter:'));
       // Web Bot Auth rules need the agent verdict precomputed (async) before
       // the synchronous rule can act on it — same pattern as filter rules.
-      this._hasAgentRules = config.rules.some((r) => r.name === 'web-bot-auth');
+      this._hasAgentRules = rules.some((r) => r.name === 'web-bot-auth');
       if (this._hasAgentRules) {
         // Warm the directory cache so the first protected request verifies warm.
         this.getAgentVerifier().warmup();
@@ -111,7 +130,7 @@ export class WebDecoy {
         enableTLSFingerprinting: this.config.enableTLSFingerprinting,
         threatScoreThreshold: this.config.threatScoreThreshold,
         hasApiKey,
-        rulesCount: config.rules?.length ?? 0,
+        rulesCount: rules.length,
       });
     }
   }

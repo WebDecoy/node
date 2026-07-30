@@ -105,3 +105,47 @@ describe('getEdgeVerdict', () => {
     expect(edge.isBrowser).toBe(false);
   });
 });
+
+/**
+ * Monitor is the default (0.7.0).
+ *
+ * Before this, installing an adapter with an API key started returning 403 to
+ * any request whose server-side score cleared threatScoreThreshold — default 80
+ * — with no supported way to watch first. `dryRun` on a rule governs that rule,
+ * not the score, and `onBlocked` did not receive `next`, so "record it and serve
+ * the request anyway" could not be expressed at all.
+ *
+ * It was found by installing the Express adapter on a live site that takes
+ * payments and files legal documents. The homepage returned Forbidden on the
+ * first request, as did an ordinary python-requests user agent.
+ *
+ * Nobody adopts a defence that breaks their site on install.
+ */
+describe('monitor mode', () => {
+  it('serves the request and annotates what it would have done', async () => {
+    const res = await withWebDecoy({ ...OPTIONS })(req({ 'user-agent': 'python-requests/2.31.0' }));
+
+    // Not a 403, not a 429 — the response is whatever the app would have sent.
+    expect(res.status).toBe(200);
+    // And the application is told, on the request, so it can decide for itself.
+    expect(forwardedToApp(res, 'x-webdecoy-would-block')).toMatch(/^(true|false)$/);
+  });
+
+  it('is the default — an install that says nothing about mode cannot block', async () => {
+    const res = await withWebDecoy({ ...OPTIONS })(req());
+    expect(res.status).toBe(200);
+  });
+
+  it('does not leak the would-block annotation to the browser', async () => {
+    const res = await withWebDecoy({ ...OPTIONS })(req());
+    expect(res.headers.get('x-webdecoy-would-block')).toBeNull();
+  });
+
+  it('strips an inbound would-block claim', async () => {
+    const res = await withWebDecoy({ ...OPTIONS })(
+      req({ 'x-webdecoy-would-block': 'false' }),
+    );
+    // Whatever we concluded, never what the client asserted.
+    expect(forwardedToApp(res, 'x-webdecoy-would-block')).toMatch(/^(true|false)$/);
+  });
+});

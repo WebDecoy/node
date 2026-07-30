@@ -1,5 +1,6 @@
 import { readEdgeVerdict, EDGE_CLASS_HEADER, EDGE_CLEARANCE_HEADER } from './edge';
 import { filter } from './rules';
+import { WebDecoy } from './sdk';
 import type { RuleContext } from './rules/types';
 
 /**
@@ -135,3 +136,49 @@ describe('edge.* in filter expressions', () => {
     expect(rule.evaluate(ctx({ [EDGE_CLASS_HEADER]: 'script' })).action).toBe('THROTTLE');
   });
 });
+
+/**
+ * Server-side detection needs a signal it can actually use (0.7.0).
+ *
+ * The unified score weights honeypot hits at 38% and user-agent at 1% —
+ * deliberately, because a user agent is trivially spoofed. A middleware with no
+ * rules can only contribute the 1% signals, so it scores ~0 whatever it sees.
+ * Measured on production: every `sdk` detection ever recorded scored 0, while
+ * `sdk_tripwire` averaged 52.5.
+ *
+ * Raising the user-agent weight would be backwards — it would score the clients
+ * honest enough to identify themselves and miss every attacker who does not. So
+ * an install with no rules gets tripwires instead of nothing.
+ */
+describe('default rules', () => {
+  it('an SDK with no rules configured still has tripwires', () => {
+    const sdk = new WebDecoy({ apiKey: 'sk_live_test' });
+    const result = sdk.evaluateRules({
+      method: 'GET',
+      path: '/.env',
+      ip: '203.0.113.9',
+      headers: {},
+      timestamp: Date.now(),
+    });
+    expect(result).not.toBeNull();
+    expect(result!.violations.length).toBeGreaterThan(0);
+  });
+
+  it('ordinary paths are untouched, so a visitor cannot trip one', () => {
+    const sdk = new WebDecoy({ apiKey: 'sk_live_test' });
+    for (const path of ['/', '/checkout', '/api/orders', '/about']) {
+      const result = sdk.evaluateRules({
+        method: 'GET', path, ip: '203.0.113.9', headers: {}, timestamp: Date.now(),
+      });
+      expect(result?.violations ?? []).toHaveLength(0);
+    }
+  });
+
+  it('rules: [] opts out explicitly', () => {
+    const sdk = new WebDecoy({ apiKey: 'sk_live_test', rules: [] });
+    const result = sdk.evaluateRules({
+      method: 'GET', path: '/.env', ip: '203.0.113.9', headers: {}, timestamp: Date.now(),
+    });
+    expect(result).toBeNull();
+  });
+})

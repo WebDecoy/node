@@ -9,6 +9,19 @@ import type { EdgeVerdict } from '@webdecoy/node';
 
 export interface WebDecoyPluginOptions extends ProtectOptions {
   /**
+   * Whether a blocking verdict actually blocks. Defaults to `'monitor'`.
+   *
+   * MONITOR IS THE DEFAULT ON PURPOSE, and this changed in 0.7.0. Before,
+   * installing this with an API key began returning 403 to any request whose
+   * server-side score cleared `threatScoreThreshold` (default 80), and there was
+   * no supported way to watch first. Found by installing it on a live site that
+   * takes payments, where the homepage returned Forbidden on the first request.
+   *
+   * Watch what it would have done, then set `mode: 'enforce'`.
+   */
+  mode?: 'monitor' | 'enforce';
+
+  /**
    * Custom function to extract IP address from request
    * By default, uses request.ip or x-forwarded-for header
    */
@@ -122,6 +135,7 @@ async function webdecoyPluginImpl(
 
   const getIP = options.getIP || defaultGetIP;
   const onBlocked = options.onBlocked || defaultOnBlocked;
+  const mode = options.mode ?? 'monitor';
   const onError = options.onError || defaultOnError;
   const skipPaths = options.skipPaths;
 
@@ -164,6 +178,14 @@ async function webdecoyPluginImpl(
         skipLocalAnalysis: options.skipLocalAnalysis,
         metadata: options.metadata,
       });
+
+      // Monitor mode: record the verdict, change nothing. Checked before the
+      // rule branches so a THROTTLE is an observation too.
+      if (mode === 'monitor') {
+        req.webdecoy = result.detection as WebDecoyDetection;
+        req.webdecoyEdge = result.edge;
+        return;
+      }
 
       // Handle rule engine results for specific HTTP responses
       if (!result.allowed && result.ruleResult) {

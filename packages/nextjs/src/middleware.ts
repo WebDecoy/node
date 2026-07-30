@@ -7,6 +7,19 @@ import { WebDecoy, WebDecoyConfig, RequestMetadata, ProtectOptions } from '@webd
 
 export interface WebDecoyMiddlewareOptions extends ProtectOptions {
   /**
+   * Whether a blocking verdict actually blocks. Defaults to `'monitor'`.
+   *
+   * MONITOR IS THE DEFAULT ON PURPOSE, and this changed in 0.7.0. Before,
+   * installing this with an API key began returning 403 to any request whose
+   * server-side score cleared `threatScoreThreshold` (default 80), and there was
+   * no supported way to watch first. Found by installing it on a live site that
+   * takes payments, where the homepage returned Forbidden on the first request.
+   *
+   * Watch what it would have done, then set `mode: 'enforce'`.
+   */
+  mode?: 'monitor' | 'enforce';
+
+  /**
    * Custom function to extract IP address from request
    * By default, uses x-forwarded-for or x-real-ip headers
    */
@@ -126,6 +139,7 @@ export function withWebDecoy(
 
   const getIP = config.getIP || defaultGetIP;
   const onBlocked = config.onBlocked || defaultOnBlocked;
+  const mode = config.mode ?? 'monitor';
   const onError = config.onError || defaultOnError;
   const skipPaths = config.skipPaths;
 
@@ -159,6 +173,22 @@ export function withWebDecoy(
         skipLocalAnalysis: config.skipLocalAnalysis,
         metadata: config.metadata,
       });
+
+      // Monitor mode: record the verdict, change nothing. Checked before the
+      // rule branches so a THROTTLE is an observation too. The annotation still
+      // rides on the REQUEST (#481), so the application can act on it itself.
+      if (mode === 'monitor') {
+        const monitorHeaders = new Headers(req.headers);
+        monitorHeaders.delete('x-webdecoy-decision');
+        monitorHeaders.delete('x-webdecoy-detection-id');
+        monitorHeaders.delete('x-webdecoy-would-block');
+        if (result.detection) {
+          monitorHeaders.set('x-webdecoy-decision', result.detection.decision || '');
+          monitorHeaders.set('x-webdecoy-detection-id', result.detection.detection_id || '');
+        }
+        monitorHeaders.set('x-webdecoy-would-block', String(!result.allowed));
+        return NextResponse.next({ request: { headers: monitorHeaders } });
+      }
 
       // Handle rule engine results for specific HTTP responses
       if (!result.allowed && result.ruleResult) {
