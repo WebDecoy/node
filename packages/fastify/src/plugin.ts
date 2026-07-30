@@ -5,6 +5,7 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import fp from 'fastify-plugin';
 import { WebDecoy, WebDecoyConfig, RequestMetadata, ProtectOptions } from '@webdecoy/node';
+import type { EdgeVerdict } from '@webdecoy/node';
 
 export interface WebDecoyPluginOptions extends ProtectOptions {
   /**
@@ -91,6 +92,8 @@ interface WebDecoyDetection {
 declare module 'fastify' {
   interface FastifyRequest {
     webdecoy?: WebDecoyDetection;
+    /** What the edge validator said about this request (#481). */
+    webdecoyEdge?: EdgeVerdict;
   }
 }
 
@@ -124,6 +127,9 @@ async function webdecoyPluginImpl(
 
   // Add decorator for webdecoy property
   fastify.decorateRequest('webdecoy', null);
+  // The edge validator's verdict, typed (#481), so a handler can branch on
+  // request.webdecoyEdge.isScript rather than string-matching x-wd-class.
+  fastify.decorateRequest('webdecoyEdge', null);
 
   // Add preHandler hook for protection
   fastify.addHook('preHandler', async (req, reply) => {
@@ -188,6 +194,7 @@ async function webdecoyPluginImpl(
       if (result.allowed) {
         // Attach detection info to request for downstream use
         req.webdecoy = result.detection as WebDecoyDetection;
+        req.webdecoyEdge = result.edge;
       } else {
         // Block the request
         onBlocked(req, reply, result.detection);

@@ -4,6 +4,7 @@
  */
 
 import type { AgentVerdict } from '../agent/types';
+import type { EdgeVerdict } from '../edge';
 
 /**
  * Context available to rules during evaluation
@@ -29,6 +30,13 @@ export interface RuleContext {
    * present). Lets a synchronous rule act on cryptographic agent verification.
    */
   agent?: AgentVerdict;
+  /**
+   * The edge validator's annotations on this request (#481), parsed from
+   * `x-wd-clearance` and `x-wd-class`. Always populated — `present: false` when
+   * the edge did not front this request. Filter expressions read it as
+   * `edge.class`, `edge.clearance` and `edge.present`.
+   */
+  edge?: EdgeVerdict;
 }
 
 /**

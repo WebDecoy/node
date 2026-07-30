@@ -91,6 +91,27 @@ function resolveProperty(path: string[], context: RuleContext): any {
     return undefined;
   }
 
+  // The edge validator's verdict (#481). Matching this already worked via
+  // req.header("x-wd-class"), which is why it exists here: a named field is
+  // discoverable, is spelled once instead of in every customer's expression, and
+  // survives us renaming a header.
+  //
+  // `edge.class` is undefined when the edge did not classify, so a comparison
+  // against it is false rather than accidentally true — the important property
+  // when the expression is deciding whether to serve someone less.
+  if (namespace === 'edge') {
+    const e = context.edge;
+    if (!e) return undefined;
+    if (prop === 'present') return e.present;
+    if (prop === 'clearance') return e.clearance;
+    if (prop === 'class') return e.class;
+    if (prop === 'verified') return e.isVerified;
+    if (prop === 'crawler') return e.isCrawler;
+    if (prop === 'script') return e.isScript;
+    if (prop === 'browser') return e.isBrowser;
+    return undefined;
+  }
+
   // Single ident with no namespace — treat as boolean property shorthand
   if (path.length === 1) return undefined;
 

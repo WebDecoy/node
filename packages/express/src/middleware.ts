@@ -4,6 +4,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { WebDecoy, WebDecoyConfig, RequestMetadata, ProtectOptions } from '@webdecoy/node';
+import type { EdgeVerdict } from '@webdecoy/node';
 
 export interface WebDecoyMiddlewareOptions extends ProtectOptions {
   /**
@@ -180,6 +181,11 @@ export function webdecoy(
       if (result.allowed) {
         // Attach detection info to request for downstream use
         (req as any).webdecoy = result.detection;
+        // And what the edge validator said, typed (#481). A handler can branch on
+        // req.webdecoyEdge.isScript instead of string-matching x-wd-class, and
+        // `present: false` tells it the edge was never in front of this request —
+        // which is no information, not a clean bill of health.
+        (req as any).webdecoyEdge = result.edge;
         return next();
       } else {
         // Block the request
@@ -208,6 +214,8 @@ declare global {
         detection_id: string;
         rule_enforced: boolean;
       };
+      /** What the edge validator said about this request (#481). */
+      webdecoyEdge?: EdgeVerdict;
     }
   }
 }
