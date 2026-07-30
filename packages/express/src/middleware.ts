@@ -8,6 +8,26 @@ import type { EdgeVerdict } from '@webdecoy/node';
 
 export interface WebDecoyMiddlewareOptions extends ProtectOptions {
   /**
+   * Whether a blocking verdict actually blocks. Defaults to `'monitor'`.
+   *
+   * MONITOR IS THE DEFAULT ON PURPOSE, and this changed in 0.7.0.
+   *
+   * Before, installing this middleware with an API key began returning 403 to
+   * any request whose server-side score cleared `threatScoreThreshold` — which
+   * defaults to 80 — and there was no supported way to watch first. `dryRun` on
+   * a rule governs that rule, not the score, and `onBlocked` did not receive
+   * `next`, so "record it and serve the request anyway" could not be expressed.
+   *
+   * Found by installing it on a live site that takes payments: the homepage
+   * returned `{"error":"Forbidden"}` on the first request, as did an ordinary
+   * `python-requests` user agent.
+   *
+   * Nobody adopts a defence by having it break their site on the first install.
+   * Watch what it would have done, then set `mode: 'enforce'`.
+   */
+  mode?: 'monitor' | 'enforce';
+
+  /**
    * Custom function to extract IP address from request
    * By default, uses req.ip or x-forwarded-for header
    */
@@ -17,7 +37,14 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
    * Custom function to handle blocked requests
    * By default, returns 403 Forbidden
    */
-  onBlocked?: (req: Request, res: Response, detection: any) => void;
+  /**
+   * Called when a request would be blocked.
+   *
+   * `next` is passed so a handler can record the verdict and continue — the
+   * omission that made monitoring impossible. Call exactly one of `next()` or a
+   * response method.
+   */
+  onBlocked?: (req: Request, res: Response, detection: any, next: NextFunction) => void;
 
   /**
    * Custom function to handle errors
@@ -62,7 +89,12 @@ function defaultGetIP(req: Request): string {
 /**
  * Default blocked request handler
  */
-function defaultOnBlocked(req: Request, res: Response, detection: any): void {
+function defaultOnBlocked(
+  req: Request,
+  res: Response,
+  detection: any,
+  _next: NextFunction,
+): void {
   res.status(403).json({
     error: 'Forbidden',
     message: 'Access denied by Web Decoy protection',
@@ -125,6 +157,7 @@ export function webdecoy(
 
   const getIP = config.getIP || defaultGetIP;
   const onBlocked = config.onBlocked || defaultOnBlocked;
+  const mode = config.mode ?? 'monitor';
   const onError = config.onError || defaultOnError;
   const skipPaths = config.skipPaths;
 
@@ -151,6 +184,21 @@ export function webdecoy(
         skipLocalAnalysis: config.skipLocalAnalysis,
         metadata: config.metadata,
       });
+
+      // Monitor mode: the verdict is recorded and reported, and the request is
+      // served exactly as it would have been.
+      //
+      // Checked BEFORE the rule branches below, not after. A rate-limit rule
+      // returning 429 is as much of an unasked-for surprise as a 403, so
+      // monitor has to mean "changes nothing", not "changes nothing except the
+      // rules". An earlier draft of this put the check after them and would
+      // have shipped exactly the bug it exists to fix.
+      if (mode === 'monitor') {
+        (req as any).webdecoy = result.detection;
+        (req as any).webdecoyEdge = result.edge;
+        (req as any).webdecoyWouldBlock = !result.allowed;
+        return next();
+      }
 
       // Handle rule engine results for specific HTTP responses
       if (!result.allowed && result.ruleResult) {
@@ -189,7 +237,7 @@ export function webdecoy(
         return next();
       } else {
         // Block the request
-        return onBlocked(req, res, result.detection);
+        return onBlocked(req, res, result.detection, next);
       }
     } catch (error) {
       onError(req, res, error as Error);
