@@ -19,6 +19,11 @@
 export { withWebDecoy, withBotProtection } from './middleware';
 export type { WebDecoyMiddlewareOptions, WithBotProtectionOptions } from './middleware';
 
+// The edge validator's verdict, readable from a route handler or server
+// component — not only from middleware (#481).
+export { getEdgeVerdict } from './edge-verdict';
+export type { EdgeVerdict, EdgeClass } from './edge-verdict';
+
 // Self-hosted captcha route handlers (PoW + detection + tokens)
 export { createCaptchaHandler } from './captcha';
 export type { NextCaptchaHandlers } from './captcha';

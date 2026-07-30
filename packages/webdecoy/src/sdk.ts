@@ -10,6 +10,7 @@ import { ViolationReporter } from './violation-reporter';
 import { IPEnrichmentClient } from './ip-enrichment';
 import { AgentVerifier } from './agent/verifier';
 import type { AgentRequestInput, AgentVerdict } from './agent/types';
+import { readEdgeVerdict } from './edge';
 import type { RuleContext, RuleEngineResult, ViolationEvent } from './rules/types';
 import {
   WebDecoyConfig,
@@ -144,6 +145,10 @@ export class WebDecoy {
       userAgent: metadata.user_agent,
       headers: metadata.headers,
       timestamp: metadata.timestamp || Date.now(),
+      // Parsed synchronously and unconditionally (#481): it is two header reads,
+      // it needs no network, and a rule that has to check whether the edge
+      // verdict was populated is a rule people will get wrong.
+      edge: readEdgeVerdict(metadata.headers),
     };
   }
 
@@ -245,6 +250,20 @@ export class WebDecoy {
    * @returns Protection result with decision and detection details
    */
   async protect(
+    metadata: RequestMetadata,
+    options: ProtectOptions = {}
+  ): Promise<ProtectResult> {
+    // The edge verdict (#481) is attached here rather than at each return inside
+    // decide(), which has seven of them including two fail-open paths. It is
+    // information ABOUT the request, not a product of the decision, so it must be
+    // present on every outcome — and a per-return copy is a line someone would
+    // eventually forget on the branch that mattered.
+    const edge = readEdgeVerdict(metadata.headers);
+    const result = await this.decide(metadata, options);
+    return { ...result, edge };
+  }
+
+  private async decide(
     metadata: RequestMetadata,
     options: ProtectOptions = {}
   ): Promise<ProtectResult> {

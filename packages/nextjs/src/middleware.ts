@@ -193,13 +193,30 @@ export function withWebDecoy(
 
       // Handle the result
       if (result.allowed) {
-        // Add detection info to request headers for downstream use
-        const response = NextResponse.next();
+        // Annotate the REQUEST, so the application sees it (#481).
+        //
+        // This previously did `NextResponse.next()` then `response.headers.set()`,
+        // which sets RESPONSE headers: the exact opposite of what its own comment
+        // said. Two consequences, both bad. The application never saw the
+        // annotation — route handlers and server components read request headers —
+        // so the feature did not work at all. And the annotation was sent to the
+        // browser, publishing our decision and detection id to the client we had
+        // just judged.
+        //
+        // In Next.js middleware, forwarding to the app requires passing headers
+        // through the `request` option; mutating the response is not the same
+        // thing and never was.
+        const requestHeaders = new Headers(req.headers);
+        // Drop any inbound copy first. An application that trusts these must not
+        // be talkable-into by the request being judged, and `set` only covers the
+        // branch where we have a detection to write.
+        requestHeaders.delete('x-webdecoy-decision');
+        requestHeaders.delete('x-webdecoy-detection-id');
         if (result.detection) {
-          response.headers.set('x-webdecoy-decision', result.detection.decision || '');
-          response.headers.set('x-webdecoy-detection-id', result.detection.detection_id || '');
+          requestHeaders.set('x-webdecoy-decision', result.detection.decision || '');
+          requestHeaders.set('x-webdecoy-detection-id', result.detection.detection_id || '');
         }
-        return response;
+        return NextResponse.next({ request: { headers: requestHeaders } });
       } else {
         return onBlocked(req, result.detection);
       }

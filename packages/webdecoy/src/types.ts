@@ -203,6 +203,16 @@ export interface ProtectResult {
    * `verified` agent specially (e.g. allow) without re-verifying.
    */
   agent?: AgentVerdict;
+
+  /**
+   * What the edge validator said about this request (#481), parsed from
+   * `x-wd-clearance` and `x-wd-class`.
+   *
+   * Always present. Check `edge.present` before branching: false means the edge
+   * did not front this request, which is no information rather than a clean bill
+   * of health.
+   */
+  edge?: import('./edge').EdgeVerdict;
 }
 
 /**
