@@ -158,3 +158,62 @@ describe('the injected link is actually armed', () => {
     expect(JSON.parse(normal.body).wouldBlock).toBe(false);
   });
 });
+
+/**
+ * Streaming SSR (#482 follow-up).
+ *
+ * The first implementation required `!res.headersSent` before intercepting.
+ * Angular SSR — and Nuxt, and anything else that calls `res.writeHead()` then
+ * pipes — commits headers before the first byte of body, so that guard silently
+ * disabled injection for precisely the apps most likely to be serving
+ * server-rendered HTML. The page rendered, nothing was injected, and nothing
+ * errored. Found on a real Angular SSR site, not in a test.
+ *
+ * What actually matters is whether a Content-Length has been committed that can
+ * no longer be corrected.
+ */
+describe('responses that commit headers before the body', () => {
+  it('injects into a writeHead + chunked response', async () => {
+    const app = express();
+    app.use(webdecoy({ apiKey: 'sk_live_test_secret', skipLocalAnalysis: true }));
+    app.get('/', (_req, res) => {
+      // No Content-Length: chunked, so the body is still free to change.
+      res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
+      res.write('<html><body>');
+      res.write('<h1>streamed</h1>');
+      res.end('</body></html>');
+    });
+
+    const { url, close } = await serve(app);
+    await settle();
+    const res = await get(`${url}/`);
+    close();
+
+    expect(res.body).toContain('<h1>streamed</h1>');
+    expect(res.body).toMatch(/<a href="\/__wd\/[0-9a-f]{12}"/);
+    expect(res.body.indexOf('/__wd/')).toBeLessThan(res.body.indexOf('</body>'));
+  });
+
+  it('leaves a response alone once a Content-Length is committed', async () => {
+    const app = express();
+    app.use(webdecoy({ apiKey: 'sk_live_test_secret', skipLocalAnalysis: true }));
+    app.get('/', (_req, res) => {
+      const body = '<html><body>fixed</body></html>';
+      // A declared length we can no longer correct — growing the body here would
+      // truncate it at the client, which is worse than a missed detection.
+      res.writeHead(200, {
+        'Content-Type': 'text/html',
+        'Content-Length': String(Buffer.byteLength(body)),
+      });
+      res.end(body);
+    });
+
+    const { url, close } = await serve(app);
+    await settle();
+    const res = await get(`${url}/`);
+    close();
+
+    expect(res.body).toBe('<html><body>fixed</body></html>');
+    expect(res.body).not.toContain('__wd');
+  });
+})
