@@ -12,6 +12,7 @@ import { IPEnrichmentClient } from './ip-enrichment';
 import { AgentVerifier } from './agent/verifier';
 import type { AgentRequestInput, AgentVerdict } from './agent/types';
 import { readEdgeVerdict } from './edge';
+import { classifyUserAgent } from './bots';
 import type { RuleContext, RuleEngineResult, ViolationEvent } from './rules/types';
 import {
   WebDecoyConfig,
@@ -186,6 +187,11 @@ export class WebDecoy {
       // it needs no network, and a rule that has to check whether the edge
       // verdict was populated is a rule people will get wrong.
       edge: readEdgeVerdict(metadata.headers),
+      // Same reasoning as `edge`, and the same cost profile (#500): a memoised
+      // substring scan over a static table, no network, no async. Populating it
+      // unconditionally means a rule never has to ask whether classification
+      // ran.
+      bot: classifyUserAgent(metadata.user_agent),
     };
   }
 

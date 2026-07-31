@@ -5,6 +5,7 @@
 
 import type { AgentVerdict } from '../agent/types';
 import type { EdgeVerdict } from '../edge';
+import type { BotVerdict, BotCategory } from '../bots';
 
 /**
  * Context available to rules during evaluation
@@ -37,6 +38,15 @@ export interface RuleContext {
    * `edge.class`, `edge.clearance` and `edge.present`.
    */
   edge?: EdgeVerdict;
+  /**
+   * Who the User-Agent says it is (#500), matched against the generated agent
+   * registry. Always populated — `known: false` when nothing matched. Filter
+   * expressions read it as `bot.category`, `bot.name`, `bot.ai` and friends.
+   *
+   * A self-declared identity, so it is evidence about cooperative agents only.
+   * See {@link BotVerdict}.
+   */
+  bot?: BotVerdict;
 }
 
 /**
@@ -92,6 +102,33 @@ export interface FilterConfig {
   /** Action when filter matches: 'DENY' (default) or 'THROTTLE' */
   action?: 'DENY' | 'THROTTLE';
   /** Dry run mode: log violations but don't block */
+  dryRun?: boolean;
+}
+
+/**
+ * Configuration for bot-category rules (#500)
+ */
+export interface BotRuleConfig {
+  /**
+   * Categories to act on, e.g. `['training_crawler']`. Uses the same vocabulary
+   * as the dashboard's `ai_scraper_category` column.
+   */
+  categories?: BotCategory[];
+  /** Specific agents by registry slug or display name, e.g. `['gptbot']`. */
+  agents?: string[];
+  /**
+   * Act on every AI client — training crawlers, AI search crawlers, AI agents
+   * and AI assistants.
+   */
+  ai?: boolean;
+  /**
+   * Never act on these, whatever else matches. Applied last, so
+   * `{ ai: true, allow: ['perplexitybot'] }` reads the way it looks.
+   */
+  allow?: string[];
+  /** Action when an agent matches: 'DENY' (default) or 'THROTTLE'. */
+  action?: 'DENY' | 'THROTTLE';
+  /** Log the violation but don't block. */
   dryRun?: boolean;
 }
 

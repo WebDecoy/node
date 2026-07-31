@@ -44,17 +44,26 @@ export type {
 export { readEdgeVerdict, EDGE_CLASS_HEADER, EDGE_CLEARANCE_HEADER } from './edge';
 export type { EdgeClass, EdgeVerdict } from './edge';
 
+// Declared-agent classification (#500). Exported as values for the same reason
+// as readEdgeVerdict: code outside protect() — a route handler deciding whether
+// to serve a paywall, a robots.txt generator — needs the same answer without
+// standing up a rule engine.
+export { matchUserAgent, classifyUserAgent, BOT_REGISTRY, BOT_CATEGORIES } from './bots';
+export type { BotVerdict, BotAgent, BotCategory } from './bots';
+
 // Rules engine exports
 export {
   rateLimit,
   filter,
   tripwire,
+  bots,
   webBotAuth,
   honeytoken,
   RuleEngine,
   RateLimitRule,
   FilterRule,
   TripwireRule,
+  BotRule,
   WebBotAuthRule,
   DEFAULT_TRIPWIRE_PATHS,
   siteHoneytoken,
@@ -71,6 +80,7 @@ export type {
   RateLimitConfig,
   FilterConfig,
   TripwireConfig,
+  BotRuleConfig,
   WebBotAuthConfig,
   HoneytokenOptions,
   Honeytoken,
