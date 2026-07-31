@@ -24,6 +24,11 @@ export type { WebDecoyMiddlewareOptions, WithBotProtectionOptions } from './midd
 export { getEdgeVerdict } from './edge-verdict';
 export type { EdgeVerdict, EdgeClass } from './edge-verdict';
 
+// Honeytoken (#482). A helper rather than automatic injection — see the module
+// for why Next middleware cannot rewrite a streamed RSC response.
+export { honeytokenLink } from './honeytoken';
+export type { SiteHoneytoken } from './honeytoken';
+
 // Self-hosted captcha route handlers (PoW + detection + tokens)
 export { createCaptchaHandler } from './captcha';
 export type { NextCaptchaHandlers } from './captcha';

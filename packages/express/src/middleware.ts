@@ -4,7 +4,13 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { WebDecoy, WebDecoyConfig, RequestMetadata, ProtectOptions } from '@webdecoy/node';
-import type { EdgeVerdict } from '@webdecoy/node';
+import type { EdgeVerdict, SiteHoneytoken } from '@webdecoy/node';
+import {
+  siteHoneytoken,
+  injectHoneytokenLink,
+  isInjectableHtml,
+  tripwire,
+} from '@webdecoy/node';
 
 export interface WebDecoyMiddlewareOptions extends ProtectOptions {
   /**
@@ -26,6 +32,23 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
    * Watch what it would have done, then set `mode: 'enforce'`.
    */
   mode?: 'monitor' | 'enforce';
+
+  /**
+   * Inject a hidden honeytoken link into HTML responses, and arm the tripwire it
+   * points at. Defaults to **on** when an apiKey is present (#482).
+   *
+   * The SDK used to generate a honeytoken and ask the developer to embed it.
+   * Almost nobody did: `sdk_tripwire` had FOUR rows in production, ever, while
+   * the WordPress plugin — which injects the link itself — has real coverage.
+   *
+   * A trap hit is the only detection here that needs no score, no JavaScript, no
+   * fingerprint and no IP. It is also the only one that scores: honeypot signals
+   * are weighted 38% against user-agent's 1%, which is why every rule-less `sdk`
+   * detection ever recorded came out at 0.
+   *
+   * Set `false` to opt out, or place the link yourself for apps that stream.
+   */
+  honeytoken?: boolean;
 
   /**
    * Custom function to extract IP address from request
@@ -158,6 +181,28 @@ export function webdecoy(
   const getIP = config.getIP || defaultGetIP;
   const onBlocked = config.onBlocked || defaultOnBlocked;
   const mode = config.mode ?? 'monitor';
+
+  // Honeytoken (#482). Derived from the API key so every replica computes the
+  // same path without coordinating — a random per-process token would advertise
+  // a link whose tripwire only one replica had armed.
+  //
+  // Resolution is async (WebCrypto HMAC, so this still runs on edge runtimes),
+  // and requests served before it settles simply carry no link. That is a few
+  // milliseconds at boot against the alternative of blocking startup on crypto.
+  const honeytokenEnabled = (config.honeytoken ?? true) && Boolean(config.apiKey);
+  let token: SiteHoneytoken | null = null;
+  if (honeytokenEnabled) {
+    void siteHoneytoken({ secret: config.apiKey as string })
+      .then((t) => {
+        token = t;
+        // Arm the path we are about to advertise. Without this the link is bait
+        // with no trap behind it — a crawler follows it and nothing happens.
+        sdk.addRule(tripwire({ paths: t.activePaths, includeDefaults: false }));
+      })
+      .catch(() => {
+        // Deriving the token is not worth a failed boot. No token, no injection.
+      });
+  }
   const onError = config.onError || defaultOnError;
   const skipPaths = config.skipPaths;
 
@@ -184,6 +229,56 @@ export function webdecoy(
         skipLocalAnalysis: config.skipLocalAnalysis,
         metadata: config.metadata,
       });
+
+      // Honeytoken injection (#482).
+      //
+      // Buffers the body only for full HTML documents and rewrites it once. The
+      // guards below are not defensive padding — each one is a way this could
+      // corrupt a customer's response, which is a far worse failure than a
+      // missed detection:
+      //
+      //   - non-HTML is left untouched, so an anchor never lands in JSON
+      //   - a committed response is left alone, because headers are already sent
+      //   - Content-Length is corrected, or the client truncates the body
+      //   - anything thrown falls back to the original write
+      if (token) {
+        const ht = token;
+        const originalWrite = res.write.bind(res);
+        const originalEnd = res.end.bind(res);
+        const chunks: Buffer[] = [];
+        let intercepting: boolean | null = null;
+
+        const shouldIntercept = (): boolean => {
+          if (intercepting === null) {
+            intercepting =
+              !res.headersSent && isInjectableHtml(res.getHeader('content-type') as string);
+          }
+          return intercepting;
+        };
+
+        (res as any).write = function (chunk: any, ...rest: any[]): boolean {
+          if (!shouldIntercept()) return originalWrite(chunk, ...rest);
+          if (chunk) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+          return true;
+        };
+
+        (res as any).end = function (chunk: any, ...rest: any[]): any {
+          try {
+            if (!shouldIntercept()) return originalEnd(chunk, ...rest);
+            if (chunk && typeof chunk !== 'function') {
+              chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+            }
+            const body = injectHoneytokenLink(Buffer.concat(chunks).toString('utf8'), ht.linkHtml);
+            const out = Buffer.from(body, 'utf8');
+            // The body grew; a stale Content-Length truncates it at the client.
+            if (!res.headersSent) res.setHeader('Content-Length', String(out.length));
+            return originalEnd(out);
+          } catch {
+            // Never let injection cost the response.
+            return originalEnd(chunk, ...rest);
+          }
+        };
+      }
 
       // Monitor mode: the verdict is recorded and reported, and the request is
       // served exactly as it would have been.

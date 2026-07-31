@@ -27,6 +27,17 @@ export class RuleEngine {
   }
 
   /**
+   * Append a rule after construction.
+   *
+   * Exists for signals that cannot be known synchronously at construction —
+   * currently the site honeytoken (#482), whose path is derived by async HMAC.
+   * Evaluation order is append order, matching the constructor.
+   */
+  add(rule: Rule): void {
+    this.rules.push(rule);
+  }
+
+  /**
    * Evaluate all rules against the request context.
    * First DENY or THROTTLE result wins. Violations are recorded for all non-ALLOW results.
    */
