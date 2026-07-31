@@ -49,6 +49,9 @@ export function evaluate(node: ASTNode, context: RuleContext): any {
  *   ip.asn, ip.asn_org → enrichment.network.*
  *   ip.abuse_score, ip.total_reports, ip.is_high_risk → enrichment.reputation.*
  *   req.path, req.method, req.ip, req.user_agent → context fields
+ *   bot.known, bot.ai, bot.category, bot.name, bot.id, bot.organization,
+ *     bot.score, bot.respects_robots → the declared-agent verdict
+ *   edge.present, edge.class, edge.clearance, ... → the edge validator's verdict
  */
 function resolveProperty(path: string[], context: RuleContext): any {
   const namespace = path[0];
@@ -109,6 +112,32 @@ function resolveProperty(path: string[], context: RuleContext): any {
     if (prop === 'crawler') return e.isCrawler;
     if (prop === 'script') return e.isScript;
     if (prop === 'browser') return e.isBrowser;
+    return undefined;
+  }
+
+  // Who the User-Agent claims to be (#500), from the generated agent registry.
+  //
+  // `bot.category` uses the customer-facing vocabulary — the same strings as the
+  // dashboard's ai_scraper_category column — so an expression can be copied from
+  // what someone is looking at.
+  //
+  // Every field is undefined when nothing matched, EXCEPT `known` and `ai`,
+  // which are false. That asymmetry is deliberate: `bot.known` and `bot.ai` are
+  // questions with a true answer for an unrecognised agent, while
+  // `bot.name == "GPTBot"` on an unmatched request should be false rather than
+  // comparing against an empty string that a typo could satisfy.
+  if (namespace === 'bot') {
+    const b = context.bot;
+    if (!b) return undefined;
+    if (prop === 'known') return b.known;
+    if (prop === 'ai') return b.isAI;
+    if (!b.known) return undefined;
+    if (prop === 'id') return b.id;
+    if (prop === 'name') return b.name;
+    if (prop === 'category') return b.category;
+    if (prop === 'organization') return b.organization;
+    if (prop === 'score') return b.score;
+    if (prop === 'respects_robots') return b.respectsRobots;
     return undefined;
   }
 

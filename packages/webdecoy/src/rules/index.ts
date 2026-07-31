@@ -6,6 +6,7 @@ export { RuleEngine } from './rule-engine';
 export { RateLimitRule } from './rate-limit-rule';
 export { FilterRule } from './filter-rule';
 export { TripwireRule, DEFAULT_TRIPWIRE_PATHS } from './tripwire-rule';
+export { BotRule } from './bot-rule';
 export { WebBotAuthRule, webBotAuth } from './web-bot-auth-rule';
 export { honeytoken } from './honeytoken';
 export { InMemoryRateLimiter } from './rate-limiter';
@@ -18,6 +19,7 @@ export type {
   RateLimitConfig,
   FilterConfig,
   TripwireConfig,
+  BotRuleConfig,
   ViolationEvent,
   IPEnrichmentData,
 } from './types';
@@ -27,7 +29,14 @@ export type { HoneytokenOptions, Honeytoken } from './honeytoken';
 import { RateLimitRule } from './rate-limit-rule';
 import { FilterRule } from './filter-rule';
 import { TripwireRule } from './tripwire-rule';
-import type { RateLimitConfig, FilterConfig, TripwireConfig, Rule } from './types';
+import { BotRule } from './bot-rule';
+import type {
+  RateLimitConfig,
+  FilterConfig,
+  TripwireConfig,
+  BotRuleConfig,
+  Rule,
+} from './types';
 
 /**
  * Factory function to create a rate limit rule
@@ -89,6 +98,39 @@ export function filter(config: FilterConfig): Rule {
  */
 export function tripwire(config: TripwireConfig = {}): Rule {
   return new TripwireRule(config);
+}
+
+/**
+ * Factory function to create a bot-category rule (#500).
+ *
+ * Acts on agents that identify themselves in the User-Agent, matched against the
+ * registry generated from the same table the scoring pipeline uses — so
+ * `'training_crawler'` here means what `ai_scraper_category` means in your
+ * dashboard.
+ *
+ * @example
+ * ```typescript
+ * import { WebDecoy, bots } from '@webdecoy/node';
+ *
+ * const sdk = new WebDecoy({
+ *   rules: [
+ *     // Keep AI models out of your content, keep your search ranking.
+ *     bots({ categories: ['training_crawler'] }),
+ *
+ *     // Or everything AI, minus the one you want referral traffic from.
+ *     bots({ ai: true, allow: ['perplexitybot'] }),
+ *
+ *     // Or a specific operator.
+ *     bots({ agents: ['gptbot', 'ClaudeBot'], action: 'THROTTLE' }),
+ *   ],
+ * });
+ * ```
+ *
+ * Only catches agents that declare themselves — anything spoofing a browser
+ * passes through, by design. Pair with {@link tripwire} for agents that lie.
+ */
+export function bots(config: BotRuleConfig = {}): Rule {
+  return new BotRule(config);
 }
 export {
   siteHoneytoken,

@@ -1,0 +1,2154 @@
+[
+  {
+    "userAgent": "ai2bot",
+    "id": "ai2bot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; ai2bot/1.0; +http://example.com/bot)",
+    "id": "ai2bot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "acunetix",
+    "id": "acunetix",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; acunetix/1.0; +http://example.com/bot)",
+    "id": "acunetix",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "ahrefsbot",
+    "id": "ahrefsbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; ahrefsbot/1.0; +http://example.com/bot)",
+    "id": "ahrefsbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "ahrefs",
+    "id": "ahrefsbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; ahrefs/1.0; +http://example.com/bot)",
+    "id": "ahrefsbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "amazonbuyforme",
+    "id": "amazon-buyforme",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; amazonbuyforme/1.0; +http://example.com/bot)",
+    "id": "amazon-buyforme",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "buyforme",
+    "id": "amazon-buyforme",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; buyforme/1.0; +http://example.com/bot)",
+    "id": "amazon-buyforme",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "amazonbot",
+    "id": "amazonbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; amazonbot/1.0; +http://example.com/bot)",
+    "id": "amazonbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "anthropic",
+    "id": "anthropic",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; anthropic/1.0; +http://example.com/bot)",
+    "id": "anthropic",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "apache-httpclient",
+    "id": "apache-httpclient",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; apache-httpclient/1.0; +http://example.com/bot)",
+    "id": "apache-httpclient",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "apify",
+    "id": "apify",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; apify/1.0; +http://example.com/bot)",
+    "id": "apify",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "applebot",
+    "id": "applebot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; applebot/1.0; +http://example.com/bot)",
+    "id": "applebot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "applebot-extended",
+    "id": "applebot-extended",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; applebot-extended/1.0; +http://example.com/bot)",
+    "id": "applebot-extended",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "archive.org_bot",
+    "id": "archive-org-bot",
+    "category": "archiver",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; archive.org_bot/1.0; +http://example.com/bot)",
+    "id": "archive-org-bot",
+    "category": "archiver",
+    "matched": true
+  },
+  {
+    "userAgent": "axios/",
+    "id": "axios",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; axios//1.0; +http://example.com/bot)",
+    "id": "axios",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "baiduspider",
+    "id": "baiduspider",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; baiduspider/1.0; +http://example.com/bot)",
+    "id": "baiduspider",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "beautifulsoup",
+    "id": "beautifulsoup",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; beautifulsoup/1.0; +http://example.com/bot)",
+    "id": "beautifulsoup",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "betteruptime",
+    "id": "better-uptime",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; betteruptime/1.0; +http://example.com/bot)",
+    "id": "better-uptime",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "bingbot",
+    "id": "bingbot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; bingbot/1.0; +http://example.com/bot)",
+    "id": "bingbot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "botify",
+    "id": "botify",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; botify/1.0; +http://example.com/bot)",
+    "id": "botify",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "bravesearch",
+    "id": "brave-search",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; bravesearch/1.0; +http://example.com/bot)",
+    "id": "brave-search",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "brightdata",
+    "id": "bright-data",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; brightdata/1.0; +http://example.com/bot)",
+    "id": "bright-data",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "luminati",
+    "id": "bright-data",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; luminati/1.0; +http://example.com/bot)",
+    "id": "bright-data",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "browser-use",
+    "id": "browser-use",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; browser-use/1.0; +http://example.com/bot)",
+    "id": "browser-use",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "browserbase",
+    "id": "browserbase",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; browserbase/1.0; +http://example.com/bot)",
+    "id": "browserbase",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "browserless",
+    "id": "browserless",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; browserless/1.0; +http://example.com/bot)",
+    "id": "browserless",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "brozzler",
+    "id": "brozzler",
+    "category": "archiver",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; brozzler/1.0; +http://example.com/bot)",
+    "id": "brozzler",
+    "category": "archiver",
+    "matched": true
+  },
+  {
+    "userAgent": "burp",
+    "id": "burp",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; burp/1.0; +http://example.com/bot)",
+    "id": "burp",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "bytespider",
+    "id": "bytespider",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; bytespider/1.0; +http://example.com/bot)",
+    "id": "bytespider",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "ccbot",
+    "id": "ccbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; ccbot/1.0; +http://example.com/bot)",
+    "id": "ccbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "censys",
+    "id": "censys",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; censys/1.0; +http://example.com/bot)",
+    "id": "censys",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "chatgpt-user",
+    "id": "chatgpt-user",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; chatgpt-user/1.0; +http://example.com/bot)",
+    "id": "chatgpt-user",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "chatgpt",
+    "id": "chatgpt-user",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; chatgpt/1.0; +http://example.com/bot)",
+    "id": "chatgpt-user",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "claude-user",
+    "id": "claude-user",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; claude-user/1.0; +http://example.com/bot)",
+    "id": "claude-user",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "claudebot",
+    "id": "claudebot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; claudebot/1.0; +http://example.com/bot)",
+    "id": "claudebot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "cohere-ai",
+    "id": "cohere-ai",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; cohere-ai/1.0; +http://example.com/bot)",
+    "id": "cohere-ai",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "cohere",
+    "id": "cohere-ai",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; cohere/1.0; +http://example.com/bot)",
+    "id": "cohere-ai",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "colly",
+    "id": "colly",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; colly/1.0; +http://example.com/bot)",
+    "id": "colly",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "commafeed",
+    "id": "commafeed",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; commafeed/1.0; +http://example.com/bot)",
+    "id": "commafeed",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "contentking",
+    "id": "contentking",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; contentking/1.0; +http://example.com/bot)",
+    "id": "contentking",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "cortana",
+    "id": "cortana",
+    "category": "ai_assistant",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; cortana/1.0; +http://example.com/bot)",
+    "id": "cortana",
+    "category": "ai_assistant",
+    "matched": true
+  },
+  {
+    "userAgent": "crawlbase",
+    "id": "crawlbase",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; crawlbase/1.0; +http://example.com/bot)",
+    "id": "crawlbase",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "datadog",
+    "id": "datadog-synthetics",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; datadog/1.0; +http://example.com/bot)",
+    "id": "datadog-synthetics",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "deepcrawl",
+    "id": "deepcrawl",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; deepcrawl/1.0; +http://example.com/bot)",
+    "id": "deepcrawl",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "deepseek",
+    "id": "deepseek",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; deepseek/1.0; +http://example.com/bot)",
+    "id": "deepseek",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "detectify",
+    "id": "detectify",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; detectify/1.0; +http://example.com/bot)",
+    "id": "detectify",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "diffbot",
+    "id": "diffbot",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; diffbot/1.0; +http://example.com/bot)",
+    "id": "diffbot",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "discordbot",
+    "id": "discordbot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; discordbot/1.0; +http://example.com/bot)",
+    "id": "discordbot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "dotbot",
+    "id": "dotbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; dotbot/1.0; +http://example.com/bot)",
+    "id": "dotbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "duckduckbot",
+    "id": "duckduckbot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; duckduckbot/1.0; +http://example.com/bot)",
+    "id": "duckduckbot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "ecosia",
+    "id": "ecosia",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; ecosia/1.0; +http://example.com/bot)",
+    "id": "ecosia",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "embedly",
+    "id": "embedly",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; embedly/1.0; +http://example.com/bot)",
+    "id": "embedly",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "exa.ai",
+    "id": "exa",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; exa.ai/1.0; +http://example.com/bot)",
+    "id": "exa",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "exabot",
+    "id": "exa",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; exabot/1.0; +http://example.com/bot)",
+    "id": "exa",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "facebookexternalhit",
+    "id": "facebookexternalhit",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; facebookexternalhit/1.0; +http://example.com/bot)",
+    "id": "facebookexternalhit",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "facebookbot",
+    "id": "facebookbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; facebookbot/1.0; +http://example.com/bot)",
+    "id": "facebookbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "faraday",
+    "id": "faraday",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; faraday/1.0; +http://example.com/bot)",
+    "id": "faraday",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "feedbin",
+    "id": "feedbin",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; feedbin/1.0; +http://example.com/bot)",
+    "id": "feedbin",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "feedly",
+    "id": "feedly",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; feedly/1.0; +http://example.com/bot)",
+    "id": "feedly",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "freshrss",
+    "id": "freshrss",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; freshrss/1.0; +http://example.com/bot)",
+    "id": "freshrss",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "freshping",
+    "id": "freshping",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; freshping/1.0; +http://example.com/bot)",
+    "id": "freshping",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "friendlycrawler",
+    "id": "friendlycrawler",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; friendlycrawler/1.0; +http://example.com/bot)",
+    "id": "friendlycrawler",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "gptbot",
+    "id": "gptbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; gptbot/1.0; +http://example.com/bot)",
+    "id": "gptbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "gemini",
+    "id": "gemini",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; gemini/1.0; +http://example.com/bot)",
+    "id": "gemini",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "gemini-deep-research",
+    "id": "gemini",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; gemini-deep-research/1.0; +http://example.com/bot)",
+    "id": "gemini",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "gemini-user",
+    "id": "gemini",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; gemini-user/1.0; +http://example.com/bot)",
+    "id": "gemini",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "go-http-client",
+    "id": "go-http-client",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; go-http-client/1.0; +http://example.com/bot)",
+    "id": "go-http-client",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "google-extended",
+    "id": "google-extended",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; google-extended/1.0; +http://example.com/bot)",
+    "id": "google-extended",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "googleagent-mariner",
+    "id": "googleagent-mariner",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; googleagent-mariner/1.0; +http://example.com/bot)",
+    "id": "googleagent-mariner",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "mariner",
+    "id": "googleagent-mariner",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; mariner/1.0; +http://example.com/bot)",
+    "id": "googleagent-mariner",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "googlebot",
+    "id": "googlebot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; googlebot/1.0; +http://example.com/bot)",
+    "id": "googlebot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "got/",
+    "id": "got",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; got//1.0; +http://example.com/bot)",
+    "id": "got",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "guzzlehttp",
+    "id": "guzzlehttp",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; guzzlehttp/1.0; +http://example.com/bot)",
+    "id": "guzzlehttp",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "httpx",
+    "id": "httpx",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; httpx/1.0; +http://example.com/bot)",
+    "id": "httpx",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "httrack",
+    "id": "httrack",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; httrack/1.0; +http://example.com/bot)",
+    "id": "httrack",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "headlesschrome",
+    "id": "headlesschrome",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; headlesschrome/1.0; +http://example.com/bot)",
+    "id": "headlesschrome",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "heritrix",
+    "id": "heritrix",
+    "category": "archiver",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; heritrix/1.0; +http://example.com/bot)",
+    "id": "heritrix",
+    "category": "archiver",
+    "matched": true
+  },
+  {
+    "userAgent": "hetrixtools",
+    "id": "hetrixtools",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; hetrixtools/1.0; +http://example.com/bot)",
+    "id": "hetrixtools",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "isscyberriskcrawler",
+    "id": "isscyberriskcrawler",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; isscyberriskcrawler/1.0; +http://example.com/bot)",
+    "id": "isscyberriskcrawler",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "iframely",
+    "id": "iframely",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; iframely/1.0; +http://example.com/bot)",
+    "id": "iframely",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "import.io",
+    "id": "import-io",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; import.io/1.0; +http://example.com/bot)",
+    "id": "import-io",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "inoreader",
+    "id": "inoreader",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; inoreader/1.0; +http://example.com/bot)",
+    "id": "inoreader",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "ia_archiver",
+    "id": "ia-archiver",
+    "category": "archiver",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; ia_archiver/1.0; +http://example.com/bot)",
+    "id": "ia-archiver",
+    "category": "archiver",
+    "matched": true
+  },
+  {
+    "userAgent": "intruder",
+    "id": "intruder",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; intruder/1.0; +http://example.com/bot)",
+    "id": "intruder",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "java/",
+    "id": "java",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; java//1.0; +http://example.com/bot)",
+    "id": "java",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "jsoup",
+    "id": "jsoup",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; jsoup/1.0; +http://example.com/bot)",
+    "id": "jsoup",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "kagi",
+    "id": "kagi",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; kagi/1.0; +http://example.com/bot)",
+    "id": "kagi",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "lwp-",
+    "id": "lwp",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; lwp-/1.0; +http://example.com/bot)",
+    "id": "lwp",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "linkedinbot",
+    "id": "linkedinbot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; linkedinbot/1.0; +http://example.com/bot)",
+    "id": "linkedinbot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "mj12bot",
+    "id": "mj12bot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; mj12bot/1.0; +http://example.com/bot)",
+    "id": "mj12bot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "mechanize",
+    "id": "mechanize",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; mechanize/1.0; +http://example.com/bot)",
+    "id": "mechanize",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "meta-externalagent",
+    "id": "meta-externalagent",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; meta-externalagent/1.0; +http://example.com/bot)",
+    "id": "meta-externalagent",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "metaphor",
+    "id": "metaphor",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; metaphor/1.0; +http://example.com/bot)",
+    "id": "metaphor",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "copilot",
+    "id": "copilot",
+    "category": "ai_assistant",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; copilot/1.0; +http://example.com/bot)",
+    "id": "copilot",
+    "category": "ai_assistant",
+    "matched": true
+  },
+  {
+    "userAgent": "miniflux",
+    "id": "miniflux",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; miniflux/1.0; +http://example.com/bot)",
+    "id": "miniflux",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "mistral",
+    "id": "mistral",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; mistral/1.0; +http://example.com/bot)",
+    "id": "mistral",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "mojeekbot",
+    "id": "mojeek",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; mojeekbot/1.0; +http://example.com/bot)",
+    "id": "mojeek",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "multion",
+    "id": "multion",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; multion/1.0; +http://example.com/bot)",
+    "id": "multion",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "naver",
+    "id": "naver",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; naver/1.0; +http://example.com/bot)",
+    "id": "naver",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "yeti",
+    "id": "naver",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; yeti/1.0; +http://example.com/bot)",
+    "id": "naver",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "neevabot",
+    "id": "neeva",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; neevabot/1.0; +http://example.com/bot)",
+    "id": "neeva",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "nessus",
+    "id": "nessus",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; nessus/1.0; +http://example.com/bot)",
+    "id": "nessus",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "netsparker",
+    "id": "netsparker",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; netsparker/1.0; +http://example.com/bot)",
+    "id": "netsparker",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "newrelic",
+    "id": "newrelic",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; newrelic/1.0; +http://example.com/bot)",
+    "id": "newrelic",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "newsblur",
+    "id": "newsblur",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; newsblur/1.0; +http://example.com/bot)",
+    "id": "newsblur",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "nikto",
+    "id": "nikto",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; nikto/1.0; +http://example.com/bot)",
+    "id": "nikto",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "nmap",
+    "id": "nmap",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; nmap/1.0; +http://example.com/bot)",
+    "id": "nmap",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "nodeping",
+    "id": "nodeping",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; nodeping/1.0; +http://example.com/bot)",
+    "id": "nodeping",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "nuclei",
+    "id": "nuclei",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; nuclei/1.0; +http://example.com/bot)",
+    "id": "nuclei",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "oai-searchbot",
+    "id": "oai-searchbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; oai-searchbot/1.0; +http://example.com/bot)",
+    "id": "oai-searchbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "zap/",
+    "id": "zap",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; zap//1.0; +http://example.com/bot)",
+    "id": "zap",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "okhttp",
+    "id": "okhttp",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; okhttp/1.0; +http://example.com/bot)",
+    "id": "okhttp",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "omgili",
+    "id": "omgili",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; omgili/1.0; +http://example.com/bot)",
+    "id": "omgili",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "oncrawl",
+    "id": "oncrawl",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; oncrawl/1.0; +http://example.com/bot)",
+    "id": "oncrawl",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "operator",
+    "id": "operator",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; operator/1.0; +http://example.com/bot)",
+    "id": "operator",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "oxylabs",
+    "id": "oxylabs",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; oxylabs/1.0; +http://example.com/bot)",
+    "id": "oxylabs",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "php/",
+    "id": "php",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; php//1.0; +http://example.com/bot)",
+    "id": "php",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "perplexitybot",
+    "id": "perplexitybot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; perplexitybot/1.0; +http://example.com/bot)",
+    "id": "perplexitybot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "phantomjs",
+    "id": "phantomjs",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; phantomjs/1.0; +http://example.com/bot)",
+    "id": "phantomjs",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "phind",
+    "id": "phind",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; phind/1.0; +http://example.com/bot)",
+    "id": "phind",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "pingdom",
+    "id": "pingdom",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; pingdom/1.0; +http://example.com/bot)",
+    "id": "pingdom",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "pinterest",
+    "id": "pinterestbot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; pinterest/1.0; +http://example.com/bot)",
+    "id": "pinterestbot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "playwright",
+    "id": "playwright",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; playwright/1.0; +http://example.com/bot)",
+    "id": "playwright",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "puppeteer",
+    "id": "puppeteer",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; puppeteer/1.0; +http://example.com/bot)",
+    "id": "puppeteer",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "python/",
+    "id": "python",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; python//1.0; +http://example.com/bot)",
+    "id": "python",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "python-requests",
+    "id": "python-requests",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; python-requests/1.0; +http://example.com/bot)",
+    "id": "python-requests",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "python-urllib",
+    "id": "python-urllib",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; python-urllib/1.0; +http://example.com/bot)",
+    "id": "python-urllib",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "qualys",
+    "id": "qualys",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; qualys/1.0; +http://example.com/bot)",
+    "id": "qualys",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "qwantify",
+    "id": "qwantify",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; qwantify/1.0; +http://example.com/bot)",
+    "id": "qwantify",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "qwen",
+    "id": "qwen",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; qwen/1.0; +http://example.com/bot)",
+    "id": "qwen",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "reddit",
+    "id": "reddit",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; reddit/1.0; +http://example.com/bot)",
+    "id": "reddit",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "rogerbot",
+    "id": "rogerbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; rogerbot/1.0; +http://example.com/bot)",
+    "id": "rogerbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "ruby",
+    "id": "ruby",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; ruby/1.0; +http://example.com/bot)",
+    "id": "ruby",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "sistrix",
+    "id": "sistrix",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; sistrix/1.0; +http://example.com/bot)",
+    "id": "sistrix",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "scrapingant",
+    "id": "scrapingant",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; scrapingant/1.0; +http://example.com/bot)",
+    "id": "scrapingant",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "scrapingbee",
+    "id": "scrapingbee",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; scrapingbee/1.0; +http://example.com/bot)",
+    "id": "scrapingbee",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "scrapy",
+    "id": "scrapy",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; scrapy/1.0; +http://example.com/bot)",
+    "id": "scrapy",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "screaming frog",
+    "id": "screaming-frog",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; screaming frog/1.0; +http://example.com/bot)",
+    "id": "screaming-frog",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "searchgpt",
+    "id": "searchgpt",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; searchgpt/1.0; +http://example.com/bot)",
+    "id": "searchgpt",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "selenium",
+    "id": "selenium",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; selenium/1.0; +http://example.com/bot)",
+    "id": "selenium",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "semrushbot",
+    "id": "semrushbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; semrushbot/1.0; +http://example.com/bot)",
+    "id": "semrushbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "semrush",
+    "id": "semrushbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; semrush/1.0; +http://example.com/bot)",
+    "id": "semrushbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "sentibot",
+    "id": "sentibot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; sentibot/1.0; +http://example.com/bot)",
+    "id": "sentibot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "serpstat",
+    "id": "serpstat",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; serpstat/1.0; +http://example.com/bot)",
+    "id": "serpstat",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "seznambot",
+    "id": "seznam",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; seznambot/1.0; +http://example.com/bot)",
+    "id": "seznam",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "shodan",
+    "id": "shodan",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; shodan/1.0; +http://example.com/bot)",
+    "id": "shodan",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "siri",
+    "id": "siri",
+    "category": "ai_assistant",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; siri/1.0; +http://example.com/bot)",
+    "id": "siri",
+    "category": "ai_assistant",
+    "matched": true
+  },
+  {
+    "userAgent": "site24x7",
+    "id": "site24x7",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; site24x7/1.0; +http://example.com/bot)",
+    "id": "site24x7",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "sitebulb",
+    "id": "sitebulb",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; sitebulb/1.0; +http://example.com/bot)",
+    "id": "sitebulb",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "slackbot",
+    "id": "slackbot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; slackbot/1.0; +http://example.com/bot)",
+    "id": "slackbot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "sogou",
+    "id": "sogou",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; sogou/1.0; +http://example.com/bot)",
+    "id": "sogou",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "splash",
+    "id": "splash",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; splash/1.0; +http://example.com/bot)",
+    "id": "splash",
+    "category": "headless_browser",
+    "matched": true
+  },
+  {
+    "userAgent": "spyfu",
+    "id": "spyfu",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; spyfu/1.0; +http://example.com/bot)",
+    "id": "spyfu",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "stagehand",
+    "id": "stagehand",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; stagehand/1.0; +http://example.com/bot)",
+    "id": "stagehand",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "statuscake",
+    "id": "statuscake",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; statuscake/1.0; +http://example.com/bot)",
+    "id": "statuscake",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "tavily",
+    "id": "tavily",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; tavily/1.0; +http://example.com/bot)",
+    "id": "tavily",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "telegrambot",
+    "id": "telegrambot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; telegrambot/1.0; +http://example.com/bot)",
+    "id": "telegrambot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "theoldreader",
+    "id": "theoldreader",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; theoldreader/1.0; +http://example.com/bot)",
+    "id": "theoldreader",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "timpibot",
+    "id": "timpibot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; timpibot/1.0; +http://example.com/bot)",
+    "id": "timpibot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "tumblr",
+    "id": "tumblr",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; tumblr/1.0; +http://example.com/bot)",
+    "id": "tumblr",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "twitterbot",
+    "id": "twitterbot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; twitterbot/1.0; +http://example.com/bot)",
+    "id": "twitterbot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "undici",
+    "id": "undici",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; undici/1.0; +http://example.com/bot)",
+    "id": "undici",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "uptimerobot",
+    "id": "uptimerobot",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; uptimerobot/1.0; +http://example.com/bot)",
+    "id": "uptimerobot",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "velenpublicwebcrawler",
+    "id": "velenpublicwebcrawler",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; velenpublicwebcrawler/1.0; +http://example.com/bot)",
+    "id": "velenpublicwebcrawler",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "wayback",
+    "id": "wayback",
+    "category": "archiver",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; wayback/1.0; +http://example.com/bot)",
+    "id": "wayback",
+    "category": "archiver",
+    "matched": true
+  },
+  {
+    "userAgent": "webscrapingapi",
+    "id": "webscrapingapi",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; webscrapingapi/1.0; +http://example.com/bot)",
+    "id": "webscrapingapi",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "webzio",
+    "id": "webzio",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; webzio/1.0; +http://example.com/bot)",
+    "id": "webzio",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "wget/",
+    "id": "wget",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; wget//1.0; +http://example.com/bot)",
+    "id": "wget",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "whatsapp",
+    "id": "whatsapp",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; whatsapp/1.0; +http://example.com/bot)",
+    "id": "whatsapp",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "slurp",
+    "id": "yahoo-slurp",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; slurp/1.0; +http://example.com/bot)",
+    "id": "yahoo-slurp",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "yandexbot",
+    "id": "yandexbot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; yandexbot/1.0; +http://example.com/bot)",
+    "id": "yandexbot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "youbot",
+    "id": "youbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; youbot/1.0; +http://example.com/bot)",
+    "id": "youbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "zyte",
+    "id": "zyte",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; zyte/1.0; +http://example.com/bot)",
+    "id": "zyte",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "scrapinghub",
+    "id": "zyte",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; scrapinghub/1.0; +http://example.com/bot)",
+    "id": "zyte",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "aiohttp",
+    "id": "aiohttp",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; aiohttp/1.0; +http://example.com/bot)",
+    "id": "aiohttp",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "curl/",
+    "id": "curl",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; curl//1.0; +http://example.com/bot)",
+    "id": "curl",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "img2dataset",
+    "id": "img2dataset",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; img2dataset/1.0; +http://example.com/bot)",
+    "id": "img2dataset",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "libwww-perl",
+    "id": "libwww-perl",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; libwww-perl/1.0; +http://example.com/bot)",
+    "id": "libwww-perl",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "node-fetch",
+    "id": "node-fetch",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; node-fetch/1.0; +http://example.com/bot)",
+    "id": "node-fetch",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+    "matched": false
+  },
+  {
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+    "matched": false
+  },
+  {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:127.0) Gecko/20100101 Firefox/127.0",
+    "matched": false
+  },
+  {
+    "userAgent": "",
+    "matched": false
+  }
+]
