@@ -248,10 +248,25 @@ export function webdecoy(
         const chunks: Buffer[] = [];
         let intercepting: boolean | null = null;
 
+        // Whether the body can still be rewritten.
+        //
+        // `headersSent` is deliberately NOT a blocker. Streaming frameworks —
+        // Angular SSR, Nuxt, anything that calls res.writeHead() then pipes —
+        // commit headers before the first byte of body, so requiring
+        // !headersSent silently disabled injection for exactly the apps most
+        // likely to be serving server-rendered HTML. Found on a real Angular SSR
+        // site: page rendered, nothing injected, no error.
+        //
+        // What actually matters is whether a Content-Length has been committed
+        // that we can no longer correct. Under chunked encoding none is declared,
+        // so the body is free to change; with a committed length, growing the
+        // body would truncate it at the client, so leave it alone.
         const shouldIntercept = (): boolean => {
           if (intercepting === null) {
-            intercepting =
-              !res.headersSent && isInjectableHtml(res.getHeader('content-type') as string);
+            const isHtml = isInjectableHtml(res.getHeader('content-type') as string);
+            const lengthCommitted =
+              res.headersSent && res.getHeader('content-length') !== undefined;
+            intercepting = isHtml && !lengthCommitted;
           }
           return intercepting;
         };
@@ -271,6 +286,8 @@ export function webdecoy(
             const body = injectHoneytokenLink(Buffer.concat(chunks).toString('utf8'), ht.linkHtml);
             const out = Buffer.from(body, 'utf8');
             // The body grew; a stale Content-Length truncates it at the client.
+            // Only settable while headers are still open — under chunked encoding
+            // there is nothing to correct, which is why that path is allowed.
             if (!res.headersSent) res.setHeader('Content-Length', String(out.length));
             return originalEnd(out);
           } catch {
