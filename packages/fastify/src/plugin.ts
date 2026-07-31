@@ -4,8 +4,17 @@
 
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import fp from 'fastify-plugin';
-import { WebDecoy, WebDecoyConfig, RequestMetadata, ProtectOptions } from '@webdecoy/node';
-import type { EdgeVerdict } from '@webdecoy/node';
+import {
+  WebDecoy,
+  WebDecoyConfig,
+  RequestMetadata,
+  ProtectOptions,
+  siteHoneytoken,
+  injectHoneytokenLink,
+  isInjectableHtml,
+  tripwire,
+} from '@webdecoy/node';
+import type { EdgeVerdict, SiteHoneytoken } from '@webdecoy/node';
 
 export interface WebDecoyPluginOptions extends ProtectOptions {
   /**
@@ -20,6 +29,25 @@ export interface WebDecoyPluginOptions extends ProtectOptions {
    * Watch what it would have done, then set `mode: 'enforce'`.
    */
   mode?: 'monitor' | 'enforce';
+
+  /**
+   * Inject a hidden honeytoken link into HTML responses, and arm the tripwire it
+   * points at. Defaults to **on** when an apiKey is present (#482).
+   *
+   * The SDK used to generate a honeytoken and ask the developer to embed it.
+   * Almost nobody did: `sdk_tripwire` had FOUR rows in production, ever, while
+   * the WordPress plugin — which injects the link itself — has real coverage.
+   *
+   * A trap hit is the only detection here that needs no score, no JavaScript, no
+   * fingerprint and no IP. It is also the only one that scores: honeypot signals
+   * are weighted 38% against user-agent's 1%, which is why every rule-less `sdk`
+   * detection ever recorded came out at 0.
+   *
+   * Applies to buffered responses — `reply.send(html)`, `@fastify/view`, and
+   * anything else that hands Fastify a string or Buffer. Streamed replies are
+   * left untouched and logged once; see the `onSend` hook for why.
+   */
+  honeytoken?: boolean;
 
   /**
    * Custom function to extract IP address from request
@@ -139,6 +167,28 @@ async function webdecoyPluginImpl(
   const onError = options.onError || defaultOnError;
   const skipPaths = options.skipPaths;
 
+  // Honeytoken (#482). Derived from the API key so every replica computes the
+  // same path without coordinating — a random per-process token would advertise
+  // a link whose tripwire only one replica had armed.
+  //
+  // Resolution is async (WebCrypto HMAC, so this still runs on edge runtimes).
+  // Fastify lets us await it here, because plugin registration is already an
+  // async boot phase — so unlike Express there is no window where early requests
+  // are served without the link.
+  const honeytokenEnabled = (options.honeytoken ?? true) && Boolean(options.apiKey);
+  let token: SiteHoneytoken | null = null;
+  if (honeytokenEnabled) {
+    try {
+      token = await siteHoneytoken({ secret: options.apiKey as string });
+      // Arm the path we are about to advertise. Without this the link is bait
+      // with no trap behind it — a crawler follows it and nothing happens.
+      sdk.addRule(tripwire({ paths: token.activePaths, includeDefaults: false }));
+    } catch {
+      // Deriving the token is not worth a failed boot. No token, no injection.
+      token = null;
+    }
+  }
+
   // Add decorator for webdecoy property
   fastify.decorateRequest('webdecoy', null);
   // The edge validator's verdict, typed (#481), so a handler can branch on
@@ -226,6 +276,59 @@ async function webdecoyPluginImpl(
       // Fail open - continue with the request
     }
   });
+
+  // Honeytoken injection (#482).
+  //
+  // Fastify's onSend is purpose-built for this: it hands us the finished payload
+  // and takes back a replacement, so there is no wrapping of reply internals the
+  // way Express requires. Content-Length is recomputed by Fastify from what we
+  // return, so a grown body cannot truncate at the client.
+  //
+  // Each guard below is a way this could corrupt a customer's response, which is
+  // a far worse failure than a missed detection:
+  //
+  //   - non-HTML is left untouched, so an anchor never lands in JSON
+  //   - streams are left untouched (see below)
+  //   - anything thrown falls back to the original payload
+  if (token) {
+    const ht = token;
+    let warnedAboutStream = false;
+
+    fastify.addHook('onSend', async (_req, reply, payload) => {
+      try {
+        if (!isInjectableHtml(reply.getHeader('content-type') as string)) return payload;
+
+        // A streamed reply is left alone on purpose. Buffering it to inject a
+        // link would trade the customer's streaming behaviour — and its memory
+        // profile on large responses — for a hidden anchor, which is not a
+        // trade this plugin gets to make silently on their behalf.
+        //
+        // So it is not silent. The failure this whole issue is about is a
+        // defence that looks installed and detects nothing; a log line once per
+        // process is what makes the gap visible instead.
+        if (payload === null || typeof payload === 'object') {
+          if (!warnedAboutStream) {
+            warnedAboutStream = true;
+            fastify.log.warn(
+              '[WebDecoy] HTML is being streamed, so the honeytoken link was not injected. ' +
+                'Render to a string, or embed the link yourself: ' +
+                `<a href="${ht.primaryPath}" aria-hidden="true" tabindex="-1" rel="nofollow noindex" ` +
+                'style="position:absolute;left:-9999px">.</a>',
+            );
+          }
+          return payload;
+        }
+
+        if (typeof payload !== 'string' && !Buffer.isBuffer(payload)) return payload;
+
+        const html = Buffer.isBuffer(payload) ? payload.toString('utf8') : payload;
+        return injectHoneytokenLink(html, ht.linkHtml);
+      } catch {
+        // Never let injection cost the response.
+        return payload;
+      }
+    });
+  }
 }
 
 export const webdecoyPlugin = fp(webdecoyPluginImpl, {

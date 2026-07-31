@@ -15,6 +15,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New exports: `AgentVerifier`, `createAgentVerifier`, `DirectoryCache`, `DEFAULT_SIGNED_AGENT_DIRECTORIES`, and types `AgentVerdict`, `AgentStatus`, `AgentCategory`, `WebBotAuthConfig`, `AgentVerifierOptions`, `SignedAgentDirectory`.
 - Doc: "Verify AI agents with Web Bot Auth in Next.js" (`docs/verify-ai-agents-web-bot-auth.md`).
 
+## [0.10.0] - 2026-07-31
+
+### Added
+- **Honeytoken injection for Fastify** — closes the last gap in #482. Express and
+  Next.js were covered in 0.8.x; Fastify still generated a token and asked the
+  developer to place the link, which is the manual step almost nobody takes.
+  - On by default when `apiKey` is set; `honeytoken: false` opts out.
+  - Injected in an `onSend` hook, so only full `text/html` replies are rewritten
+    and Fastify recomputes `Content-Length`.
+  - The token is derived from the API key, so every replica advertises and arms
+    the same path.
+  - **Streamed replies are not rewritten** — buffering a stream to insert an
+    anchor would discard the streaming behaviour the app asked for. The plugin
+    logs a warning once per process with the markup to embed manually, so the
+    gap is visible rather than silent.
+
 ## [0.9.0] - 2026-07-31
 
 ### Added
