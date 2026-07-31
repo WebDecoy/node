@@ -15,6 +15,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New exports: `AgentVerifier`, `createAgentVerifier`, `DirectoryCache`, `DEFAULT_SIGNED_AGENT_DIRECTORIES`, and types `AgentVerdict`, `AgentStatus`, `AgentCategory`, `WebBotAuthConfig`, `AgentVerifierOptions`, `SignedAgentDirectory`.
 - Doc: "Verify AI agents with Web Bot Auth in Next.js" (`docs/verify-ai-agents-web-bot-auth.md`).
 
+## [0.9.0] - 2026-07-31
+
+### Added
+- **Bot classification in the request path** — rules can now act on who the
+  User-Agent says it is, which the AI-scraper docs described but nothing could do.
+  - `bots()` rule: `bots({ categories: ['training_crawler'] })`,
+    `bots({ ai: true, allow: ['perplexitybot'] })`,
+    `bots({ agents: ['gptbot', 'ClaudeBot'], action: 'THROTTLE' })`.
+  - New filter namespace: `bot.known`, `bot.ai`, `bot.category`, `bot.name`,
+    `bot.id`, `bot.organization`, `bot.score`, `bot.respects_robots`.
+  - New exports: `bots`, `BotRule`, `matchUserAgent`, `classifyUserAgent`,
+    `BOT_REGISTRY`, `BOT_CATEGORIES`, and types `BotVerdict`, `BotAgent`,
+    `BotCategory`, `BotRuleConfig`.
+  - 168 agents generated from the Go registry, matched locally with no network
+    call. Category names match the dashboard's `ai_scraper_category` column.
+  - `ai: true` covers training crawlers, AI search crawlers, AI agents and AI
+    assistants. It excludes `search_crawler` — blocking Googlebot would deindex
+    your site.
+
+  This matches a **self-declared** User-Agent, so it acts only on agents that
+  identify honestly. That is the right tool for cooperative crawlers and the
+  wrong one for anything spoofing a browser; use `tripwire()` for those.
+
 ## [0.4.0] - 2026-06-30
 
 ### Added
