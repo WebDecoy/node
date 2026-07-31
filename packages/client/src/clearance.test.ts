@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  *
- * Locks the wd_clearance device-fp contract (#128). The fp is the deny-list key,
+ * Locks the wd_clearance device-fp contract. The fp is the deny-list key,
  * so its exact composition MUST stay byte-identical to the edge challenge page
  * (app repo: edge/clearance-worker). This test pins the canonical string, a golden
  * hash the worker can cross-assert, and the no-canvas/WebGL guarantee.

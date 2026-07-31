@@ -101,7 +101,7 @@ export function tripwire(config: TripwireConfig = {}): Rule {
 }
 
 /**
- * Factory function to create a bot-category rule (#500).
+ * Factory function to create a bot-category rule.
  *
  * Acts on agents that identify themselves in the User-Agent, matched against the
  * registry generated from the same table the scoring pipeline uses — so

@@ -24,27 +24,22 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
    * a rule governs that rule, not the score, and `onBlocked` did not receive
    * `next`, so "record it and serve the request anyway" could not be expressed.
    *
-   * Found by installing it on a live site that takes payments: the homepage
-   * returned `{"error":"Forbidden"}` on the first request, as did an ordinary
-   * `python-requests` user agent.
-   *
-   * Nobody adopts a defence by having it break their site on the first install.
+   *    * Nobody adopts a defence by having it break their site on the first install.
    * Watch what it would have done, then set `mode: 'enforce'`.
    */
   mode?: 'monitor' | 'enforce';
 
   /**
    * Inject a hidden honeytoken link into HTML responses, and arm the tripwire it
-   * points at. Defaults to **on** when an apiKey is present (#482).
+   * points at. Defaults to **on** when an apiKey is present.
    *
    * The SDK used to generate a honeytoken and ask the developer to embed it.
-   * Almost nobody did: `sdk_tripwire` had FOUR rows in production, ever, while
-   * the WordPress plugin — which injects the link itself — has real coverage.
+   * Almost nobody does, and an unplaced link is a trap nothing can walk into.
    *
    * A trap hit is the only detection here that needs no score, no JavaScript, no
    * fingerprint and no IP. It is also the only one that scores: honeypot signals
-   * are weighted 38% against user-agent's 1%, which is why every rule-less `sdk`
-   * detection ever recorded came out at 0.
+   * carry the highest weight in the threat score, while a User-Agent — all a
+   * rule-less install can otherwise report — carries nearly none.
    *
    * Set `false` to opt out, or place the link yourself for apps that stream.
    */
@@ -182,7 +177,7 @@ export function webdecoy(
   const onBlocked = config.onBlocked || defaultOnBlocked;
   const mode = config.mode ?? 'monitor';
 
-  // Honeytoken (#482). Derived from the API key so every replica computes the
+  // Honeytoken. Derived from the API key so every replica computes the
   // same path without coordinating — a random per-process token would advertise
   // a link whose tripwire only one replica had armed.
   //
@@ -230,7 +225,7 @@ export function webdecoy(
         metadata: config.metadata,
       });
 
-      // Honeytoken injection (#482).
+      // Honeytoken injection.
       //
       // Buffers the body only for full HTML documents and rewrites it once. The
       // guards below are not defensive padding — each one is a way this could
@@ -341,7 +336,7 @@ export function webdecoy(
       if (result.allowed) {
         // Attach detection info to request for downstream use
         (req as any).webdecoy = result.detection;
-        // And what the edge validator said, typed (#481). A handler can branch on
+        // And what the edge validator said, typed. A handler can branch on
         // req.webdecoyEdge.isScript instead of string-matching x-wd-class, and
         // `present: false` tells it the edge was never in front of this request —
         // which is no information, not a clean bill of health.
@@ -374,7 +369,7 @@ declare global {
         detection_id: string;
         rule_enforced: boolean;
       };
-      /** What the edge validator said about this request (#481). */
+      /** What the edge validator said about this request. */
       webdecoyEdge?: EdgeVerdict;
     }
   }

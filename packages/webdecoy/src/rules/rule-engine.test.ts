@@ -16,7 +16,7 @@ function ctx(cookie?: string): RuleContext {
   };
 }
 
-describe('RuleEngine clearance forwarding (#136)', () => {
+describe('RuleEngine clearance forwarding', () => {
   it('attaches the wd_clearance token to a tripwire violation', () => {
     const engine = new RuleEngine([
       fixedRule({ action: 'DENY', rule: 'tripwire', reason: 'honeypot path' }),

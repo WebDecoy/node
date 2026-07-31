@@ -83,9 +83,8 @@ export class WebDecoy {
     // unified score weights honeypot hits at 38% and attack signatures at 24%,
     // but user-agent at 1% and headers at 1% — deliberately, because both are
     // trivially spoofed. A middleware with no rules can only contribute those
-    // last two, so it scores ~0 no matter what it sees. Measured against
-    // production: every `sdk` detection ever recorded scored 0, while
-    // `sdk_tripwire` averaged 52.5 and `bot_scanner` 45.7.
+    // last two, so it scores ~0 no matter what it sees — while the same client
+    // walking into a tripwire scores an order of magnitude higher.
     //
     // Inflating the user-agent weight would be the wrong fix and actively
     // backwards: it would score the clients honest enough to say
@@ -183,11 +182,11 @@ export class WebDecoy {
       userAgent: metadata.user_agent,
       headers: metadata.headers,
       timestamp: metadata.timestamp || Date.now(),
-      // Parsed synchronously and unconditionally (#481): it is two header reads,
+      // Parsed synchronously and unconditionally: it is two header reads,
       // it needs no network, and a rule that has to check whether the edge
       // verdict was populated is a rule people will get wrong.
       edge: readEdgeVerdict(metadata.headers),
-      // Same reasoning as `edge`, and the same cost profile (#500): a memoised
+      // Same reasoning as `edge`, and the same cost profile: a memoised
       // substring scan over a static table, no network, no async. Populating it
       // unconditionally means a rule never has to ask whether classification
       // ran.
@@ -296,7 +295,7 @@ export class WebDecoy {
     metadata: RequestMetadata,
     options: ProtectOptions = {}
   ): Promise<ProtectResult> {
-    // The edge verdict (#481) is attached here rather than at each return inside
+    // The edge verdict is attached here rather than at each return inside
     // decide(), which has seven of them including two fail-open paths. It is
     // information ABOUT the request, not a product of the decision, so it must be
     // present on every outcome — and a per-return copy is a line someone would

@@ -20,11 +20,11 @@ export { withWebDecoy, withBotProtection } from './middleware';
 export type { WebDecoyMiddlewareOptions, WithBotProtectionOptions } from './middleware';
 
 // The edge validator's verdict, readable from a route handler or server
-// component — not only from middleware (#481).
+// component — not only from middleware.
 export { getEdgeVerdict } from './edge-verdict';
 export type { EdgeVerdict, EdgeClass } from './edge-verdict';
 
-// Honeytoken (#482). A helper rather than automatic injection — see the module
+// Honeytoken. A helper rather than automatic injection — see the module
 // for why Next middleware cannot rewrite a streamed RSC response.
 export { honeytokenLink } from './honeytoken';
 export type { SiteHoneytoken } from './honeytoken';

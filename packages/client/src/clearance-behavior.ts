@@ -1,5 +1,5 @@
 /**
- * Behavioral human-likelihood for clearance minting (app repo #328, PRD FR10).
+ * Behavioral human-likelihood for clearance minting .
  *
  * A wd_clearance token normally says only "this is a real browser that hasn't
  * tripped deception". This module lets a session also present POSITIVE evidence

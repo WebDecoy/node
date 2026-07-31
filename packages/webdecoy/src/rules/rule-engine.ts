@@ -30,7 +30,7 @@ export class RuleEngine {
    * Append a rule after construction.
    *
    * Exists for signals that cannot be known synchronously at construction —
-   * currently the site honeytoken (#482), whose path is derived by async HMAC.
+   * currently the site honeytoken, whose path is derived by async HMAC.
    * Evaluation order is append order, matching the constructor.
    */
   add(rule: Rule): void {
@@ -51,7 +51,7 @@ export class RuleEngine {
       if (result.action !== 'ALLOW') {
         // Record violation. Tripwire hits (a real user can't reach a honeypot
         // path) carry the actor's wd_clearance token so the backend can deny its
-        // device fingerprint — the deception signal driving enforcement (#136).
+        // device fingerprint — the deception signal driving enforcement.
         violations.push({
           rule: result.rule,
           action: result.action,

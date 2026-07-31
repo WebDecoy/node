@@ -27,7 +27,7 @@ export { FormAnalyzer, getFormAnalyzer } from './collectors/form';
 export { sha256 } from './sha256';
 export { startClearance, computeDeviceFP, CLEARANCE_COOKIE, FP_VERSION, DEFAULT_INGEST_URL } from './clearance';
 export type { ClearanceOptions, DeviceFPInputs } from './clearance';
-// Behavioral human-likelihood (#328). Exported so the collection contract is
+// Behavioral human-likelihood. Exported so the collection contract is
 // inspectable by anyone integrating — summarizeBehavior IS the published list
 // of what we send.
 export { summarizeBehavior, hasEnoughInteraction, watchInteraction } from './clearance-behavior';

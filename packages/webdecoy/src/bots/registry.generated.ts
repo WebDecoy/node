@@ -1,7 +1,7 @@
 /**
  * GENERATED FILE — DO NOT EDIT.
  *
- * Source of truth: WebDecoy/app `pkg/agents` (Go).
+ * Source of truth: the Go agent registry in the main application repo.
  * Regenerate with `packages/webdecoy/scripts/gen-bot-registry.mjs`; see that
  * script for the command.
  *

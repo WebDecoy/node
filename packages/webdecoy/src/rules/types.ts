@@ -27,19 +27,19 @@ export interface RuleContext {
   enrichment?: IPEnrichmentData;
   /**
    * Web Bot Auth verdict (populated async before evaluation when a
-   * {@link https://github.com/WebDecoy/app/issues/323 webBotAuth} rule is
+   * `webBotAuth` rule is
    * present). Lets a synchronous rule act on cryptographic agent verification.
    */
   agent?: AgentVerdict;
   /**
-   * The edge validator's annotations on this request (#481), parsed from
+   * The edge validator's annotations on this request, parsed from
    * `x-wd-clearance` and `x-wd-class`. Always populated — `present: false` when
    * the edge did not front this request. Filter expressions read it as
    * `edge.class`, `edge.clearance` and `edge.present`.
    */
   edge?: EdgeVerdict;
   /**
-   * Who the User-Agent says it is (#500), matched against the generated agent
+   * Who the User-Agent says it is, matched against the generated agent
    * registry. Always populated — `known: false` when nothing matched. Filter
    * expressions read it as `bot.category`, `bot.name`, `bot.ai` and friends.
    *
@@ -106,7 +106,7 @@ export interface FilterConfig {
 }
 
 /**
- * Configuration for bot-category rules (#500)
+ * Configuration for bot-category rules
  */
 export interface BotRuleConfig {
   /**
@@ -171,7 +171,7 @@ export interface ViolationEvent {
   /**
    * The request's wd_clearance token, when present. Lets the backend bind a
    * tripwire hit to the actor's device fingerprint and deny it — the same
-   * durable lockout a decoy hit produces (enforcement issue #136). Only carried
+   * durable lockout a decoy hit produces. Only carried
    * for deception rules (tripwires); undefined otherwise.
    */
   clearance?: string;

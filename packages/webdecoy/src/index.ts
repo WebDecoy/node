@@ -37,14 +37,14 @@ export type {
   ProtectOptions,
 } from './types';
 
-// The edge validator's verdict, as the origin sees it (#481). Exported as a
+// The edge validator's verdict, as the origin sees it. Exported as a
 // value, not only a type: readEdgeVerdict() is how an application that is not
 // using protect() — a route handler, a server component — reads the tag without
 // string-matching a header.
 export { readEdgeVerdict, EDGE_CLASS_HEADER, EDGE_CLEARANCE_HEADER } from './edge';
 export type { EdgeClass, EdgeVerdict } from './edge';
 
-// Declared-agent classification (#500). Exported as values for the same reason
+// Declared-agent classification. Exported as values for the same reason
 // as readEdgeVerdict: code outside protect() — a route handler deciding whether
 // to serve a paywall, a robots.txt generator — needs the same answer without
 // standing up a rule engine.

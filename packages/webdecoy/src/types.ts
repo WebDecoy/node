@@ -205,7 +205,7 @@ export interface ProtectResult {
   agent?: AgentVerdict;
 
   /**
-   * What the edge validator said about this request (#481), parsed from
+   * What the edge validator said about this request, parsed from
    * `x-wd-clearance` and `x-wd-class`.
    *
    * Always present. Check `edge.present` before branching: false means the edge

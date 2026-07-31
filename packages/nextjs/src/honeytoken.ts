@@ -1,5 +1,5 @@
 /**
- * Honeytoken for Next.js (#482).
+ * Honeytoken for Next.js.
  *
  * WHY THIS IS A HELPER AND NOT AUTOMATIC
  *

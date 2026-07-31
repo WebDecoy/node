@@ -90,7 +90,7 @@ interface MintResponse {
 
 /** Call the public issuance endpoint. Returns null on any failure (fail open).
  *  `behavior`, when present, carries the session's interaction aggregates and
- *  can earn the token a graded 'human-likely' trust level (#328). */
+ *  can earn the token a graded 'human-likely' trust level. */
 async function mint(
   ingestUrl: string,
   siteKey: string,
@@ -156,7 +156,7 @@ export interface ClearanceOptions {
   scope?: string;
   /**
    * Collect interaction aggregates and upgrade the token to a graded
-   * 'human-likely' trust level once the visitor actually interacts (#328).
+   * 'human-likely' trust level once the visitor actually interacts.
    * Default true. Set false to mint clean tokens only — routes that require a
    * minimum trust level will then always challenge.
    *
