@@ -18,9 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.10.0] - 2026-07-31
 
 ### Added
-- **Honeytoken injection for Fastify** — closes the last gap in #482. Express and
-  Next.js were covered in 0.8.x; Fastify still generated a token and asked the
-  developer to place the link, which is the manual step almost nobody takes.
+- **Honeytoken injection for Fastify.** Express and Next.js gained this in 0.8.x;
+  Fastify still generated a token and left you to place the link. The plugin now
+  injects a hidden trap link into HTML replies and arms the tripwire it points at.
   - On by default when `apiKey` is set; `honeytoken: false` opts out.
   - Injected in an `onSend` hook, so only full `text/html` replies are rewritten
     and Fastify recomputes `Content-Length`.
@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Bot classification in the request path** — rules can now act on who the
-  User-Agent says it is, which the AI-scraper docs described but nothing could do.
+  User-Agent says it is, synchronously and with no network call.
   - `bots()` rule: `bots({ categories: ['training_crawler'] })`,
     `bots({ ai: true, allow: ['perplexitybot'] })`,
     `bots({ agents: ['gptbot', 'ClaudeBot'], action: 'THROTTLE' })`.
@@ -44,8 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - New exports: `bots`, `BotRule`, `matchUserAgent`, `classifyUserAgent`,
     `BOT_REGISTRY`, `BOT_CATEGORIES`, and types `BotVerdict`, `BotAgent`,
     `BotCategory`, `BotRuleConfig`.
-  - 168 agents generated from the Go registry, matched locally with no network
-    call. Category names match the dashboard's `ai_scraper_category` column.
+  - 168 known agents, matched locally. Category names match the
+    `ai_scraper_category` values shown in your dashboard.
   - `ai: true` covers training crawlers, AI search crawlers, AI agents and AI
     assistants. It excludes `search_crawler` — blocking Googlebot would deindex
     your site.

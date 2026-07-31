@@ -1,5 +1,5 @@
 /**
- * Read the edge validator's verdict inside a Next.js app (#481).
+ * Read the edge validator's verdict inside a Next.js app.
  *
  * The Cloudflare clearance worker annotates every forwarded request with
  * `x-wd-clearance` and, when the sensor classified the client, `x-wd-class`.

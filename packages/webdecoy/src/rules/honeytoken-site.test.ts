@@ -6,9 +6,9 @@ import {
 } from './honeytoken-site';
 
 /**
- * The site honeytoken (#482).
+ * The site honeytoken.
  *
- * `sdk_tripwire` had FOUR rows in production, ever, because the SDK generated a
+ * `sdk_tripwire` saw almost no use, because the SDK generated a
  * honeytoken and asked the developer to embed it. This is the half that lets an
  * adapter do it — which needs the path to be DERIVED rather than random, so
  * every replica computes the same one.

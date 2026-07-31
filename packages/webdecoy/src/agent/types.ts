@@ -8,7 +8,7 @@
  * or plain traffic carrying no agent signature at all?
  *
  * The verdict taxonomy mirrors the server-side verifier in the ingest service
- * (WebDecoy/app#320) so the SDK, the edge validator, and the backend all speak
+ * so the SDK, the edge validator, and the backend all speak
  * the same language.
  */
 

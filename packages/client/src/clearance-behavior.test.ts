@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  *
- * Locks the behavioral-clearance contract (app repo #328, PRD FR10): what may
+ * Locks the behavioral-clearance contract : what may
  * leave the browser, when a session is summarized at all, and that scripted
  * input produces measurably different aggregates than a human hand.
  */

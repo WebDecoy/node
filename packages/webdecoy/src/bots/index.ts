@@ -1,5 +1,5 @@
 /**
- * Local bot classification (#500).
+ * Local bot classification.
  *
  * WHY THIS IS IN THE SDK AT ALL
  *

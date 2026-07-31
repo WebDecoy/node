@@ -1,6 +1,6 @@
 /**
  * Site honeytoken — a stable, derivable trap the adapters can inject for you
- * (#482).
+ *.
  *
  * WHY THIS EXISTS ALONGSIDE honeytoken()
  *
@@ -20,12 +20,14 @@
  * JavaScript, no fingerprint and no IP — the client asked for a path that exists
  * nowhere and is linked only from an element no human can see.
  *
- * That is not a stylistic preference, it is arithmetic. The unified score weights
- * honeypot hits at 38% and user-agent at 1%, because a user agent is trivially
- * spoofed. Measured against production: every `sdk` detection ever recorded
- * scored 0, while `sdk_tripwire` averaged 52.5. And `sdk_tripwire` had FOUR rows
- * in total, because the SDK generated a honeytoken and then asked the developer
- * to place the link. WordPress injects it itself and has coverage.
+ * That is not a stylistic preference, it is arithmetic. Honeypot hits carry the
+ * highest weight in the threat score and a User-Agent carries nearly none,
+ * because a User-Agent is trivially spoofed — so the same client scores near
+ * zero on a page view and very high on a trap.
+ *
+ * Which only pays off if the link is on the page. Generating a token and asking
+ * the developer to place it is a step most installs never take, so the adapters
+ * that own the response inject it themselves.
  */
 
 import { hmacSha256Hex } from '../webcrypto';

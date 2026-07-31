@@ -3,7 +3,7 @@ import { withWebDecoy } from './middleware';
 import { getEdgeVerdict } from './edge-verdict';
 
 /**
- * The Next.js adapter's annotation, and the edge tag it has to let through (#481).
+ * The Next.js adapter's annotation, and the edge tag it has to let through.
  *
  * This adapter shipped a bug that made the feature it advertised impossible: it
  * set its annotation with `response.headers.set()` after `NextResponse.next()`,
@@ -43,7 +43,7 @@ describe('withWebDecoy annotates the request, not the response', () => {
 
   it('forwards the edge tag through to the application untouched', async () => {
     // The tag the Cloudflare validator set upstream has to survive this middleware
-    // — it is the whole point of #481 that the application can read it.
+    // — it is the whole point that the application can read it.
     const res = await withWebDecoy({ ...OPTIONS })(
       req({ 'x-wd-class': 'script', 'x-wd-clearance': 'valid' })
     );

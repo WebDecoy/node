@@ -4,7 +4,7 @@ import { WebDecoy } from './sdk';
 import type { RuleContext } from './rules/types';
 
 /**
- * Reading the edge validator's tag (#481).
+ * Reading the edge validator's tag.
  *
  * The worker has set `x-wd-clearance` on every forwarded request since the
  * validator shipped, and nothing read it — so on a scoped route an application's
@@ -143,8 +143,8 @@ describe('edge.* in filter expressions', () => {
  * The unified score weights honeypot hits at 38% and user-agent at 1% —
  * deliberately, because a user agent is trivially spoofed. A middleware with no
  * rules can only contribute the 1% signals, so it scores ~0 whatever it sees.
- * Measured on production: every `sdk` detection ever recorded scored 0, while
- * `sdk_tripwire` averaged 52.5.
+ * A page view by an unknown client scores near zero, while the same client
+ * walking into a trap scores an order of magnitude higher.
  *
  * Raising the user-agent weight would be backwards — it would score the clients
  * honest enough to identify themselves and miss every attacker who does not. So

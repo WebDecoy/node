@@ -4,7 +4,7 @@ import { AddressInfo } from 'node:net';
 import { webdecoy } from './middleware';
 
 /**
- * Honeytoken injection through a real Express app (#482).
+ * Honeytoken injection through a real Express app.
  *
  * The unit tests cover the injection function. These cover the part that can
  * corrupt a customer's response: intercepting res.write/res.end. Each case here
@@ -160,7 +160,7 @@ describe('the injected link is actually armed', () => {
 });
 
 /**
- * Streaming SSR (#482 follow-up).
+ * Streaming SSR.
  *
  * The first implementation required `!res.headersSent` before intercepting.
  * Angular SSR — and Nuxt, and anything else that calls `res.writeHead()` then

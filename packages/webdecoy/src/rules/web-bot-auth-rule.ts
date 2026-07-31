@@ -1,5 +1,5 @@
 /**
- * Web Bot Auth rule (WebDecoy/app#323).
+ * Web Bot Auth rule (the main application repo).
  *
  * Acts on the Web Bot Auth verdict the SDK computes before rule evaluation
  * (`context.agent`). Its headline job is to make **impersonation deny-able in

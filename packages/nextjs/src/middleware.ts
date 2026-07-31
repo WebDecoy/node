@@ -12,8 +12,8 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
    * MONITOR IS THE DEFAULT ON PURPOSE, and this changed in 0.7.0. Before,
    * installing this with an API key began returning 403 to any request whose
    * server-side score cleared `threatScoreThreshold` (default 80), and there was
-   * no supported way to watch first. Found by installing it on a live site that
-   * takes payments, where the homepage returned Forbidden on the first request.
+   * no supported way to watch first — which is a good way to take down a site on
+   * the first install.
    *
    * Watch what it would have done, then set `mode: 'enforce'`.
    */
@@ -176,7 +176,7 @@ export function withWebDecoy(
 
       // Monitor mode: record the verdict, change nothing. Checked before the
       // rule branches so a THROTTLE is an observation too. The annotation still
-      // rides on the REQUEST (#481), so the application can act on it itself.
+      // rides on the REQUEST, so the application can act on it itself.
       if (mode === 'monitor') {
         const monitorHeaders = new Headers(req.headers);
         monitorHeaders.delete('x-webdecoy-decision');
@@ -223,7 +223,7 @@ export function withWebDecoy(
 
       // Handle the result
       if (result.allowed) {
-        // Annotate the REQUEST, so the application sees it (#481).
+        // Annotate the REQUEST, so the application sees it.
         //
         // This previously did `NextResponse.next()` then `response.headers.set()`,
         // which sets RESPONSE headers: the exact opposite of what its own comment

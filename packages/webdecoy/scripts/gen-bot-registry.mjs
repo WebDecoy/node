@@ -2,11 +2,12 @@
 /**
  * Generate src/bots/registry.generated.ts from the Go agent registry.
  *
- * The Go table in WebDecoy/app `pkg/agents` is the single source of truth. This
+ * The Go agent registry in the main application repo is the single source of
+ * truth. This
  * script turns its JSON export into a TypeScript module so the SDK can classify a
  * User-Agent locally, with no network call, in the request path.
  *
- * Usage, from the WebDecoy/app checkout:
+ * Usage, from the application repo checkout:
  *
  *   cd pkg && go run ./cmd/export-agent-registry \
  *     | node ../../webdecoy-node/packages/webdecoy/scripts/gen-bot-registry.mjs
@@ -77,7 +78,7 @@ const lines = agents.map((a) => {
 const out = `/**
  * GENERATED FILE — DO NOT EDIT.
  *
- * Source of truth: WebDecoy/app \`pkg/agents\` (Go).
+ * Source of truth: the Go agent registry in the main application repo.
  * Regenerate with \`packages/webdecoy/scripts/gen-bot-registry.mjs\`; see that
  * script for the command.
  *

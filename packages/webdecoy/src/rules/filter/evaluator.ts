@@ -94,7 +94,7 @@ function resolveProperty(path: string[], context: RuleContext): any {
     return undefined;
   }
 
-  // The edge validator's verdict (#481). Matching this already worked via
+  // The edge validator's verdict. Matching this already worked via
   // req.header("x-wd-class"), which is why it exists here: a named field is
   // discoverable, is spelled once instead of in every customer's expression, and
   // survives us renaming a header.
@@ -115,7 +115,7 @@ function resolveProperty(path: string[], context: RuleContext): any {
     return undefined;
   }
 
-  // Who the User-Agent claims to be (#500), from the generated agent registry.
+  // Who the User-Agent claims to be, from the generated agent registry.
   //
   // `bot.category` uses the customer-facing vocabulary — the same strings as the
   // dashboard's ai_scraper_category column — so an expression can be copied from

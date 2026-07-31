@@ -3,7 +3,7 @@ import { Readable } from 'node:stream';
 import { webdecoyPlugin } from './plugin';
 
 /**
- * Honeytoken injection through a real Fastify app (#482).
+ * Honeytoken injection through a real Fastify app.
  *
  * Express needed these tests because it wraps res.write/res.end and can corrupt
  * a response. Fastify's onSend is a supported extension point, so the risk is

@@ -23,8 +23,8 @@ export interface WebDecoyPluginOptions extends ProtectOptions {
    * MONITOR IS THE DEFAULT ON PURPOSE, and this changed in 0.7.0. Before,
    * installing this with an API key began returning 403 to any request whose
    * server-side score cleared `threatScoreThreshold` (default 80), and there was
-   * no supported way to watch first. Found by installing it on a live site that
-   * takes payments, where the homepage returned Forbidden on the first request.
+   * no supported way to watch first — which is a good way to take down a site on
+   * the first install.
    *
    * Watch what it would have done, then set `mode: 'enforce'`.
    */
@@ -32,16 +32,15 @@ export interface WebDecoyPluginOptions extends ProtectOptions {
 
   /**
    * Inject a hidden honeytoken link into HTML responses, and arm the tripwire it
-   * points at. Defaults to **on** when an apiKey is present (#482).
+   * points at. Defaults to **on** when an apiKey is present.
    *
    * The SDK used to generate a honeytoken and ask the developer to embed it.
-   * Almost nobody did: `sdk_tripwire` had FOUR rows in production, ever, while
-   * the WordPress plugin — which injects the link itself — has real coverage.
+   * Almost nobody does, and an unplaced link is a trap nothing can walk into.
    *
    * A trap hit is the only detection here that needs no score, no JavaScript, no
    * fingerprint and no IP. It is also the only one that scores: honeypot signals
-   * are weighted 38% against user-agent's 1%, which is why every rule-less `sdk`
-   * detection ever recorded came out at 0.
+   * carry the highest weight in the threat score, while a User-Agent — all a
+   * rule-less install can otherwise report — carries nearly none.
    *
    * Applies to buffered responses — `reply.send(html)`, `@fastify/view`, and
    * anything else that hands Fastify a string or Buffer. Streamed replies are
@@ -133,7 +132,7 @@ interface WebDecoyDetection {
 declare module 'fastify' {
   interface FastifyRequest {
     webdecoy?: WebDecoyDetection;
-    /** What the edge validator said about this request (#481). */
+    /** What the edge validator said about this request. */
     webdecoyEdge?: EdgeVerdict;
   }
 }
@@ -167,7 +166,7 @@ async function webdecoyPluginImpl(
   const onError = options.onError || defaultOnError;
   const skipPaths = options.skipPaths;
 
-  // Honeytoken (#482). Derived from the API key so every replica computes the
+  // Honeytoken. Derived from the API key so every replica computes the
   // same path without coordinating — a random per-process token would advertise
   // a link whose tripwire only one replica had armed.
   //
@@ -191,7 +190,7 @@ async function webdecoyPluginImpl(
 
   // Add decorator for webdecoy property
   fastify.decorateRequest('webdecoy', null);
-  // The edge validator's verdict, typed (#481), so a handler can branch on
+  // The edge validator's verdict, typed, so a handler can branch on
   // request.webdecoyEdge.isScript rather than string-matching x-wd-class.
   fastify.decorateRequest('webdecoyEdge', null);
 
@@ -277,7 +276,7 @@ async function webdecoyPluginImpl(
     }
   });
 
-  // Honeytoken injection (#482).
+  // Honeytoken injection.
   //
   // Fastify's onSend is purpose-built for this: it hands us the finished payload
   // and takes back a replacement, so there is no wrapping of reply internals the

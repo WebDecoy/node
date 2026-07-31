@@ -1,5 +1,5 @@
 /**
- * The edge validator's verdict, as the origin sees it (#481).
+ * The edge validator's verdict, as the origin sees it.
  *
  * WHY THIS MODULE EXISTS
  *

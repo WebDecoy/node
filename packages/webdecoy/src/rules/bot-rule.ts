@@ -1,5 +1,5 @@
 /**
- * Bot-category rule (#500).
+ * Bot-category rule.
  *
  * The one-liner for the policy this product category exists to express:
  *
