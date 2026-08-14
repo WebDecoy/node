@@ -27,7 +27,7 @@ export const CLEARANCE_COOKIE = 'wd_clearance';
  *
  *   1. this function
  *   2. app repo `edge/clearance-worker/src/device-fp.ts` (the interstitial)
- *   3. app repo `cdn/pro/bot-detection-pro.js` computeClearanceFP()
+ *   3. app repo `cdn/public/bot-detection-pro.js` computeClearanceFP()
  *
  * If two of them computed different fps for the same browser, a decoy-triggered
  * deny would catch one and not the other — the lockout would leak, silently.
