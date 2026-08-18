@@ -37,6 +37,14 @@ export type {
   ProtectOptions,
 } from './types';
 
+// The reserved test trigger: `curl -A "WebDecoy-Test/1.0" <site>`
+// always produces a labeled test detection through the real pipeline.
+export {
+  isTestTriggerUserAgent,
+  TEST_TRIGGER_UA_PREFIX,
+  TEST_TRIGGER_USER_AGENT,
+} from './test-trigger';
+
 // The edge validator's verdict, as the origin sees it. Exported as a
 // value, not only a type: readEdgeVerdict() is how an application that is not
 // using protect() — a route handler, a server component — reads the tag without
