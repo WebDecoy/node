@@ -13,6 +13,7 @@ import { AgentVerifier } from './agent/verifier';
 import type { AgentRequestInput, AgentVerdict } from './agent/types';
 import { readEdgeVerdict } from './edge';
 import { classifyUserAgent } from './bots';
+import { isTestTriggerUserAgent } from './test-trigger';
 import type { RuleContext, RuleEngineResult, ViolationEvent } from './rules/types';
 import {
   WebDecoyConfig,
@@ -20,6 +21,7 @@ import {
   ProtectResult,
   ProtectOptions,
   SDKDetectionRequest,
+  SDKDetectionResponse,
 } from './types';
 
 export class WebDecoy {
@@ -320,6 +322,15 @@ export class WebDecoy {
         metadata.timestamp = Date.now();
       }
 
+      // The reserved test trigger: `curl -A "WebDecoy-Test/1.0"` from the
+      // quickstart. Handled BEFORE rules and before any local-analysis
+      // threshold: the documented one-liner must always produce a detection,
+      // and it must never fire the customer's rules — ingest marks the row
+      // is_test and keeps it out of stats, billing, and enforcement.
+      if (isTestTriggerUserAgent(metadata.user_agent)) {
+        return this.reportTestTrigger(metadata);
+      }
+
       // Evaluate rules first (if configured). Use async evaluation when a rule
       // needs a pre-fetched signal — IP enrichment (filter rules) or Web Bot
       // Auth verification (webBotAuth rules). Capture the agent verdict so it
@@ -468,6 +479,60 @@ export class WebDecoy {
           rule_enforced: false,
         },
         error: error instanceof Error ? error.message : 'Unknown error',
+      };
+    }
+  }
+
+  /**
+   * Report a test-trigger request and return a blocking verdict.
+   *
+   * The verdict is `allowed: false` so an enforce-mode adapter answers the
+   * curl with a 403 — a visibly different response that tells the developer
+   * their middleware acted, Arcjet-quickstart style. (The default monitor
+   * mode still serves the request; the dashboard row is the real receipt.)
+   *
+   * Without an API key nothing can reach the dashboard, so the verdict says
+   * so via `error` instead of pretending the test ran.
+   */
+  private async reportTestTrigger(metadata: RequestMetadata): Promise<ProtectResult> {
+    const blocked: SDKDetectionResponse = {
+      decision: 'block',
+      confidence: 100,
+      threat_level: 'HIGH',
+      bot_detected: true,
+      bot_type: 'test_trigger',
+      detection_id: 'test_' + Date.now(),
+      rule_enforced: false,
+    };
+
+    if (!this.client) {
+      return {
+        allowed: false,
+        detection: blocked,
+        error: 'Test trigger recognized, but no apiKey is configured — nothing was reported to the dashboard.',
+      };
+    }
+
+    try {
+      const detection = await this.client.detect({
+        request_metadata: metadata,
+        local_analysis: {
+          suspicious_headers: false,
+          missing_sec_ch_ua: false,
+          datacenter_ip: false,
+          local_score: 100,
+          needs_verification: true,
+          flags: ['test_trigger'],
+        },
+      });
+      return { allowed: false, detection };
+    } catch (error) {
+      // Still block — the developer asked for a visible reaction — but say
+      // why the dashboard may show nothing.
+      return {
+        allowed: false,
+        detection: blocked,
+        error: error instanceof Error ? error.message : 'Failed to report test detection',
       };
     }
   }
