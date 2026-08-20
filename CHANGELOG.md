@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.1] - 2026-08-20
+
+### Added
+- **WebDecoyBot recognized in the bot registry.** The SDK now classifies WebDecoy's own first-party crawler — the User-Agent behind install verification and agent-readiness scans (`WebDecoyBot/1.0`, `+https://bot.webdecoy.com`) — as a known, low-threat monitoring crawler instead of an unknown bot. Generated from the shared Go registry; the cross-language parity test keeps it in lockstep with the server matcher.
+
+## [0.11.0] - 2026-08-18
+
 ### Added
 - **Local Web Bot Auth verification** (RFC 9421 HTTP Message Signatures, tag `web-bot-auth`).
   - `detectBot(request)` — verify an inbound request's agent signature and get a `verified` / `impersonation` / `claimed` / `none` verdict (with agent name/category for verified agents). Accepts a WHATWG `Request` or `{ method, url, headers }`.
@@ -139,7 +146,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Contributing guidelines
 - MIT License
 
-[Unreleased]: https://github.com/WebDecoy/node/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/WebDecoy/node/compare/v0.11.1...HEAD
+[0.11.1]: https://github.com/WebDecoy/node/compare/v0.11.0...v0.11.1
+[0.11.0]: https://github.com/WebDecoy/node/compare/v0.10.0...v0.11.0
+[0.10.0]: https://github.com/WebDecoy/node/compare/v0.9.0...v0.10.0
 [0.4.0]: https://github.com/WebDecoy/node/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/WebDecoy/node/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/WebDecoy/node/compare/v0.2.0...v0.2.1
