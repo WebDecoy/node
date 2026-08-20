@@ -1968,6 +1968,18 @@
     "matched": true
   },
   {
+    "userAgent": "webdecoybot",
+    "id": "webdecoybot",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; webdecoybot/1.0; +http://example.com/bot)",
+    "id": "webdecoybot",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
     "userAgent": "webscrapingapi",
     "id": "webscrapingapi",
     "category": "commercial_scraper",
