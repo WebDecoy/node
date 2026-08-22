@@ -45,6 +45,13 @@ export {
   TEST_TRIGGER_USER_AGENT,
 } from './test-trigger';
 
+// Resolving the client IP behind a proxy. Exported as values because the
+// adapters are not the only place that needs the answer: an application that
+// builds its own RequestMetadata, or rate-limits something of its own, has to
+// derive the address the same way or the two disagree about who the caller is.
+export { resolveClientIp, normalizeIp, ipInCidr } from './client-ip';
+export type { TrustedProxies, ResolveClientIpOptions, HeaderSource } from './client-ip';
+
 // The edge validator's verdict, as the origin sees it. Exported as a
 // value, not only a type: readEdgeVerdict() is how an application that is not
 // using protect() — a route handler, a server component — reads the tag without

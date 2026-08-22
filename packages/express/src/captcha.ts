@@ -17,17 +17,38 @@
  */
 
 import type { Request, Response, NextFunction, RequestHandler } from 'express';
-import { createCaptchaEndpoints, type CaptchaEndpointsOptions } from '@webdecoy/node';
+import {
+  createCaptchaEndpoints,
+  resolveClientIp,
+  normalizeIp,
+  type CaptchaEndpointsOptions,
+  type TrustedProxies,
+} from '@webdecoy/node';
 
-function getIP(req: Request): string {
-  const forwardedFor = req.headers['x-forwarded-for'];
-  if (forwardedFor) {
-    const ips = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor;
-    return ips.split(',')[0].trim();
+/**
+ * The captcha endpoints rate-limit and score by IP, so they need the same
+ * answer the middleware gets — a forgeable one here would let a solver farm
+ * mint challenges under an address per request.
+ */
+function getIP(req: Request, trustProxy: TrustedProxies | undefined): string {
+  const peer = req.socket?.remoteAddress;
+  if (trustProxy === undefined) {
+    return normalizeIp(req.ip) ?? normalizeIp(peer) ?? '127.0.0.1';
   }
-  const realIP = req.headers['x-real-ip'];
-  if (realIP) return Array.isArray(realIP) ? realIP[0] : realIP;
-  return req.ip || req.socket.remoteAddress || '127.0.0.1';
+  return (
+    resolveClientIp({ headers: req.headers, peer, trustProxy }) ??
+    normalizeIp(peer) ??
+    '127.0.0.1'
+  );
+}
+
+export interface ExpressCaptchaOptions extends CaptchaEndpointsOptions {
+  /**
+   * How much of the `X-Forwarded-For` chain to believe. Same meaning and same
+   * default as the middleware's option: unset defers to Express's own
+   * `trust proxy` setting.
+   */
+  trustProxy?: TrustedProxies;
 }
 
 function normalizeQuery(query: Request['query']): Record<string, string | undefined> {
@@ -38,7 +59,7 @@ function normalizeQuery(query: Request['query']): Record<string, string | undefi
   return out;
 }
 
-export function webdecoyCaptcha(options?: CaptchaEndpointsOptions): RequestHandler {
+export function webdecoyCaptcha(options?: ExpressCaptchaOptions): RequestHandler {
   const endpoints = createCaptchaEndpoints(options);
 
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -48,7 +69,7 @@ export function webdecoyCaptcha(options?: CaptchaEndpointsOptions): RequestHandl
       query: normalizeQuery(req.query),
       headers: req.headers as Record<string, string>,
       body: req.body,
-      ip: getIP(req),
+      ip: getIP(req, options?.trustProxy),
     });
 
     if (!result) {

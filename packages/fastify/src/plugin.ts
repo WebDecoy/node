@@ -13,8 +13,10 @@ import {
   injectHoneytokenLink,
   isInjectableHtml,
   tripwire,
+  resolveClientIp,
+  normalizeIp,
 } from '@webdecoy/node';
-import type { EdgeVerdict, SiteHoneytoken } from '@webdecoy/node';
+import type { EdgeVerdict, SiteHoneytoken, TrustedProxies } from '@webdecoy/node';
 
 export interface WebDecoyPluginOptions extends ProtectOptions {
   /**
@@ -49,8 +51,23 @@ export interface WebDecoyPluginOptions extends ProtectOptions {
   honeytoken?: boolean;
 
   /**
-   * Custom function to extract IP address from request
-   * By default, uses request.ip or x-forwarded-for header
+   * How much of the `X-Forwarded-For` chain to believe.
+   *
+   * Leave this unset and Fastify decides: `request.ip` already honours the
+   * server's own `trustProxy` option, which defaults to the socket address. Set
+   * it to override that for WebDecoy alone — a number of trusted hops,
+   * `'cloudflare'`, or CIDRs of your proxies.
+   *
+   * Fastify's default was already the safe one, so unlike the Express and
+   * Next.js adapters nothing changes here in 0.12.0. The option exists so all
+   * three adapters answer the question the same way.
+   */
+  trustProxy?: TrustedProxies;
+
+  /**
+   * Custom function to extract IP address from request.
+   *
+   * Overrides `trustProxy` entirely — you are choosing the address yourself.
    */
   getIP?: (req: FastifyRequest) => string;
 
@@ -73,11 +90,29 @@ export interface WebDecoyPluginOptions extends ProtectOptions {
 }
 
 /**
- * Default IP extraction function for Fastify
+ * The client IP, as far as we are willing to believe it.
+ *
+ * With no `trustProxy` we defer to `request.ip`, which Fastify derives from its
+ * own `trustProxy` server option and which falls back to the socket address.
+ * Deferring means an app that has configured its proxies correctly does not have
+ * to configure them twice.
  */
-function defaultGetIP(req: FastifyRequest): string {
-  // Fastify provides req.ip which handles x-forwarded-for
-  return req.ip || '127.0.0.1';
+function resolveIP(req: FastifyRequest, trustProxy: TrustedProxies | undefined): string {
+  const peer = req.socket?.remoteAddress;
+
+  if (trustProxy === undefined) {
+    return normalizeIp(req.ip) ?? normalizeIp(peer) ?? '127.0.0.1';
+  }
+
+  return (
+    resolveClientIp({
+      headers: req.headers as Record<string, string | string[] | undefined>,
+      peer,
+      trustProxy,
+    }) ??
+    normalizeIp(peer) ??
+    '127.0.0.1'
+  );
 }
 
 /**
@@ -160,7 +195,7 @@ async function webdecoyPluginImpl(
 ): Promise<void> {
   const sdk = new WebDecoy(options);
 
-  const getIP = options.getIP || defaultGetIP;
+  const getIP = options.getIP || ((req: FastifyRequest) => resolveIP(req, options.trustProxy));
   const onBlocked = options.onBlocked || defaultOnBlocked;
   const mode = options.mode ?? 'monitor';
   const onError = options.onError || defaultOnError;

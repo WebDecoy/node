@@ -31,7 +31,7 @@ export type { SiteHoneytoken } from './honeytoken';
 
 // Self-hosted captcha route handlers (PoW + detection + tokens)
 export { createCaptchaHandler } from './captcha';
-export type { NextCaptchaHandlers } from './captcha';
+export type { NextCaptchaHandlers, NextCaptchaOptions } from './captcha';
 export type { CaptchaEndpointsOptions } from '@webdecoy/node';
 
 // Re-export core types for convenience
