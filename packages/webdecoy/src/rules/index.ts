@@ -7,6 +7,12 @@ export { RateLimitRule } from './rate-limit-rule';
 export { FilterRule } from './filter-rule';
 export { TripwireRule, DEFAULT_TRIPWIRE_PATHS } from './tripwire-rule';
 export { BotRule } from './bot-rule';
+export { BotPolicy, botPolicy } from './bot-policy';
+export {
+  AttackSignatureRule,
+  attackSignatures,
+  ATTACK_SIGNATURE_IDS,
+} from './attack-signatures';
 export { WebBotAuthRule, webBotAuth } from './web-bot-auth-rule';
 export { honeytoken } from './honeytoken';
 export { InMemoryRateLimiter } from './rate-limiter';
@@ -26,6 +32,8 @@ export type {
   IPEnrichmentData,
 } from './types';
 export type { WebBotAuthConfig } from './web-bot-auth-rule';
+export type { BotPolicyOptions, RobotsTxtOptions } from './bot-policy';
+export type { AttackSignatureConfig } from './attack-signatures';
 export type { HoneytokenOptions, Honeytoken } from './honeytoken';
 export type {
   RateLimitStore,

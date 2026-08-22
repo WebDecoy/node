@@ -202,6 +202,9 @@ export function withWebDecoy(
         ip: getIP(req),
         user_agent: req.headers.get('user-agent') || undefined,
         headers,
+        // The query is where injection payloads live, and it is not part of
+        // the routed path, so attackSignatures() cannot see it otherwise.
+        query: req.nextUrl.search ? req.nextUrl.search.slice(1) : undefined,
         timestamp: Date.now(),
       };
 
@@ -350,6 +353,9 @@ export function withBotProtection<T extends (...args: any[]) => any>(
         ip,
         user_agent: req.headers['user-agent'],
         headers: req.headers as Record<string, string>,
+        // The query is where injection payloads live, and it is not part of
+        // the routed path, so attackSignatures() cannot see it otherwise.
+        query: req.url?.includes('?') ? req.url.slice(req.url.indexOf('?') + 1) : undefined,
         timestamp: Date.now(),
       };
 

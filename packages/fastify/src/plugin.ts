@@ -272,6 +272,9 @@ async function webdecoyPluginImpl(
         ip: getIP(req),
         user_agent: req.headers['user-agent'],
         headers,
+        // The query is where injection payloads live, and it is not part of
+        // the routed path, so attackSignatures() cannot see it otherwise.
+        query: req.url.includes('?') ? req.url.slice(req.url.indexOf('?') + 1) : undefined,
         timestamp: Date.now(),
       };
 

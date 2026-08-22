@@ -147,6 +147,20 @@ export interface RequestMetadata {
   /** All request headers */
   headers: Record<string, string>;
 
+  /**
+   * Raw query string, without the leading `?`. Populated by the adapters.
+   * Read by `attackSignatures()`, which cannot see it via `path` — Express's
+   * `req.path` excludes the query, and that is where injection payloads live.
+   */
+  query?: string;
+
+  /**
+   * Request body as text, when the application chooses to supply it. Never
+   * populated automatically: buffering a body the application has not already
+   * parsed would change its streaming behaviour.
+   */
+  body?: string;
+
   /** TLS connection information */
   tls_info?: TLSInfo;
 
