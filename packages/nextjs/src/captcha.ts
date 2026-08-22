@@ -15,7 +15,6 @@
 import {
   createCaptchaEndpoints,
   resolveClientIp,
-  normalizeIp,
   type CaptchaEndpointsOptions,
   type TrustedProxies,
 } from '@webdecoy/node';
@@ -28,13 +27,7 @@ import {
  * back on.
  */
 function getIP(headers: Headers, trustProxy: TrustedProxies | undefined): string {
-  const fromChain = resolveClientIp({ headers, trustProxy: trustProxy ?? 1 });
-  if (fromChain) return fromChain;
-  return (
-    normalizeIp(headers.get('x-real-ip')) ??
-    normalizeIp(headers.get('x-vercel-forwarded-for')?.split(',').pop()) ??
-    '127.0.0.1'
-  );
+  return resolveClientIp({ headers, trustProxy: trustProxy ?? 1 }) ?? '127.0.0.1';
 }
 
 export interface NextCaptchaOptions extends CaptchaEndpointsOptions {

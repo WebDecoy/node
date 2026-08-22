@@ -99,17 +99,10 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
  * `X-Forwarded-For`, never an override of one.
  */
 function resolveIP(req: NextRequest, trustProxy: TrustedProxies | undefined): string {
-  const fromChain = resolveClientIp({
-    headers: req.headers,
-    trustProxy: trustProxy ?? 1,
-  });
-  if (fromChain) return fromChain;
-
-  return (
-    normalizeIp(req.headers.get('x-real-ip')) ??
-    normalizeIp(req.headers.get('x-vercel-forwarded-for')?.split(',').pop()) ??
-    '127.0.0.1'
-  );
+  // One resolver. `x-real-ip` and the platform header used to be read here as a
+  // fallback; they now live inside resolveClientIp, so this adapter reads no
+  // forwarding header of its own and cannot drift from the others.
+  return resolveClientIp({ headers: req.headers, trustProxy: trustProxy ?? 1 }) ?? '127.0.0.1';
 }
 
 /**
