@@ -70,6 +70,36 @@ export default tseslint.config(
     },
   },
 
+  // Type-aware rules, on the source only.
+  //
+  // These need a TypeScript program, which costs real time — so they are scoped
+  // to the rules that actually catch things `tsc` does not. The headline is
+  // no-floating-promises: this SDK does a lot of deliberate fire-and-forget
+  // (violation reporting, honeytoken derivation, directory warmup) where the
+  // intentional ones are marked `void` and an accidental one would look
+  // identical. A detection that silently never reported is the exact failure
+  // this catches.
+  //
+  // The broad `recommendedTypeChecked` preset is deliberately NOT used: most of
+  // it duplicates what `strict` already enforces, at the cost of a much slower
+  // lint and a large backlog of findings that are style rather than defects.
+  {
+    files: ['**/src/**/*.ts'],
+    ignores: ['**/*.test.ts', '**/*.spec.ts'],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    rules: {
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/await-thenable': 'error',
+      '@typescript-eslint/require-await': 'error',
+    },
+  },
+
   {
     files: ['**/*.test.ts', '**/*.spec.ts'],
     languageOptions: {

@@ -265,7 +265,10 @@ export class EnvironmentalCollector {
         state: audioCtx.state,
         baseLatency: audioCtx.baseLatency
       };
-      audioCtx.close();
+      // Not awaited (the info is already gathered) but the rejection has to go
+      // somewhere: `void` alone would leave an unhandled rejection logged in the
+      // user's console, and the try/catch above does not cover it.
+      audioCtx.close().catch(() => {});
       return info;
     } catch {
       return { supported: false, error: true };

@@ -29,7 +29,10 @@ export class ViolationReporter {
     this.debug = config.debug ?? false;
 
     const flushInterval = config.flushInterval ?? 5000;
-    this.flushTimer = setInterval(() => this.flush(), flushInterval);
+    // flush() catches everything internally and never rejects, so `void` is the
+    // whole handling. Said out loud because a timer whose callback rejects
+    // keeps firing and every tick adds another unhandled rejection.
+    this.flushTimer = setInterval(() => void this.flush(), flushInterval);
     if (this.flushTimer.unref) {
       this.flushTimer.unref();
     }
