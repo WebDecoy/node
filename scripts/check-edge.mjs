@@ -29,7 +29,7 @@ for (const entry of entries) {
       platform: 'browser',
       format: 'esm',
       logLevel: 'silent',
-      external: ['next', 'next/*', 'express', 'fastify', 'fastify-plugin'],
+      external: ['next', 'next/*', 'express', 'fastify', 'fastify-plugin', 'hono'],
     });
     console.log(`✓ edge-compatible: ${entry}`);
   } catch (error) {

@@ -90,7 +90,45 @@ app.use(
 );
 ```
 
-Fastify (`@webdecoy/fastify`) and Next.js (`@webdecoy/nextjs`) expose the same rule-based middleware.
+Fastify (`@webdecoy/fastify`), Next.js (`@webdecoy/nextjs`) and Hono (`@webdecoy/hono`) expose the same rule-based middleware.
+
+### Hono — Workers, Bun, Deno
+
+```bash
+npm install @webdecoy/hono
+```
+
+```typescript
+import { Hono } from 'hono';
+import { webdecoy } from '@webdecoy/hono';
+import { tripwire } from '@webdecoy/node';
+
+const app = new Hono();
+app.use('*', webdecoy({ rules: [tripwire()], skipPaths: ['/health'] }));
+```
+
+`c.get('webdecoy')` carries the decision — in monitor mode, which is the default,
+that is the only place the verdict surfaces.
+
+### Any other fetch runtime — no package needed
+
+Bun, Deno, Astro, Nitro, SvelteKit and Remix all hand you a WHATWG `Request` and
+want a `Response`. `createFetchGuard()` is the same implementation the Hono
+adapter wraps:
+
+```typescript
+import { createFetchGuard, tripwire } from '@webdecoy/node';
+
+const guard = createFetchGuard({ mode: 'enforce', rules: [tripwire()] });
+
+export default {
+  async fetch(request: Request): Promise<Response> {
+    const { response } = await guard.check(request);
+    if (response) return response;              // denied
+    return guard.decorate(await handle(request)); // injects the honeytoken link
+  },
+};
+```
 
 ## More local rules
 
@@ -203,6 +241,7 @@ if (!result.allowed) {
 | [@webdecoy/express](https://www.npmjs.com/package/@webdecoy/express) | [![npm](https://img.shields.io/npm/v/@webdecoy/express.svg)](https://www.npmjs.com/package/@webdecoy/express) | Express.js middleware |
 | [@webdecoy/fastify](https://www.npmjs.com/package/@webdecoy/fastify) | [![npm](https://img.shields.io/npm/v/@webdecoy/fastify.svg)](https://www.npmjs.com/package/@webdecoy/fastify) | Fastify plugin |
 | [@webdecoy/nextjs](https://www.npmjs.com/package/@webdecoy/nextjs) | [![npm](https://img.shields.io/npm/v/@webdecoy/nextjs.svg)](https://www.npmjs.com/package/@webdecoy/nextjs) | Next.js middleware |
+| [@webdecoy/hono](https://www.npmjs.com/package/@webdecoy/hono) | [![npm](https://img.shields.io/npm/v/@webdecoy/hono.svg)](https://www.npmjs.com/package/@webdecoy/hono) | Hono middleware (Workers, Bun, Deno) |
 | [@webdecoy/client](https://www.npmjs.com/package/@webdecoy/client) | [![npm](https://img.shields.io/npm/v/@webdecoy/client.svg)](https://www.npmjs.com/package/@webdecoy/client) | Browser-side signal collector |
 
 ## One bot policy, published and enforced

@@ -80,6 +80,12 @@ export type { EdgeClass, EdgeVerdict } from './edge';
 export { matchUserAgent, classifyUserAgent, BOT_REGISTRY, BOT_CATEGORIES } from './bots';
 export type { BotVerdict, BotAgent, BotCategory } from './bots';
 
+// A guard over WHATWG Request/Response — the one adapter that covers every
+// runtime with a fetch handler. `@webdecoy/hono` is a thin wrapper over it; Bun,
+// Deno, Astro and Nitro need no package at all.
+export { createFetchGuard } from './fetch-guard';
+export type { FetchGuard, FetchGuardOptions, GuardOutcome } from './fetch-guard';
+
 // Rules engine exports
 export {
   rateLimit,
