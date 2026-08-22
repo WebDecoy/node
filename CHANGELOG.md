@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Rate-limit counters can be shared.** `RateLimitRule` hard-constructed an in-memory `Map` with no seam to replace it, so on any deployment with more than one process the limit was effectively `max × instances` — and on Vercel or Lambda it reset on every cold start. `rateLimit({ store })` now takes a `RateLimitStore`.
+  - `upstashRateLimitStore({ url, token })` ships in the core package. Upstash speaks Redis over HTTP, which is the only shape that works on Vercel Edge, Workers and Deno, where an ordinary client cannot open a socket. It calls the REST API with `fetch` rather than depending on `@upstash/redis`.
+  - Fails open by default when Redis is unreachable; `onError: 'closed'` denies instead. Either way the outcome is visible in `decision.results`.
+  - `Rule` gained an optional `prepare(context)` that `protect()` awaits before evaluation — the same pre-fetch already used for IP enrichment and Web Bot Auth. `evaluate()` stays synchronous, so the default in-memory path is unchanged and allocation-free.
+  - The synchronous `evaluateRules()` cannot consume a networked store and now reports `NOT_RUN` for such a rule, rather than allowing silently. A rate limiter that has quietly stopped limiting looks identical to one that is working.
+
 - **`protect()` returns a typed decision.** It used to return `{ allowed, detection }`, and the adapters typed the value handed to `onBlocked` as `any`.
   - `conclusion: 'ALLOW' | 'DENY' | 'CHALLENGE' | 'ERROR'`, with `isAllowed()` / `isDenied()` / `isChallenged()` / `isErrored()` and `deniedBy(rule)`. `ERROR` is a distinct conclusion, so a caller can tell "allowed" from "never decided" — both still serve the request.
   - `results` — every configured rule in evaluation order with a `state` of `RUN`, `DRY_RUN`, `NOT_RUN` or `CACHED`. `NOT_RUN` is new information: a `filter()` rule with no IP enrichment, or a `webBotAuth()` rule on a request with no host, used to report ALLOW, which reads as "checked and fine" rather than "never checked". A dry-run rule that matched now reports `conclusion: 'DENY'` with `state: 'DRY_RUN'`, rather than the ALLOW its action said.

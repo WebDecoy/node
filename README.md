@@ -108,7 +108,7 @@ const wd = new WebDecoy({
 });
 ```
 
-- **`rateLimit({ max, window, algorithm?, action?, keyBy? })`** — fixed or sliding window, keyed by IP (or a custom function). No key.
+- **`rateLimit({ max, window, algorithm?, action?, keyBy?, store? })`** — fixed or sliding window, keyed by IP (or a custom function). No key. See [shared rate limits](#rate-limits-across-more-than-one-process) before you run two replicas.
 - **`tripwire({ paths?, prefixes?, patterns?, includeDefaults? })`** — deterministic honeypot-path detection. No key.
 - **`webBotAuth({ onImpersonation?, onClaimed?, allowCategories? })`** — verify AI-agent signatures (Web Bot Auth / RFC 9421) locally; deny impersonators of known agents. No key.
 - **`filter({ expression, action? })`** — an expression language over IP reputation/geo (e.g. `ip.tor`, `ip.country in ["CN", "RU"]`). Requires an API key for enrichment.
@@ -203,6 +203,40 @@ if (!result.allowed) {
 | [@webdecoy/fastify](https://www.npmjs.com/package/@webdecoy/fastify) | [![npm](https://img.shields.io/npm/v/@webdecoy/fastify.svg)](https://www.npmjs.com/package/@webdecoy/fastify) | Fastify plugin |
 | [@webdecoy/nextjs](https://www.npmjs.com/package/@webdecoy/nextjs) | [![npm](https://img.shields.io/npm/v/@webdecoy/nextjs.svg)](https://www.npmjs.com/package/@webdecoy/nextjs) | Next.js middleware |
 | [@webdecoy/client](https://www.npmjs.com/package/@webdecoy/client) | [![npm](https://img.shields.io/npm/v/@webdecoy/client.svg)](https://www.npmjs.com/package/@webdecoy/client) | Browser-side signal collector |
+
+## Rate limits across more than one process
+
+`rateLimit()` counts in this process's memory by default. That is correct for a
+single process and wrong the moment you run two: the effective limit becomes
+`max × instances`, and on Vercel or Lambda it also resets on every cold start.
+
+Point the rule at a shared store to make one limit one limit:
+
+```typescript
+import { rateLimit, upstashRateLimitStore } from '@webdecoy/node';
+
+const store = upstashRateLimitStore({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+
+const wd = new WebDecoy({
+  rules: [rateLimit({ max: 100, window: 60, store })],
+});
+```
+
+Upstash speaks Redis over HTTP, so this works on Vercel Edge, Cloudflare Workers
+and Deno, where an ordinary Redis client cannot open a socket. It uses `fetch`
+directly — no `@upstash/redis` dependency.
+
+If Redis is unreachable the store **fails open** and the request is allowed; pass
+`onError: 'closed'` to deny instead. Either way the outcome appears in
+`decision.results`, so it does not look like a normal evaluation.
+
+Any object implementing `RateLimitStore` works. A store that returns promises is
+consumed during `protect()`'s async pre-fetch; a `sync` store is consumed inline.
+The synchronous `evaluateRules()` cannot consume a networked store, and reports
+`NOT_RUN` rather than allowing silently.
 
 ## Client IP behind a proxy
 

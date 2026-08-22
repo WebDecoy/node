@@ -99,6 +99,9 @@ export {
   injectHoneytokenLink,
   isInjectableHtml,
   HONEYTOKEN_BASE_PATH,
+  MemoryRateLimitStore,
+  upstashRateLimitStore,
+  UpstashRateLimitStore,
 } from './rules';
 
 export type {
@@ -118,6 +121,11 @@ export type {
   HoneytokenLinkProps,
   ViolationEvent,
   IPEnrichmentData,
+  RateLimitStore,
+  SyncRateLimitStore,
+  RateLimitOutcome,
+  RateLimitConsume,
+  UpstashStoreOptions,
 } from './rules';
 
 // Local Web Bot Auth verification (RFC 9421, tag "web-bot-auth")
