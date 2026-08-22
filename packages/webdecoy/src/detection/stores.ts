@@ -59,7 +59,7 @@ export class InMemoryRateLimiter implements RateLimiter {
     const now = Date.now();
     const cutoff = now - windowSeconds * 1000;
 
-    let timestamps = (this.requests.get(key) ?? []).filter((t) => t > cutoff);
+    const timestamps = (this.requests.get(key) ?? []).filter((t) => t > cutoff);
 
     const count = timestamps.length;
     if (count >= maxRequests) {

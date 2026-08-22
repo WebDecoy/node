@@ -78,6 +78,10 @@ Run linter:
 npm run lint
 ```
 
+One flat config at the repo root (`eslint.config.mjs`) covers every package — don't add a per-package one. The ruleset is deliberately narrow, because type checking is TypeScript's job and formatting is Prettier's; what's left is the class of thing neither catches.
+
+`@typescript-eslint/no-explicit-any` is a **warning** under a per-package budget, set in each package's lint script (`eslint src --max-warnings N`). CI fails if the count grows, so a new `any` needs either a real type or a deliberate decision to raise the number. Lower it when you remove one.
+
 Format code:
 
 ```bash
