@@ -62,7 +62,15 @@ function normalizeQuery(query: Request['query']): Record<string, string | undefi
 export function webdecoyCaptcha(options?: ExpressCaptchaOptions): RequestHandler {
   const endpoints = createCaptchaEndpoints(options);
 
-  return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    // Express 4 does not catch a rejected promise from a handler, so an async
+    // handler that throws leaves the request hanging until the client times out
+    // and logs an unhandled rejection instead of a 500. Kept synchronous, with
+    // the rejection routed to the error middleware explicitly.
+    void handle(req, res, next).catch(next);
+  };
+
+  async function handle(req: Request, res: Response, next: NextFunction): Promise<void> {
     const result = await endpoints.handle({
       method: req.method,
       pathname: req.path,
@@ -80,5 +88,5 @@ export function webdecoyCaptcha(options?: ExpressCaptchaOptions): RequestHandler
     res.status(result.status);
     for (const [k, v] of Object.entries(result.headers)) res.setHeader(k, v);
     res.json(result.body);
-  };
+  }
 }

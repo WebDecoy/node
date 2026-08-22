@@ -108,7 +108,12 @@ export class InvisibleSession {
   }
 
   private _attachToForms(): void {
-    document.addEventListener('submit', async (e) => {
+    // Deliberately a SYNCHRONOUS listener. `e.preventDefault()` below only
+    // works because nothing has awaited yet — once the handler yields, the
+    // browser has already submitted the form and cancelling is a no-op. An
+    // async listener made that a one-line change away from silently breaking,
+    // with no test that would notice.
+    document.addEventListener('submit', (e) => {
       const form = e.target as HTMLFormElement;
       if (form.dataset.webdecoyIgnore) return;
 
@@ -122,26 +127,33 @@ export class InvisibleSession {
 
       if (!this.lastScore || Date.now() - this.lastScore.timestamp > 60000) {
         e.preventDefault();
-
-        try {
-          const result = await this.execute(form.dataset.webdecoyAction || 'form_submit');
-          tokenField.value = result.token || '';
-
-          if (result.success) {
-            form.submit();
-          } else {
-            document.dispatchEvent(
-              new CustomEvent('webdecoy:blocked', { detail: { score: result.score, form } }),
-            );
-          }
-        } catch (error) {
-          console.error('WebDecoy captcha error:', error);
-          form.submit(); // Fail open
-        }
+        void this._scoreThenSubmit(form, tokenField);
       } else {
         tokenField.value = this.lastScore.token || '';
       }
     });
+  }
+
+  /** Score the session, then resubmit the form the listener cancelled. */
+  private async _scoreThenSubmit(
+    form: HTMLFormElement,
+    tokenField: HTMLInputElement,
+  ): Promise<void> {
+    try {
+      const result = await this.execute(form.dataset.webdecoyAction || 'form_submit');
+      tokenField.value = result.token || '';
+
+      if (result.success) {
+        form.submit();
+      } else {
+        document.dispatchEvent(
+          new CustomEvent('webdecoy:blocked', { detail: { score: result.score, form } }),
+        );
+      }
+    } catch (error) {
+      console.error('WebDecoy captcha error:', error);
+      form.submit(); // Fail open
+    }
   }
 
   async execute(action = ''): Promise<VerifyResponse> {

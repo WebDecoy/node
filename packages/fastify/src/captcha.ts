@@ -18,6 +18,9 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import fp from 'fastify-plugin';
 import { createCaptchaEndpoints, type CaptchaEndpointsOptions } from '@webdecoy/node';
 
+// fastify-plugin's async contract: the signature is what marks this a plugin,
+// not the body, so there is nothing here to await.
+// eslint-disable-next-line @typescript-eslint/require-await
 async function plugin(fastify: FastifyInstance, options: CaptchaEndpointsOptions): Promise<void> {
   const endpoints = createCaptchaEndpoints(options);
 

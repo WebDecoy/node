@@ -82,6 +82,10 @@ One flat config at the repo root (`eslint.config.mjs`) covers every package — 
 
 `@typescript-eslint/no-explicit-any` is a **warning** under a per-package budget, set in each package's lint script (`eslint src --max-warnings N`). CI fails if the count grows, so a new `any` needs either a real type or a deliberate decision to raise the number. Lower it when you remove one.
 
+Four **type-aware** rules run on `src` (not on tests): `no-floating-promises`, `no-misused-promises`, `await-thenable`, `require-await`. They need a TypeScript program and are slower, so the set is deliberately small — these catch things `tsc` does not, and the rest of `recommendedTypeChecked` mostly duplicates `strict` at the cost of a large style backlog.
+
+`no-floating-promises` is the one that earns its keep here. This SDK does a lot of deliberate fire-and-forget — violation reporting, honeytoken derivation, directory warmup — and an accidental one looks identical to an intentional one. Mark the deliberate ones with `void`, and say in a comment why the rejection is safe to drop.
+
 Format code:
 
 ```bash
