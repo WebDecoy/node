@@ -302,3 +302,42 @@ describe('resolveClientIp', () => {
     });
   });
 });
+
+describe('the single-header fallback', () => {
+  it('uses X-Real-IP when a proxy is declared but sends no chain', () => {
+    // nginx's default: X-Real-IP and no X-Forwarded-For.
+    const ip = resolveClientIp({
+      headers: h({ 'x-real-ip': '203.0.113.9' }),
+      peer: '10.0.0.1',
+      trustProxy: 1,
+    });
+    expect(ip).toBe('203.0.113.9');
+  });
+
+  it('takes the last value of the platform header, not the first', () => {
+    const ip = resolveClientIp({
+      headers: h({ 'x-vercel-forwarded-for': '1.2.3.4, 203.0.113.9' }),
+      trustProxy: 1,
+    });
+    expect(ip).toBe('203.0.113.9');
+  });
+
+  it('prefers a real forwarding chain over either', () => {
+    const ip = resolveClientIp({
+      headers: h({ 'x-forwarded-for': '198.51.100.7', 'x-real-ip': '203.0.113.9' }),
+      peer: '10.0.0.1',
+      trustProxy: 1,
+    });
+    expect(ip).toBe('198.51.100.7');
+  });
+
+  it('ignores both when no proxy is declared', () => {
+    // Under trustProxy: false we read no forwarding header at all. X-Real-IP is
+    // exactly as forgeable as the rest of them.
+    const ip = resolveClientIp({
+      headers: h({ 'x-real-ip': '1.2.3.4' }),
+      peer: '198.51.100.7',
+    });
+    expect(ip).toBe('198.51.100.7');
+  });
+});

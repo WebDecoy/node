@@ -262,14 +262,27 @@ export function resolveClientIp(options: ResolveClientIpOptions): string | undef
 
   const chain = forwardedChain(headers);
 
+  // A proxy that sets only `X-Real-IP` (nginx's default) or the platform's own
+  // header, with no forwarding chain to walk. Consulted here rather than in each
+  // adapter so there is one place that decides what counts as the client — the
+  // adapters reading these themselves is how the leftmost-XFF bug came to live
+  // in three copies.
+  //
+  // Only when the caller has said a proxy exists. Under `false` we read no
+  // forwarding header at all, and these are as forgeable as the rest.
+  const singleHeaderFallback = (): string | undefined =>
+    normalizeIp(readHeader(headers, 'x-real-ip')) ??
+    normalizeIp(readHeader(headers, 'x-vercel-forwarded-for')?.split(',').pop()) ??
+    undefined;
+
   if (typeof trustProxy === 'number') {
     if (!Number.isInteger(trustProxy) || trustProxy < 0) return peer;
     // The client is the Nth entry from the right. A chain shorter than the
     // configured depth means the request did not arrive the way the operator
     // described it, so we believe none of it.
     const index = chain.length - trustProxy;
-    if (index < 0 || index >= chain.length) return peer;
-    return chain[index] ?? peer;
+    if (index < 0 || index >= chain.length) return singleHeaderFallback() ?? peer;
+    return chain[index] ?? singleHeaderFallback() ?? peer;
   }
 
   // CIDR list: walk right to left, past addresses that belong to us. `peer`
@@ -284,5 +297,5 @@ export function resolveClientIp(options: ResolveClientIpOptions): string | undef
   }
   // Every hop was trusted, which means the outermost one is as far as the chain
   // goes — that address is the client.
-  return (full[0] ?? undefined) ?? peer;
+  return (full[0] ?? undefined) ?? singleHeaderFallback() ?? peer;
 }
