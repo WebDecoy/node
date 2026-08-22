@@ -199,6 +199,8 @@ export class WebDecoy {
       method: metadata.method,
       userAgent: metadata.user_agent,
       headers: metadata.headers,
+      query: metadata.query,
+      body: metadata.body,
       timestamp: metadata.timestamp || Date.now(),
       // Parsed synchronously and unconditionally: it is two header reads,
       // it needs no network, and a rule that has to check whether the edge

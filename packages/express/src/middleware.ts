@@ -256,6 +256,11 @@ export function webdecoy(
         ip: getIP(req),
         user_agent: req.headers['user-agent'],
         headers: req.headers as Record<string, string>,
+        // `req.path` excludes the query, which is where injection payloads
+        // live, so attackSignatures() cannot see them without this.
+        query: req.originalUrl.includes('?')
+          ? req.originalUrl.slice(req.originalUrl.indexOf('?') + 1)
+          : undefined,
         timestamp: Date.now(),
       };
 

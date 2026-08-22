@@ -22,6 +22,10 @@ export interface RuleContext {
   userAgent?: string;
   /** Request headers (lowercase keys) */
   headers: Record<string, string>;
+  /** Raw query string, without the leading `?`. */
+  query?: string;
+  /** Request body as text, when the application supplied one. */
+  body?: string;
   /** Request timestamp */
   timestamp: number;
   /** IP enrichment data (populated async when available) */

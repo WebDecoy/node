@@ -112,6 +112,7 @@ const wd = new WebDecoy({
 - **`tripwire({ paths?, prefixes?, patterns?, includeDefaults? })`** — deterministic honeypot-path detection. No key.
 - **`webBotAuth({ onImpersonation?, onClaimed?, allowCategories? })`** — verify AI-agent signatures (Web Bot Auth / RFC 9421) locally; deny impersonators of known agents. No key.
 - **`filter({ expression, action? })`** — an expression language over IP reputation/geo (e.g. `ip.tor`, `ip.country in ["CN", "RU"]`). Requires an API key for enrichment.
+- **`attackSignatures({ inspect?, exclude?, action? })`** — deny requests carrying unambiguous injection payloads. No key. See [attack signatures](#attack-signatures).
 
 ## Verify AI agents (Web Bot Auth)
 
@@ -203,6 +204,67 @@ if (!result.allowed) {
 | [@webdecoy/fastify](https://www.npmjs.com/package/@webdecoy/fastify) | [![npm](https://img.shields.io/npm/v/@webdecoy/fastify.svg)](https://www.npmjs.com/package/@webdecoy/fastify) | Fastify plugin |
 | [@webdecoy/nextjs](https://www.npmjs.com/package/@webdecoy/nextjs) | [![npm](https://img.shields.io/npm/v/@webdecoy/nextjs.svg)](https://www.npmjs.com/package/@webdecoy/nextjs) | Next.js middleware |
 | [@webdecoy/client](https://www.npmjs.com/package/@webdecoy/client) | [![npm](https://img.shields.io/npm/v/@webdecoy/client.svg)](https://www.npmjs.com/package/@webdecoy/client) | Browser-side signal collector |
+
+## One bot policy, published and enforced
+
+`botPolicy()` produces both the `robots.txt` you publish and the rule that
+enforces it, from one object — so they cannot drift:
+
+```typescript
+import { WebDecoy, botPolicy } from '@webdecoy/node';
+
+const policy = botPolicy({
+  deny: ['training_crawler'],     // or 'ai', a category, or an agent name
+  allow: ['perplexitybot'],
+});
+
+app.get('/robots.txt', (_req, res) => res.type('text/plain').send(policy.robotsTxt()));
+
+const wd = new WebDecoy({ rules: [policy.rule()] });
+```
+
+A `robots.txt` that disallows GPTBot while the middleware lets it through is a
+policy you believe is in force and is not. The reverse — enforcing against a
+crawler the published file invites — is how a site quietly leaves a search index.
+
+`robots.txt` is a request, honoured at the crawler's discretion. The registry
+records whether each operator *documents* honouring it, and the generated file
+names the ones in your deny set that do not:
+
+```
+# These do not document honouring robots.txt, so the lines below are a
+# request only. The bots() rule is what actually stops them:
+#   ByteSpider (ByteDance)
+#   Webz.io (Webz.io)
+```
+
+`policy.unenforceable` is the same list, in code. Requires no API key.
+
+## Attack signatures
+
+Tripwires catch scanners by the path they ask for. `attackSignatures()` looks at
+what they send:
+
+```typescript
+attackSignatures({
+  inspect: ['path', 'query'],  // default; 'body' and 'headers' are opt-in
+  exclude: ['traversal'],      // signature ids
+  dryRun: false,
+});
+```
+
+**This is not a WAF, and should not become one.** A WAF's value is breadth, and
+breadth is bought with false positives. This is a small curated set — SQL
+injection, XSS, traversal, command injection, `${jndi:` — chosen because each has
+no innocent reading in a path or query string. It composes with the deterministic
+signals: a request carrying an injection payload *and* walking into a tripwire is
+much stronger evidence than either alone.
+
+Bodies and headers are off by default, because a CMS saving an article and a URL
+passed as a query parameter both legitimately contain things that look like
+attacks. Turn them on with `dryRun: true` first. The `Cookie` header is never
+inspected at all — session tokens are opaque, and one that trips a signature logs
+a user out for a reason nobody can explain.
 
 ## Rate limits across more than one process
 
