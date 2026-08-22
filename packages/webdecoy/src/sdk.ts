@@ -12,6 +12,8 @@ import { IPEnrichmentClient } from './ip-enrichment';
 import { AgentVerifier } from './agent/verifier';
 import type { AgentRequestInput, AgentVerdict } from './agent/types';
 import { readEdgeVerdict } from './edge';
+import { resolveLogger } from './logger';
+import type { Logger } from './logger';
 import { Decision, newDecisionId } from './decision';
 import type { Conclusion } from './decision';
 import { deriveKey, DEFAULT_CHARACTERISTICS } from './characteristics';
@@ -31,7 +33,7 @@ export class WebDecoy {
   private client: WebDecoyClient | null;
   private config: Omit<
     Required<WebDecoyConfig>,
-    'apiKey' | 'rules' | 'webBotAuth' | 'characteristics' | 'decisionCache'
+    'apiKey' | 'rules' | 'webBotAuth' | 'characteristics' | 'decisionCache' | 'logger'
   > & {
     apiKey?: string;
   };
@@ -44,6 +46,8 @@ export class WebDecoy {
   private agentVerifier: AgentVerifier | null = null;
   private readonly webBotAuthOptions?: WebDecoyConfig['webBotAuth'];
   private readonly characteristics: readonly import('./characteristics').Characteristic[];
+  /** Where diagnostics go. Never console directly — see logger.ts. */
+  readonly log: Logger;
   private readonly decisionCache: DecisionCache | null;
 
   constructor(config: WebDecoyConfig) {
@@ -69,6 +73,8 @@ export class WebDecoy {
       tlsRejectUnauthorized: config.tlsRejectUnauthorized ?? true,
     };
 
+    this.log = resolveLogger(config.logger, this.config.debug);
+
     // Initialize API client only when apiKey is provided
     if (hasApiKey) {
       this.client = new WebDecoyClient({
@@ -80,9 +86,7 @@ export class WebDecoy {
       });
     } else {
       this.client = null;
-      if (this.config.debug) {
-        console.log('[WebDecoy] Running in local-only mode (no API key). Rules will still evaluate.');
-      }
+      this.log.info('Running in local-only mode (no API key). Rules will still evaluate.');
     }
 
     this.webBotAuthOptions = config.webBotAuth;
@@ -141,15 +145,13 @@ export class WebDecoy {
       this.setViolationReporter(reporter);
     }
 
-    if (this.config.debug) {
-      console.log('[WebDecoy] Initialized with config:', {
-        apiUrl: this.config.apiUrl,
-        enableTLSFingerprinting: this.config.enableTLSFingerprinting,
-        threatScoreThreshold: this.config.threatScoreThreshold,
-        hasApiKey,
-        rulesCount: rules.length,
-      });
-    }
+    this.log.debug('Initialized', {
+      apiUrl: this.config.apiUrl,
+      enableTLSFingerprinting: this.config.enableTLSFingerprinting,
+      threatScoreThreshold: this.config.threatScoreThreshold,
+      hasApiKey,
+      rulesCount: rules.length,
+    });
   }
 
   /**
@@ -441,9 +443,7 @@ export class WebDecoy {
           }
         : analyzeRequest(metadata);
 
-      if (this.config.debug) {
-        console.log('[WebDecoy] Local analysis result:', localAnalysis);
-      }
+      this.log.debug('Local analysis', { ...localAnalysis });
 
       // Build detection request
       const detectionRequest: SDKDetectionRequest = {
@@ -483,13 +483,11 @@ export class WebDecoy {
       const threshold = options.threshold ?? this.config.threatScoreThreshold;
       const allowed = detection.decision === 'allow' || detection.confidence < threshold;
 
-      if (this.config.debug) {
-        console.log('[WebDecoy] Server detection result:', {
-          decision: detection.decision,
-          confidence: detection.confidence,
-          allowed,
-        });
-      }
+      this.log.debug('Server detection', {
+        decision: detection.decision,
+        confidence: detection.confidence,
+        allowed,
+      });
 
       // A server verdict of "challenge" is the one case that can route to the
       // captcha, and it only counts when the score cleared the threshold —
@@ -518,10 +516,11 @@ export class WebDecoy {
 
       return decision;
     } catch (error) {
-      // Log error if debug is enabled
-      if (this.config.debug) {
-        console.error('[WebDecoy] Protection error:', error);
-      }
+      // An error here means no verdict was reached, which the operator wants to
+      // know about whether or not they turned debug on.
+      this.log.error('Protection error', {
+        error: error instanceof Error ? error.message : String(error),
+      });
 
       // Fail open: a security control that takes the site down when it has a
       // bad day is worse than the traffic it was filtering. ERROR is a distinct

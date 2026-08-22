@@ -444,6 +444,42 @@ missing that field together.
 
 All TypeScript types are exported (`WebDecoyConfig`, `RequestMetadata`, `ProtectResult`, `Rule`, `TripwireConfig`, `RateLimitConfig`, `FilterConfig`, `Honeytoken`, …).
 
+## Testing your rules
+
+```typescript
+import { createTestHarness, get, expectDenied, expectAllowed } from '@webdecoy/node/testing';
+import { tripwire } from '@webdecoy/node';
+
+const wd = createTestHarness({ rules: [tripwire()] });
+
+test('a scanner is denied and a visitor is not', async () => {
+  expectDenied(await wd.protect(get('/.env')), { rule: 'tripwire' });
+  expectAllowed(await wd.protect(get('/')));
+});
+```
+
+The harness is **offline by default** — an API key in the environment is ignored
+unless you pass `allowNetwork: true`, so a unit test never turns into a live call
+or files test traffic as a real detection. Each harness gets its own rule state,
+so rate-limit counters do not leak between cases.
+
+`protectMany(sdk, request, n)` runs a rate limit to its edge without sleeping.
+Assertion failures print every rule and its state, because "expected false to be
+true" tells you nothing about which of six rules was supposed to fire.
+
+## Logging
+
+Diagnostics default to `console`, with everything below `warn` gated on `debug`.
+Pass any object with `debug`/`info`/`warn`/`error`:
+
+```typescript
+new WebDecoy({ logger: myLogger });
+new WebDecoy({ logger: fromPino(pino()) });  // pino's argument order is reversed
+```
+
+`fromPino()` exists because passing a pino instance directly type-checks and then
+silently drops every structured field.
+
 ## Examples
 
 See [examples](./examples) for complete working setups — e.g. [express-basic](./examples/express-basic).

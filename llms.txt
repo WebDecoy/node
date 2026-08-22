@@ -1,0 +1,140 @@
+# WebDecoy Node SDK
+
+> Deterministic bot detection for Node.js, Express, Fastify, Next.js and Hono.
+> Catches scrapers with honeypot paths rather than fingerprinting. The local
+> rules need no account, no API key and no network.
+
+The core idea: a hidden path a real user can never reach, so any request for it
+is automated *by construction*. That detects intent, which a better fingerprint
+cannot spoof away. Fingerprint- and challenge-based detection loses to
+purpose-built stealth scrapers; a tripwire does not.
+
+## Install and verify in three lines
+
+```bash
+npm install @webdecoy/express
+```
+
+```typescript
+import express from 'express';
+import { webdecoy } from '@webdecoy/express';
+import { tripwire, rateLimit } from '@webdecoy/node';
+
+const app = express();
+
+app.use(webdecoy({
+  rules: [tripwire(), rateLimit({ max: 100, window: 60 })],
+  skipPaths: ['/health'],
+}));
+```
+
+Confirm it works:
+
+```bash
+curl -A "WebDecoy-Test/1.0" http://localhost:3000/
+```
+
+That User-Agent is reserved. It always produces a labelled test detection
+through the real pipeline, and is excluded from stats, billing and enforcement.
+Without an API key the verdict says so rather than pretending the test reached a
+dashboard.
+
+## Packages
+
+- `@webdecoy/node` — core SDK, all rules, `createFetchGuard()`
+- `@webdecoy/express` — Express middleware
+- `@webdecoy/fastify` — Fastify plugin
+- `@webdecoy/nextjs` — Next.js middleware
+- `@webdecoy/hono` — Hono middleware (Cloudflare Workers, Bun, Deno)
+- `@webdecoy/client` — browser signal collector and proof-of-work captcha
+- `@webdecoy/node/testing` — test-suite helpers, offline by default
+
+For Bun, Deno, Astro, Nitro, SvelteKit or Remix use `createFetchGuard()` from
+`@webdecoy/node` directly — no adapter package needed.
+
+## Rules
+
+All local, all keyless unless noted. First DENY or THROTTLE wins.
+
+- `tripwire({ paths?, prefixes?, patterns?, includeDefaults? })` — honeypot
+  paths. On by default when no rules are configured.
+- `rateLimit({ max, window, algorithm?, keyBy?, store? })` — fixed or sliding
+  window. In-process by default; pass `upstashRateLimitStore()` when running
+  more than one replica, or the limit becomes `max × instances`.
+- `bots({ categories?, agents?, ai?, allow? })` — act on self-declared agents.
+- `botPolicy({ deny, allow })` — one object producing both `robotsTxt()` and
+  `rule()`, so the published policy and the enforced one cannot drift.
+- `webBotAuth()` — verify AI-agent HTTP signatures locally (RFC 9421). Denies
+  impersonation of known agents.
+- `attackSignatures({ inspect?, exclude? })` — a small curated set of injection
+  payloads. Not a WAF, and should not be described as one.
+- `filter({ expression })` — expression language over IP reputation and geo.
+  **Requires an API key** for enrichment.
+- `honeytoken()` / `siteHoneytoken()` — the hidden decoy link a tripwire guards.
+  The framework middleware injects it automatically when an API key is present.
+
+## Config that matters
+
+```typescript
+new WebDecoy({
+  apiKey: process.env.WEBDECOY_API_KEY,  // optional; local rules work without it
+  rules: [...],
+  characteristics: ['ip'],               // what counts as the same caller
+  decisionCache: { ttl: 60_000 },        // reuse of server-derived denials
+  logger: myLogger,                      // defaults to console, gated on debug
+});
+```
+
+Middleware options: `mode` (`'monitor'` default, `'enforce'` to block),
+`skipPaths`, `trustProxy`, `getIP`, `onBlocked`, `honeytoken`.
+
+## What `protect()` returns
+
+```typescript
+const d = await wd.protect(metadata);
+
+d.conclusion            // 'ALLOW' | 'DENY' | 'CHALLENGE' | 'ERROR'
+d.allowed               // true for ALLOW and ERROR (fail open)
+d.deniedBy('tripwire')  // which rule, without string-matching
+d.results               // every rule: RUN | DRY_RUN | NOT_RUN | CACHED
+d.id                    // 'dec_…'
+```
+
+`ERROR` means no verdict was reached; the request is served anyway.
+
+The same object is on `req.webdecoyDecision` (Express, Fastify, Next.js) and
+`c.get('webdecoyDecision')` (Hono), in monitor mode too. `req.webdecoy` is the
+older, narrower detection response.
+
+## Things to get right
+
+- **Default to `mode: 'monitor'`.** Do not enable enforce on a first install.
+  Nobody adopts a defence that breaks their site on day one.
+- **Set `trustProxy` if the app is behind a proxy.** Forwarding headers are not
+  believed by default, because the client writes the leftmost value. Express and
+  Fastify defer to the framework's own trust-proxy setting; Next.js defaults to
+  one hop.
+- **`filter()` needs an API key.** Without enrichment it reports `NOT_RUN`.
+- **Rate limits are per-process** unless given a shared store.
+- **`attackSignatures()` inspects path and query only** by default. Turn on
+  bodies or headers with `dryRun: true` first.
+
+## Testing an install
+
+```typescript
+import { createTestHarness, get, expectDenied, expectAllowed } from '@webdecoy/node/testing';
+
+const wd = createTestHarness({ rules: [tripwire()] });
+expectDenied(await wd.protect(get('/.env')), { rule: 'tripwire' });
+expectAllowed(await wd.protect(get('/')));
+```
+
+Offline by default: an API key in the environment is ignored unless
+`allowNetwork: true`, so a unit test never files traffic as a real detection.
+
+## Links
+
+- README: https://github.com/WebDecoy/node#readme
+- Web Bot Auth guide: https://github.com/WebDecoy/node/blob/main/docs/verify-ai-agents-web-bot-auth.md
+- Dashboard: https://app.webdecoy.com
+- Docs: https://docs.webdecoy.com

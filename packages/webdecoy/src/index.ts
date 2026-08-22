@@ -83,6 +83,9 @@ export type { BotVerdict, BotAgent, BotCategory } from './bots';
 // A guard over WHATWG Request/Response — the one adapter that covers every
 // runtime with a fetch handler. `@webdecoy/hono` is a thin wrapper over it; Bun,
 // Deno, Astro and Nitro need no package at all.
+export { consoleLogger, silentLogger, fromPino } from './logger';
+export type { Logger, LogFields } from './logger';
+
 export { createFetchGuard } from './fetch-guard';
 export type { FetchGuard, FetchGuardOptions, GuardOutcome } from './fetch-guard';
 

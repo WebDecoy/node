@@ -347,7 +347,12 @@ export function webdecoy(
       // rules". An earlier draft of this put the check after them and would
       // have shipped exactly the bug it exists to fix.
       if (mode === 'monitor') {
-        (req as any).webdecoy = result.detection;
+        // `webdecoy` is the detection response and has been since 0.1, so it
+        // stays what it is. `webdecoyDecision` is the full typed verdict —
+        // conclusion, every rule's outcome, deniedBy() — and carries the same
+        // name in every adapter, which `webdecoy` cannot.
+        req.webdecoy = result.detection;
+        req.webdecoyDecision = result;
         (req as any).webdecoyEdge = result.edge;
         (req as any).webdecoyWouldBlock = !result.allowed;
         return next();
@@ -381,7 +386,12 @@ export function webdecoy(
       // Handle the result
       if (result.allowed) {
         // Attach detection info to request for downstream use
-        (req as any).webdecoy = result.detection;
+        // `webdecoy` is the detection response and has been since 0.1, so it
+        // stays what it is. `webdecoyDecision` is the full typed verdict —
+        // conclusion, every rule's outcome, deniedBy() — and carries the same
+        // name in every adapter, which `webdecoy` cannot.
+        req.webdecoy = result.detection;
+        req.webdecoyDecision = result;
         // And what the edge validator said, typed. A handler can branch on
         // req.webdecoyEdge.isScript instead of string-matching x-wd-class, and
         // `present: false` tells it the edge was never in front of this request —
@@ -415,6 +425,13 @@ declare global {
         detection_id: string;
         rule_enforced: boolean;
       };
+      /**
+       * The full typed verdict: `conclusion`, every rule's outcome including the
+       * ones that dry-ran or never ran, and `deniedBy()`. Populated in monitor
+       * mode too, which is where it matters — that is the only place a verdict
+       * surfaces when nothing is blocked.
+       */
+      webdecoyDecision?: import('@webdecoy/node').ProtectResult;
       /** What the edge validator said about this request. */
       webdecoyEdge?: EdgeVerdict;
     }
