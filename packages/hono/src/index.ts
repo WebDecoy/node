@@ -45,6 +45,7 @@ export const WEBDECOY_CONTEXT_KEY = 'webdecoy';
 declare module 'hono' {
   interface ContextVariableMap {
     webdecoy?: Decision;
+    webdecoyDecision?: Decision;
   }
 }
 
@@ -64,6 +65,9 @@ export function webdecoy(options: WebDecoyHonoOptions = {}): MiddlewareHandler {
     // and `trustProxy: 'cloudflare'` is the stronger choice behind Cloudflare.
     const { decision, response } = await guard.check(c.req.raw);
     c.set(WEBDECOY_CONTEXT_KEY, decision);
+    // The same value under the name the Node adapters use, so documentation and
+    // application code do not have to branch on which framework they are in.
+    c.set('webdecoyDecision', decision);
 
     if (response) {
       return onBlocked ? await onBlocked(c, decision) : response;

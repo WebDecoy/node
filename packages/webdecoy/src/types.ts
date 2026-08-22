@@ -7,6 +7,7 @@ import type { Rule } from './rules/types';
 import type { AgentVerifierOptions } from './agent/types';
 import type { Characteristic } from './characteristics';
 import type { DecisionCacheOptions } from './decision-cache';
+import type { Logger } from './logger';
 
 export type { ProtectResult, Conclusion, RuleState, RuleOutcome } from './decision';
 
@@ -97,6 +98,17 @@ export interface WebDecoyConfig {
    * @default { ttl: 60_000, max: 10_000 }
    */
   decisionCache?: DecisionCacheOptions | false;
+
+  /**
+   * Where the SDK's diagnostics go. Defaults to `console`, gated on `debug` for
+   * everything below `warn`.
+   *
+   * Any object with `debug`/`info`/`warn`/`error` taking `(message, fields?)`
+   * works. For a pino-style logger, whose argument order is the other way
+   * round, wrap it with `fromPino()` — passing one directly type-checks and then
+   * silently drops every structured field.
+   */
+  logger?: Logger;
 }
 
 /**

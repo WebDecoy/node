@@ -186,6 +186,13 @@ interface WebDecoyDetection {
 declare module 'fastify' {
   interface FastifyRequest {
     webdecoy?: WebDecoyDetection;
+    /**
+     * The full typed verdict: `conclusion`, every rule's outcome including the
+     * ones that dry-ran or never ran, and `deniedBy()`. Populated in monitor
+     * mode too, which is where it matters — that is the only place a verdict
+     * surfaces when nothing is blocked.
+     */
+    webdecoyDecision?: ProtectResult;
     /** What the edge validator said about this request. */
     webdecoyEdge?: EdgeVerdict;
   }
@@ -288,7 +295,12 @@ async function webdecoyPluginImpl(
       // Monitor mode: record the verdict, change nothing. Checked before the
       // rule branches so a THROTTLE is an observation too.
       if (mode === 'monitor') {
+        // `webdecoy` is the detection response and has been since 0.1, so it
+        // stays what it is. `webdecoyDecision` is the full typed verdict —
+        // conclusion, every rule's outcome, deniedBy() — and carries the same
+        // name in every adapter, which `webdecoy` cannot.
         req.webdecoy = result.detection as WebDecoyDetection;
+        req.webdecoyDecision = result;
         req.webdecoyEdge = result.edge;
         return;
       }
@@ -321,7 +333,12 @@ async function webdecoyPluginImpl(
       // Handle the result
       if (result.allowed) {
         // Attach detection info to request for downstream use
+        // `webdecoy` is the detection response and has been since 0.1, so it
+        // stays what it is. `webdecoyDecision` is the full typed verdict —
+        // conclusion, every rule's outcome, deniedBy() — and carries the same
+        // name in every adapter, which `webdecoy` cannot.
         req.webdecoy = result.detection as WebDecoyDetection;
+        req.webdecoyDecision = result;
         req.webdecoyEdge = result.edge;
       } else {
         // Block the request

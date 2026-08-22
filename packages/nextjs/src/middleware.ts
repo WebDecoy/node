@@ -385,7 +385,14 @@ export function withBotProtection<T extends (...args: any[]) => any>(
       }
 
       // Attach detection info to request
-      (req as any).webdecoy = result.detection;
+      // See the adapters' note: `webdecoy` is the detection, `webdecoyDecision`
+      // is the full typed verdict and means the same thing everywhere.
+      const annotated = req as typeof req & {
+        webdecoy?: SDKDetectionResponse;
+        webdecoyDecision?: ProtectResult;
+      };
+      annotated.webdecoy = result.detection;
+      annotated.webdecoyDecision = result;
     } catch (error) {
       console.error('[WebDecoy] Protection error:', error);
       // Fail open
