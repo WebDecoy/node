@@ -20,7 +20,7 @@
     "test": "turbo run test",
     "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "check:edge": "npm run check:edge -w @webdecoy/node -w @webdecoy/nextjs"
+    "check:edge": "npm run check:edge -w @webdecoy/node -w @webdecoy/nextjs -w @webdecoy/hono"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
