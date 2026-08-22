@@ -279,6 +279,38 @@ names the ones in your deny set that do not:
 
 `policy.unenforceable` is the same list, in code. Requires no API key.
 
+## Catching a real browser that isn't a real user
+
+A Playwright-driven Chrome that browses only the links a human would presents a
+genuine fingerprint, follows no hidden links and requests no honeypot paths — the
+one thing a tripwire cannot see. What it cannot fake is having a person behind
+it.
+
+```typescript
+import { MemoryClientSignalStore, clientSignals, tripwire } from '@webdecoy/node';
+
+const signalStore = new MemoryClientSignalStore();
+
+app.use(webdecoyCaptcha({ secret: process.env.WEBDECOY_SECRET, signalStore }));
+app.use(webdecoy({
+  rules: [
+    tripwire(),                                          // intent — deterministic
+    clientSignals({ store: signalStore, dryRun: true }), // interaction — probabilistic
+  ],
+}));
+```
+
+`@webdecoy/client` collects behavioural, environmental and form signals in the
+browser; `/score` records the verdict against the session; `clientSignals()` acts
+on it for the requests that follow. Before this the score went back to the
+browser and the origin never learned anything from it.
+
+**A request with no session is `NOT_RUN`, never a denial** — curl and Googlebot
+both send nothing, and scoring silence would deny exactly the crawlers you most
+need to keep. This augments the keyless rules; it does not replace them.
+
+Full guide: [**Catching a real browser that isn't a real user**](docs/client-signals.md).
+
 ## Attack signatures
 
 Tripwires catch scanners by the path they ask for. `attackSignatures()` looks at
