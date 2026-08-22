@@ -13,6 +13,8 @@ import { AgentVerifier } from './agent/verifier';
 import type { AgentRequestInput, AgentVerdict } from './agent/types';
 import { readEdgeVerdict } from './edge';
 import { resolveLogger } from './logger';
+import { startSpan, setAttribute, recordError, endSpan } from './tracing';
+import type { Tracer } from './tracing';
 import type { Logger } from './logger';
 import { Decision, newDecisionId } from './decision';
 import type { Conclusion } from './decision';
@@ -33,7 +35,7 @@ export class WebDecoy {
   private client: WebDecoyClient | null;
   private config: Omit<
     Required<WebDecoyConfig>,
-    'apiKey' | 'rules' | 'webBotAuth' | 'characteristics' | 'decisionCache' | 'logger'
+    'apiKey' | 'rules' | 'webBotAuth' | 'characteristics' | 'decisionCache' | 'logger' | 'tracer'
   > & {
     apiKey?: string;
   };
@@ -48,6 +50,8 @@ export class WebDecoy {
   private readonly characteristics: readonly import('./characteristics').Characteristic[];
   /** Where diagnostics go. Never console directly — see logger.ts. */
   readonly log: Logger;
+  /** Optional OpenTelemetry tracer. Absent means no spans and no cost. */
+  private readonly tracer?: Tracer;
   private readonly decisionCache: DecisionCache | null;
 
   constructor(config: WebDecoyConfig) {
@@ -74,6 +78,7 @@ export class WebDecoy {
     };
 
     this.log = resolveLogger(config.logger, this.config.debug);
+    this.tracer = config.tracer;
 
     // Initialize API client only when apiKey is provided
     if (hasApiKey) {
@@ -253,7 +258,15 @@ export class WebDecoy {
   /** Evaluate rules against a prepared context and report any violations. */
   private runRules(context: RuleContext): RuleEngineResult | null {
     if (!this.ruleEngine) return null;
+
+    const span = startSpan(this.tracer, 'webdecoy.rules');
     const result = this.ruleEngine.evaluate(context);
+    setAttribute(span, 'webdecoy.rules.action', result.action);
+    setAttribute(span, 'webdecoy.rules.evaluated', result.results.length);
+    setAttribute(span, 'webdecoy.rules.violations', result.violations.length);
+    if (result.rule) setAttribute(span, 'webdecoy.rules.deciding', result.rule);
+    endSpan(span);
+
     if (result.violations.length > 0 && this.violationReporter) {
       this.violationReporter.report(result.violations);
     }
@@ -335,7 +348,41 @@ export class WebDecoy {
     // present on every outcome — and a per-return copy is a line someone would
     // eventually forget on the branch that mattered.
     const edge = readEdgeVerdict(metadata.headers);
-    return (await this.decide(metadata, options)).withEdge(edge);
+
+    const span = startSpan(this.tracer, 'webdecoy.protect');
+    try {
+      const decision = (await this.decide(metadata, options)).withEdge(edge);
+
+      // Attributes chosen so a trace answers the questions an operator actually
+      // asks: what did we decide, which rule decided it, and did this request
+      // cost a round trip to ingest. The decision id joins the span to the
+      // dashboard row.
+      setAttribute(span, 'webdecoy.decision.id', decision.id);
+      setAttribute(span, 'webdecoy.decision.conclusion', decision.conclusion);
+      setAttribute(span, 'webdecoy.decision.allowed', decision.allowed);
+      setAttribute(span, 'webdecoy.rules.evaluated', decision.results.length);
+      if (decision.ruleResult?.rule) {
+        setAttribute(span, 'webdecoy.decision.rule', decision.ruleResult.rule);
+      }
+      // A detection id that is not the decision id means the verdict came back
+      // from ingest rather than being settled locally.
+      setAttribute(
+        span,
+        'webdecoy.remote',
+        decision.detection.detection_id !== decision.id,
+      );
+      if (decision.error) {
+        setAttribute(span, 'webdecoy.error', decision.error);
+      }
+      return decision;
+    } catch (error) {
+      // decide() fails open rather than throwing, so this is a bug rather than
+      // a bad day — worth marking on the span rather than swallowing.
+      recordError(span, error);
+      throw error;
+    } finally {
+      endSpan(span);
+    }
   }
 
   private async decide(
