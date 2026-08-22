@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-08-22
+
 ### Added
 
 - **The client-signal path is wired end to end.** `@webdecoy/client` collected behavioural, environmental and form signals, `DetectionEngine` scored them, and `/score` returned a verdict — to the browser, which then forgot it. The origin never learned anything from the submission, and joining the two was left to the developer, so in practice nobody did. Now `createCaptchaEndpoints({ signalStore })` records the verdict against the browser's session, and `clientSignals({ store })` lets the requests that follow act on it. This is the SDK's answer to a Playwright-driven Chrome that browses only the links a human would: it has a genuine fingerprint and follows no hidden links, so no tripwire sees it, but it cannot fake having a person behind it. A request with no session is `NOT_RUN`, never a denial — curl and Googlebot both send nothing, and scoring silence would deny exactly the crawlers most worth keeping. Guide: `docs/client-signals.md`.
@@ -213,7 +215,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Contributing guidelines
 - MIT License
 
-[Unreleased]: https://github.com/WebDecoy/node/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/WebDecoy/node/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/WebDecoy/node/compare/v0.12.0...v0.13.0
 [0.12.0]: https://github.com/WebDecoy/node/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/WebDecoy/node/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/WebDecoy/node/compare/v0.10.0...v0.11.0
