@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-08-22
+
 ### Fixed
 
 - **The client IP is no longer taken from a header the client writes.** The Express and Next.js adapters read the leftmost `X-Forwarded-For` value and treated it as the caller's address. That value is supplied by the client on the first hop, so a single `-H 'X-Forwarded-For: 1.2.3.4'` bought a fresh rate-limit bucket per forged address, put an address of the caller's choosing on every violation reported to the dashboard, and reduced `filter({ expression: 'ip.tor or ip.vpn' })` to an opt-in check. The captcha endpoints in both adapters had the same flaw.
@@ -172,7 +174,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Contributing guidelines
 - MIT License
 
-[Unreleased]: https://github.com/WebDecoy/node/compare/v0.11.1...HEAD
+[Unreleased]: https://github.com/WebDecoy/node/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/WebDecoy/node/compare/v0.11.1...v0.12.0
 [0.11.1]: https://github.com/WebDecoy/node/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/WebDecoy/node/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/WebDecoy/node/compare/v0.9.0...v0.10.0
