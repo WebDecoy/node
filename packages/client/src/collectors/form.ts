@@ -156,13 +156,21 @@ export class FormAnalyzer {
   }
 
   _interceptFormSubmit(): void {
-    // Detect programmatic form.submit() calls
-    const self = this;
+    // Detect programmatic form.submit() calls.
+    //
+    // The replacement has to be a `function`, not an arrow: it needs the `this`
+    // of the call site, which is the form being submitted. An arrow closure
+    // carries the collector instance in instead, so the two are separated
+    // rather than aliased through `self`.
+    const record = (form: HTMLFormElement) => this._recordProgrammaticSubmit(form);
     const originalSubmit = HTMLFormElement.prototype.submit;
 
-    HTMLFormElement.prototype.submit = function (this: HTMLFormElement): void {
-      self._recordProgrammaticSubmit(this);
-      return originalSubmit.apply(this, arguments as unknown as []);
+    HTMLFormElement.prototype.submit = function (
+      this: HTMLFormElement,
+      ...args: unknown[]
+    ): void {
+      record(this);
+      return (originalSubmit as (...a: unknown[]) => void).apply(this, args);
     };
   }
 

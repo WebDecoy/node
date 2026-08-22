@@ -82,7 +82,7 @@ export class Parser {
   }
 
   private comparison(): ASTNode {
-    let left = this.primary();
+    const left = this.primary();
 
     // Check for comparison operators
     if (this.match(TokenType.EQ)) return { kind: 'binary', op: '==', left, right: this.primary() };
