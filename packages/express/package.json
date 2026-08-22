@@ -18,7 +18,7 @@
     "build": "tsup src/index.ts --format cjs,esm --dts --clean",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "test": "jest --passWithNoTests",
-    "lint": "eslint src --max-warnings 14",
+    "lint": "eslint src --max-warnings 12",
     "clean": "rm -rf dist"
   },
   "keywords": [

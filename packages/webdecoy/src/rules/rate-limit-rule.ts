@@ -28,7 +28,10 @@ export class RateLimitRule implements Rule {
   }
 
   evaluate(context: RuleContext): RuleResult {
-    const key = this.config.keyBy ? this.config.keyBy(context) : context.ip;
+    // Precedence: this rule's own keyBy, then the SDK-wide characteristics,
+    // then the IP. `context.key` is always populated, so the last fallback only
+    // matters for a context built by hand.
+    const key = this.config.keyBy ? this.config.keyBy(context) : (context.key ?? context.ip);
     const windowMs = this.config.window * 1000;
 
     const result =

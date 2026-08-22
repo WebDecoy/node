@@ -26,6 +26,19 @@ export class FilterRule implements Rule {
   }
 
   evaluate(context: RuleContext): RuleResult {
+    // Nearly every filter expression reads `ip.*`, which only exists once IP
+    // enrichment has been fetched — and that needs an API key. Without it the
+    // expression evaluates against nothing and quietly returns false, which
+    // reads as "checked, and this IP is fine". Say NOT_RUN instead.
+    if (!context.enrichment && this.expression.includes('ip.')) {
+      return {
+        action: 'ALLOW',
+        rule: this.name,
+        state: 'NOT_RUN',
+        reason: 'No IP enrichment available — filter needs an API key',
+      };
+    }
+
     const result = evaluate(this.ast, context);
 
     // If the filter expression evaluates to truthy, the rule triggers

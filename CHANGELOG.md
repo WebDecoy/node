@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **`protect()` returns a typed decision.** It used to return `{ allowed, detection }`, and the adapters typed the value handed to `onBlocked` as `any`.
+  - `conclusion: 'ALLOW' | 'DENY' | 'CHALLENGE' | 'ERROR'`, with `isAllowed()` / `isDenied()` / `isChallenged()` / `isErrored()` and `deniedBy(rule)`. `ERROR` is a distinct conclusion, so a caller can tell "allowed" from "never decided" — both still serve the request.
+  - `results` — every configured rule in evaluation order with a `state` of `RUN`, `DRY_RUN`, `NOT_RUN` or `CACHED`. `NOT_RUN` is new information: a `filter()` rule with no IP enrichment, or a `webBotAuth()` rule on a request with no host, used to report ALLOW, which reads as "checked and fine" rather than "never checked". A dry-run rule that matched now reports `conclusion: 'DENY'` with `state: 'DRY_RUN'`, rather than the ALLOW its action said.
+  - `id` — a random `dec_…` id, also stamped on `detection.detection_id`. The old `'rule_' + Date.now()` was not unique under concurrency and correlated with nothing.
+  - `onBlocked` receives the full decision as a trailing argument in all three adapters, and `detection` is typed. Existing handlers are unaffected.
+  - `allowed` is unchanged, including failing open on error, so existing middleware keeps working.
+
+- **`characteristics`** — what the SDK treats as the same caller, for keyed rules and the decision cache. Defaults to `['ip']`; accepts `'path'`, `'method'`, `'userAgent'`, or a function over the rule context. A rule's own `keyBy` still wins. When a characteristic is absent the key falls back to the IP, rather than bucketing every request missing that field into one bucket — which is how a limit meant for one tenant takes out anonymous traffic site-wide.
+
+- **Decision caching.** A server-derived `DENY` or `CHALLENGE` is reused for its TTL instead of re-asking the service about a caller it just answered for. Deliberately narrow: `ALLOW` is never cached (that is how a client that has since started misbehaving keeps sailing through, and it saves the cheap request), and rule outcomes are never cached (a rate limiter has to see every request, and a cached tripwire hit would stop the violation being reported). Configure with `decisionCache: { ttl, max }` or disable with `false`.
+
 ## [0.12.0] - 2026-08-22
 
 ### Fixed

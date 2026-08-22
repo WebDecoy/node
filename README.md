@@ -255,25 +255,57 @@ Additional local rules for the `rules` array. `filter()` requires an API key for
 
 Local Web Bot Auth verification (RFC 9421). `webBotAuth()` returns a `Rule` that denies agent impersonation; `detectBot(request)` returns the verdict directly for custom handling. See the [Web Bot Auth guide](docs/verify-ai-agents-web-bot-auth.md). Exported types: `AgentVerdict`, `AgentStatus`, `AgentCategory`, `WebBotAuthConfig`, `AgentVerifierOptions`, `SignedAgentDirectory`.
 
-### `protect(metadata, options?): Promise<ProtectResult>`
+### `protect(metadata, options?): Promise<Decision>`
 
-Full analysis of a request (platform feature). Returns a decision:
+Full analysis of a request. Returns a typed decision:
 
 ```typescript
-interface ProtectResult {
-  allowed: boolean;
-  detection: {
-    decision: 'allow' | 'block' | 'challenge';
-    confidence: number;      // 0–100 threat score
-    threat_level: 'MINIMAL' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-    bot_detected: boolean;
-    bot_type?: string;       // e.g. "curl", "selenium"
-    detection_id: string;
-    rule_enforced: boolean;
-  };
-  error?: string;
-}
+const d = await wd.protect(metadata);
+
+d.conclusion            // 'ALLOW' | 'DENY' | 'CHALLENGE' | 'ERROR'
+d.allowed               // true for ALLOW and ERROR (fail open)
+d.id                    // 'dec_…', correlates with the dashboard
+d.isDenied()            // narrowing helpers
+d.deniedBy('tripwire')  // which rule, without string-matching
+d.results               // every rule, in order, and what it concluded
+d.detection             // the service's response, as before
+d.edge                  // what the edge validator said
 ```
+
+`results` is the part worth knowing about. Every configured rule appears, with a
+`state`:
+
+| `state` | Meaning |
+|---|---|
+| `RUN` | Evaluated, and its conclusion counts. |
+| `DRY_RUN` | Evaluated; conclusion recorded but not enforced. |
+| `NOT_RUN` | Could not evaluate — a signal it needs was absent (a `filter()` with no IP enrichment, a `webBotAuth()` on a request with no host). |
+| `CACHED` | Not evaluated; a prior decision for this key was reused. |
+
+`NOT_RUN` is the one that used to be invisible: such a rule reported ALLOW, which
+reads as "checked and fine" rather than "never checked". A dry-run rule that
+matched reports `conclusion: 'DENY'` with `state: 'DRY_RUN'` — what it *would*
+have done is the reason you turned it on.
+
+`ERROR` is not a synonym for `DENY`. It means no verdict was reached, and the
+request is allowed through.
+
+### `characteristics` — what counts as the same caller
+
+Rate limits and the decision cache key on the client IP by default. On an
+authenticated API that is usually the wrong subject:
+
+```typescript
+const wd = new WebDecoy({
+  characteristics: [(ctx) => ctx.headers['x-api-key']],
+  rules: [rateLimit({ max: 100, window: 60 })],
+});
+```
+
+Built-ins are `'ip'`, `'path'`, `'method'`, `'userAgent'`; a function derives
+anything else. A rule's own `keyBy` still wins. If a characteristic is absent on
+a request the key falls back to the IP, rather than bucketing every request
+missing that field together.
 
 All TypeScript types are exported (`WebDecoyConfig`, `RequestMetadata`, `ProtectResult`, `Rule`, `TripwireConfig`, `RateLimitConfig`, `FilterConfig`, `Honeytoken`, …).
 

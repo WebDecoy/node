@@ -4,6 +4,7 @@
  */
 
 import { Rule, RuleContext, RuleResult, RuleEngineResult, ViolationEvent } from './types';
+import type { RuleOutcome } from '../decision';
 
 /** Pull the wd_clearance token from a request's Cookie header, if present. */
 function extractClearance(headers: Record<string, string>): string | undefined {
@@ -43,10 +44,30 @@ export class RuleEngine {
    */
   evaluate(context: RuleContext): RuleEngineResult {
     const violations: ViolationEvent[] = [];
+    const results: RuleOutcome[] = [];
     let decidingResult: RuleResult | null = null;
 
     for (const rule of this.rules) {
       const result = rule.evaluate(context);
+      const dryRun = result.metadata?.dryRun === true;
+
+      // Recorded for every rule, not only the ones that fired. A rule that
+      // allowed and a rule that never ran both used to leave no trace, and the
+      // difference between them is the difference between "checked and fine"
+      // and "never checked".
+      //
+      // A dry-run rule reports `action: 'ALLOW'` because it must not block, but
+      // its conclusion is DENY — that is the whole point of watching it. Reading
+      // the action alone would show every dry-run rule as passing, which is the
+      // opposite of what the operator turned it on to see.
+      results.push({
+        rule: result.rule,
+        state: result.state ?? (dryRun ? 'DRY_RUN' : 'RUN'),
+        conclusion: dryRun || result.action !== 'ALLOW' ? 'DENY' : 'ALLOW',
+        action: result.action,
+        reason: result.reason,
+        metadata: result.metadata,
+      });
 
       if (result.action !== 'ALLOW') {
         // Record violation. Tripwire hits (a real user can't reach a honeypot
@@ -62,12 +83,12 @@ export class RuleEngine {
           reason: result.reason,
           clearance: result.rule === 'tripwire' ? extractClearance(context.headers) : undefined,
           metadata: result.metadata,
-          dryRun: result.metadata?.dryRun === true,
+          dryRun,
           timestamp: new Date(context.timestamp).toISOString(),
         });
 
         // First non-ALLOW result that is not dry-run decides the outcome
-        if (!decidingResult && !result.metadata?.dryRun) {
+        if (!decidingResult && !dryRun) {
           decidingResult = result;
         }
       }
@@ -80,12 +101,14 @@ export class RuleEngine {
         reason: decidingResult.reason,
         metadata: decidingResult.metadata,
         violations,
+        results,
       };
     }
 
     return {
       action: 'ALLOW',
       violations,
+      results,
     };
   }
 

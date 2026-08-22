@@ -4,7 +4,11 @@
  */
 
 import type { Rule } from './rules/types';
-import type { AgentVerifierOptions, AgentVerdict } from './agent/types';
+import type { AgentVerifierOptions } from './agent/types';
+import type { Characteristic } from './characteristics';
+import type { DecisionCacheOptions } from './decision-cache';
+
+export type { ProtectResult, Conclusion, RuleState, RuleOutcome } from './decision';
 
 /**
  * Configuration options for the Web Decoy SDK
@@ -67,6 +71,32 @@ export interface WebDecoyConfig {
    * Defaults are sensible; override only to curate your own agent allowlist.
    */
   webBotAuth?: AgentVerifierOptions;
+
+  /**
+   * What counts as "the same caller" — the components of the key that keyed
+   * rules and the decision cache use.
+   *
+   * Defaults to `['ip']`. On an authenticated API the meaningful subject is
+   * usually not an address:
+   *
+   * ```ts
+   * characteristics: [(ctx) => ctx.headers['x-api-key']]
+   * ```
+   *
+   * A rule's own `keyBy` still wins over this. If a characteristic is absent on
+   * a request the key falls back to the IP rather than bucketing every such
+   * request together.
+   */
+  characteristics?: Characteristic[];
+
+  /**
+   * Reuse of decisions that cost a network round trip. `false` disables it.
+   *
+   * Only server-derived DENY and CHALLENGE verdicts are cached — never ALLOW,
+   * and never a rule outcome, because a rate limiter has to see every request.
+   * @default { ttl: 60_000, max: 10_000 }
+   */
+  decisionCache?: DecisionCacheOptions | false;
 }
 
 /**
@@ -179,40 +209,6 @@ export interface SDKDetectionResponse {
 
   /** True if a response rule was enforced */
   rule_enforced: boolean;
-}
-
-/**
- * Result of the protect() method
- */
-export interface ProtectResult {
-  /** Whether to allow the request */
-  allowed: boolean;
-
-  /** Detection response from the service */
-  detection: SDKDetectionResponse;
-
-  /** Error message if the request failed */
-  error?: string;
-
-  /** Rule engine result (if rules were evaluated) */
-  ruleResult?: import('./rules/types').RuleEngineResult;
-
-  /**
-   * Web Bot Auth verdict, present when a `webBotAuth()` rule triggered the
-   * local agent verification for this request. Lets middleware treat a
-   * `verified` agent specially (e.g. allow) without re-verifying.
-   */
-  agent?: AgentVerdict;
-
-  /**
-   * What the edge validator said about this request, parsed from
-   * `x-wd-clearance` and `x-wd-class`.
-   *
-   * Always present. Check `edge.present` before branching: false means the edge
-   * did not front this request, which is no information rather than a clean bill
-   * of health.
-   */
-  edge?: import('./edge').EdgeVerdict;
 }
 
 /**

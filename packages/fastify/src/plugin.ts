@@ -16,7 +16,13 @@ import {
   resolveClientIp,
   normalizeIp,
 } from '@webdecoy/node';
-import type { EdgeVerdict, SiteHoneytoken, TrustedProxies } from '@webdecoy/node';
+import type {
+  EdgeVerdict,
+  SiteHoneytoken,
+  TrustedProxies,
+  ProtectResult,
+  SDKDetectionResponse,
+} from '@webdecoy/node';
 
 export interface WebDecoyPluginOptions extends ProtectOptions {
   /**
@@ -72,10 +78,19 @@ export interface WebDecoyPluginOptions extends ProtectOptions {
   getIP?: (req: FastifyRequest) => string;
 
   /**
-   * Custom function to handle blocked requests
-   * By default, returns 403 Forbidden
+   * Called when a request would be blocked.
+   *
+   * `detection` is the detection response, as before. `decision` is the full
+   * typed verdict — `conclusion`, every rule's outcome including the ones that
+   * dry-ran or never ran, and `deniedBy('tripwire')` — for handlers that need to
+   * know WHY rather than just THAT.
    */
-  onBlocked?: (req: FastifyRequest, reply: FastifyReply, detection: any) => void;
+  onBlocked?: (
+    req: FastifyRequest,
+    reply: FastifyReply,
+    detection: SDKDetectionResponse,
+    decision: ProtectResult,
+  ) => void;
 
   /**
    * Custom function to handle errors
@@ -118,7 +133,11 @@ function resolveIP(req: FastifyRequest, trustProxy: TrustedProxies | undefined):
 /**
  * Default blocked request handler
  */
-function defaultOnBlocked(req: FastifyRequest, reply: FastifyReply, detection: any): void {
+function defaultOnBlocked(
+  req: FastifyRequest,
+  reply: FastifyReply,
+  detection: SDKDetectionResponse,
+): void {
   reply.status(403).send({
     error: 'Forbidden',
     message: 'Access denied by Web Decoy protection',
@@ -303,7 +322,7 @@ async function webdecoyPluginImpl(
         req.webdecoyEdge = result.edge;
       } else {
         // Block the request
-        onBlocked(req, reply, result.detection);
+        onBlocked(req, reply, result.detection, result);
       }
     } catch (error) {
       onError(req, reply, error as Error);

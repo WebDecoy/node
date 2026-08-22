@@ -12,13 +12,16 @@ import { IPEnrichmentClient } from './ip-enrichment';
 import { AgentVerifier } from './agent/verifier';
 import type { AgentRequestInput, AgentVerdict } from './agent/types';
 import { readEdgeVerdict } from './edge';
+import { Decision, newDecisionId } from './decision';
+import type { Conclusion } from './decision';
+import { deriveKey, DEFAULT_CHARACTERISTICS } from './characteristics';
+import { DecisionCache } from './decision-cache';
 import { classifyUserAgent } from './bots';
 import { isTestTriggerUserAgent } from './test-trigger';
 import type { RuleContext, RuleEngineResult, ViolationEvent } from './rules/types';
 import {
   WebDecoyConfig,
   RequestMetadata,
-  ProtectResult,
   ProtectOptions,
   SDKDetectionRequest,
   SDKDetectionResponse,
@@ -26,7 +29,10 @@ import {
 
 export class WebDecoy {
   private client: WebDecoyClient | null;
-  private config: Omit<Required<WebDecoyConfig>, 'apiKey' | 'rules' | 'webBotAuth'> & {
+  private config: Omit<
+    Required<WebDecoyConfig>,
+    'apiKey' | 'rules' | 'webBotAuth' | 'characteristics' | 'decisionCache'
+  > & {
     apiKey?: string;
   };
   private ruleEngine: RuleEngine | null;
@@ -36,6 +42,8 @@ export class WebDecoy {
   private _hasAgentRules = false;
   private agentVerifier: AgentVerifier | null = null;
   private readonly webBotAuthOptions?: WebDecoyConfig['webBotAuth'];
+  private readonly characteristics: readonly import('./characteristics').Characteristic[];
+  private readonly decisionCache: DecisionCache | null;
 
   constructor(config: WebDecoyConfig) {
     const hasApiKey = !!config.apiKey;
@@ -77,6 +85,9 @@ export class WebDecoy {
     }
 
     this.webBotAuthOptions = config.webBotAuth;
+    this.characteristics = config.characteristics ?? DEFAULT_CHARACTERISTICS;
+    this.decisionCache =
+      config.decisionCache === false ? null : new DecisionCache(config.decisionCache ?? {});
 
     // Rules. When none are configured, tripwires are switched on rather than
     // leaving the SDK with nothing to detect.
@@ -177,7 +188,7 @@ export class WebDecoy {
 
   /** Build the base (synchronous) rule context from request metadata. */
   private buildContext(metadata: RequestMetadata): RuleContext {
-    return {
+    const context: RuleContext = {
       ip: metadata.ip,
       path: metadata.path,
       method: metadata.method,
@@ -194,6 +205,10 @@ export class WebDecoy {
       // ran.
       bot: classifyUserAgent(metadata.user_agent),
     };
+    // Derived after the rest of the context exists, because a custom
+    // characteristic is handed the context and may read any of it.
+    context.key = deriveKey(context, this.characteristics);
+    return context;
   }
 
   /**
@@ -291,26 +306,31 @@ export class WebDecoy {
    *
    * @param metadata - Request metadata to analyze
    * @param options - Optional configuration for this specific request
-   * @returns Protection result with decision and detection details
+   * @returns The decision — `conclusion`, every rule's outcome, and the
+   *   narrowing helpers. Satisfies `ProtectResult`.
    */
   async protect(
     metadata: RequestMetadata,
     options: ProtectOptions = {}
-  ): Promise<ProtectResult> {
+  ): Promise<Decision> {
     // The edge verdict is attached here rather than at each return inside
-    // decide(), which has seven of them including two fail-open paths. It is
+    // decide(), which has six of them including two fail-open paths. It is
     // information ABOUT the request, not a product of the decision, so it must be
     // present on every outcome — and a per-return copy is a line someone would
     // eventually forget on the branch that mattered.
     const edge = readEdgeVerdict(metadata.headers);
-    const result = await this.decide(metadata, options);
-    return { ...result, edge };
+    return (await this.decide(metadata, options)).withEdge(edge);
   }
 
   private async decide(
     metadata: RequestMetadata,
     options: ProtectOptions = {}
-  ): Promise<ProtectResult> {
+  ): Promise<Decision> {
+    // Declared out here so the catch below can stamp the same id and key onto
+    // an ERROR decision. An error is still a decision about a caller.
+    const id = newDecisionId();
+    let key = metadata.ip || 'unknown';
+
     try {
       // Validate required fields
       if (!metadata.ip) {
@@ -328,73 +348,71 @@ export class WebDecoy {
       // and it must never fire the customer's rules — ingest marks the row
       // is_test and keeps it out of stats, billing, and enforcement.
       if (isTestTriggerUserAgent(metadata.user_agent)) {
-        return this.reportTestTrigger(metadata);
+        return this.reportTestTrigger(metadata, id);
       }
 
-      // Evaluate rules first (if configured). Use async evaluation when a rule
-      // needs a pre-fetched signal — IP enrichment (filter rules) or Web Bot
-      // Auth verification (webBotAuth rules). Capture the agent verdict so it
-      // can be surfaced on the result for downstream allow decisions.
-      let ruleResult: RuleEngineResult | null;
-      let agentVerdict: AgentVerdict | undefined;
-      if (this.ruleEngine && (this._hasFilterRules || this._hasAgentRules)) {
-        const context = await this.buildAsyncContext(metadata);
-        agentVerdict = context.agent;
-        ruleResult = this.runRules(context);
-      } else {
-        ruleResult = this.evaluateRules(metadata);
-      }
+      // One context for the whole decision. Async only when a rule needs a
+      // pre-fetched signal — IP enrichment (filter rules) or Web Bot Auth
+      // verification (webBotAuth rules).
+      const needsAsync = this._hasFilterRules || this._hasAgentRules;
+      const context = needsAsync
+        ? await this.buildAsyncContext(metadata)
+        : this.buildContext(metadata);
+      key = context.key ?? key;
+      const agentVerdict: AgentVerdict | undefined = context.agent;
+      const ruleResult: RuleEngineResult | null = this.ruleEngine
+        ? this.runRules(context)
+        : null;
 
-      // If rules denied the request, return immediately without API call
-      if (ruleResult && ruleResult.action === 'DENY') {
-        return {
-          allowed: false,
+      // Rules denied or throttled: decided locally, no API call. Not cached —
+      // a rate limiter has to see every request to advance its window, and a
+      // cached tripwire hit would stop the violation being reported.
+      if (ruleResult && ruleResult.action !== 'ALLOW') {
+        const throttled = ruleResult.action === 'THROTTLE';
+        return new Decision({
+          conclusion: 'DENY',
+          reason: ruleResult.reason,
           detection: {
             decision: 'block',
             confidence: 100,
-            threat_level: 'HIGH',
+            threat_level: throttled ? 'MEDIUM' : 'HIGH',
             bot_detected: false,
-            detection_id: 'rule_' + Date.now(),
+            detection_id: id,
             rule_enforced: true,
           },
+          id,
+          results: ruleResult.results,
           ruleResult,
           agent: agentVerdict,
-        };
+          key,
+        });
       }
 
-      // If rules throttled, return a throttle response
-      if (ruleResult && ruleResult.action === 'THROTTLE') {
-        return {
-          allowed: false,
-          detection: {
-            decision: 'block',
-            confidence: 100,
-            threat_level: 'MEDIUM',
-            bot_detected: false,
-            detection_id: 'rule_' + Date.now(),
-            rule_enforced: true,
-          },
-          ruleResult,
-          agent: agentVerdict,
-        };
-      }
-
-      // No API client — return fail-open default
+      // No API client — local rules are all there is, and they allowed.
       if (!this.client) {
-        return {
-          allowed: true,
+        return new Decision({
+          conclusion: 'ALLOW',
           detection: {
             decision: 'allow',
             confidence: 0,
             threat_level: 'MINIMAL',
             bot_detected: false,
-            detection_id: 'local_' + Date.now(),
+            detection_id: id,
             rule_enforced: false,
           },
+          id,
+          results: ruleResult?.results ?? [],
           ruleResult: ruleResult ?? undefined,
           agent: agentVerdict,
-        };
+          key,
+        });
       }
+
+      // A decision we already paid a round trip for. Checked here rather than
+      // at the top of the method so the rules still run: the limiter has to see
+      // every request, and a tripwire hit still has to be reported.
+      const cached = this.decisionCache?.get(key);
+      if (cached) return cached.asCached();
 
       // Perform local analysis (unless explicitly skipped)
       const localAnalysis = options.skipLocalAnalysis
@@ -425,19 +443,22 @@ export class WebDecoy {
 
       if (!shouldCallServer && localAnalysis.local_score < 50) {
         // Low risk, allow without server verification
-        return {
-          allowed: true,
+        return new Decision({
+          conclusion: 'ALLOW',
           detection: {
             decision: 'allow',
             confidence: 100 - localAnalysis.local_score,
             threat_level: 'MINIMAL',
             bot_detected: false,
-            detection_id: 'local_' + Date.now(),
+            detection_id: id,
             rule_enforced: false,
           },
+          id,
+          results: ruleResult?.results ?? [],
           ruleResult: ruleResult ?? undefined,
           agent: agentVerdict,
-        };
+          key,
+        });
       }
 
       // Call the detection API
@@ -455,31 +476,55 @@ export class WebDecoy {
         });
       }
 
-      return {
-        allowed,
+      // A server verdict of "challenge" is the one case that can route to the
+      // captcha, and it only counts when the score cleared the threshold —
+      // below it, the request is allowed and there is nothing to challenge.
+      const conclusion: Conclusion = allowed
+        ? 'ALLOW'
+        : detection.decision === 'challenge'
+          ? 'CHALLENGE'
+          : 'DENY';
+
+      const decision = new Decision({
+        conclusion,
+        reason: allowed ? undefined : `Threat score ${detection.confidence} (threshold ${threshold})`,
         detection,
+        id,
+        results: ruleResult?.results ?? [],
         ruleResult: ruleResult ?? undefined,
         agent: agentVerdict,
-      };
+        key,
+        ttl: this.decisionCache && !allowed ? this.decisionCache.lifetime : 0,
+      });
+
+      // Only the network-derived verdicts are worth remembering; see
+      // decision-cache.ts for why ALLOW and rule outcomes are excluded.
+      if (this.decisionCache) this.decisionCache.set(key, decision);
+
+      return decision;
     } catch (error) {
       // Log error if debug is enabled
       if (this.config.debug) {
         console.error('[WebDecoy] Protection error:', error);
       }
 
-      // Return error result
-      return {
-        allowed: true, // Fail open to avoid blocking legitimate users
+      // Fail open: a security control that takes the site down when it has a
+      // bad day is worse than the traffic it was filtering. ERROR is a distinct
+      // conclusion so a caller can tell "allowed" from "never decided".
+      return new Decision({
+        conclusion: 'ERROR',
         detection: {
           decision: 'allow',
           confidence: 0,
           threat_level: 'MINIMAL',
           bot_detected: false,
-          detection_id: 'error_' + Date.now(),
+          detection_id: id,
           rule_enforced: false,
         },
+        id,
+        key,
         error: error instanceof Error ? error.message : 'Unknown error',
-      };
+      });
     }
   }
 
@@ -494,23 +539,26 @@ export class WebDecoy {
    * Without an API key nothing can reach the dashboard, so the verdict says
    * so via `error` instead of pretending the test ran.
    */
-  private async reportTestTrigger(metadata: RequestMetadata): Promise<ProtectResult> {
+  private async reportTestTrigger(metadata: RequestMetadata, id: string): Promise<Decision> {
     const blocked: SDKDetectionResponse = {
       decision: 'block',
       confidence: 100,
       threat_level: 'HIGH',
       bot_detected: true,
       bot_type: 'test_trigger',
-      detection_id: 'test_' + Date.now(),
+      detection_id: id,
       rule_enforced: false,
     };
 
     if (!this.client) {
-      return {
-        allowed: false,
+      return new Decision({
+        id,
+        conclusion: 'DENY',
+        reason: 'Reserved test trigger',
         detection: blocked,
-        error: 'Test trigger recognized, but no apiKey is configured — nothing was reported to the dashboard.',
-      };
+        error:
+          'Test trigger recognized, but no apiKey is configured — nothing was reported to the dashboard.',
+      });
     }
 
     try {
@@ -525,15 +573,22 @@ export class WebDecoy {
           flags: ['test_trigger'],
         },
       });
-      return { allowed: false, detection };
+      return new Decision({
+        id,
+        conclusion: 'DENY',
+        reason: 'Reserved test trigger',
+        detection,
+      });
     } catch (error) {
       // Still block — the developer asked for a visible reaction — but say
       // why the dashboard may show nothing.
-      return {
-        allowed: false,
+      return new Decision({
+        id,
+        conclusion: 'DENY',
+        reason: 'Reserved test trigger',
         detection: blocked,
         error: error instanceof Error ? error.message : 'Failed to report test detection',
-      };
+      });
     }
   }
 
