@@ -6,6 +6,7 @@
 import type { AgentVerdict } from '../agent/types';
 import type { EdgeVerdict } from '../edge';
 import type { BotVerdict, BotCategory } from '../bots';
+import type { RuleOutcome, RuleState } from '../decision';
 
 /**
  * Context available to rules during evaluation
@@ -47,6 +48,12 @@ export interface RuleContext {
    * See {@link BotVerdict}.
    */
   bot?: BotVerdict;
+  /**
+   * The key identifying this caller, derived from the SDK's `characteristics`.
+   * Keyed rules use it unless they were given their own `keyBy`. Defaults to
+   * the IP, so a rule can read it unconditionally.
+   */
+  key?: string;
 }
 
 /**
@@ -61,6 +68,15 @@ export interface RuleResult {
   reason?: string;
   /** Additional metadata */
   metadata?: Record<string, any>;
+  /**
+   * Set by a rule that could not evaluate because a signal it needs was absent
+   * — a filter rule with no IP enrichment, a Web Bot Auth rule on a request
+   * with no host. Such a rule returns ALLOW, and without this the result is
+   * indistinguishable from "checked and fine".
+   *
+   * Rules that ran leave this unset; the engine fills in `RUN` or `DRY_RUN`.
+   */
+  state?: RuleState;
 }
 
 /**
@@ -227,4 +243,10 @@ export interface RuleEngineResult {
   metadata?: Record<string, any>;
   /** All violations generated during evaluation */
   violations: ViolationEvent[];
+  /**
+   * Every configured rule and what it concluded, in evaluation order —
+   * including the ones that allowed, dry-ran, or could not run. `violations`
+   * only ever held the non-ALLOW subset.
+   */
+  results: RuleOutcome[];
 }

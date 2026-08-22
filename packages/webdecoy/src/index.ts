@@ -37,6 +37,20 @@ export type {
   ProtectOptions,
 } from './types';
 
+// The decision `protect()` returns. Exported as a value because the class
+// carries the narrowing helpers (`isDenied()`, `deniedBy()`) that keep an
+// adapter's blocked path from being typed `any`.
+export { Decision, newDecisionId } from './decision';
+export type { Conclusion, RuleState, RuleOutcome, DecisionInit } from './decision';
+
+// What counts as the same caller. Exported so an application can derive the
+// same key the SDK does — two answers to "who is this" is one too many.
+export { deriveKey, DEFAULT_CHARACTERISTICS } from './characteristics';
+export type { Characteristic } from './characteristics';
+
+export { DecisionCache } from './decision-cache';
+export type { DecisionCacheOptions } from './decision-cache';
+
 // The reserved test trigger: `curl -A "WebDecoy-Test/1.0" <site>`
 // always produces a labeled test detection through the real pipeline.
 export {

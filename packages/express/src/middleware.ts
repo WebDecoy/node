@@ -4,7 +4,13 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { WebDecoy, WebDecoyConfig, RequestMetadata, ProtectOptions } from '@webdecoy/node';
-import type { EdgeVerdict, SiteHoneytoken, TrustedProxies } from '@webdecoy/node';
+import type {
+  EdgeVerdict,
+  SiteHoneytoken,
+  TrustedProxies,
+  ProtectResult,
+  SDKDetectionResponse,
+} from '@webdecoy/node';
 import {
   siteHoneytoken,
   injectHoneytokenLink,
@@ -85,8 +91,18 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
    * `next` is passed so a handler can record the verdict and continue — the
    * omission that made monitoring impossible. Call exactly one of `next()` or a
    * response method.
+   *
+   * `decision` is the full typed verdict — `conclusion`, every rule's outcome
+   * including the ones that dry-ran or never ran, and `deniedBy('tripwire')` —
+   * for handlers that need to know WHY rather than just THAT.
    */
-  onBlocked?: (req: Request, res: Response, detection: any, next: NextFunction) => void;
+  onBlocked?: (
+    req: Request,
+    res: Response,
+    detection: SDKDetectionResponse,
+    next: NextFunction,
+    decision: ProtectResult,
+  ) => void;
 
   /**
    * Custom function to handle errors
@@ -135,7 +151,7 @@ function resolveIP(req: Request, trustProxy: TrustedProxies | undefined): string
 function defaultOnBlocked(
   req: Request,
   res: Response,
-  detection: any,
+  detection: SDKDetectionResponse,
   _next: NextFunction,
 ): void {
   res.status(403).json({
@@ -369,7 +385,7 @@ export function webdecoy(
         return next();
       } else {
         // Block the request
-        return onBlocked(req, res, result.detection, next);
+        return onBlocked(req, res, result.detection, next, result);
       }
     } catch (error) {
       onError(req, res, error as Error);

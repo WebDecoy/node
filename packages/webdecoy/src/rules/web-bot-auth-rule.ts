@@ -55,7 +55,18 @@ export class WebBotAuthRule implements Rule {
 
   evaluate(context: RuleContext): RuleResult {
     const verdict = context.agent;
-    if (!verdict || verdict.status === 'none') return this.allow();
+    // No verdict at all means verification never happened — the request had no
+    // host to build a signature base from. That is different from `none`, which
+    // means it was checked and carried no signature.
+    if (!verdict) {
+      return {
+        action: 'ALLOW',
+        rule: this.name,
+        state: 'NOT_RUN',
+        reason: 'Request lacked the host information needed to verify a signature',
+      };
+    }
+    if (verdict.status === 'none') return this.allow();
 
     if (verdict.status === 'impersonation') {
       return this.act(this.onImpersonation, 'agent_impersonation', {

@@ -11,7 +11,7 @@ import {
   resolveClientIp,
   normalizeIp,
 } from '@webdecoy/node';
-import type { TrustedProxies } from '@webdecoy/node';
+import type { TrustedProxies, ProtectResult, SDKDetectionResponse } from '@webdecoy/node';
 
 export interface WebDecoyMiddlewareOptions extends ProtectOptions {
   /**
@@ -58,7 +58,19 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
    * Custom function to handle blocked requests
    * By default, returns 403 Forbidden JSON response
    */
-  onBlocked?: (req: NextRequest, detection: any) => NextResponse;
+  /**
+   * Called when a request would be blocked.
+   *
+   * `detection` is the detection response, as before. `decision` is the full
+   * typed verdict — `conclusion`, every rule's outcome including the ones that
+   * dry-ran or never ran, and `deniedBy('tripwire')` — for handlers that need to
+   * know WHY rather than just THAT.
+   */
+  onBlocked?: (
+    req: NextRequest,
+    detection: SDKDetectionResponse,
+    decision: ProtectResult,
+  ) => NextResponse;
 
   /**
    * Custom function to handle errors
@@ -103,7 +115,7 @@ function resolveIP(req: NextRequest, trustProxy: TrustedProxies | undefined): st
 /**
  * Default blocked request handler
  */
-function defaultOnBlocked(req: NextRequest, detection: any): NextResponse {
+function defaultOnBlocked(req: NextRequest, detection: SDKDetectionResponse): NextResponse {
   return NextResponse.json(
     {
       error: 'Forbidden',
@@ -274,7 +286,7 @@ export function withWebDecoy(
         }
         return NextResponse.next({ request: { headers: requestHeaders } });
       } else {
-        return onBlocked(req, result.detection);
+        return onBlocked(req, result.detection, result);
       }
     } catch (error) {
       const errorResponse = onError(req, error as Error);
