@@ -86,6 +86,23 @@ export type { BotVerdict, BotAgent, BotCategory } from './bots';
 export { consoleLogger, silentLogger, fromPino } from './logger';
 export type { Logger, LogFields } from './logger';
 
+// Browser signals, joined to the requests that follow them. See client-signals.ts
+// for why this is not a threat judgement about a client that sends none.
+export {
+  clientSignals,
+  ClientSignalRule,
+  MemoryClientSignalStore,
+  readClientSession,
+  CLIENT_SESSION_COOKIE,
+  CLIENT_SESSION_HEADER,
+} from './client-signals';
+export type {
+  ClientVerdict,
+  ClientSignalStore,
+  ClientSignalConfig,
+  MemoryClientSignalStoreOptions,
+} from './client-signals';
+
 export { createFetchGuard } from './fetch-guard';
 export type { FetchGuard, FetchGuardOptions, GuardOutcome } from './fetch-guard';
 

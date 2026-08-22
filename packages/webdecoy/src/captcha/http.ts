@@ -13,6 +13,7 @@
 
 import { Captcha, type CaptchaOptions } from './service';
 import type { Signals } from '../detection/types';
+import type { ClientSignalStore } from '../client-signals';
 
 /** Normalized inbound request the adapters construct. */
 export interface CaptchaRequest {
@@ -36,6 +37,12 @@ export interface CaptchaHttpResponse {
 }
 
 export interface CaptchaEndpointsOptions extends CaptchaOptions {
+  /**
+   * Where `/score` records its verdict, for `clientSignals()` to read on
+   * subsequent requests. Omit and the score is returned to the browser and
+   * forgotten, which is what happened before this existed.
+   */
+  signalStore?: ClientSignalStore;
   /** Base path the routes are mounted under (default `/__webdecoy`). */
   basePath?: string;
 }
@@ -48,6 +55,8 @@ interface VerifyBody {
   powTiming?: { duration?: number; iterations?: number } | null;
   action?: string;
   token?: string;
+  /** The browser widget's session id, sent by `@webdecoy/client`. */
+  sessionId?: string;
 }
 
 const JSON_HEADERS = { 'content-type': 'application/json' };
@@ -58,7 +67,7 @@ const JSON_HEADERS = { 'content-type': 'application/json' };
  * middleware can fall through to the next handler).
  */
 export function createCaptchaEndpoints(options: CaptchaEndpointsOptions = {}) {
-  const { basePath = '/__webdecoy', ...captchaOptions } = options;
+  const { basePath = '/__webdecoy', signalStore, ...captchaOptions } = options;
   const captcha = new Captcha(captchaOptions);
   const base = basePath.replace(/\/$/, '');
 
@@ -118,7 +127,26 @@ export function createCaptchaEndpoints(options: CaptchaEndpointsOptions = {}) {
         ja3Hash,
         action: b.action,
       });
-      return json(200, result);
+
+      // Remember the verdict against the browser's session, so the requests
+      // that follow can act on it. Without this the score goes back to the
+      // browser and the origin never learns anything from it — which was the
+      // gap: all the parts existed and nothing joined them.
+      if (signalStore && b.sessionId) {
+        await signalStore.set({
+          sessionId: b.sessionId,
+          score: result.score,
+          recommendation: result.recommendation,
+          at: Date.now(),
+        });
+      }
+
+      return json(200, {
+        ...result,
+        // Echoed so the widget can set the cookie the rule reads, without the
+        // developer wiring a second endpoint to hand it one.
+        sessionId: b.sessionId ?? null,
+      });
     }
 
     // POST {base}/token/verify
