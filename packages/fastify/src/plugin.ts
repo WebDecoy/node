@@ -9,12 +9,13 @@ import {
   WebDecoyConfig,
   RequestMetadata,
   ProtectOptions,
-  siteHoneytoken,
   injectHoneytokenLink,
   isInjectableHtml,
-  tripwire,
   resolveClientIp,
   normalizeIp,
+  shouldSkipPath,
+  ruleBlockResponse,
+  deriveAndArm,
 } from '@webdecoy/node';
 import type {
   EdgeVerdict,
@@ -154,22 +155,6 @@ function defaultOnError(req: FastifyRequest, reply: FastifyReply, error: Error):
 }
 
 /**
- * Check if path should be skipped
- */
-function shouldSkipPath(path: string, skipPaths?: string[] | RegExp[]): boolean {
-  if (!skipPaths || skipPaths.length === 0) {
-    return false;
-  }
-
-  return skipPaths.some((pattern) => {
-    if (typeof pattern === 'string') {
-      return path === pattern || path.startsWith(pattern);
-    }
-    return pattern.test(path);
-  });
-}
-
-/**
  * Web Decoy detection info attached to requests
  */
 interface WebDecoyDetection {
@@ -235,19 +220,12 @@ async function webdecoyPluginImpl(
   // Fastify lets us await it here, because plugin registration is already an
   // async boot phase — so unlike Express there is no window where early requests
   // are served without the link.
-  const honeytokenEnabled = (options.honeytoken ?? true) && Boolean(options.apiKey);
-  let token: SiteHoneytoken | null = null;
-  if (honeytokenEnabled) {
-    try {
-      token = await siteHoneytoken({ secret: options.apiKey as string });
-      // Arm the path we are about to advertise. Without this the link is bait
-      // with no trap behind it — a crawler follows it and nothing happens.
-      sdk.addRule(tripwire({ paths: token.activePaths, includeDefaults: false }));
-    } catch {
-      // Deriving the token is not worth a failed boot. No token, no injection.
-      token = null;
-    }
-  }
+  // The awaited variant, because plugin registration is already an async boot
+  // phase. Same derive-and-arm as every other adapter; only the timing differs.
+  const token: SiteHoneytoken | null = await deriveAndArm(sdk, {
+    apiKey: options.apiKey,
+    enabled: options.honeytoken,
+  });
 
   // Add decorator for webdecoy property
   fastify.decorateRequest('webdecoy', null);
@@ -305,29 +283,15 @@ async function webdecoyPluginImpl(
         return;
       }
 
-      // Handle rule engine results for specific HTTP responses
-      if (!result.allowed && result.ruleResult) {
-        const rr = result.ruleResult;
-
-        if (rr.action === 'THROTTLE') {
-          const retryAfter = rr.metadata?.retryAfter ?? 60;
-          reply.header('Retry-After', String(retryAfter));
-          reply.status(429).send({
-            error: 'Too Many Requests',
-            message: rr.reason || 'Rate limit exceeded',
-            retry_after: retryAfter,
-          });
-          return;
+      // A rule refusal answers with the shape every adapter uses; only the
+      // writing of it is Fastify's business.
+      const block = ruleBlockResponse(result);
+      if (block) {
+        for (const [name, value] of Object.entries(block.headers)) {
+          reply.header(name, value);
         }
-
-        if (rr.action === 'DENY') {
-          reply.status(403).send({
-            error: 'Forbidden',
-            message: rr.reason || 'Access denied by rule',
-            rule: rr.rule,
-          });
-          return;
-        }
+        reply.status(block.status).send(block.body);
+        return;
       }
 
       // Handle the result

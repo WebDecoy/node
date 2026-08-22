@@ -6,18 +6,18 @@ import { Request, Response, NextFunction } from 'express';
 import { WebDecoy, WebDecoyConfig, RequestMetadata, ProtectOptions } from '@webdecoy/node';
 import type {
   EdgeVerdict,
-  SiteHoneytoken,
   TrustedProxies,
   ProtectResult,
   SDKDetectionResponse,
 } from '@webdecoy/node';
 import {
-  siteHoneytoken,
   injectHoneytokenLink,
   isInjectableHtml,
-  tripwire,
   resolveClientIp,
   normalizeIp,
+  shouldSkipPath,
+  ruleBlockResponse,
+  armSiteHoneytoken,
 } from '@webdecoy/node';
 
 export interface WebDecoyMiddlewareOptions extends ProtectOptions {
@@ -170,22 +170,6 @@ function defaultOnError(req: Request, res: Response, error: Error): void {
 }
 
 /**
- * Check if path should be skipped
- */
-function shouldSkipPath(path: string, skipPaths?: string[] | RegExp[]): boolean {
-  if (!skipPaths || skipPaths.length === 0) {
-    return false;
-  }
-
-  return skipPaths.some((pattern) => {
-    if (typeof pattern === 'string') {
-      return path === pattern || path.startsWith(pattern);
-    }
-    return pattern.test(path);
-  });
-}
-
-/**
  * Create Express middleware for Web Decoy protection
  *
  * @example
@@ -218,27 +202,13 @@ export function webdecoy(
   const onBlocked = config.onBlocked || defaultOnBlocked;
   const mode = config.mode ?? 'monitor';
 
-  // Honeytoken. Derived from the API key so every replica computes the
-  // same path without coordinating — a random per-process token would advertise
-  // a link whose tripwire only one replica had armed.
-  //
-  // Resolution is async (WebCrypto HMAC, so this still runs on edge runtimes),
-  // and requests served before it settles simply carry no link. That is a few
-  // milliseconds at boot against the alternative of blocking startup on crypto.
-  const honeytokenEnabled = (config.honeytoken ?? true) && Boolean(config.apiKey);
-  let token: SiteHoneytoken | null = null;
-  if (honeytokenEnabled) {
-    void siteHoneytoken({ secret: config.apiKey as string })
-      .then((t) => {
-        token = t;
-        // Arm the path we are about to advertise. Without this the link is bait
-        // with no trap behind it — a crawler follows it and nothing happens.
-        sdk.addRule(tripwire({ paths: t.activePaths, includeDefaults: false }));
-      })
-      .catch(() => {
-        // Deriving the token is not worth a failed boot. No token, no injection.
-      });
-  }
+  // Honeytoken arming lives in the shared core: every adapter derived the same
+  // token the same way, and a fourth copy is a fourth place the next change can
+  // fail to land.
+  const getToken = armSiteHoneytoken(sdk, {
+    apiKey: config.apiKey,
+    enabled: config.honeytoken,
+  });
   const onError = config.onError || defaultOnError;
   const skipPaths = config.skipPaths;
 
@@ -282,8 +252,10 @@ export function webdecoy(
       //   - a committed response is left alone, because headers are already sent
       //   - Content-Length is corrected, or the client truncates the body
       //   - anything thrown falls back to the original write
-      if (token) {
-        const ht = token;
+      // Read once: the getter can settle between calls, and an injected link
+      // whose tripwire was armed a moment later is bait with no trap.
+      const ht = getToken();
+      if (ht) {
         const originalWrite = res.write.bind(res);
         const originalEnd = res.end.bind(res);
         const chunks: Buffer[] = [];
@@ -358,29 +330,15 @@ export function webdecoy(
         return next();
       }
 
-      // Handle rule engine results for specific HTTP responses
-      if (!result.allowed && result.ruleResult) {
-        const rr = result.ruleResult;
-
-        if (rr.action === 'THROTTLE') {
-          const retryAfter = rr.metadata?.retryAfter ?? 60;
-          res.setHeader('Retry-After', String(retryAfter));
-          res.status(429).json({
-            error: 'Too Many Requests',
-            message: rr.reason || 'Rate limit exceeded',
-            retry_after: retryAfter,
-          });
-          return;
+      // A rule refusal answers with the shape every adapter uses; only the
+      // writing of it is Express's business.
+      const block = ruleBlockResponse(result);
+      if (block) {
+        for (const [name, value] of Object.entries(block.headers)) {
+          res.setHeader(name, value);
         }
-
-        if (rr.action === 'DENY') {
-          res.status(403).json({
-            error: 'Forbidden',
-            message: rr.reason || 'Access denied by rule',
-            rule: rr.rule,
-          });
-          return;
-        }
+        res.status(block.status).json(block.body);
+        return;
       }
 
       // Handle the result
