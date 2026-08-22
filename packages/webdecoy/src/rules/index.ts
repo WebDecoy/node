@@ -10,6 +10,8 @@ export { BotRule } from './bot-rule';
 export { WebBotAuthRule, webBotAuth } from './web-bot-auth-rule';
 export { honeytoken } from './honeytoken';
 export { InMemoryRateLimiter } from './rate-limiter';
+export { MemoryRateLimitStore } from './rate-limit-store';
+export { upstashRateLimitStore, UpstashRateLimitStore } from './upstash-store';
 
 export type {
   Rule,
@@ -25,6 +27,13 @@ export type {
 } from './types';
 export type { WebBotAuthConfig } from './web-bot-auth-rule';
 export type { HoneytokenOptions, Honeytoken } from './honeytoken';
+export type {
+  RateLimitStore,
+  SyncRateLimitStore,
+  RateLimitOutcome,
+  RateLimitConsume,
+} from './rate-limit-store';
+export type { UpstashStoreOptions } from './upstash-store';
 
 import { RateLimitRule } from './rate-limit-rule';
 import { FilterRule } from './filter-rule';

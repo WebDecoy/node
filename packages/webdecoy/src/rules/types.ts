@@ -54,6 +54,11 @@ export interface RuleContext {
    * the IP, so a rule can read it unconditionally.
    */
   key?: string;
+  /**
+   * Outcomes a rule resolved during the async pre-fetch, keyed by rule name.
+   * Populated by {@link Rule.prepare}; read synchronously by `evaluate`.
+   */
+  prepared?: Record<string, unknown>;
 }
 
 /**
@@ -87,6 +92,16 @@ export interface Rule {
   name: string;
   /** Evaluate the rule against request context */
   evaluate(context: RuleContext): RuleResult;
+  /**
+   * Resolve anything this rule needs from the network before `evaluate` runs,
+   * stashing it on `context.prepared`.
+   *
+   * `evaluate` is synchronous, and making it async would turn every rule
+   * evaluation into a promise for the sake of the one rule that needs it. This
+   * is the same pre-fetch the SDK already does for IP enrichment and Web Bot
+   * Auth verdicts.
+   */
+  prepare?(context: RuleContext): Promise<void>;
   /** Clean up resources (timers, etc.) */
   destroy?(): void;
 }
@@ -101,8 +116,17 @@ export interface RateLimitConfig {
   window: number;
   /** Algorithm: 'fixed' (default) or 'sliding' */
   algorithm?: 'fixed' | 'sliding';
-  /** Custom key derivation function. Default: by IP */
+  /** Custom key derivation function. Default: the SDK's characteristics, then IP */
   keyBy?: (context: RuleContext) => string;
+  /**
+   * Where the counters live. Defaults to this process's memory, which is
+   * correct for a single process and wrong the moment you run two — the limit
+   * becomes `max × instances` and resets on every cold start.
+   *
+   * Pass {@link upstashRateLimitStore} (or your own {@link RateLimitStore}) to
+   * share counters across replicas.
+   */
+  store?: import('./rate-limit-store').RateLimitStore;
   /** Action when limit is exceeded: 'DENY' or 'THROTTLE' (default: 'THROTTLE') */
   action?: 'DENY' | 'THROTTLE';
   /** Dry run mode: log violations but don't block */

@@ -18,7 +18,7 @@ import { deriveKey, DEFAULT_CHARACTERISTICS } from './characteristics';
 import { DecisionCache } from './decision-cache';
 import { classifyUserAgent } from './bots';
 import { isTestTriggerUserAgent } from './test-trigger';
-import type { RuleContext, RuleEngineResult, ViolationEvent } from './rules/types';
+import type { Rule, RuleContext, RuleEngineResult, ViolationEvent } from './rules/types';
 import {
   WebDecoyConfig,
   RequestMetadata,
@@ -40,6 +40,7 @@ export class WebDecoy {
   private ipEnrichmentClient: IPEnrichmentClient | null = null;
   private _hasFilterRules = false;
   private _hasAgentRules = false;
+  private _preparingRules: Rule[] = [];
   private agentVerifier: AgentVerifier | null = null;
   private readonly webBotAuthOptions?: WebDecoyConfig['webBotAuth'];
   private readonly characteristics: readonly import('./characteristics').Characteristic[];
@@ -116,6 +117,9 @@ export class WebDecoy {
       // Web Bot Auth rules need the agent verdict precomputed (async) before
       // the synchronous rule can act on it — same pattern as filter rules.
       this._hasAgentRules = rules.some((r) => r.name === 'web-bot-auth');
+      // A rule with a networked store consumes it before evaluation, so the
+      // synchronous evaluate() can stay synchronous.
+      this._preparingRules = rules.filter((r) => typeof r.prepare === 'function');
       if (this._hasAgentRules) {
         // Warm the directory cache so the first protected request verifies warm.
         this.getAgentVerifier().warmup();
@@ -184,6 +188,7 @@ export class WebDecoy {
     }
     if (rule.name.startsWith('filter:')) this._hasFilterRules = true;
     if (rule.name === 'web-bot-auth') this._hasAgentRules = true;
+    if (typeof rule.prepare === 'function') this._preparingRules.push(rule);
   }
 
   /** Build the base (synchronous) rule context from request metadata. */
@@ -229,6 +234,13 @@ export class WebDecoy {
     // Verify Web Bot Auth signature locally so the sync rule can act on it.
     if (this._hasAgentRules) {
       context.agent = await this.computeAgentVerdict(metadata);
+    }
+
+    // Let rules resolve their own networked signals. Run together rather than
+    // in sequence: two rate limits against the same store are two round trips
+    // whether or not we wait for the first, and the request is waiting on both.
+    if (this._preparingRules.length > 0) {
+      await Promise.all(this._preparingRules.map((rule) => rule.prepare!(context)));
     }
 
     return context;
@@ -354,7 +366,8 @@ export class WebDecoy {
       // One context for the whole decision. Async only when a rule needs a
       // pre-fetched signal — IP enrichment (filter rules) or Web Bot Auth
       // verification (webBotAuth rules).
-      const needsAsync = this._hasFilterRules || this._hasAgentRules;
+      const needsAsync =
+        this._hasFilterRules || this._hasAgentRules || this._preparingRules.length > 0;
       const context = needsAsync
         ? await this.buildAsyncContext(metadata)
         : this.buildContext(metadata);
