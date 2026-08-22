@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **OpenTelemetry spans** around `protect()` and rule evaluation. Pass a tracer: `new WebDecoy({ tracer: trace.getTracer('webdecoy') })`. Injected rather than imported, so the package stays dependency-free and edge-safe — the `Tracer` type is a structural subset of OpenTelemetry's, so `trace.getTracer()` works with no adapter, and omitting it means no spans, no dependency and no behaviour change. Attributes cover the decision id (which joins a span to its dashboard row), the conclusion, the deciding rule, and whether the request cost a round trip to ingest. A tracer that throws cannot fail a request.
+
+### Changed
+
+- **One adapter core.** Express, Fastify, Next.js (middleware and Pages wrapper) and the fetch guard each carried their own copy of skip-path matching, the 429 and 403 payloads, and honeytoken arming — five copies of one set of decisions, and five places the next correction can fail to land. They now share `adapter-core.ts`; the framework-specific response mechanics are untouched, and every honeytoken-injection test passes unchanged. Fastify keeps its awaited arming, which has no window where early requests are served without the link.
+
 ## [0.13.0] - 2026-08-22
 
 ### Added

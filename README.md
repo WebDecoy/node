@@ -512,6 +512,31 @@ new WebDecoy({ logger: fromPino(pino()) });  // pino's argument order is reverse
 `fromPino()` exists because passing a pino instance directly type-checks and then
 silently drops every structured field.
 
+## Tracing
+
+Pass an OpenTelemetry tracer and `protect()` emits a span, with a child span for
+rule evaluation:
+
+```typescript
+import { trace } from '@opentelemetry/api';
+
+new WebDecoy({ tracer: trace.getTracer('webdecoy') });
+```
+
+The tracer is **injected, not imported** — this package has no dependencies and
+runs on Workers and Vercel Edge, where a stray transitive import is expensive.
+The `Tracer` type is a structural subset of OpenTelemetry's, so
+`trace.getTracer()` satisfies it with no adapter. Omit it and there are no spans,
+no dependency, and no behaviour change.
+
+Attributes are the questions an operator actually asks: `decision.id` (which
+joins the span to the dashboard row), `decision.conclusion`, `decision.rule`,
+`rules.evaluated`, and `webdecoy.remote` — whether the request cost a round trip
+to ingest or was settled locally.
+
+A tracer that throws cannot fail a request. Observability that can take the
+request path down is worse than none.
+
 ## Examples
 
 See [examples](./examples) for complete working setups — e.g. [express-basic](./examples/express-basic).

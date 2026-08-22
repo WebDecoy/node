@@ -8,6 +8,7 @@ import type { AgentVerifierOptions } from './agent/types';
 import type { Characteristic } from './characteristics';
 import type { DecisionCacheOptions } from './decision-cache';
 import type { Logger } from './logger';
+import type { Tracer } from './tracing';
 
 export type { ProtectResult, Conclusion, RuleState, RuleOutcome } from './decision';
 
@@ -109,6 +110,21 @@ export interface WebDecoyConfig {
    * silently drops every structured field.
    */
   logger?: Logger;
+
+  /**
+   * An OpenTelemetry tracer, if you run one.
+   *
+   * Injected rather than imported so this package stays dependency-free and
+   * edge-safe. The interface is a structural subset of OpenTelemetry's, so
+   * `trace.getTracer('webdecoy')` works directly:
+   *
+   * ```ts
+   * new WebDecoy({ tracer: trace.getTracer('webdecoy') });
+   * ```
+   *
+   * Omit it and there are no spans, no dependency and no behaviour change.
+   */
+  tracer?: Tracer;
 }
 
 /**

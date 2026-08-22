@@ -84,6 +84,7 @@ export type { BotVerdict, BotAgent, BotCategory } from './bots';
 // runtime with a fetch handler. `@webdecoy/hono` is a thin wrapper over it; Bun,
 // Deno, Astro and Nitro need no package at all.
 export { consoleLogger, silentLogger, fromPino } from './logger';
+export type { Tracer, Span } from './tracing';
 export type { Logger, LogFields } from './logger';
 
 // Browser signals, joined to the requests that follow them. See client-signals.ts
