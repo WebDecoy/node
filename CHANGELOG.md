@@ -25,6 +25,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Fastify** is unchanged. It already deferred to `request.ip`, which was the safe answer; it gains the `trustProxy` option for parity.
   - `getIP` still overrides everything, and existing `getIP` implementations are untouched.
 
+### Internal
+
+- **Lint runs for the first time.** Every package declared `eslint` and `@typescript-eslint` as devDependencies and ran `eslint src/**/*.ts`, but no config file had ever existed in the tree, so `npm run lint` exited 2 in all five and had done since the repo was created. There is now one flat config at the root (ESLint 9, `typescript-eslint` 8), the duplicated per-package toolchain is gone, and CI runs lint so it cannot rot again. `no-explicit-any` is a warning under a per-package budget that CI does not let grow.
+
+  Two client-side changes fell out of it and are worth knowing about:
+  - `_measureJSExecution()` now accumulates its arithmetic loop into a recorded `mathSink` value, matching what the array loop already did with `arrayLen`. The loop previously discarded its result and could legally be optimised away entirely — which would drive `mathOps` toward zero and trip the "JS execution unusually fast" automation signal on an ordinary browser. It also reports `stringLen` for the same reason. Both are additive keys on an open record.
+  - The `HTMLFormElement.prototype.submit` interception uses rest parameters and a closure instead of `arguments` and a `this` alias. Behaviour is unchanged — `submit()` takes no arguments.
+
 ## [0.11.1] - 2026-08-20
 
 ### Added

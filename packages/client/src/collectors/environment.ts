@@ -118,7 +118,6 @@ export class EnvironmentalCollector {
 
   _detectPlaywright(): { detected: boolean; signals: string[] } {
     try {
-      const w = window as any;
       const signals: string[] = [];
 
       // Check for Playwright window properties
@@ -138,14 +137,13 @@ export class EnvironmentalCollector {
       }
 
       return { detected: signals.length > 0, signals };
-    } catch (e) {
+    } catch {
       return { detected: false, signals: [] };
     }
   }
 
   _detectCDP(): { detected: boolean; signals: string[] } {
     try {
-      const w = window as any;
       const signals: string[] = [];
 
       // ChromeDriver injects cdc_ prefixed properties (ChromeDriver Canary Detection)
@@ -181,7 +179,7 @@ export class EnvironmentalCollector {
             signals.push('webdriver_getter_modified');
           }
         }
-      } catch (e) {
+      } catch {
         // Skip if can't access descriptor
       }
 
@@ -189,7 +187,7 @@ export class EnvironmentalCollector {
         detected: signals.length > 0,
         signals: signals
       };
-    } catch (e) {
+    } catch {
       return { detected: false, signals: [] };
     }
   }
@@ -217,7 +215,7 @@ export class EnvironmentalCollector {
         hash = hash & hash;
       }
       return { hash: hash.toString(16), dataLength: dataUrl.length, supported: true };
-    } catch (e) {
+    } catch {
       return { error: true, supported: false };
     }
   }
@@ -249,7 +247,7 @@ export class EnvironmentalCollector {
         shadingVersion: gl.getParameter(gl.SHADING_LANGUAGE_VERSION),
         suspiciousRenderer
       };
-    } catch (e) {
+    } catch {
       return { supported: false, error: true };
     }
   }
@@ -269,7 +267,7 @@ export class EnvironmentalCollector {
       };
       audioCtx.close();
       return info;
-    } catch (e) {
+    } catch {
       return { supported: false, error: true };
     }
   }
@@ -320,7 +318,7 @@ export class EnvironmentalCollector {
       }
 
       return { supported: true, patched, patchedCount: patched.length };
-    } catch (e) {
+    } catch {
       return { supported: false };
     }
   }
@@ -374,10 +372,12 @@ export class EnvironmentalCollector {
     const results: Record<string, number> = {};
 
     let start = performance.now();
+    let mathSink = 0;
     for (let i = 0; i < 1000; i++) {
-      Math.sqrt(i) * Math.sin(i);
+      mathSink += Math.sqrt(i) * Math.sin(i);
     }
     results.mathOps = performance.now() - start;
+    results.mathSink = mathSink; // keep the loop from being optimised away
 
     start = performance.now();
     const arr: number[] = [];
@@ -389,6 +389,7 @@ export class EnvironmentalCollector {
     let str = '';
     for (let i = 0; i < 100; i++) str += 'a';
     results.stringOps = performance.now() - start;
+    results.stringLen = str.length; // same reason as arrayLen above
 
     return results;
   }
@@ -466,7 +467,7 @@ export class EnvironmentalCollector {
         tanLarge: results.tan,
         supported: true
       };
-    } catch (e) {
+    } catch {
       return { supported: false, error: true };
     }
   }
@@ -480,7 +481,7 @@ export class EnvironmentalCollector {
       const errors: Record<string, string> = {};
 
       // TypeError - null property access
-      try { (null as any).foo; } catch (e) { errors.typeError = (e as Error).message; }
+      try { void (null as any).foo; } catch (e) { errors.typeError = (e as Error).message; }
 
       // RangeError - invalid array length
       try { ([] as any).length = -1; } catch (e) { errors.rangeError = (e as Error).message; }
@@ -507,7 +508,7 @@ export class EnvironmentalCollector {
         typeError: errors.typeError,
         supported: true
       };
-    } catch (e) {
+    } catch {
       return { supported: false, error: true };
     }
   }
@@ -564,7 +565,7 @@ export class EnvironmentalCollector {
         rangeWidth: rangeRect.width,
         supported: true
       };
-    } catch (e) {
+    } catch {
       return { supported: false, error: true };
     }
   }
@@ -605,7 +606,7 @@ export class EnvironmentalCollector {
       };
 
       return { ...queries, supported: true };
-    } catch (e) {
+    } catch {
       return { supported: false, error: true };
     }
   }
@@ -630,7 +631,7 @@ export class EnvironmentalCollector {
         hasMIDI: 'requestMIDIAccess' in navigator,
         supported: true
       };
-    } catch (e) {
+    } catch {
       return { supported: false, error: true };
     }
   }
@@ -707,7 +708,7 @@ export class EnvironmentalCollector {
         hasDejaVuSans: detectedFonts.includes('DejaVu Sans'),
         supported: true
       };
-    } catch (e) {
+    } catch {
       return { supported: false, error: true };
     }
   }
@@ -768,7 +769,7 @@ export class EnvironmentalCollector {
         hasAppleVoices: voices.some(v => v.name.includes('Samantha') || v.name.includes('Alex')),
         supported: true
       };
-    } catch (e) {
+    } catch {
       return { supported: false, error: true };
     }
   }
@@ -799,7 +800,7 @@ export class EnvironmentalCollector {
             // Headless browsers typically have 0 devices
             totalDevices: devices.length
           };
-        } catch (e) {
+        } catch {
           info.mediaDevices = { supported: false, error: true };
         }
       }
@@ -841,12 +842,12 @@ export class EnvironmentalCollector {
         info.hasLocalIP = localIPs.size > 0;
 
         pc.close();
-      } catch (e) {
+      } catch {
         info.localIPError = true;
       }
 
       return info;
-    } catch (e) {
+    } catch {
       return { supported: false, error: true };
     }
   }
@@ -927,7 +928,7 @@ export class EnvironmentalCollector {
         mismatches: mismatches,
         mismatchCount: mismatches.length
       };
-    } catch (e) {
+    } catch {
       return { supported: false, error: true };
     }
   }
