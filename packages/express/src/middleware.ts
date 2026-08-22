@@ -4,12 +4,14 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { WebDecoy, WebDecoyConfig, RequestMetadata, ProtectOptions } from '@webdecoy/node';
-import type { EdgeVerdict, SiteHoneytoken } from '@webdecoy/node';
+import type { EdgeVerdict, SiteHoneytoken, TrustedProxies } from '@webdecoy/node';
 import {
   siteHoneytoken,
   injectHoneytokenLink,
   isInjectableHtml,
   tripwire,
+  resolveClientIp,
+  normalizeIp,
 } from '@webdecoy/node';
 
 export interface WebDecoyMiddlewareOptions extends ProtectOptions {
@@ -46,8 +48,30 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
   honeytoken?: boolean;
 
   /**
-   * Custom function to extract IP address from request
-   * By default, uses req.ip or x-forwarded-for header
+   * How much of the `X-Forwarded-For` chain to believe.
+   *
+   * Leave this unset and Express decides: `req.ip` already honours the app's own
+   * `trust proxy` setting, which defaults to the socket address. Set it to
+   * override that for WebDecoy alone — a number of trusted hops, `'cloudflare'`,
+   * or CIDRs of your proxies.
+   *
+   * THIS CHANGED IN 0.12.0, and it is a behaviour change worth reading.
+   *
+   * Before, the middleware read the leftmost `X-Forwarded-For` value and called
+   * it the client — the one value in that header the client writes itself. A
+   * single `-H 'X-Forwarded-For: 1.2.3.4'` bought a fresh rate-limit bucket per
+   * forged address and put an address of the caller's choosing on every
+   * detection we reported.
+   *
+   * If your app is behind a proxy and does not already set `trust proxy`, set
+   * this, or every request will be attributed to the proxy.
+   */
+  trustProxy?: TrustedProxies;
+
+  /**
+   * Custom function to extract IP address from request.
+   *
+   * Overrides `trustProxy` entirely — you are choosing the address yourself.
    */
   getIP?: (req: Request) => string;
 
@@ -83,25 +107,26 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
 }
 
 /**
- * Default IP extraction function
- * Handles various common proxy headers
+ * The client IP, as far as we are willing to believe it.
+ *
+ * With no `trustProxy` we defer to `req.ip`, because Express has already
+ * answered this question: it applies the app's `trust proxy` setting and falls
+ * back to the socket address when there isn't one. Deferring means an app that
+ * has configured its proxies correctly does not have to configure them twice,
+ * and an app that hasn't gets the peer address instead of a forgeable header.
  */
-function defaultGetIP(req: Request): string {
-  // Check X-Forwarded-For header (common with proxies)
-  const forwardedFor = req.headers['x-forwarded-for'];
-  if (forwardedFor) {
-    const ips = Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor;
-    return ips.split(',')[0].trim();
+function resolveIP(req: Request, trustProxy: TrustedProxies | undefined): string {
+  const peer = req.socket?.remoteAddress;
+
+  if (trustProxy === undefined) {
+    return normalizeIp(req.ip) ?? normalizeIp(peer) ?? '127.0.0.1';
   }
 
-  // Check X-Real-IP header
-  const realIP = req.headers['x-real-ip'];
-  if (realIP) {
-    return Array.isArray(realIP) ? realIP[0] : realIP;
-  }
-
-  // Fall back to req.ip
-  return req.ip || req.socket.remoteAddress || '127.0.0.1';
+  return (
+    resolveClientIp({ headers: req.headers, peer, trustProxy }) ??
+    normalizeIp(peer) ??
+    '127.0.0.1'
+  );
 }
 
 /**
@@ -173,7 +198,7 @@ export function webdecoy(
 ): (req: Request, res: Response, next: NextFunction) => Promise<void> {
   const sdk = new WebDecoy(config);
 
-  const getIP = config.getIP || defaultGetIP;
+  const getIP = config.getIP || ((req: Request) => resolveIP(req, config.trustProxy));
   const onBlocked = config.onBlocked || defaultOnBlocked;
   const mode = config.mode ?? 'monitor';
 

@@ -3,7 +3,15 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { WebDecoy, WebDecoyConfig, RequestMetadata, ProtectOptions } from '@webdecoy/node';
+import {
+  WebDecoy,
+  WebDecoyConfig,
+  RequestMetadata,
+  ProtectOptions,
+  resolveClientIp,
+  normalizeIp,
+} from '@webdecoy/node';
+import type { TrustedProxies } from '@webdecoy/node';
 
 export interface WebDecoyMiddlewareOptions extends ProtectOptions {
   /**
@@ -20,8 +28,29 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
   mode?: 'monitor' | 'enforce';
 
   /**
-   * Custom function to extract IP address from request
-   * By default, uses x-forwarded-for or x-real-ip headers
+   * How many proxies sit between the client and this middleware, or which ones.
+   * Defaults to `1` — the hosting platform in front of you.
+   *
+   * THIS CHANGED IN 0.12.0, and it is a behaviour change worth reading.
+   *
+   * Before, the middleware read the LEFTMOST `X-Forwarded-For` value. That is
+   * the one value in the header the client writes itself, so a single
+   * `-H 'X-Forwarded-For: 1.2.3.4'` bought a fresh rate-limit bucket per forged
+   * address and put an address of the caller's choosing on every detection we
+   * reported. It now reads from the right, past the hops you say you have.
+   *
+   * Edge middleware has no socket to fall back on, so unlike the Express and
+   * Fastify adapters there is no safe "believe nothing" default here — `1` is
+   * correct on Vercel and on any single-proxy deployment. Behind a CDN in front
+   * of your platform, set `2`. Behind Cloudflare with the origin locked to it,
+   * `'cloudflare'` is stronger than counting.
+   */
+  trustProxy?: TrustedProxies;
+
+  /**
+   * Custom function to extract IP address from request.
+   *
+   * Overrides `trustProxy` entirely — you are choosing the address yourself.
    */
   getIP?: (req: NextRequest) => string;
 
@@ -50,28 +79,25 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
 }
 
 /**
- * Default IP extraction function for Next.js
+ * The client IP, as far as we are willing to believe it.
+ *
+ * `x-real-ip` and `x-vercel-forwarded-for` are consulted only after the
+ * forwarding chain comes up empty. Both are written by a proxy in the normal
+ * case and by anyone at all otherwise, so they are a fallback for a missing
+ * `X-Forwarded-For`, never an override of one.
  */
-function defaultGetIP(req: NextRequest): string {
-  // Check X-Forwarded-For header (common with Vercel and proxies)
-  const forwardedFor = req.headers.get('x-forwarded-for');
-  if (forwardedFor) {
-    return forwardedFor.split(',')[0].trim();
-  }
+function resolveIP(req: NextRequest, trustProxy: TrustedProxies | undefined): string {
+  const fromChain = resolveClientIp({
+    headers: req.headers,
+    trustProxy: trustProxy ?? 1,
+  });
+  if (fromChain) return fromChain;
 
-  // Check X-Real-IP header
-  const realIP = req.headers.get('x-real-ip');
-  if (realIP) {
-    return realIP;
-  }
-
-  // Vercel provides this
-  const vercelIP = req.headers.get('x-vercel-forwarded-for');
-  if (vercelIP) {
-    return vercelIP.split(',')[0].trim();
-  }
-
-  return '127.0.0.1';
+  return (
+    normalizeIp(req.headers.get('x-real-ip')) ??
+    normalizeIp(req.headers.get('x-vercel-forwarded-for')?.split(',').pop()) ??
+    '127.0.0.1'
+  );
 }
 
 /**
@@ -137,7 +163,7 @@ export function withWebDecoy(
 ): (req: NextRequest) => Promise<NextResponse> {
   const sdk = new WebDecoy(config);
 
-  const getIP = config.getIP || defaultGetIP;
+  const getIP = config.getIP || ((req: NextRequest) => resolveIP(req, config.trustProxy));
   const onBlocked = config.onBlocked || defaultOnBlocked;
   const mode = config.mode ?? 'monitor';
   const onError = config.onError || defaultOnError;
@@ -297,16 +323,19 @@ export function withBotProtection<T extends (...args: any[]) => any>(
     const [req, res] = args;
 
     try {
-      // Extract IP from various sources
-      const forwardedFor = req.headers['x-forwarded-for'];
-      const ip = forwardedFor
-        ? (Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor).split(',')[0].trim()
-        : req.headers['x-real-ip'] || req.socket?.remoteAddress || '127.0.0.1';
+      // A Pages API route runs on Node, so there is a socket here and the safe
+      // default the edge middleware cannot have applies: believe no forwarding
+      // header unless the caller says how many proxies wrote it.
+      const peer = req.socket?.remoteAddress;
+      const ip =
+        resolveClientIp({ headers: req.headers, peer, trustProxy: config.trustProxy }) ??
+        normalizeIp(peer) ??
+        '127.0.0.1';
 
       const metadata: RequestMetadata = {
         method: req.method || 'GET',
         path: req.url || '/',
-        ip: typeof ip === 'string' ? ip : '127.0.0.1',
+        ip,
         user_agent: req.headers['user-agent'],
         headers: req.headers as Record<string, string>,
         timestamp: Date.now(),

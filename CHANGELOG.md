@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **The client IP is no longer taken from a header the client writes.** The Express and Next.js adapters read the leftmost `X-Forwarded-For` value and treated it as the caller's address. That value is supplied by the client on the first hop, so a single `-H 'X-Forwarded-For: 1.2.3.4'` bought a fresh rate-limit bucket per forged address, put an address of the caller's choosing on every violation reported to the dashboard, and reduced `filter({ expression: 'ip.tor or ip.vpn' })` to an opt-in check. The captcha endpoints in both adapters had the same flaw.
+
+  Forwarding headers are now believed only as far as you say they should be, counted from the right of the chain — the end written by infrastructure you control.
+
+  - New `trustProxy` option on every adapter and on the captcha endpoints: `false` (believe nothing), a number of trusted hops, `'cloudflare'` (use `CF-Connecting-IP`), or an array of CIDRs to walk past.
+  - New exports from `@webdecoy/node`: `resolveClientIp()`, `normalizeIp()`, `ipInCidr()`, and the `TrustedProxies` type — so an application building its own `RequestMetadata` derives the same address the middleware does. Edge-safe: no `node:net`.
+  - Addresses are normalised before use. Ports, brackets and IPv6 zone ids are stripped, IPv4-mapped IPv6 collapses to its IPv4 form so a dual-stack listener keys one client once, and anything that does not parse falls back to the peer address rather than becoming a key of its own.
+
+### Changed
+
+- **Behaviour change — read this if you run behind a proxy.**
+  - **Express** now defers to `req.ip`, which honours the app's own `trust proxy` setting and otherwise resolves to the socket address. An app already configured with `app.set('trust proxy', …)` needs no change. An app behind a proxy that never configured Express will now attribute traffic to the proxy: set `trust proxy`, or pass `trustProxy` to the middleware.
+  - **Next.js** reads the chain from the right and defaults to `1` trusted hop, which is correct on Vercel and on any single-proxy deployment. Edge middleware has no socket to fall back on, so there is no believe-nothing default available here. Behind a CDN in front of your platform, set `trustProxy: 2`; behind Cloudflare with the origin locked to it, `trustProxy: 'cloudflare'`.
+  - **Fastify** is unchanged. It already deferred to `request.ip`, which was the safe answer; it gains the `trustProxy` option for parity.
+  - `getIP` still overrides everything, and existing `getIP` implementations are untouched.
+
 ## [0.11.1] - 2026-08-20
 
 ### Added

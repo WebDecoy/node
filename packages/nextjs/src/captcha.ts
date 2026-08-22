@@ -12,16 +12,37 @@
  * ```
  */
 
-import { createCaptchaEndpoints, type CaptchaEndpointsOptions } from '@webdecoy/node';
+import {
+  createCaptchaEndpoints,
+  resolveClientIp,
+  normalizeIp,
+  type CaptchaEndpointsOptions,
+  type TrustedProxies,
+} from '@webdecoy/node';
 
-function getIP(headers: Headers): string {
-  const forwarded = headers.get('x-forwarded-for');
-  if (forwarded) return forwarded.split(',')[0].trim();
+/**
+ * The captcha endpoints rate-limit and score by IP, so they need the same
+ * answer the middleware gets — a forgeable one here would let a solver farm
+ * mint challenges under an address per request. Defaults to one trusted hop for
+ * the same reason the middleware does: a route handler has no socket to fall
+ * back on.
+ */
+function getIP(headers: Headers, trustProxy: TrustedProxies | undefined): string {
+  const fromChain = resolveClientIp({ headers, trustProxy: trustProxy ?? 1 });
+  if (fromChain) return fromChain;
   return (
-    headers.get('x-real-ip') ||
-    headers.get('x-vercel-forwarded-for') ||
+    normalizeIp(headers.get('x-real-ip')) ??
+    normalizeIp(headers.get('x-vercel-forwarded-for')?.split(',').pop()) ??
     '127.0.0.1'
   );
+}
+
+export interface NextCaptchaOptions extends CaptchaEndpointsOptions {
+  /**
+   * How many proxies sit between the client and this handler, or which ones.
+   * Defaults to `1`. Same meaning as the middleware's option.
+   */
+  trustProxy?: TrustedProxies;
 }
 
 function headersToRecord(headers: Headers): Record<string, string> {
@@ -37,7 +58,7 @@ export interface NextCaptchaHandlers {
   POST: (req: Request) => Promise<Response>;
 }
 
-export function createCaptchaHandler(options?: CaptchaEndpointsOptions): NextCaptchaHandlers {
+export function createCaptchaHandler(options?: NextCaptchaOptions): NextCaptchaHandlers {
   const endpoints = createCaptchaEndpoints(options);
 
   async function handler(req: Request): Promise<Response> {
@@ -63,7 +84,7 @@ export function createCaptchaHandler(options?: CaptchaEndpointsOptions): NextCap
       query,
       headers,
       body,
-      ip: getIP(req.headers),
+      ip: getIP(req.headers, options?.trustProxy),
     });
 
     if (!result) {

@@ -204,6 +204,29 @@ if (!result.allowed) {
 | [@webdecoy/nextjs](https://www.npmjs.com/package/@webdecoy/nextjs) | [![npm](https://img.shields.io/npm/v/@webdecoy/nextjs.svg)](https://www.npmjs.com/package/@webdecoy/nextjs) | Next.js middleware |
 | [@webdecoy/client](https://www.npmjs.com/package/@webdecoy/client) | [![npm](https://img.shields.io/npm/v/@webdecoy/client.svg)](https://www.npmjs.com/package/@webdecoy/client) | Browser-side signal collector |
 
+## Client IP behind a proxy
+
+Rate limits, IP enrichment and every detection we record are keyed on the caller's address, so it matters that the address is real. `X-Forwarded-For` is written by the client for the first hop — the leftmost value in it is whatever the caller decided to send — so the middleware believes it only as far as you say it should, counted from the **right** of the chain, which is the end your own infrastructure wrote.
+
+```typescript
+app.use(webdecoy({
+  trustProxy: 1,   // one proxy in front of this app
+}));
+```
+
+| `trustProxy` | Meaning |
+|---|---|
+| `false` | Read no forwarding headers. The socket address is the client. |
+| `1`, `2`, … | The number of proxies between the client and this app. |
+| `'cloudflare'` | Use `CF-Connecting-IP`. Only safe if the origin is unreachable except through Cloudflare. |
+| `['10.0.0.0/8', …]` | CIDRs of proxies you run. The chain is walked right to left and the first address that isn't yours is the client. |
+
+**Defaults.** Express and Fastify defer to `req.ip` / `request.ip`, which already honour the framework's own trust-proxy setting and otherwise resolve to the socket address — so if you've configured `app.set('trust proxy', …)` there's nothing to do here. Next.js middleware has no socket to fall back on, so it defaults to `1` trusted hop, which is correct on Vercel and on any single-proxy deployment.
+
+If your app sits behind a proxy and neither of those is configured, set `trustProxy` — otherwise every request is attributed to the proxy and rate limits apply to your whole site at once.
+
+The same option is accepted by `webdecoyCaptcha()` / `createCaptchaHandler()`, and `getIP` still overrides all of it. To derive the address yourself the same way, `@webdecoy/node` exports `resolveClientIp()`, `normalizeIp()` and `ipInCidr()`.
+
 ## Configuration (platform options)
 
 ```typescript
@@ -264,7 +287,7 @@ See [examples](./examples) for complete working setups — e.g. [express-basic](
 
 **What if the WebDecoy service is down?** Local rules are unaffected (they never call out). Platform `protect()` fails open by default, so requests continue.
 
-**Behind a CDN or load balancer?** Yes — the middleware handles `X-Forwarded-For` and similar. Configure your proxy's trusted-IP settings correctly.
+**Behind a CDN or load balancer?** Yes, but tell the middleware how many proxies are in front of it. See [Client IP behind a proxy](#client-ip-behind-a-proxy).
 
 ## Support
 
