@@ -103,6 +103,12 @@ export type {
   MemoryClientSignalStoreOptions,
 } from './client-signals';
 
+// The decisions every framework middleware shares. Exported so an adapter this
+// package does not ship — a custom one, or a framework added later — reaches
+// for the same answers rather than reimplementing them.
+export { shouldSkipPath, ruleBlockResponse, armSiteHoneytoken, deriveAndArm } from './adapter-core';
+export type { BlockResponse, HoneytokenArmingOptions } from './adapter-core';
+
 export { createFetchGuard } from './fetch-guard';
 export type { FetchGuard, FetchGuardOptions, GuardOutcome } from './fetch-guard';
 

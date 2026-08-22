@@ -10,6 +10,8 @@ import {
   ProtectOptions,
   resolveClientIp,
   normalizeIp,
+  shouldSkipPath,
+  ruleBlockResponse,
 } from '@webdecoy/node';
 import type { TrustedProxies, ProtectResult, SDKDetectionResponse } from '@webdecoy/node';
 
@@ -129,22 +131,6 @@ function defaultOnError(req: NextRequest, error: Error): NextResponse | null {
 }
 
 /**
- * Check if path should be skipped
- */
-function shouldSkipPath(path: string, skipPaths?: string[] | RegExp[]): boolean {
-  if (!skipPaths || skipPaths.length === 0) {
-    return false;
-  }
-
-  return skipPaths.some((pattern) => {
-    if (typeof pattern === 'string') {
-      return path === pattern || path.startsWith(pattern);
-    }
-    return pattern.test(path);
-  });
-}
-
-/**
  * Create Next.js middleware for Web Decoy protection
  *
  * @example
@@ -224,35 +210,14 @@ export function withWebDecoy(
         return NextResponse.next({ request: { headers: monitorHeaders } });
       }
 
-      // Handle rule engine results for specific HTTP responses
-      if (!result.allowed && result.ruleResult) {
-        const rr = result.ruleResult;
-
-        if (rr.action === 'THROTTLE') {
-          const retryAfter = rr.metadata?.retryAfter ?? 60;
-          return NextResponse.json(
-            {
-              error: 'Too Many Requests',
-              message: rr.reason || 'Rate limit exceeded',
-              retry_after: retryAfter,
-            },
-            {
-              status: 429,
-              headers: { 'Retry-After': String(retryAfter) },
-            }
-          );
-        }
-
-        if (rr.action === 'DENY') {
-          return NextResponse.json(
-            {
-              error: 'Forbidden',
-              message: rr.reason || 'Access denied by rule',
-              rule: rr.rule,
-            },
-            { status: 403 }
-          );
-        }
+      // A rule refusal answers with the shape every adapter uses; only the
+      // building of the NextResponse is this adapter's business.
+      const block = ruleBlockResponse(result);
+      if (block) {
+        return NextResponse.json(block.body, {
+          status: block.status,
+          headers: block.headers,
+        });
       }
 
       // Handle the result
@@ -359,17 +324,17 @@ export function withBotProtection<T extends (...args: any[]) => any>(
       });
 
       if (!result.allowed) {
-        // Handle rule engine specific responses
-        if (result.ruleResult?.action === 'THROTTLE') {
-          const retryAfter = result.ruleResult.metadata?.retryAfter ?? 60;
-          res.setHeader('Retry-After', String(retryAfter));
-          return res.status(429).json({
-            error: 'Too Many Requests',
-            message: result.ruleResult.reason || 'Rate limit exceeded',
-            retry_after: retryAfter,
-          });
+        // Same shared refusal shape as the middleware and every other adapter.
+        // This wrapper was the fourth copy of it.
+        const block = ruleBlockResponse(result);
+        if (block) {
+          for (const [name, value] of Object.entries(block.headers)) {
+            res.setHeader(name, value);
+          }
+          return res.status(block.status).json(block.body);
         }
 
+        // A server-score block names no rule, so it keeps its own shape.
         return res.status(403).json({
           error: 'Forbidden',
           message: 'Access denied by Web Decoy protection',

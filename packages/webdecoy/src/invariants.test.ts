@@ -131,6 +131,66 @@ describe('one answer to "is this rule running"', () => {
   });
 });
 
+describe('one answer to "what does a refused request get"', () => {
+  it('builds the rule-refusal response only in adapter-core.ts', () => {
+    // Four adapters each had their own copy of the 429 and 403 payloads, the
+    // skip-path matcher and the honeytoken arming. Every copy is a place the
+    // next correction can fail to land — which is exactly how the
+    // leftmost-X-Forwarded-For bug outlived its own fix in two of them.
+    const core = join(PACKAGES, 'webdecoy', 'src', 'adapter-core.ts');
+    const offenders = sourceFiles()
+      .filter((f) => f !== core)
+      .flatMap((f) => hits(f, /'Too Many Requests'|"Too Many Requests"/));
+
+    if (offenders.length > 0) {
+      throw new Error(
+        'These build a rule-refusal response themselves instead of calling\n' +
+          'ruleBlockResponse(). One shape, one place — a second copy is a second\n' +
+          'thing to keep in step, and it will not be kept in step.\n\n  ' +
+          offenders.join('\n  '),
+      );
+    }
+  });
+
+  it('matches skip paths only in adapter-core.ts', () => {
+    const core = join(PACKAGES, 'webdecoy', 'src', 'adapter-core.ts');
+    const offenders = sourceFiles()
+      .filter((f) => f !== core)
+      .flatMap((f) => hits(f, /function shouldSkipPath|function matches\(pathname/));
+
+    if (offenders.length > 0) {
+      throw new Error(
+        'These reimplement skip-path matching instead of importing\n' +
+          'shouldSkipPath() from the shared core.\n\n  ' + offenders.join('\n  '),
+      );
+    }
+  });
+
+  it('derives the site honeytoken only in adapter-core.ts', () => {
+    // Deriving without arming the tripwire it points at advertises bait with no
+    // trap behind it. Keeping the pair in one place is what stops the two
+    // drifting apart in a copy.
+    const core = join(PACKAGES, 'webdecoy', 'src', 'adapter-core.ts');
+    // nextjs/honeytoken.ts derives without arming, on purpose: it is the
+    // render-side helper an App Router layout calls to print the link, and the
+    // developer arms the tripwire in their middleware with the same
+    // activePaths. Both sides derive the same HMAC from the API key, which is
+    // what makes them agree. It is a second caller, not a second answer.
+    const renderSide = join(PACKAGES, 'nextjs', 'src', 'honeytoken.ts');
+    const offenders = sourceFiles()
+      .filter((f) => f !== core && f !== renderSide)
+      .flatMap((f) => hits(f, /siteHoneytoken\(\{/));
+
+    if (offenders.length > 0) {
+      throw new Error(
+        'These derive the site honeytoken themselves. Use armSiteHoneytoken()\n' +
+          'or deriveAndArm(), which arm the tripwire in the same step.\n\n  ' +
+          offenders.join('\n  '),
+      );
+    }
+  });
+});
+
 describe('the edge build stays edge-compatible', () => {
   it('no node: import reaches a package that ships to Workers', () => {
     // check:edge catches this at build time, but only for the entry points it

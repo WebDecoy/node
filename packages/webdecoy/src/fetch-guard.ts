@@ -24,13 +24,8 @@ import type { WebDecoyConfig, RequestMetadata, ProtectOptions } from './types';
 import type { Decision } from './decision';
 import { resolveClientIp, normalizeIp } from './client-ip';
 import type { TrustedProxies } from './client-ip';
-import {
-  siteHoneytoken,
-  injectHoneytokenLink,
-  isInjectableHtml,
-  tripwire,
-  type SiteHoneytoken,
-} from './rules';
+import { injectHoneytokenLink, isInjectableHtml } from './rules';
+import { shouldSkipPath, ruleBlockResponse, armSiteHoneytoken } from './adapter-core';
 
 export interface FetchGuardOptions extends WebDecoyConfig, ProtectOptions {
   /**
@@ -89,42 +84,19 @@ export interface FetchGuard {
 }
 
 function defaultBlocked(_request: Request, decision: Decision): Response {
-  const throttled = decision.ruleResult?.action === 'THROTTLE';
-  const retryAfter = Number(decision.ruleResult?.metadata?.retryAfter ?? 60);
+  // The rule refusal shape is shared with every other adapter; only the
+  // detection id is added here, because a fetch handler has nowhere else to
+  // surface it.
+  const block = ruleBlockResponse(decision) ?? {
+    status: 403,
+    headers: {},
+    body: { error: 'Forbidden', message: 'Access denied by Web Decoy protection' },
+  };
 
-  if (throttled) {
-    return new Response(
-      JSON.stringify({
-        error: 'Too Many Requests',
-        message: decision.reason ?? 'Rate limit exceeded',
-        retry_after: retryAfter,
-        detection_id: decision.id,
-      }),
-      {
-        status: 429,
-        headers: {
-          'content-type': 'application/json',
-          'retry-after': String(retryAfter),
-        },
-      },
-    );
-  }
-
-  return new Response(
-    JSON.stringify({
-      error: 'Forbidden',
-      message: 'Access denied by Web Decoy protection',
-      detection_id: decision.id,
-    }),
-    { status: 403, headers: { 'content-type': 'application/json' } },
-  );
-}
-
-function matches(pathname: string, patterns: (string | RegExp)[] | undefined): boolean {
-  if (!patterns || patterns.length === 0) return false;
-  return patterns.some((p) =>
-    typeof p === 'string' ? pathname === p || pathname.startsWith(p) : p.test(pathname),
-  );
+  return new Response(JSON.stringify({ ...block.body, detection_id: decision.id }), {
+    status: block.status,
+    headers: { 'content-type': 'application/json', ...block.headers },
+  });
 }
 
 function headerRecord(headers: Headers): Record<string, string> {
@@ -159,19 +131,10 @@ export function createFetchGuard(options: FetchGuardOptions = {}): FetchGuard {
   // coordinating — a random per-process token would advertise a link whose
   // tripwire only one replica had armed. Requests served before the async HMAC
   // settles simply carry no link.
-  let token: SiteHoneytoken | null = null;
-  if ((options.honeytoken ?? true) && options.apiKey) {
-    void siteHoneytoken({ secret: options.apiKey })
-      .then((t) => {
-        token = t;
-        // Arm the path before advertising it: a link with no trap behind it is
-        // bait a crawler follows for nothing.
-        sdk.addRule(tripwire({ paths: t.activePaths, includeDefaults: false }));
-      })
-      .catch(() => {
-        // Deriving the token is not worth a failed boot.
-      });
-  }
+  const getToken = armSiteHoneytoken(sdk, {
+    apiKey: options.apiKey,
+    enabled: options.honeytoken,
+  });
 
   function resolveIP(request: Request, peer?: string): string {
     if (options.getIP) return options.getIP(request);
@@ -190,7 +153,7 @@ export function createFetchGuard(options: FetchGuardOptions = {}): FetchGuard {
     sdk,
 
     skips(pathname: string): boolean {
-      return matches(pathname, options.skipPaths);
+      return shouldSkipPath(pathname, options.skipPaths);
     },
 
     async check(request: Request, peer?: string): Promise<GuardOutcome> {
@@ -220,7 +183,7 @@ export function createFetchGuard(options: FetchGuardOptions = {}): FetchGuard {
     },
 
     async decorate(response: Response): Promise<Response> {
-      const current = token;
+      const current = getToken();
       if (!current) return response;
       if (!isInjectableHtml(response.headers.get('content-type'))) return response;
       // A body already consumed by the application cannot be read again, and
