@@ -576,6 +576,18 @@
     "matched": true
   },
   {
+    "userAgent": "duckassistbot",
+    "id": "duckassistbot",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; duckassistbot/1.0; +http://example.com/bot)",
+    "id": "duckassistbot",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
     "userAgent": "duckduckbot",
     "id": "duckduckbot",
     "category": "search_crawler",
@@ -936,6 +948,18 @@
     "matched": true
   },
   {
+    "userAgent": "iboubot",
+    "id": "iboubot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; iboubot/1.0; +http://example.com/bot)",
+    "id": "iboubot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
     "userAgent": "iframely",
     "id": "iframely",
     "category": "fetcher",
@@ -1053,6 +1077,18 @@
     "userAgent": "Mozilla/5.0 (compatible; linkedinbot/1.0; +http://example.com/bot)",
     "id": "linkedinbot",
     "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "linkupbot",
+    "id": "linkupbot",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; linkupbot/1.0; +http://example.com/bot)",
+    "id": "linkupbot",
+    "category": "ai_search_crawler",
     "matched": true
   },
   {
@@ -1560,6 +1596,18 @@
     "matched": true
   },
   {
+    "userAgent": "reflectionbot",
+    "id": "reflectionbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; reflectionbot/1.0; +http://example.com/bot)",
+    "id": "reflectionbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
     "userAgent": "rogerbot",
     "id": "rogerbot",
     "category": "seo_crawler",
@@ -1785,6 +1833,18 @@
     "userAgent": "Mozilla/5.0 (compatible; slackbot/1.0; +http://example.com/bot)",
     "id": "slackbot",
     "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "sofyabot",
+    "id": "sofyabot",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; sofyabot/1.0; +http://example.com/bot)",
+    "id": "sofyabot",
+    "category": "ai_search_crawler",
     "matched": true
   },
   {
@@ -2145,6 +2205,18 @@
     "userAgent": "Mozilla/5.0 (compatible; node-fetch/1.0; +http://example.com/bot)",
     "id": "node-fetch",
     "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "xai-searchbot",
+    "id": "xai-searchbot",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; xai-searchbot/1.0; +http://example.com/bot)",
+    "id": "xai-searchbot",
+    "category": "ai_search_crawler",
     "matched": true
   },
   {
