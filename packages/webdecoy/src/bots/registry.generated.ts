@@ -11,7 +11,7 @@
  * agents share User-Agent substrings, so sorting this array changes how real
  * traffic is classified.
  *
- * 169 agents across 15 categories.
+ * 171 agents across 15 categories.
  */
 
 /**
@@ -103,6 +103,8 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "velenpublicwebcrawler", name: "VelenPublicWebCrawler", category: "training_crawler", organization: "Velen", baseScore: 70, respectsRobots: false, uaPatterns: ["velenpublicwebcrawler"] },
   { id: "isscyberriskcrawler", name: "ISSCyberRiskCrawler", category: "training_crawler", organization: "ISS", baseScore: 65, respectsRobots: false, uaPatterns: ["isscyberriskcrawler"] },
   { id: "friendlycrawler", name: "FriendlyCrawler", category: "training_crawler", organization: "Unknown", baseScore: 65, respectsRobots: true, uaPatterns: ["friendlycrawler"] },
+  { id: "xai-searchbot", name: "xAI-SearchBot", category: "ai_search_crawler", organization: "xAI", baseScore: 70, respectsRobots: true, uaPatterns: ["xai-searchbot"] },
+  { id: "linkupbot", name: "LinkupBot", category: "ai_search_crawler", organization: "Linkup", baseScore: 65, respectsRobots: true, uaPatterns: ["linkupbot"] },
   { id: "searchgpt", name: "SearchGPT", category: "ai_search_crawler", organization: "OpenAI", baseScore: 75, respectsRobots: true, uaPatterns: ["searchgpt"] },
   { id: "phind", name: "Phind", category: "ai_search_crawler", organization: "Phind", baseScore: 70, respectsRobots: true, uaPatterns: ["phind"] },
   { id: "kagi", name: "Kagi", category: "ai_search_crawler", organization: "Kagi", baseScore: 65, respectsRobots: true, uaPatterns: ["kagi"] },
