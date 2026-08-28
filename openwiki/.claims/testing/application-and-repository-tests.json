@@ -1,0 +1,300 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:7035cf4318eca5fa2c5bba6ba0461f844f06572fc993a71ce76541fed9c4f736",
+  "claims": [
+    {
+      "id": "claim_478b8d2d7d444fa29bb0a6465827dc04",
+      "statement": "The public `@webdecoy/node/testing` export is built from `src/testing.ts` and is a distinct testing subpath rather than the normal SDK entry point.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/package.json#L7-L28",
+          "version": "repo-lines-v1:sha256:cd50dbce48661f6a9aa5be4a2a05c052f940d6621d77ff91ab058227923ed12f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjMDViYjlmNGE4Yjk4NDUxMGY4MTVhNWZjNDA3OGQ3N2M1YTIwZTkzZjMzNzNkYzVkZGU0YTM0MWQxYjQwYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjZmJjYWIwOGUxYTE1Yzk0ZDRmNjUxODc5NDRlNzZmYjM5ZWFjMzQ3NmE5MWNhNmZlNTdjOTg5MGFhNDAzY2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwYzJhYzMyMDQ4NDllNzllNzljOWNlZDY0MDAzYzM5ZjA0OWNmOTNjNmY4MjY1NzJhODBjZTA2OTRhZjE0OWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZiMjA4ODMzMDkwMTE3NWFhZGNmOWUwNWYxNDU0MDYxNTY1MDQ5NWY3Yjk5YTNmOTE4ZGMwMDQ1MjU4MjY4MzQifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/testing.ts#L1-L31",
+          "version": "repo-lines-v1:sha256:23feef5b4ca53083526b9294a48e55bfc9270a32d5ea72dedf50e11edd5b123f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRhNGZlYmE2ZjU4MjcwNzViMmNhY2FkMWJhZDU3MzU5MWI4MzExMjViYjhhMzM5YjBkMmUyMGY0NGEyZjYxNTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_41dfea780bbd4592b1a5007cffc00ed4",
+      "statement": "`createTestHarness()` is offline and silent by default: it removes the API key unless `allowNetwork` is explicitly true, and each harness constructs a new `WebDecoy` instance with its own in-memory rule state.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/testing.test.ts#L43-L86",
+          "version": "repo-lines-v1:sha256:ac832205ab9d659553660fe741a45c74686c04cc9394bdaf4581fb3c7d75e86c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZTgzMzUwYTI2NDQ3MTc5MDYyZWY5NGM5Yzc4ZGU1YTVlYzlhMmZiYmU5N2I0Y2IyNTIxOTYzOWU1MmM4MzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUwZTVjZDY1ZDdlNmIwNDEwZWIzYmQ2MDk0ODM4OGQyZjdmMWQ3OWVkMmIxNGVmNGQwOTljOGMzMTAxYzg5YzUifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/testing.ts#L77-L101",
+          "version": "repo-lines-v1:sha256:28d1c228411573f5b5ac6e53caa66aa0b6abb5d44a66653614580e2f85938a99:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViMmJhMGNmMTE4YWUwZDg3MmY2NTkyNDRhZTdhM2E2ZDdhYmVkM2Y1ODdlOTQzNGI1ZTA4YzQzMjgzMmNjNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1NTFhOGVjYTc1YTgzNDZmMjc5MTFiMGFiODI1MTNlYzVjOTIzNTdjZTFhNjI5MjA1ZTk3MzAxMjE2YWZjODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRiNTcxM2JkYzJlMDVkZGI1NzRmZWMxMWMyOWNhZmFiNGZkNDI3NTU4ZjU4YTk4NjczZjVlM2I3N2M5YmQwZjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fff32b92979443008aa102b231cdd46f",
+      "statement": "The public testing helpers build complete request metadata, split GET query strings from paths, support POST and bot-shaped requests, and provide sequential `protectMany()` calls for stateful-policy tests.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/testing.test.ts#L15-L40",
+          "version": "repo-lines-v1:sha256:4e9866c71cde4f5de951e0545118336b82bff9027d0b0f2db932820dc28addb0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkYTk2OTBkYzY0ZGNjZWZkZGJlM2M0N2RiNTJkZWU1MTIzYjE2ZDUwNTEwODU2ZTE1ZjQxM2EyMGZiNWQxMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlOGI1NzFhNGQyODg1ZmMxODEyNmQ5NjNmNDE5MWUzM2ZhZjljZDg2MzIxMTU4NzcwYmFlMGJlOWM3NDc3NzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA3OGRkYzViMzczNDI4OWJlZWI3NDFmYjNmOTI5MzYzNDIzOTYyNWM4ODYzNDEzNTIzMDg5MTExMzNjZDc5OTEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/testing.test.ts#L154-L175",
+          "version": "repo-lines-v1:sha256:35cffba782841b2e9d4601cbec14b4fbe8e6d790da30668c5fc7d92d253b25bf:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1NTAzYjM5N2NiMTY2MTEyMzk4MzJmYzRiMzE3YzI0M2RlNWEzZTk4ODAwYTU5ZTIwNDczZjA0MWVhNGRlN2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxNGRhNjkzNTMwZDM5MDdmNGNmZThkNmYxNDM4MTMyOWQ1ZTVlNjJiZTk4NTFhYmNhYWExMTg3MmJhYWEzNjMifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/testing.ts#L189-L205",
+          "version": "repo-lines-v1:sha256:19bc0f69f035f4b7c0e06719d4db6a61ca0049c7584c8f244386c2ccd47e3dce:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/testing.ts#L38-L75",
+          "version": "repo-lines-v1:sha256:7e2e6a921fd336b7fbf91bb64906bfcccfcc7d39a8f997520b3ba9e4c265e11c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2ZWEzMGNiZTExMWViOTQ3MTQ4YjFlNDhlZTcxMmQ2YjE4MzM1ODI0NmZmMTgwZTc2NTFiYTJlMWQxZjExOWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjYjgxMzFjZjZjZDcxNGUzMTVlZDgxODU5YTQ3NzVhMDI1MWJkYTQxZTEwZDIxMzVhYzgyZjk5YmEwMzJkODMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmNTJkZGRhMzdmODNmMDZiNGMxMDBkOTQyY2RkZGY3YTljODllNjI5OThmZjJiMjQ5NjVmNGY5OGE3Y2YzYTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_557ed8d801604c6fb8469a574d6ed221",
+      "statement": "Consumer test assertions deliberately distinguish `DENY`, `ALLOW`, `ERROR`, and named rule states: `expectAllowed` rejects `ERROR`, `expectDenied` can require a rule or reason, and `expectRuleState` reports absent or mismatched rule outcomes.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/decision.ts#L29-L50",
+          "version": "repo-lines-v1:sha256:ac7edc69f422848d127df8b47267ae70b7812818d65f975b07330cb7b863201f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlYTgxYWI2YjEwZDg1YzAwOTMxOWU2ZDA4YTljNDY3MmViZTJhZjA0ZjliZmY0ODUyNTNmNjJlYzFkMjk0NmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiNTFmNzdiYmU0M2ZlNTBkZWQ0YzJhZTZkZDE3YjAzZWY5ZjUyMTJlZDNjZjFmZmJmYjBlYWNmNmZmMzNjODYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlNDZmOTYwY2YyMzZkMjA0YWUxOTJlNDJlNGJhNjUzZThhYzlmYTVlNGY2YTljY2UxZjhiOTg0ZDBhM2E2OWEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/decision.ts#L70-L129",
+          "version": "repo-lines-v1:sha256:00f8306239fcc7f1583c22055121a35569cb8a598fb772eee4a71621c6922838:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyMDI3ZmZhYjA3MjRkOTkyZDgyNTQ0Y2ExY2Y0YWQwNzcyMTlkYTIyMGMyN2FmZTM2NWE4NzdkMjc1MGNiNzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3NzU1MTA4NDM4ZGZlZWQ4OWY4ODNhY2U0Y2IxMjU3MDI0NmYyNmY4NmMxOTI1MjkyNzY0OGJkOWY4MzE4YTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE4MzA4YzI2YzM1M2ZkOGI5NGM3NWNlMjc0YWZjNjU4YTQ3NDQ1OWNlZjhhYTczOWVmMTEwNzk1MWUwOTczOGIifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/testing.test.ts#L89-L151",
+          "version": "repo-lines-v1:sha256:a7524ed5c750813e77252b065f786e711d4db6309818a1c454d22da334ada8d6:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwZDMwYTM1YzdlMGIxOGM2ODczZWE2NzQyZWNkOWIyNzMzYTRmODc5MDJlM2UxZGJjOTA5M2UwOTdjOGY3MTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM5M2FhNDIzMTM0NzY1M2QzMmVmZWUwODdiNjczNGUwYjJmODdkZDQxNmNkYzQ4ZjRlNWM2MTY5NThkMWY2MDUifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/testing.ts#L103-L187",
+          "version": "repo-lines-v1:sha256:8a39b77d646c21b8883b3718aac7e9794821b02f51ec4c53705b067e9c941e83:eyJzZWxlY3RlZExpbmVDb3VudCI6ODUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyN2U5MDY0NjVmMGVmZmIzOGYxN2EzNGU1MGYwNTc2Y2M5MjU4ODYyOWY3ODIzMjBiYmU3ZThiNmE0YWQ0ODMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMGYyZDNhM2FhZGEyNzU4NjQ1NzhkMGE0MzkxNTYzOGQ1NDNmZWNhMmM5NDg1OGRiOTQxMjExZTg2Y2VmMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM4ZDk1ZDIyN2QxYWE2M2U2ZGY4MjM0MjRmNDZmM2ZjYzRlN2MzNzQ1YTJlZTljMGIyYTUyMTQ1YjY3ZDVmNjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bb5dd85c14ac40c19bca9d39bdf40143",
+      "statement": "A decision's compatibility boolean fails open for `ERROR`, while its typed conclusion remains distinct: `allowed` is true for `ALLOW` and `ERROR`, and false for `DENY` and `CHALLENGE`.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/decision.ts#L183-L206",
+          "version": "repo-lines-v1:sha256:0306970cfec682129aa2b34a36f69ef0f9c22f67a956850e5eb822b9afbcf9a7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjYWY4YzQ1YzJiMDVkOWYxMjBjMTc3ZGEwZjM3NzE0MTNmNDhiMGNkNjUyMjE4YTAwMzQ1OGZmODhiMDlkY2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0ZTQyMDhjZDZmZmI4YzRhMzU0N2IyZjU0YWRhMTk5NzhjM2YzNjVlNzhmOTUwMmVmNTE0NWNkZDJhYTg1NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzYjQ3MjIwNGFmYTcyMDYxMWI5ZTIyN2M3M2I5YzVjYWYyOWYzYjhhMTNkYzc1NWI0NzBlYTNlYjFmMDg5ZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwZWQ3MTY5MDNmYmI0ZGRjMzEyZjU3MGRiNTFiZmJlOWIwMGI1YmU3MjdiMjk2ZjExNTI1N2E0NmYwNDI4NTEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/decision.ts#L29-L37",
+          "version": "repo-lines-v1:sha256:fe22b922d9799f4961ec672971f8aee7406c8cde332c11635510ef69ff61054a:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzJiZDQ4MDFiOTA1NDdkZmIzMTljNTFjNjg2ZjhkMjMxMThkNTgxMTEyMzZjMjI1MjQ2ODU2NzlhYTJkYzNkYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWI1MWY3N2JiZTQzZmU1MGRlZDRjMmFlNmRkMTdiMDNlZjlmNTIxMmVkM2NmMWZmYmZiMGVhY2Y2ZmYzM2M4NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2NkOGE4MTQ4MGZkZjI3OWE4YjdiZTNjYThlNTU1OGRlYWM3MGE1ZDhlMWY2Y2I5ZWIyNGI4ZjI0ZWY5YjdjMCJ9"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/decision.ts#L76-L82",
+          "version": "repo-lines-v1:sha256:9fefb6fe142809a6e56b68a48738d33e91ce298f851eae0921180f319150209d:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGYyYTJmOTk2ZjA4ZTY4MGJkMjkyMTM1YTZmYTQ5NzhiZGEyNmU2MDJkODRmMzNjYjFkNTk0Nzc1ZDQzMDRiNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmVlZGY0OTFlMWFkZWJkNzU0MWQ2Y2Q3NzE1NDlkYmM0M2IwNDhmZDE1NWFhMDgzNjkyNWMxMjVmYTNiOTQyYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTEyOWY4NzFlMTI5ZjJhNWJmNDkwODMxZWRkNjIwYjk2YmI4OGYwNzg5YmM2OWY1OGQ1Zjg3Mjg5YWQyNjkyYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2Y3NWRjNTQ2NjA4YjExMGM5NzY2MTIxMTQ4OTBlN2ZmMjdiOGVmOWJiYjkzZGIxZGY1NTllNDAxZGE0MWI4YSJ9"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L565-L588",
+          "version": "repo-lines-v1:sha256:2aa6d236f791e7689693a7ebdb55e2a844d85a93895cc47fbf074750f30ce43e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4ZGI3NDYwODE4MmNiN2NhNGQ5ZmJhNDlhMzk0OTlhN2YzOTA3YjRlYTAzM2IxNDkyYWQ1Y2YwYmVlZWVjZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxN2FmMTEwMWM5N2I3YzJmNTI1NDA3ODJlNjM0Y2M0NDQwZjBlOTcwMzQxZTUyZjk3NTIzMTFkNzhiN2Q3ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljZGM2MzI3NmI2MTQwYTNmNTMyYjBjMmFiMWZjN2JiZWJmOWE2NTljZDcxNWU4Y2MxYWE1MTM4NGMyZDAwMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_eeb5f20c9f6f42af8203db454cb1d774",
+      "statement": "The SDK runs configured rules before remote detection, resolves asynchronous rule inputs before evaluation when needed, and does not cache local rule refusals because rate limits and tripwire reporting must observe every request.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L228-L274",
+          "version": "repo-lines-v1:sha256:fcbfe9c5c366ce2c0166fa065a61f79e600f816551f2db864fd400dfc59b584b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2M2Y2YTMzZWI4YmYwMzk2NTQ5Y2RkZTg3MWM4MGU5MWFiZGQ0MDA3YmMzNDAxNzQ1OGM0Y2ZkZTlmNjM3NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxMWMxMTA4ZmQ4MWE5ZjVmNGQ5ZTI3NjcyOWRjMjQyNmYyYzlhYjUxZjMzYWRiOWE0MGU5MzNiNTgwMzVjNWEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L417-L479",
+          "version": "repo-lines-v1:sha256:0cab903da95ade8e45d47b80d473b03bae5cf9b8de55a845bffdeb1f8f5643c3:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyOTEyMzUwMjgzNGZkODdjYTExMGIwM2Q2MjgyMDgyNjM2OTY1OWFhOGI4YjliYjRiZWU3MDMzZmUxMmMyOGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhOWQzYmRmMGNkNDE0MGYyOTk2ODI2YTBlNzkwMTViZWQxNjQzZDcyYzZiMWIxNjQzM2ZhMzY4YzliZjJlNTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjMTQ5NWE2YWYzMDNjZDMxNDA4MGY4MjUwM2YwZjE5YjdkYjgyZmRkZDVkYWNkMjI1MmIwMWMxMTBjYjVmZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmMTM0NDAyZGVmMmEyNTZjM2MyY2E1NTlkMWE2NGRkY2NjODA4M2MwMTAyYWIzODU0MmE1ZTY5NzhkNDMyYmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_39c926bbfcd54efba6ff92ba3a611f82",
+      "statement": "The rate-limit storage seam distinguishes synchronous in-memory consumption from asynchronous stores prepared before evaluation; shared-store tests require one limit across SDK instances, exactly one consume per request, and `NOT_RUN` when an async store was not prepared.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/rate-limit-store.test.ts#L56-L105",
+          "version": "repo-lines-v1:sha256:0dde4545e4c849dd4f9eab2c76a89fbc252101568c82bd5c61482a8b22939dec:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlMTQzYzA3NmQzYTA1NDQxNTc0NzI1NDc1MGE1MGU5MzNlYzM1ZmM0MjE2NjMzMWE3MzgyYjkzZGM0N2ZkOTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU1ZDBiNGRlMDgyZGFhOWEzYWM1YzY3NmU5NTBiNGI2MDEzYjM0MjBiYWJkZDk3ODdkOTEzN2QxNTUzNDI5MjUifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/rate-limit-store.ts#L17-L31",
+          "version": "repo-lines-v1:sha256:3c588b82f9f0a29102cb931db7b6d0aed6b37b92fe490ce090351600ea7fd7ad:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYwMmQxNjU1ZjMwMWM0ZmQ2Y2YzMTc4M2MxZTAxMjQ1MGY1OTMxOTgxNjdkMDNmY2Y1ZmM4ZWJkNWM2Y2EzMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwNGQwMzc0NTBkYjI3ODEzZTZjODkzMGUyODFiMjM3YjdhNzQ0NDIyZDY0Y2ZiMTczMzg5NmU4OTgyNWVkZDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiZTFjNzBlMDYxYTA1NDkzNzZjMjI3NTc3ZWVhZWY2OTViZDFlMDI4ZjU0M2MxZmFkYzhmNTgyM2Y4ZGI3ZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3YjUwY2I3MmZlMzE0YTFlZGRkZDdjYWUxYmU4ODNkOTVmY2QzYjhjMjFmNWQ4OThmNDUwMThhNGRiYWVmYjgifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/rate-limit-store.ts#L51-L91",
+          "version": "repo-lines-v1:sha256:9b276dd667922ebe3064a9d6dba7580a28fcc4e324a6b30f75381457d9c1a7ce:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxOTQzNWU1ZWVjMWIwYjliYWZlYjQ3YzcyYjc1ZjBiYThhYzNlODY3NjI4MGIzNDlkNWUxNGMyMTIxOGJmZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_17a4c347d1c846c3a96df26d0b27d4bf",
+      "statement": "Rule-engine results record every rule outcome, represent dry-run findings as `DRY_RUN` with a `DENY` conclusion but non-enforcing action, and let the first non-dry-run non-allow result decide the request.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/rule-engine.ts#L41-L113",
+          "version": "repo-lines-v1:sha256:34f8e7ba51aa78ef1538a9f3efa09b3d801ff3ac1daa3c4f1a0f8274a28b929e:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhNDdjNmMwNDJmZGU4MDI4Y2MyYmNiNTk4YjcyMDM5Mjc5MGNlYmQ5ZDIyNWNlNmNiZDI4NGNmMTc3YjNhMDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyYjkzZDI5OTFlZTQzODA0OGE3NDlkYjc3OTcwYWMxZTcxNGU4NzdhNzM3NDBkYTVmYTQwODZmZjgyMmY0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_96f251c2dca64f72951c93fdd25f4dfe",
+      "statement": "Framework boundary tests use runtime-appropriate transports: Express uses a real HTTP server for response interception, Fastify uses `app.inject()`, and Hono uses its fetch-shaped `app.request()` path.",
+      "evidence": [
+        {
+          "resource": "repo://packages/express/src/honeytoken-injection.test.ts#L6-L31",
+          "version": "repo-lines-v1:sha256:66e19d1bc9609957ab8d73ecf0605c2f5212c0a39e7a392cd24ef30c73715737:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ5ZDExMzk4NWE2YTY5YzMxNTQxYWZhOGE1YTYwYzgzZGY5NTdmN2I2ZmIxODU0ZTFmZTA3NTg3MjAxNTIxZGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM5M2ViZjYxYzQ1NjMyNDkzYTQwYTQzZWUxZDliOGUwODYyNTAyMzQ5YmRlODQ1MzcwNzIwZjYxMmVlYjFhYzAifQ"
+        },
+        {
+          "resource": "repo://packages/fastify/src/honeytoken-injection.test.ts#L5-L37",
+          "version": "repo-lines-v1:sha256:34673584f40bf79f2f8b3ac018373930b8243e220f73cc53171be7776a156462:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyMzRmYzNjYjc0YTdjY2UxMDg3ZWYxNDU3ZTZkOGY1MDExMjNmMTNhNjIzNmZlNWE1YjEwZGVjNzdjMTRjYmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2M2UxYjFiYjIxNWIxNmIxM2ZhZWFkZGQwOWE5MDk3MDMyMTVhOTE4MWFkNmIwNmZhMTYyNDA1MDRkYzM5YzgifQ"
+        },
+        {
+          "resource": "repo://packages/hono/src/middleware.test.ts#L5-L20",
+          "version": "repo-lines-v1:sha256:8581b4b5957326ecd61e995225c8813e0dedd28a28256799a83a036d1aa2f277:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAzNjZhNjM2ZmMwNmQ3ZTNhMmQ3M2U4ZWNlYzg2ODc0MWFlZWIwMGNhZGY0NGViZmQwMzE1ZTg0ZjNjMjg3YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNiMzhjNjk3MTRkYzExMTMwMjU1YmVjOWVmZmJlNjlhYmI3Y2VhODc2ZGQxZTE3ZGUwMWJiZDU4NWM2OTQ1MzMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d03104ee7a0547c0ae7306a46b1fdf76",
+      "statement": "Honeytoken adapter tests protect response integrity and trap viability: they verify HTML-only injection, untouched JSON/text or streams as appropriate, valid content length where rewritten, and that the advertised path is armed as a tripwire.",
+      "evidence": [
+        {
+          "resource": "repo://packages/express/src/honeytoken-injection.test.ts#L133-L218",
+          "version": "repo-lines-v1:sha256:d58594016455f204057f400495bfe458bfd7d48263d16999d0bf6cb0c32f64d9:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxMDczNjVjZDU4Mjk0MDBjMjY0ZjZmNTQ5MWIxZmFlYTY3YTg1Zjg0ZTkxNjNlY2IxMTYzZDc0MjIyYmRhMDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVjOWQ4NmUzOGQ4NGZhN2Q1ZGRlNmZiYTM5YmYwYWU3Zjk2MmU0NmJiNTU2YmJjYWEwMzhiOWYyM2IzM2I2ZjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1ODBiNzY1MThkYWU5NzlmYWViZDAyMzY3YTI5MjkyYTUwZDk3NjA5MjI1MWEzOGE2Y2UzMDg4MGJhNDI4MjUifQ"
+        },
+        {
+          "resource": "repo://packages/express/src/honeytoken-injection.test.ts#L45-L121",
+          "version": "repo-lines-v1:sha256:5f30b90d60e7660ddbd8afff7fc2e12ea2a9dc100cabdbb3fe251502439b34e2:eyJzZWxlY3RlZExpbmVDb3VudCI6NzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwZmJhNzM2YzdmMzZiODE5MTY5YzMwYjc5OWViM2UwOGFjNWQyZTE4NGVkM2IyMDc1OGVhNTBhMDIyM2JmMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjZDgzMDdkYjAyZDMzMTUyZGFmYTdmNDhkOTBmMTk1ZTZjYzUxY2EyODljM2FlMzVjNWM0MTZkYTQ1Y2JkMmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4YjdkNzgzMmE4MTQwYTJhYjMwYTJjYTI0OTk2NzEyYTc0NjIyMzFhOWYwMmMyYTA5N2YzNjI5NjZkNzQzYjMifQ"
+        },
+        {
+          "resource": "repo://packages/fastify/src/honeytoken-injection.test.ts#L39-L123",
+          "version": "repo-lines-v1:sha256:53b2919f3fad9509968230a8cd458f3771d0a6b6c3304187262dd3391ca20dbf:eyJzZWxlY3RlZExpbmVDb3VudCI6ODUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwZmJhNzM2YzdmMzZiODE5MTY5YzMwYjc5OWViM2UwOGFjNWQyZTE4NGVkM2IyMDc1OGVhNTBhMDIyM2JmMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjZDgzMDdkYjAyZDMzMTUyZGFmYTdmNDhkOTBmMTk1ZTZjYzUxY2EyODljM2FlMzVjNWM0MTZkYTQ1Y2JkMmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQwYjc0MzA0YjNmYjMxODIwZWFkMmNjYzEzNWI2MGUyZjk1M2Y0MWI0OTRhZDkxYjZlMDZmNTAwYmI3ZDk1ZDgifQ"
+        },
+        {
+          "resource": "repo://packages/hono/src/middleware.test.ts#L85-L120",
+          "version": "repo-lines-v1:sha256:de439ba8e242ac66cc6b5196da5d5af40dbabdd9833c826c64ae9e5f32a0343b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiNDBmYzAyNDk5NGVlOTE3ZDE0YjMyOGQ3YzliMzBkZTRhMzg5OTU1ZWMwMzI5NDE4MDg3Yjk3NWNhMTEwMTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4c5ebeef7a8343018ec085a34155236f",
+      "statement": "Next.js middleware tests verify that protection annotations are forwarded on request headers for application code rather than leaked on response headers, and that client-supplied decision annotations are overwritten or removed.",
+      "evidence": [
+        {
+          "resource": "repo://packages/nextjs/src/middleware.test.ts#L18-L83",
+          "version": "repo-lines-v1:sha256:95a86dd61a5a6f182d182194e466d337ef6f6330fe1a718c9283822d215e884f:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0YmY1NWRhZjJmYjFlNGI1OTVkN2ZhYmMyNWIxNTA5MWQwNTdkNGE2Nzk4NDJhNzliYTZmYWVkNTZiOTVlOWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3M2JmN2I0YmE4NTM1NjNlYjkyMjZmODBhYTQ3YWRhNmIzYjkzYmI4MTg0ZmI0MWUzY2ZkZjlmNTYwMWNlN2QifQ"
+        },
+        {
+          "resource": "repo://packages/nextjs/src/middleware.ts#L197-L248",
+          "version": "repo-lines-v1:sha256:f3a6c6a6df95a8cb1f9bcccaf301617915d506ac1829840062406634b40defc5:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxNWRiOTEwOGE1ODFhNGI4ZGEzM2UwYjM5YjIxZDU5MzFkM2I0NGNkMmY2ZGRkYTZlMWIxM2M0ODE5YTdjOGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmOGYyMjVmODJhZmY5YjExMjg0Yjg5NTMyNDE5ZDBmOGExYTJlNDg1MTA0NmNjYzg0ODhlYmY2MTA0M2IwNWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlYjQ4NmM5MTE0OTExMmI5YTU4NTk2Yjg5MmE1YjY0OGM3NDdjMGNiZGZlZDU2Mjc1ZDBiYmNiMzdiMDg0YzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwNmUxZmIzMzg0MjI2ZTE0NGZkNzJhY2FjODY3NDljODg4YWI5YTRkMmRkYjVhY2Q1NWRiZjUxNDUwMDRlZjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8a302301e6f54e5a9feff643a1dacac3",
+      "statement": "The normalized captcha HTTP handler returns `null` for non-captcha paths, serves challenge, verify, score, and token-verification routes under a configurable base path, and captcha tests exercise challenge-to-token and invisible-score flows through that boundary.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/captcha/http.test.ts#L47-L134",
+          "version": "repo-lines-v1:sha256:6d37aa21efd62c72c4afe3ea2d85bcaa5623221a45fa94fd83cd74920f581141:eyJzZWxlY3RlZExpbmVDb3VudCI6ODgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1ODBiZjg0NDgxNmE5YWNjYmQ1ODBmZDg1MmZiODBhM2Q0YjA4YzFhYTRkZWNiNjNlNjI1ZGRlZDMyYjRiZDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZkYmQwZWNiNmM0OGEyMzQ4MjQ1YTU0NzIwZWE4YTYwODYxYmIzZmRhYWE3Y2M3NGIwYjNkM2FkZDQwYzVhMDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/captcha/http.ts#L1-L12",
+          "version": "repo-lines-v1:sha256:c34f849bdcaa195ef9f527a942909ff31180d21b897550bef18d256dd9e585fb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJkMWYwMDAwMDgxMjU3YmViM2YyZDA2ZmEyZGQ3YzEwYzY3NjM5MmI4MThkMGNmMjZhOGJhZGYwMDdmZjU0MGMifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/captcha/http.ts#L64-L163",
+          "version": "repo-lines-v1:sha256:1a7f7f37d84876110f06111df22d439c1a4931bfc1b152f95890f6d8ad28783d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlYWYyMmNmMDczMjU5MmMyNDcxNDFjYmU2MWVmYTExMDEyNjEyZjVhMzEyMmI5YWY5YmJhZjUyZjU3MjRkMTk0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIyZjI0OTJiNTJiZGYwMDYxNDA4MmVjMTRhYjQ0NjI3MmMwZTQwNDNjYmViODRiN2E1ZmM0YzhhYzIwYjAxZTcxIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiIzMmNiODc1ZTI1YzY2M2JmYTk0ZWUwMGVjMmZmZjE5OTViODJmYjI1YWEyYjI2Mjg2NjNkNmM4ZDE2NjEwZGE0In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_bdc5206218154804b63abfd197fb38a6",
+      "statement": "The repository's Edge Runtime test bundles the core SDK for a browser platform and executes protection, Web Bot Auth verification, and captcha token replay behavior in an Edge VM, catching both Node-only bundle dependencies and runtime Node-global dependencies.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/edge-runtime.test.ts#L1-L74",
+          "version": "repo-lines-v1:sha256:9946836afb958fa304836b07a3ad946b473cebad830f01e95428dad10d885ffa:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEwZDZiZWQ3NDMxMmFkNzZjM2U4ZjBkNGMzMDZhMzFiODdmMWYyNGVlMzIxMGQ5MWEwN2MyNDJiZTZmNTI5ZTEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/edge-runtime.test.ts#L76-L155",
+          "version": "repo-lines-v1:sha256:a021059779900d9b9e7697e5517fb508a435ee05b486435beb14ccbd626e7e37:eyJzZWxlY3RlZExpbmVDb3VudCI6ODAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0ZjQyMTU4NmU4MTdiZTdjMGUyODQyMjkwZGUyN2UzMWJmMjhkODQwMWI5ZTNlMTA0ZmU2MWI1ODg0YTliMzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzNjRhZDdhYmQ4ZjhiY2E4ZGNlOGEyODA3NmZjYzUzMjg2NjgzYWRkMTg5ZTllYjQ0YWM4MGIzMGQ1MmQ3ZDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_73288b5034704459890628010d35173a",
+      "statement": "Source-inspection invariants enforce shared ownership across packages: only the central IP resolver reads forwarding headers, decisions are not reduced to bare objects or spreads, starvable rules expose `NOT_RUN`, shared adapter helpers own refusal/skip/honeytoken behavior, and edge-shipped package graphs have no `node:` imports.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/invariants.test.ts#L1-L16",
+          "version": "repo-lines-v1:sha256:3a370c81225f68fd7954cc85b120bcbd1f101f78d7ad4f4be21726ebd0c9ff25:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxM2M2YTEyNjc4ODNhMjQ2NzA2ODM3YTViM2JhZGQ2YjZiNjQ0NzUwYzk1ZTgzNmRmMjNmNzRlOGQ3ZTM5M2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUyYWUwMTM1NzMyY2Y3MGUzMjRjZDY5NzRkNTBmMzczMDc4MjViNTg4OWFmYTgxMGUyZjQxZWJjNGVhN2RkODIifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/invariants.test.ts#L134-L210",
+          "version": "repo-lines-v1:sha256:5feb9a2004197a383995a367bab9d234b3460a139b6b585549fb51b9ca90eceb:eyJzZWxlY3RlZExpbmVDb3VudCI6NzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjMTRhZDAyOWI1MTZlNGQ1Yjg0ZDQ1OTdiNjJmZTRkMTc0ZjZkZWYzMWU4ZGFlOGJiNWM1MzEzZTE1OGE5ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/invariants.test.ts#L54-L131",
+          "version": "repo-lines-v1:sha256:8e6a38e6d4b4bbca6618654a8e4a6787470ca4fbcf4c915e011aec73a2de59cc:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MmIxNTlmM2RiODg4YjQzMGQ3MjRiNDZkYTY1OWU5NTJlODk5MmI1ZTI4MDNmYTg0NmIxZmU4NDg3MTMxZjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyMTczMjAzNzY5YTQ3Mzg2NjYxZDZhMjgwMDE0ZWRkMmFjNzdjODNhMmM5NDk3MmEyYmM2ZjM2NTdjZTIwMzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzMzAxZjFlODgwZmE3MWMzNTU3Y2ExNmY3YTJmNzlkZGIzYzc3ZDYxODBiMTAyMWNmYzYzY2M4ZGI1MGE1MjcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c93a1ee9eb0c4c9d85c5287050ae68f8",
+      "statement": "Client IP resolution defaults to trusting no forwarding header and can be configured by trusted hop count, Cloudflare, or proxy CIDRs; it walks proxy chains from the right and falls back to the peer address for missing or malformed configured sources.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/client-ip.test.ts#L219-L265",
+          "version": "repo-lines-v1:sha256:1daa9755bbb358ba4b071db02e479f7d42d13f023fd5b133788f9610e4f05e9b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiY2JhMmNjZjFmZmNhNGIxOWY3YzgwMmZhMTUzYWQ0MmZlNGYyYzBlNDJkMDU2NGVkNDU5MzA3YzdhMGM5YzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDExY2FmNDNlOTdlZjM2OWU2YmVlZDFhMjY4YmQwNTgzOGYyOWI5ZGQyNTRiZjY5YmE2NDg4NDE0NzIzNGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNjQ4YmMyYWEyODlkNmM2YzcwZmQ2ZjIxMmY1OGQwMDU5YmYzMjUzMWU0YTQ1M2RlNzc2NjMyOTZmZDE1MzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4NDUxY2FkYmEzY2Q0Zjk0ODY2M2VjZjQxODhmOTZiMmFmODE3ZThkZjViYWRkZmUyNTdjMmFhM2Q2MjFjMTcifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/client-ip.test.ts#L84-L193",
+          "version": "repo-lines-v1:sha256:217225d2a4a58e963e1487fe57f4f35de824a8fdeb5f751fed5a277c4808b250:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlNmJmNDg1YTI5OGNiZjNiYWU3ZGRmMTJiN2YyM2YyZWM0NDU1YjRmNTEzZmIzODEyMmNlMzM3YzkwZjE1NjM2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzYTNlNDZmOTQyNzZiNmY2ZjRlZDFmMDJhZjc4YmVmNmEyZWUxYzQzOWRkNTU4NGI5NzM5NDgzMTMyMTRkMmI3IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiNzc5ZDExOGQ2ZTNjYmY0NTA1Mzk3NDhkZWU3YTQzMDdhY2JlNjQ0NmNiYTI5N2YyNzYwZmE1ZDBiYmExYmMyIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjOTRjZjRlMTVkZGM1ODQ4MWI0ZmEzZmZlYThiMTU3MWRhYzg4MDkxM2Y3MDIyMzI1YTAyYjkzOTExNDFmMjM2In0"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/client-ip.ts#L19-L61",
+          "version": "repo-lines-v1:sha256:86eced8797379c7c830a0a58d5b442f7448a7aadb14075c5efbd49e272aa5b83:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxZTdjN2JkODAyNDI5MGMxN2M3MDBjMjdlNjA1M2YwYjVmZGU3ZGE0NTA2NTMwOGEwNTQ3OWNkZjMwODNiYTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMwMmJkYWE2MjViZDAwYjk4MjRjYTc4MGNmYWQ4NDdjZGEwM2IxMzQyOGQ5NWMyMThmNzI2YzlhOGU2OGYzOWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjliZTcyMDc4NjE2OWJjZmMxMDAyMzJmMzdlYzY3ODZmNWFjYTJjMjJiYzUzZjI4ZTNlNDhmZWQxOWYxZGE3ODYifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/client-ip.ts#L241-L301",
+          "version": "repo-lines-v1:sha256:6aed701a215cfbb84bd10150bbcd350ddffb6195f92102974568ecaa67d2d543:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0MGU2YzUwOGFjMTlhZjIxYzc5YmQ0YmIwZWI3YWMwMTlmYzllZDg1OWYxYzdkOTkxOTljZTlmNDljNjZmYzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_831fe3e31f9e4365a29be14af55858ce",
+      "statement": "Root `test`, `lint`, and `build` scripts dispatch through Turbo, and the edge check bundles the core, Next.js, and Hono entry points for the browser platform so reachable Node built-ins fail the check.",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L16-L24",
+          "version": "repo-lines-v1:sha256:748ac0ca7ff6ac2f63866b09fcd9bca6377d1470d07f5e5ccfa9998d21a75ff0:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ4MzNkNTk0OWMwM2E0MGNhOTUyNDkxNjEwYTY2NTk2NDRiM2FhNDY2MzYyZjc5OTAyMGRiZjE5ODE1NDdkYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGY0ZWU1MzczZTAzOWIzOTcxNTY0YTJmOGVhODRjN2Q2ZGU2MzhlZTkyMjQwMWI3M2JhMDRhZDQ4YTJkZTEwOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGMwZjI3NDU2YmU1ZjE3ZmYwNDIyMjc5OGQ0YzBjNzNiOWMxZDA4NjFhNjgxZTg1MzE1MDIxNzExNDIxOTk2YSJ9"
+        },
+        {
+          "resource": "repo://scripts/check-edge.mjs#L1-L43",
+          "version": "repo-lines-v1:sha256:98109e743687c78f818a8a59c043e2528e7fef17f5e11466e6db11d70ce2f8a0:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI0YTFhNWZjZjI1Y2UyOTAwMmU5ZTQ3OTFjOTM4MjAwNDYxZDU4MTVjOWM2YWQ5ZjY3OTU3ZGM5Zjc4MDM3ZDAifQ"
+        },
+        {
+          "resource": "repo://turbo.json#L4-L19",
+          "version": "repo-lines-v1:sha256:681c7b26f8af39af0665f76513d64b9e9b180ad46ec8fa87bfa47d104c0d8222:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4NTQxMjVmYmY5N2RlMTQyZDVjOTliY2YzNTk2YTU3ODI1MTc3M2IyMmQwNzI2NWQ5N2NiNjA1MTgwNjcyOGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmMGNkYjk3MmE3YmZiN2VkMjQ2ZjlmZjY3MjM4NWU1NWY0OTY4ZmMxMTA0M2RjNWI2ODRkNTFkZmEzMWRiY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFlY2ZlMzAzYmI2MDQ1N2E3MGNiZDI2ODQxMThjYTAyZDU1MjQ3YmIwNTIyMTBlMmU3MmZlZDIxY2I2ZWZmODciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdkMWViZWE3YjBmNmI2MmFmNjBmNDNjYjY5NzhkYmQ5OGU5YmUzYzJiYzE0YzlhZDNjOTg4YTU5N2IzNWJjYzkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3726f312782a46fea6f6da500c341b5d",
+      "statement": "The captcha Express example documents the browser-to-server flow through challenge, signal collection, proof-of-work verification, and signed-token verification, and cautions that its in-memory stores must be replaced with shared stores for multi-instance or serverless deployment.",
+      "evidence": [
+        {
+          "resource": "repo://examples/captcha-express/README.md#L1-L29",
+          "version": "repo-lines-v1:sha256:99e4cec0c0365d154e1210b57d60b26ab8d4b9c9913b6018d14f36efe02beb3a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkOWM0ZjhkZDVmYTA2MTFiYTM3NThiMzY2OTc4MmU3OTI5YzJhM2M3MjRjZDQ3MDE5MmE1YzBjMTA4YzM2YjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjYWI3NjkyMTI1YzM0YmU0NTMyN2NhMDQ1MDMzMzJkNWFkY2FhZWMzZTc1NDQwOGY2ZDdjYzhlZDc3Y2ZjMjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-28T15:55:55.028Z"
+  }
+}

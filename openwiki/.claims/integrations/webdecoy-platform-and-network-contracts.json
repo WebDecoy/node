@@ -1,0 +1,322 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:51b84eecb952e715ebc4b128cc35100d17bfd2311b72b8a65c7b04ce1db1f3bf",
+  "claims": [
+    {
+      "id": "claim_1ed78618c0284720b65e1c5423e3914b",
+      "statement": "A `WebDecoy` instance without an API key runs in local-only mode: local rules still evaluate, while construction of the authenticated `WebDecoyClient` is conditional on an API key; authenticated clients also enable automatic IP enrichment for filter rules and violation reporting when rules exist.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L140-L151",
+          "version": "repo-lines-v1:sha256:7f469ddb1f3c5d3e329170d2c1416a0dab5e5e1b00b047654b2482fc9cbe7925:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2YWM2MDk2NmY0NmU4MWZkYzM5MWVlYmVkZjczOTg0NTAzNTQ5ZmIzM2Y2ZWNkNDZjNmJmMTg3OTYyYWYyNWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyMzIwODE0MDNjMWU4ZmZiOTkxYmJmZTY2MDAxZTYyODlhYTZiYmMzMjVjNjkxZWVlM2Q2Y2VmYzQzZTRjNWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVhNGY3MGEzMzk0ZDNjMTBhYmFiYWY5NDFlOTFkOTMzMTYyMjZjODE2M2U2ZjQwNTlhZmJhNmRlMzZjZjllMjgifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L57-L100",
+          "version": "repo-lines-v1:sha256:a3e45842893be95702a44b64356f4030d6b6014d240ae26410fdd0e9e6904753:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliMzA1ZTdlMGY0OTkwMGMyZTczMDEwNmVmNTVhOWY2YjAxOWZkNDRkMmE2Mjk2YWE3ODc1NTYzYTViYjQzMjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2M2M5NGUyZmFiZTE2MWRmMjdjMDM4YWM4NTlhODczOWY2MzU2MWJhMzI5ODFmZGMzZTRhZTE0MDkwYzFmMzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjViYjM2MTg1ZjI3NmJhN2I4MjdhNGU5MzlkOWM2ZTk5Y2NiMDZlMTM3OGIyYmFmZDU5ZTNjN2E3MDI4M2RmYmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4ZGRkNDc3Yzg4MWIyNTI4OTZlNzRhNjk0ODc2YWIwZTRkZDUwOTkyNzhiODM1ZjA0ODRkYjk1MGVkNzUzODEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4016c322ef1c4b2c89e5304b46ce9667",
+      "statement": "The server transport uses Web-standard `fetch` with JSON, bearer authorization, a configurable abort timeout, and a normalized base URL; the fetch transport ignores `tlsRejectUnauthorized=false` rather than disabling TLS certificate verification.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/client.ts#L13-L24",
+          "version": "repo-lines-v1:sha256:20461f4b5cc81674886aeef495bc18207df6d55d08dfcf038964ec6468b4bb0c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmMjc1YTQyOGRjYjk4MjVjZjY3YmYyMGFiM2NhNzQ2MDZmMDhiODRjMDM2NzA2YzlkMjZmYTk1ZjQ1MzlmMDkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFkNjJkN2EwNDIzNTE5NjkwMjY4ZmJiYjFlNTQxZDRkNzdjMjBmZTY4MjhkODY3MDBlMGY4ZjI0NGZlNzZlNzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4NDJmNTk1YzliODgxNTI0ZjBlNDA5MjcyYzI4NWU2ZGU4M2JkOWEwMmMyMmRkY2RkMjM0YThjOWY0ZWFjMmQifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/client.ts#L36-L56",
+          "version": "repo-lines-v1:sha256:b773ef715d74791210cde56207e6d508509e3d2a71571c4a6c3610426555b881:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2NTlkYTE4MGIxNzEwOGNjY2UwNzkxMDQ4ZDJjMzdkNDhiNTRkMjdkZjJhNWEwZTRlMWYwNzgzY2NkYmM0ODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2YzUzMTI1MDliMzFkMjcxNTI2MTZlYzU1MWY3MTk0N2MzZWFjZjZjYTUzODU1YjcxZDQzNDVhY2MyMTRmZDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI2ZmU0NTc2NWQyMDdhZDVlYTY3NWY4MjZlMmY4N2MyYzk1ZmI1M2EzYzA0ODM4NmFlMWE1NmFmYWIxYzE2ODUifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/client.ts#L58-L104",
+          "version": "repo-lines-v1:sha256:a5ed3382792c3ba4d46bbade8f351c320c22ead431eea8e00c233888d4627bd5:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxYTRhYmZhMzQwZmI5NjYxZWFlYWYxYTU2MWNhYTBhNGQyMDUzNWQ3MjBjNjRmMGE4Y2YzMjU3NTBiZDVhMGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjZmNlOGYzNWQ0ZjUyOGI5ZmE5ZWFhMjQ2NGRlNTQ1YjhkOGEyNWY5N2M3NDhjNTVmMWI3ZWEyZGU1MzczOGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_db1bf1b3bf404b5283a0eae88d5afa02",
+      "statement": "Authenticated detection is a POST to `/api/v1/sdk/detect`; timeout, connection, authentication, rate-limit, and other non-success conditions become errors, while a successful response is returned as the service detection response.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/client.ts#L106-L144",
+          "version": "repo-lines-v1:sha256:01749cbc9c4ba408036be1dc42c405e3e85846f8d8c46a9325a7555a73986e75:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxZjQ1M2I0NGY0MWQ3ZWQ1ZTUxYjcxZTNiMzA2NDUxZDBmNzM5MTBiMWMzMGU3MTNmNmMwN2Q3MjVjYmNjMmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bf3873b6d691448c9fa2ada20f8805f3",
+      "statement": "`protect()` evaluates local rules before cache lookup and remote detection; a local refusal returns a local denial without a detection call, no API client returns a local allow, and remote detection is called only after local analysis says verification or TLS fingerprinting requires it.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L417-L527",
+          "version": "repo-lines-v1:sha256:4096c61ff3f7f8bcd753abbeafa4c989383a914e9340ab18709b6ffd6d6cfc63:eyJzZWxlY3RlZExpbmVDb3VudCI6MTExLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5MjkxMjM1MDI4MzRmZDg3Y2ExMTBiMDNkNjI4MjA4MjYzNjk2NTlhYThiOGI5YmI0YmVlNzAzM2ZlMTJjMjhhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI1MDU1OWM3Yjk3NjVkZTY2ZGY2YTE3OWI3ODIzZDVhNmUzMGE3MGU2Zjk1YzkwNTBlYTFmYjQ3ZTJkNWFmYzgwIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhYzE0OTVhNmFmMzAzY2QzMTQwODBmODI1MDNmMGYxOWI3ZGI4MmZkZGQ1ZGFjZDIyNTJiMDFjMTEwY2I1ZmU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1MmIxOWZlZTQ0NTEzYjUzNTZmZDFlYjhhODcwMzE1MDVlODFhMGUwY2EwMGMwZTc2ZDFiZWQ1MzBiNWFiN2YzIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_f380ec388b5545d481b594a856a29d72",
+      "statement": "A failed protection pipeline, including a failed remote detection call or malformed request metadata, is logged and returned as an `ERROR` decision; `ERROR` is allowed fail-open but remains distinct from an affirmative `ALLOW`.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/decision.ts#L183-L200",
+          "version": "repo-lines-v1:sha256:7c24f7aa77c2257aca513097966ee2a7a4d42a81e496638e634566e3db626837:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjYWY4YzQ1YzJiMDVkOWYxMjBjMTc3ZGEwZjM3NzE0MTNmNDhiMGNkNjUyMjE4YTAwMzQ1OGZmODhiMDlkY2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwNWY5M2EzM2I5N2ZmNzNmYTM5ZTBjN2ZkNjYwNGU4OTE0YWI1MmVkZWExYTg2N2VmOWJlZWI2ZTRkNDNiMWMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzYjQ3MjIwNGFmYTcyMDYxMWI5ZTIyN2M3M2I5YzVjYWYyOWYzYjhhMTNkYzc1NWI0NzBlYTNlYjFmMDg5ZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxNjc1MDI5M2U4NTQyYTgzOTlmNzllMTVjODUzNTc4ZDU0ZjcyNDVlYzFhNGM2ZTc5NDE2OWFmODcwNDAyNDgifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/decision.ts#L29-L37",
+          "version": "repo-lines-v1:sha256:fe22b922d9799f4961ec672971f8aee7406c8cde332c11635510ef69ff61054a:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzJiZDQ4MDFiOTA1NDdkZmIzMTljNTFjNjg2ZjhkMjMxMThkNTgxMTEyMzZjMjI1MjQ2ODU2NzlhYTJkYzNkYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWI1MWY3N2JiZTQzZmU1MGRlZDRjMmFlNmRkMTdiMDNlZjlmNTIxMmVkM2NmMWZmYmZiMGVhY2Y2ZmYzM2M4NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2NkOGE4MTQ4MGZkZjI3OWE4YjdiZTNjYThlNTU1OGRlYWM3MGE1ZDhlMWY2Y2I5ZWIyNGI4ZjI0ZWY5YjdjMCJ9"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/decision.ts#L76-L82",
+          "version": "repo-lines-v1:sha256:9fefb6fe142809a6e56b68a48738d33e91ce298f851eae0921180f319150209d:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGYyYTJmOTk2ZjA4ZTY4MGJkMjkyMTM1YTZmYTQ5NzhiZGEyNmU2MDJkODRmMzNjYjFkNTk0Nzc1ZDQzMDRiNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmVlZGY0OTFlMWFkZWJkNzU0MWQ2Y2Q3NzE1NDlkYmM0M2IwNDhmZDE1NWFhMDgzNjkyNWMxMjVmYTNiOTQyYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTEyOWY4NzFlMTI5ZjJhNWJmNDkwODMxZWRkNjIwYjk2YmI4OGYwNzg5YmM2OWY1OGQ1Zjg3Mjg5YWQyNjkyYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2Y3NWRjNTQ2NjA4YjExMGM5NzY2MTIxMTQ4OTBlN2ZmMjdiOGVmOWJiYjkzZGIxZGY1NTllNDAxZGE0MWI4YSJ9"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L565-L588",
+          "version": "repo-lines-v1:sha256:2aa6d236f791e7689693a7ebdb55e2a844d85a93895cc47fbf074750f30ce43e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4ZGI3NDYwODE4MmNiN2NhNGQ5ZmJhNDlhMzk0OTlhN2YzOTA3YjRlYTAzM2IxNDkyYWQ1Y2YwYmVlZWVjZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxN2FmMTEwMWM5N2I3YzJmNTI1NDA3ODJlNjM0Y2M0NDQwZjBlOTcwMzQxZTUyZjk3NTIzMTFkNzhiN2Q3ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljZGM2MzI3NmI2MTQwYTNmNTMyYjBjMmFiMWZjN2JiZWJmOWE2NTljZDcxNWU4Y2MxYWE1MTM4NGMyZDAwMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4c428129d1f64073b83a19e103473453",
+      "statement": "The SDK maps a remote response using the configured or per-call threat threshold: service `allow` or below-threshold confidence yields `ALLOW`, a qualifying `challenge` yields `CHALLENGE`, and another qualifying non-allow response yields `DENY`.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L526-L564",
+          "version": "repo-lines-v1:sha256:ab15c982888dd39c0a4699fe63473f378bfbc79c3ce249a62e12b41f618d463d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjNGNkMWY1ZmNkNjY4NTMyNzc0ZjUzNGYwZGI5MDg5NDMwMWY0ZjJmNzU5ZTIzNDMyYjYzMmI1MWQ2NzI2MGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzYzk0ZWYzZjU2NjQxMDEyNWFhMTllMTFkYmU3NWM4YmE2M2M2OTY0MmNiODdmMjhmYTA1M2FjMGJiNDZmMjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg3MzAxZTA0ODZlYWJmYTc0MmJmMzg0Njc4NWJiMTEwY2UyNzc4ZGVhNGZiZDMxZTBhNmFiNTk5ODRkZGIwYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxODRlZDVlMjQwNTk1OTRjNTgyY2FiNDU5N2FiNDc5NWU0NTZjMTg1MTFiNzY0MDAxOTY1YzIzOTRlN2M3ZjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0c96cb42c65d46fd8f220a0550bb59b0",
+      "statement": "IP enrichment uses the authenticated GET `/api/v1/sdk/ip/{encoded IP}/enrichment` contract and returns `null` on HTTP or transport failure rather than throwing into the rule path.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/client.ts#L160-L177",
+          "version": "repo-lines-v1:sha256:54740ce32d1705ec537c5744ed63c764302e4eb7e97d02bd2cb8168695c987c9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBlNzRmNGNiMGQyODQ1YzhkZmVkNzIwMmY0NzdjZmRmMTYzYjJjNjdmYTA5Yjg2Yzk5NjRiY2QwMzA4NjkyZjQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_333b0743c8d74045825e891c9807a2eb",
+      "statement": "`IPEnrichmentClient` caches successful results per IP for a one-hour default TTL, coalesces concurrent requests for the same IP, does not cache unsuccessful results, and permits explicit cache clearing.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/ip-enrichment.ts#L25-L71",
+          "version": "repo-lines-v1:sha256:01017a222feeb96eac4592c595a6e4276068c94ee439543d850ad2ab6a709648:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY5YjUyY2E0NjhjODVkODhkOTUyM2JiMGUwZWUyODY0YmEyNzY0OGJhYzMzNzY3ZjRkNmRhNzk5YTFlZWRhMjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/ip-enrichment.ts#L9-L23",
+          "version": "repo-lines-v1:sha256:f34d9afe436874e214531986efd0a4fce6034a396f8632248dec49c30515f1b3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5NWE0Y2U4OGE2ZDhlMzA3YjY3NGQ1ZDI2YTYzOTU2MDA2NWZkNzY3ZmM3ZGU1MmI0N2U1YzdlNzcwNjJiMmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyZTBiYWRmMDE3MzE1ZDNjMTAwODk4YjU4NGI2YTA0ZjZhYWUzOTZiMDMzMWVkYzE2MjdjYWQ4ZjgwMjAzNTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmMjBiZjljODIzOWQ1Yzc2NWYzMDFmYmJiZDM2NzljZDAzY2E2YjVkMTA3OTljMzViODg3OTJmZTRhOGU4NDkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7f45017caaf84073b3aa15805280a0d3",
+      "statement": "Only configured filter rules cause the SDK to create and fetch through IP enrichment; if enrichment is unavailable, the filter input remains absent instead of creating a remote dependency for every request.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/decision.test.ts#L96-L103",
+          "version": "repo-lines-v1:sha256:c728011d0b95fbdd28f3398d6958af91f6a4159a907fa071102841b1a61aad3a:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzBiYzBkNzM3NjRlNDU2NGUxYTdhNjliZmM0ZDFjMmEzNDFiNWVlMGU0ZDM3N2IyMTIzNmExYzNjZTk3MGFmZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2EzZTQ2Zjk0Mjc2YjZmNmY0ZWQxZjAyYWY3OGJlZjZhMmVlMWM0MzlkZDU1ODRiOTczOTQ4MzEzMjE0ZDJiNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzkzYWZkNjcxZDI5MmQ2NTZhNWZkODIzOWY3MjdhNzg4YTQwZDc4NjM5ZDRkOGU4MWVkMDE1NjFkZGJhYjk5MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjJkMTEzZWQ3MmI5OTg4NTA2YmNkNTZkMWIwM2U2ZWFiNWNhNjZlMDI4MGY2ZGYxYTJhNTcyNmMyNjMwYjAzMiJ9"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L121-L143",
+          "version": "repo-lines-v1:sha256:5652f67ef61e828e8088d75f057a75e77b22238befcca8a8958f1be202a694fa:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5MjkyZjcwMjU5NWRiODQxYjBlMmZkZDMyYzcyYTI1Mzk5MjMzOTc0ZWQzNDVkZWMwMWJmMDZmZDI4ZTY0MGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2OGMxNGYxYzgyM2QxMDM1NDM3MDBlM2U2MGM1MzFhMDdmMTBkMGIzNzVhNzdjNmYxNWQyNWIyOWNmODk1ZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0MTU1MDJhNTU5MGNiZjhjMTUzMDU1MDI2M2YxZjE4NDA0N2NmNjcwOGUyOGVhN2JhOGYxYmI5Y2QzNjJiNGIifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L228-L255",
+          "version": "repo-lines-v1:sha256:896563cdb795ed1d0d56b227ef89b7c53e8bd84c6de8cd44a063ab291cb632ec:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5YzdiMTUwMjEzYmJmNjIyZTRkNTQyMTk5ZmZiM2FmODJkOTg3NDU4ZTI3MjVlZDE0YTBiNWM5Y2EwZmEyNWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2M2Y2YTMzZWI4YmYwMzk2NTQ5Y2RkZTg3MWM4MGU5MWFiZGQ0MDA3YmMzNDAxNzQ1OGM0Y2ZkZTlmNjM3NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2MDRlYThmN2VjMDAxOGVjNjNiOWYwNmQyNzQ5MjMzODNmODBiZjc2NDJjMTA4N2RlZjZjNzYwODNjYTNhYWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6b48c272ae8749e5ad67f03b269856be",
+      "statement": "The decision cache is a bounded process-local cache keyed by caller characteristic that stores only remote `DENY` and `CHALLENGE` decisions; it never caches allows, local rule decisions, or errors, and local rules always run before lookup.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/decision-cache.ts#L1-L20",
+          "version": "repo-lines-v1:sha256:9365e25151cdfc35a064119d5688c1746dc9cfbb299075b9508dc7b374b5f4d3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyMTNiNGNhMDE3OTJhMGU5YjkyNGMzMDFjZDc2OTNmMWFhNzM1NmJkM2ZlNTUzNTZmZmZjOTcyZjM3NDFiZmYifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/decision-cache.ts#L24-L99",
+          "version": "repo-lines-v1:sha256:4785101fd8aaba8b903822f3bd858e5301a99d3644dfb3fc1f9b6868094b47e7:eyJzZWxlY3RlZExpbmVDb3VudCI6NzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyYWViODY4MmI0Y2U1ZjQ5OGE1OTEwNmQ5NmQwYzcxMmUzMzA0ZjI0ODVlZmVhNjBmMTA2NDgzZTk2M2Y2ZDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyMTNiNGNhMDE3OTJhMGU5YjkyNGMzMDFjZDc2OTNmMWFhNzM1NmJkM2ZlNTUzNTZmZmZjOTcyZjM3NDFiZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L475-L480",
+          "version": "repo-lines-v1:sha256:a3a98c3e0fea8a2e34543146610a58dfbaf7a9db58df22b7fb5e95b1f27a7cf4:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODU1MjA1YmQ0MzViNjE4NGEyNmExNDg2ODk3N2VlMjQyYWJjMzU0YWVhN2Y4YzNjOWQ5ODUyODEwZTNmMDIxMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODczMDFlMDQ4NmVhYmZhNzQyYmYzODQ2Nzg1YmIxMTBjZTI3NzhkZWE0ZmJkMzFlMGE2YWI1OTk4NGRkYjBjNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmUxYzY0MGNiOWJhMjZkNTZhMGRiNmVlNzA1ZWVjYzFhNDVmNDI5MGQ5YzNiYTVjOGI5YWRhMzQzOGE4NjVkMiJ9"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L548-L563",
+          "version": "repo-lines-v1:sha256:eb86e2a76c3c426d465ea9d4f3f352427b003402822bff1ce7667ab111fe810e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwYWMzMjUxNmE4MDY4NjM3YTIzMTAxMjljYjlmODZhMDEwZGZiYjU3ODRhZjUzZmExMmNlZmQyOWY2ZmE1NzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY4MWUzMGE2Nzk4ZDg2NDVkYTMzNWNjYTc5OTIwN2JiZjI3NDc1NjdjNTVjMDU4NDhhMGY1MDZmY2MwZTRiNzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc5M2JjNWNhNTg2N2Q5ZGFkNDczNTg3OGIwNGE3MzBjMmYwNTIzM2RlMzZlZDRlOTA1MWFlY2ZiMTVmZjAyYzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_15c5c7a916624830beae1c41ef0ef66d",
+      "statement": "Violation reporting is asynchronous best-effort telemetry: events are buffered, flushed every five seconds or at 50 buffered events, split into batches of 100, and dropped on failure without affecting request serving; `destroy()` stops the timer and attempts a final flush.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/client.ts#L146-L158",
+          "version": "repo-lines-v1:sha256:0a1d778b07f68dd5a0520a3500658d71f2342622de5b5f13c7e119accbe6253a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkYTdmZGI2ZTM0NjZjNTJiNjJlZWVmODU5OGQzOWE3NjVmNzVlOTU0MmFkMGYxMDIxY2Y5Y2YwZTM2YWEyYjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhMDY1NDZjZjY3YzU0NDIzYjNkMDVlYjk4OWQ2YmVjNmU5MzgyYjY2M2E0ODcxMTQ1OTZlNjk5ZDQ2MmU1MjMifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L258-L273",
+          "version": "repo-lines-v1:sha256:4237782eac19bfa79954615b07d5a23e2d7fea771575ec6a7b0c10f51e1e77bb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzYjk4ODllNGNkNmEzMzEyZTlkNjU5OWZkOTU0MzkxMTZmMDdhM2Q3OTk1YzE1NzM3ZDJjZTYxNjE0ZDA0MTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlYmRiMzY1YmMwYjU3OWE3NzI2OGE2YTY3YjYwZTQwYzAwYWYxMDM3ODBlYzFlNzU2MjNhMTRlZGYzN2ZmYWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2M2Y2YTMzZWI4YmYwMzk2NTQ5Y2RkZTg3MWM4MGU5MWFiZGQ0MDA3YmMzNDAxNzQ1OGM0Y2ZkZTlmNjM3NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjllZWYwZDhmNDk0YTZmNmYwMzc1M2IxYzg0OWNjMWFlZGYyZmUxN2E3YzFlM2EzNjZiZmM1YzdjMmJhYzIzYjkifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L697-L705",
+          "version": "repo-lines-v1:sha256:3e38cf8f9599fcfbe0405fe4e4a7b5866827831dc8ac8991bd0e136c7a14a48d:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGYyYTJmOTk2ZjA4ZTY4MGJkMjkyMTM1YTZmYTQ5NzhiZGEyNmU2MDJkODRmMzNjYjFkNTk0Nzc1ZDQzMDRiNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjdlNTc4OGQ1ZDlkNzNkMjRhODFkYmMwYTVhNzRiZmE4MmM5YzNiM2FmOTllNTJhZjc5NmU5MGI0NjhhOGEzZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWJmMGU4YTNhNGE4YWUxOGEyYmNiZWI1ZmNjNTJiOTk1ODlmODcyOTE4ZTBkMWQ1OTM4MDg0ZTJmMzU2NjAzMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzc5MjllOTFlMGY5OWMzZTgyNWRlNjliNDM1ZmI2NDg0ZDFiMGExZGYyZjQ2NTYxYWJmMWEyOWYwNDE4OGI4OCJ9"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/violation-reporter.ts#L9-L89",
+          "version": "repo-lines-v1:sha256:499b42629e6143c42a203ba92a8fcf6043d9b07d98fcf4889c0eef35fa2707e3:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiNzFlZmYwNjdiNTM5ZmFlN2VkNWZkMjhiNzJlMDg0MTdmYWNlMmZkY2Y5MzM0YjZhNGQwMDg2NWU3Njk1YzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhMDY4YmRlZDI3MjFiNjAxZjcyZmI1MTExZGMxYTYwZDZhMzcwYjJjZmZkNTM0YmFiMDllYjY0MDNkMDllZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9bb550992fb74c0f9e1d02394ab5a3b3",
+      "statement": "`validateConfig()` cannot validate a key offline: it performs a minimal authenticated detection request, returns false for an explicit invalid-key response, and treats other errors as valid because they may be network failures.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/client.ts#L179-L212",
+          "version": "repo-lines-v1:sha256:39707566fcd70b973ce510eab2ecdb1cce542329480b8ee2cc6f447bb1cf1738:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L656-L673",
+          "version": "repo-lines-v1:sha256:22e02d3329345d11fb6c82af60e02041904f186132f8371314447e2a5e00616d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyZjc5M2M0ZmY0YTYyOTY2ZDNjMGJiYjU1NGQzOTc4NWZmNWY5MDZlYzFiNGRhNmEzMzg0M2VlM2EwYmM0MDcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ec860697902f4072b1787d5cdfe1f9ba",
+      "statement": "Browser `startClearance()` is a separate public clearance flow: it defers work until idle, avoids a mint when the clearance cookie already exists, computes a versioned device fingerprint from collector-provided canvas/WebGL output plus stable environment fields, and posts the site key and browser evidence to `/api/v1/clearance` without server bearer authentication.",
+      "evidence": [
+        {
+          "resource": "repo://packages/client/src/clearance.ts#L140-L167",
+          "version": "repo-lines-v1:sha256:3fed620a69e4103b744704f132c0d41a95effaa09bf790f86d50e4b5babd1503:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1ODYxYjVlZjlkZmRkYTY5YmE2Yjk1YTU1YmJkNzBhMjVkNzhhNjU3ZjU0OTczZDgzNzlhNjEzMDMyN2MzMzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNjNWZmYzRiNmY3MGNhZjM5ZGNlNzc0ZmFiNTJmMmI5ZjdlMWE5ZjRlMDM3N2Y1ZWRlOGJlMDZhZjczNDQ3NTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ1ODA0OTg5ZTZiNjg1ZWZjOTdiMjU5Yjk4ZWFmMGJkY2UxNDI2MTE5YmE1MzQxN2Q2YmJjMDA3YWRmMTYwMWQifQ"
+        },
+        {
+          "resource": "repo://packages/client/src/clearance.ts#L204-L244",
+          "version": "repo-lines-v1:sha256:dd2ca70fac22d32d941378cdaf832e3c3a460b0858283bdc645dae4a77616964:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMGYyZDNhM2FhZGEyNzU4NjQ1NzhkMGE0MzkxNTYzOGQ1NDNmZWNhMmM5NDg1OGRiOTQxMjExZTg2Y2VmMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcwMDI1NzdiYjhjNmNjMzA5MmU1NDhjYTVlZjRmMzVlZTA5NmYzYmVhY2E0M2YxNWY5ZGQzNTFlMmYxN2RmODEifQ"
+        },
+        {
+          "resource": "repo://packages/client/src/clearance.ts#L21-L46",
+          "version": "repo-lines-v1:sha256:0f1e5dea58159a96d9acca9dd7f6beb84fb7c030635ba7774c7bfad4c8f5ec82:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA4MGRmYzYyMDFkZjgxMGI5NTJkZmM3Y2EwYzg2OThkNjcyZDU3ZWFmMmQxOGQ5YmY2YTgwMWNhZTVkZjRlZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2NTQ3ZGY3ZmYwMGJmYjMyOGI5YjA3OWIxZjI0Yjk2OTUxYmZlM2Q1NWE1MGQ0OTA5MmQwZTEyMzgzNWE2OTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjM2JjM2Q0ZmFhODAyMzNmNTE1ZWJhZTZjNmJlZWYzNjE4MDE3NjFlYzk2ZTg5YjdmZjM4MmZkOGM4NDJjY2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRkZDA2N2IxNjJjMTI5MGM2YjJjMzY5MzcwMWRkYTIzZDNmNTZhMmNhMzY0NWZjYmViNjEzNzliMjg3NGE5MzEifQ"
+        },
+        {
+          "resource": "repo://packages/client/src/clearance.ts#L55-L83",
+          "version": "repo-lines-v1:sha256:06b456c2e2eebae72fa8933c727a9cddcf1501aa7986655f55e436fe850921a5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBhMDkxZjZhNzMyNjU0NjQxZjc4ZGRkNDk3YzM1NTRiNTU2ZWEyZmY5ZWM1ZjIxZmFlOGVjOGYwM2RlOTUzMDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0MDUzNTlhM2E5YTcyYzNkM2UwYmU3MWI3MDRmZTkyM2NiYjkyYTdmNjhiZWQzM2I1Zjk0YmE0MDM0NzUwMGUifQ"
+        },
+        {
+          "resource": "repo://packages/client/src/clearance.ts#L91-L123",
+          "version": "repo-lines-v1:sha256:67cc152e082f9a84c3a04c75a1cd6e2b7c56e15c0b2521e1c4426327322c761a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2MmFkM2YyMmYyMzdhNTZhMzEzYTdhYjgxMmEyMDNkNzhhZjJiZWY0M2M3NTQ0YjllZjdiZmE3MGQ4MzdjNTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhMDdjOGZlMDNmYzUxY2MxN2QxMmJiOTVmZTMyOTk3MjNlNTUyODY0YjE1ZDJmMjcwZTFkMjM0ZGJhMjQ5YjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmMzBlODM1MGRiYWFkMGM0Yjk4ODQwZTlhMjI3ZWFlMDBmMTYxN2ViZTQyMmU1NzA5NDg5M2U4Mzk1NTczNjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_066fb6b477dd4475881cd90b2894fc95",
+      "statement": "Clearance minting and behavioral upgrades are fail-open in the browser: mint failures return no token, upgrades leave an existing token untouched, and browser clearance work does not block normal interaction.",
+      "evidence": [
+        {
+          "resource": "repo://packages/client/src/clearance.ts#L174-L201",
+          "version": "repo-lines-v1:sha256:e187c79dc08076fe2879fa9129c1954e36dcb470560817ecc6ccf5e7f91cfbf7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEyNzM3MWMyNDIxZjA5Yjc3MWY1YTMyYTNmNDBiZTg2MTE0NDdkNDI1MmVkZWVlMmJkNDY5NTUyY2ViMjA5YTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgifQ"
+        },
+        {
+          "resource": "repo://packages/client/src/clearance.ts#L204-L244",
+          "version": "repo-lines-v1:sha256:dd2ca70fac22d32d941378cdaf832e3c3a460b0858283bdc645dae4a77616964:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMGYyZDNhM2FhZGEyNzU4NjQ1NzhkMGE0MzkxNTYzOGQ1NDNmZWNhMmM5NDg1OGRiOTQxMjExZTg2Y2VmMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcwMDI1NzdiYjhjNmNjMzA5MmU1NDhjYTVlZjRmMzVlZTA5NmYzYmVhY2E0M2YxNWY5ZGQzNTFlMmYxN2RmODEifQ"
+        },
+        {
+          "resource": "repo://packages/client/src/clearance.ts#L91-L123",
+          "version": "repo-lines-v1:sha256:67cc152e082f9a84c3a04c75a1cd6e2b7c56e15c0b2521e1c4426327322c761a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2MmFkM2YyMmYyMzdhNTZhMzEzYTdhYjgxMmEyMDNkNzhhZjJiZWY0M2M3NTQ0YjllZjdiZmE3MGQ4MzdjNTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhMDdjOGZlMDNmYzUxY2MxN2QxMmJiOTVmZTMyOTk3MjNlNTUyODY0YjE1ZDJmMjcwZTFkMjM0ZGJhMjQ5YjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmMzBlODM1MGRiYWFkMGM0Yjk4ODQwZTlhMjI3ZWFlMDBmMTYxN2ViZTQyMmU1NzA5NDg5M2U4Mzk1NTczNjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7d90e005e8c041c4b8f3b0cc71307752",
+      "statement": "Behavioral clearance evidence is restricted to aggregate counts, durations, variances, ratios, and a pointer-modality boolean; it excludes coordinates, key identities, form values, content, URLs, screenshots, and replayable event streams, and insufficient interaction produces no aggregate.",
+      "evidence": [
+        {
+          "resource": "repo://packages/client/src/clearance-behavior.test.ts#L114-L151",
+          "version": "repo-lines-v1:sha256:81c01545803216d4162995f07fd78844cb11607e696fc465821d2eb0cb49808d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhMDk2ZmNiZWVmNmFlNTZlNmU5YTA5MjM1Yzg1N2UyNzUyMWNlMWYzN2ZhYmVlMDc3NzhiNDViYTA0YzY2MWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZmNzI4MGVkMGFhOTM3YmYwNjE2NGVlN2EyZjJmNWI5NWQ5ZGQwYTIxYWNlMjBlNzc5NmQ1ZTZiYjA1NDYzYjEifQ"
+        },
+        {
+          "resource": "repo://packages/client/src/clearance-behavior.test.ts#L80-L112",
+          "version": "repo-lines-v1:sha256:e2c01df2c2b67975bbff4bd4596f44c22b31c9b77e117025b4b72f03b2c8ed6f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwYWQzYmY1NWRmMzgzNjQxZGNhNGVmZWYyNTY2YjE5Yzc2MjkyY2ZkNjIzYzU2NmNlYmUxZWNhMDMwY2JjYTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllZmM5ZWZmYjc2MjU1NTg3OGFiNjM3YTVkNGI5NDQyYTlhMWE4NzVkZGFhMjdjMDUwNjQ4NGI0ZmQ5NWQ4MDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4Y2M0OTk5NDk1ZGMyNjkzZWVhMjhhNzkwMzI2YTI2ZjFhOTU1MGNiMjM3ZWVmZGY5ZTk3Zjk0NzZiYzc0NTQifQ"
+        },
+        {
+          "resource": "repo://packages/client/src/clearance-behavior.ts#L30-L46",
+          "version": "repo-lines-v1:sha256:26882b34555e3a0214e0c464673a1e66a898431237215af73bff24527a8a0c83:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1MWE3MGU2Y2NmMTNiNmRiMGY2OWQ3ZTI3OTk1OGQ1NDY4NTdkNzFjYjE4MzI4YTU2NzRiM2FmMTcxNWVkYTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlMTZmMTBjYzZmYzI0MjAzMWE0Yzk0NDUwZGRkZjg0MGEyMDk0M2VjY2IzZDAyNmNjMGM2MmRiY2ZhNzJhNTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0YzFlNDdmYmU3MzBiZTk5ZjE5MjFmYzE3NGM4NDI4MzdhZjYwMzNjN2IzMGM2YmVmZjBjNjlmYTQxYTk4ZDcifQ"
+        },
+        {
+          "resource": "repo://packages/client/src/clearance-behavior.ts#L4-L25",
+          "version": "repo-lines-v1:sha256:33be9b0660ed3f3c7f27a4e81a81a68d6d948babf3851651c6078a5f7b3e7619:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmNmZjZjg2MzA2ZDQ2NzdkMTJkZjZmMjhhMzE2ZTg4NGFmZTgzZmQ5MTljMTNlNjNhODJhMGNkZTE3MmI4YTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzOGUzOWE5N2NjOGE0MTJiODEwNTI5NDViMWZiZTQ1OTlhYzM5OTljODExODFlYzY3ZjM0ZDM1Y2ZlOWVkYzUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFlZTU5ZWNkMTc5YWRhZGZhMWQyNjc0OWY5NTMzNmM3ZWIyOTcwODcyZWM4ZDlkM2Y0MzFlNGE4OGY2N2Y1OWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4ZGMxZGM5YjkxYTlmMWEzZTZhZjQxMDY1YWY5MTdkMjlmOGZlYTFhODZhMmRiN2VjZWRkYWJjMGIzNThkNzMifQ"
+        },
+        {
+          "resource": "repo://packages/client/src/clearance-behavior.ts#L84-L123",
+          "version": "repo-lines-v1:sha256:789e7f2fe59f6ffe83cdda37d5a089b4fdbe685ac45255c7b92b0bfae1c9a784:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgxZjM3MjcyOTIzZTVkM2U0YjVlMjhiMjczMmM2MTNlOWYyMjdhMDkyODBhMmRjMWEzZmUxMGY4OWMyOGE0ZTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY3ZmUzNzM5MmJlMDBiMjdmZDUwNjFjNzAyNWY1MmNlNGE3MjYxMDY2ZmQ3M2VjNTQ3OTczMDc5MTE1YmU2ZGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNkNmE3NGM0ZDVmZDczYWU2YjQ1NjU5OTE0YmZjMzM4MTFiMzlhYzM2MDY5MjU4ZDliNjY5NzJkZWY4ODAzNjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ddab457cd67147eca93f92749cbfb78e",
+      "statement": "A leading, case-insensitive `WebDecoy-Test/` User-Agent is a reserved installation trigger that is handled before rules and local analysis, sends a labeled detection through normal ingest when an API key exists, and returns a denial even if reporting cannot complete; a mid-string occurrence does not match.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L408-L415",
+          "version": "repo-lines-v1:sha256:85c601fd955ab3638725c4f557c016def50b4340588085a4abd010c0de765115:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzAzYjEyYWY2OWZlODgzM2ZhYThkNjU5YTMyMjdkZjdhZjJhMGYzNDc0ZDI4MzIxYWFmOWY0M2ZhYWI2ZTU3YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOWI2MmY2MGQ4NTkwYTU3OWNmNDZmOGQ2NzM3OGM0YzU3MmI5NjJjZWNjZGI5MGM3YTVmN2I0MmI5NjA3ODJhNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTgyNDkzZjM4MmI5YzcwM2NkYTc4OWM1NTJjMzgzNzZkNmFmNWI4ZmViMjk4N2Q2NDRkOGFkYTM4OThlNGRjNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2RiNjNiNzQ4YzE4MjQwN2UwMjYwYTdjZjVhZWU1Y2IxMjI0OGEwMzNlOTA2ZWUyMWE2YWFlYmJkZGQ2NmU3NCJ9"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L592-L654",
+          "version": "repo-lines-v1:sha256:2ebbc54d84d10e19c0061e139f7dada0862d6ad33c2dafc87c165c68a97faa2f:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRkYjhkZDc1MDcxZWJhYjg5MzMwZTBiZjFhOGNkODg0OGVkM2IxZGU5NTk0MjNmZGJlYzhiZDk5YjhjOThjMWMifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/test-trigger.test.ts#L24-L34",
+          "version": "repo-lines-v1:sha256:9ecbcfe96a8c798978b1038bc10960202dafb4bcf524fdfacc723e3a436b0c4c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyZDM1ZDY4NTkxYTc5MTRhYjg1YzllZjY3MjZkODYzNmFlNzljNTBjNWVmM2Y5ZDBiYjAyMGRlOGZlODQwYzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRiNmRkZGEwODM1Yzc0NGQ4Nzk0YzZiMWZjMjM3MDBhYWY5NDgyNmRhNWYyZTBmZTExZjE5NWQzNmM2NGMxM2QifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/test-trigger.test.ts#L43-L118",
+          "version": "repo-lines-v1:sha256:b96e5dc7a5c3d15fdc009999647c05d62ea51213c02c39490b9c964f8044b078:eyJzZWxlY3RlZExpbmVDb3VudCI6NzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjMWZmY2VkODhjMjZkZGE5MGM5MTk3MDIzN2Q0N2U1NGNmY2U0ZTEyNWFiY2U0NTA0NjhiN2U0YWExMzIwMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0ZmQwMTFjMWUyMWMzYTVmY2I5MGI0OGM5YTA4MGE5ZWU3MjdhNWI1ZDkwZDE2Nzc5NzgzMjg0Y2ZhZDE1ZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjYWVjZGEyODA1Nzk1Zjg5ZTgzOWQzM2RlZDI5NGNiMzQ4N2MyZmQ4MGM4ZGEyNDdiNmMxODlkNzRkYjQ1M2MifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/test-trigger.ts#L1-L29",
+          "version": "repo-lines-v1:sha256:c00f1af0c52693d70dadd3c2429d38d28a96c212804598d437e4957af034e155:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkOTUwYjZiNTcwZTZjMDY1ZTYxNDQ0OWIxOGZiMjQ2ZDkzMTkzMjk5MDhiNTdlZWJhNWRlYjcyMmI3NGUwMTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_20692d88e1954345a8a360ff1d2c1ca3",
+      "statement": "The reserved test trigger is designed for a labeled dashboard installation receipt and is excluded by ingest from normal statistics, billing, actor scoring, and enforcement; it must not be used unintentionally in tests that have real credentials because it uses the normal ingest path.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/test-trigger.test.ts#L43-L71",
+          "version": "repo-lines-v1:sha256:cef3e749bd64401199e28ddf61957fbea2ebbea63be27bb53583221a8d8de17b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjMWZmY2VkODhjMjZkZGE5MGM5MTk3MDIzN2Q0N2U1NGNmY2U0ZTEyNWFiY2U0NTA0NjhiN2U0YWExMzIwMGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0ZmQwMTFjMWUyMWMzYTVmY2I5MGI0OGM5YTA4MGE5ZWU3MjdhNWI1ZDkwZDE2Nzc5NzgzMjg0Y2ZhZDE1ZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJjODNlNTkwMmE2YjIyZGYxOGU5NGRhZGJjYjhiZjU5MTZhZGQxODkzMWNjMzUzOTAxMzg0ODk5NDE3ZGM5YzIifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/test-trigger.ts#L4-L17",
+          "version": "repo-lines-v1:sha256:44053def5cdc3227d45bbd65ba079d98cef25e58220820b9192f84a79d6d3a5d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1NjBiZGIwNWFiZmVmNTY4NzhlOGJmNmJhMmQzMmI3MjQzYjNkNWQyN2Q5ZjM0OGM3N2U3ZTA5YmNmNDY5MDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiNTI3ZThlYmVmYTU4MzMzMTI0Mzg4NGNlM2FlMmMyZGU1YTA5ZTNiNGRlZDQyZDI0Y2IwNDFhZDBhMTU4ZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxYTFiNTBlOTM1YjcyMDNjNjJlMDA3ZGUwZTgxM2Y0ZTEzYjhjNjVjNTQ2N2U1NzIwNWVlZjg4ZDY1ZDc2OTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZiOWJmOTRlYTA5NjMyOWE3MGY4YjcxYzMwYjY3YzU1NDY1MWFmNGFiYjFkNWRmMmE0ODUwMjNiZGY1Nzc4NDAifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/testing.ts#L1-L20",
+          "version": "repo-lines-v1:sha256:2900339e50aad1b6527336beb152d8a5239539ce6aedafa1ec1b79924e8cc16e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkZWRiNjI3NzQ5ODg3MGI2NTIyOTY0N2ZlNDY1YzZjMTBkZmU3NmM0OTE4MWQxYTM1OGI3YWI3OTgxZWU3MTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc2MTY1MDQ4OWI0YzAzZmRhNzJmZjMwYThlODg1ZjdhZDNjOWZlODk4NTM3YWQxMDFjODE5NWZhMjk4MjQ5OWUifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/testing.ts#L77-L101",
+          "version": "repo-lines-v1:sha256:28d1c228411573f5b5ac6e53caa66aa0b6abb5d44a66653614580e2f85938a99:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViMmJhMGNmMTE4YWUwZDg3MmY2NTkyNDRhZTdhM2E2ZDdhYmVkM2Y1ODdlOTQzNGI1ZTA4YzQzMjgzMmNjNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1NTFhOGVjYTc1YTgzNDZmMjc5MTFiMGFiODI1MTNlYzVjOTIzNTdjZTFhNjI5MjA1ZTk3MzAxMjE2YWZjODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRiNTcxM2JkYzJlMDVkZGI1NzRmZWMxMWMyOWNhZmFiNGZkNDI3NTU4ZjU4YTk4NjczZjVlM2I3N2M5YmQwZjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_48954092745944039bcb38fb39d918d7",
+      "statement": "`createTestHarness()` is offline by default: unless `allowNetwork` is explicitly true, it removes the configured API key and uses a silent logger, preventing ambient credentials from turning application unit tests into dashboard traffic.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/testing.ts#L77-L101",
+          "version": "repo-lines-v1:sha256:28d1c228411573f5b5ac6e53caa66aa0b6abb5d44a66653614580e2f85938a99:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViMmJhMGNmMTE4YWUwZDg3MmY2NTkyNDRhZTdhM2E2ZDdhYmVkM2Y1ODdlOTQzNGI1ZTA4YzQzMjgzMmNjNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1NTFhOGVjYTc1YTgzNDZmMjc5MTFiMGFiODI1MTNlYzVjOTIzNTdjZTFhNjI5MjA1ZTk3MzAxMjE2YWZjODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRiNTcxM2JkYzJlMDVkZGI1NzRmZWMxMWMyOWNhZmFiNGZkNDI3NTU4ZjU4YTk4NjczZjVlM2I3N2M5YmQwZjkifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-28T15:55:55.028Z"
+  }
+}

@@ -1,0 +1,292 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:19bd03abc5b46adce1e2153d415051bdab801ee6df6c44631c3e33c6abf96c37",
+  "claims": [
+    {
+      "id": "claim_c913dbf2990149f8b69ce692374c2995",
+      "statement": "WebDecoy treats User-Agent matching as declared identity for cooperative-agent policy rather than proof of identity: agents can spoof a browser string, while behavior-oriented controls are intended for agents that lie about their User-Agent.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/bots/index.ts#L4-L27",
+          "version": "repo-lines-v1:sha256:0389a294928b11c335e854b9e08b1461a1575ffccf94a7863a859d7e826c69a1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyYzE5ZmZmYTUxMmMzM2JhMmJjNGI0M2I4MmY4YTgwYWNhOWVmYjcxZWEzOTQ1MzdkMzExYTU1OThjOWQ5ZjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA0ZjlmZjk2Y2ExZGQ3MWMzNjY3ZDYyNjY2OGZhOWY3NjZiYzY2MzZkYzhlMTA2YzE1ZGVhZTc4Yzk4MTE3NjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkYWMwMDU3N2VkNzg3ZGQ5OTMwOTdlMjk2ZDE0MDRlYzgxNGI4ZGUzODllYzNiNmU0OWQzYTA0OTFiODhlZTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBhNTA2M2ZkODhiYjcyODJlNTg2ZTY0YTk4OTQ3MTA0Njk5MWM1NmJjYjM1Y2ZiNDQ0NmQ1NWUxNzYxZjc2YzEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/bot-rule.ts#L15-L21",
+          "version": "repo-lines-v1:sha256:1cf11ea393d262f6a3a4b348432f86f6648519391d98146a9c5444a8cbd63ecb:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzczMThmMDc0MWRmOWJmNDQ1Mjk0Y2Y2MDQyZjE3NTNkNmFlMjA4YjcwMTY1NjYwMGM2YzY5YmFjOTI5ODZkMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMWQxNjYyYmY0YjBlZjQxYTMyZmQxMjNiMmI0ZTc1ZmMzNmIxODBlZGVmMjg5ZDIzNThjYmQzYjE2NWQzZGNiOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzQwYmRlYTBmZDhlMWM5OGU2YzdlMjdmMDMzYTYwNmI2YTc3MDhmOGQ3NTM3ZTE2NGYyYTFhNWQ5NDlhOGRmYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDRkOGIzYzQyNzYzYWY4MGNjMThkZTkwOTkyMDQxOTBiNTZkMmU5ODc4MmRkMmYwMWFiMDUyZjEyMmFhNDZmZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_3f5d5ea9b3f54a9ab8a137269fb6db80",
+      "statement": "`classifyUserAgent()` uses the generated registry to return a complete known or unknown bot verdict; unknown traffic is represented as `known: false`, category `none`, score 0, and `isAI: false`, while known verdicts carry registry identity and policy attributes.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/bots/bots.test.ts#L92-L125",
+          "version": "repo-lines-v1:sha256:1d0df9752b74330785386c3978e5c103669fa07841adc4bb71aef86c1801a253:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0ZTA5ZDZhNmJhM2U3ZjQ5NzAyNjA5Y2QxNDhkZTE1ZDJiZjQ5ZjQ2MjUxYjk1MGNhNjgwNzQ2MDYzNjcyMmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/bots/index.ts#L130-L144",
+          "version": "repo-lines-v1:sha256:3f7b8e96db2da792302155043987c9e206d16ca82ddd4067f29e5ed825063a01:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyMjUwMzQ1MzdlYzM3ODI4NWZiMDczMTZkOGZlZGEzMWY2MWFmMGVmMjNlMjExNmZhZjY3NDgwZjNjNjYzMmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyYTJjYjI1YTEyMmI0NDIyMWE2MjM0ZWM2NjBhN2I1ZmI3ZjliZGU3YjNiOWUyYjNjNTU5YTBkOTZmYWM3MzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ0NGU2ZDdkZGMyN2FkMDVjNzRkM2JmMGE0NDU5YzNmZDM4YWJiODRkYjY2YzUxZTY5MDhhYzBhZWVlMmY5ZDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcwYjE1MTUyMzkxM2ZkYTAxOTY4NTIzOGU3MDRkMGVlMGEwMWJiM2E0NGZlNzVhMGZjODk2OWE0OWY4OGU3ZTYifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/bots/index.ts#L47-L82",
+          "version": "repo-lines-v1:sha256:f267cb49cf5eab4100ac4f9f3bf8ef89369b0137c76e94a1c7760f7c28006383:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkZTllOWUwN2Q5ZjZmMWVmMGMzY2UxMjI1NmUzYTM1MGI1Y2I0MzNkYTQ1OTg0NjJiMDA1ZjQ3YWY0MzU4MDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMDRjMTY2MmJlOWRjMTY1M2Y0YjljZGQwYzEyY2FmZGE4YzNiMTA5M2FhY2Y4M2UzMjBlZGYxOWM3ZGZkZTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4YjdkNzgzMmE4MTQwYTJhYjMwYTJjYTI0OTk2NzEyYTc0NjIyMzFhOWYwMmMyYTA5N2YzNjI5NjZkNzQzYjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4538fc5cf6ca4a26af798a3ab2a95a36",
+      "statement": "User-Agent matching is case-insensitive, uses first-match registry order as precedence, and memoizes both hits and misses in a cache capped at 1,000 caller-controlled strings that is cleared at capacity.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/bots/bots.test.ts#L23-L58",
+          "version": "repo-lines-v1:sha256:52cb9a1b6a583693d4ec2081006cbaf27884412b65acdcddeaa590e2935d1139:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUzZTdhMTU2OTc0OGIwMjEyNWFiN2VmYTAwMjE5ZWRjODMxOGRlN2Y4NGI1OGIxOWI0MDYyNmQ1YjQ5ODlhZTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyOGRkNzQ0YzFkMWQxZGM2YmIzNzIyNTkyYjZkM2U5YmZlMGFhNDY2ZTg0NmY2MzEyNmNlNzQ1ZTcwZDJmODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwZGQ0YzQyNDc2ZWJhYWFlN2UzYjNmZmQyZTM1OWMzNDhkOWQzZDZlOTYxMGEwMTA4ZDA4ZjM3YTlkNzQ3YTYifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/bots/bots.test.ts#L68-L89",
+          "version": "repo-lines-v1:sha256:3b78291d680512f10b36afbb53cd282d62d8510ff527b9b35be3ad45c4250dca:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxYjEwMzk3NDg2YjRkMDEyMmY4Y2E3MDZkZGZkMTU0NzFiZTg3OTgzNmJkYjRmYWM3MmUxZDA3YzJjMjNmMGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE3ZDhhZmE4MDdiMmMzNGM1MzBhMGZjNWNiYjkxYjVkMjIyNGJhMmJhOTQ3OGYxN2NiZWFjYWVmYWU3M2RmZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4M2JhOWNkNjMyOTkyMDQ5NjQzY2ViNTk0NzJlOWE1NTA0NTAxYzZiMTI2NmEyYWRiODljODg2NGY1NTc3OWYifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/bots/index.ts#L85-L127",
+          "version": "repo-lines-v1:sha256:d4fd061e6522e85749e93134c328a31e79c99cb493e8accccd300a4cc7c7d1bf:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiNWMzZTRkMGRlMjZmY2UwZDkzZGQzN2ZhZmQwZDg5YWE0NDNhZDc4OWMxN2RkM2Q2NmY5ZjNlYjVmYTQ4MDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRmOTVkNmIwMTcyOGFmZDM4ZDg4MmNjNzgzMGI2OWExZTI1NzcwZjQ5MTI1Mzc4MDIyNzFiOGNkODE2MDJlYzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZiM2JhY2ZkZGY0NzRmZDc1NjdjMjU4OGYwNGJkNzJmZjcxOWI0NDFmNDRjYmUyM2VhMDA0YzQyODlmY2FlYzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5c21aea71c4f40aa828448b4a8505590",
+      "statement": "`BotRule` only acts on a known User-Agent classification; it can select categories, named agents, or all AI categories, applies allow-list exemptions before broad matches, defaults to DENY, and supports THROTTLE and dry-run actions.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/bot-rule.test.ts#L24-L85",
+          "version": "repo-lines-v1:sha256:4ff7a83d9e5748eb83d11d23d9b493151bbb9b3ccf10c9a40133aa8ccf15d76d:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExNzJmMzA5MzQ1ZjY4ZWY2NTUwOGMwY2RjODkxZWJiOTk0NGU5ZTBiYWYyNGYxOTU0MjQ3OWIzOWY5YjYxOTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkYjRmZDRmZGIzMmExNjYxYTcwY2U0YjMwZDYzNWRlOTY1NGM2YjkwYzBkNWUwZTlmYjZkZmY2NGQzM2FiNzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1OGFmMDFhYjg1YWI5ODNkMmE2MjBiZTUyNDZjMTQ5NWI4YTJkODYxMjUyYjMyNjVlZTQ3YzE5MDM5Mjk5MGIifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/bot-rule.ts#L26-L84",
+          "version": "repo-lines-v1:sha256:bd7bab63894d04016e113f0c0976d715283ca427d84e1aec42b099c5354dcaf3:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczZTVlYTdjZTA1OWI1MzA5ZjNiZWZhMDY5MmY4MzMxYzA1ZWVhNjE2ZGQwYWVmMDVmN2UzMDk2ZDZiYmEwY2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllOGI1MGQ5NWQ1Mzc5ZTEwZjkyOWEwODRlODY3NmViNmM5MTk0ZjUwNmJjNDE4MTZlZGY5MmMyNTcwOThlYjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNzM5YTA2YzFjYmIxMjQ0ZTMzNjNkMzhiY2Y5ZmE1MGNlODRmZWQzOTljMjE5M2EzYzdmMDhkNTk5MThiMmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5403ca3b046745b6a5b2b19d1f9c4d49",
+      "statement": "`botPolicy()` resolves one registry-backed deny/allow set and exposes both an enforcing `BotRule` and generated `robots.txt`, preventing policy drift between published crawler guidance and local enforcement.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/bot-policy.test.ts#L28-L58",
+          "version": "repo-lines-v1:sha256:7f1101e03fb4c908e3626dcc9c9253a2f34c4dbcd6e737b1ffad81def497cb07:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3ZTQ2ZTIyZjc4OTc1MTM1YWY4MTRkZTE0YWI1Yjk4Y2Y3MWE2MGM0ZjIwODlmZjllZTllMTY4ZTMwZTk1MGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyNzliNjgwNTIwZWQ1MjZkY2M0YzhhYTM3MzUyNzU5MGUyODE5NWU0MGZiZTYxMDdlMWU1YjQ5NWE0NTc3MzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiYTQ4NmEwYjRkYjlkNzg5MzgyNzEzZGQ4ZWI0OWQzNTEyNDFlZjljZWY4MTAwZGEwNTBjZmE2ODU4ZDlhMmEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/bot-policy.ts#L4-L32",
+          "version": "repo-lines-v1:sha256:eb23afa57cf12e32689e921b35983188dc29163c43dd5e28e99c2bebcc1510b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiNmVhYWZkZTE4YjhiNTFjNDk4MzhlNzdjNTUyMDk3YWM0NzA5NjA1OTRlMjBkMGYwYzUyMGNkMDY1MWE4NGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzMmVhODg3MDQ1M2VjYWU5NjcxZDIwOTVhYTMwMDg4N2NhMzEyYWRmZjQwNDg4MDA0NzA4NDU5MTk5NzUwZmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMzg3NjUxMTI3MTA1Y2Q0MzkyOGI5MTFmMjllNWY5OTQzMjgyMjEzNzBjNGVmYTE0M2VjY2Q4YzhjNDZhZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViODQ2YmJmNzg1YzdmNWIyMDg3MWQyMDNjNWIxMDM3YWUwODljNGY0NWM4MGE1YWZlNDdmMzQyYzVjZDUzYjUifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/bot-policy.ts#L81-L134",
+          "version": "repo-lines-v1:sha256:50cfe17bcc8d994833e111df5c90e1205c92c26a718a0e51f8e85a419b4ccf4d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2Yjk4MTY2MTUxM2IxMWM1YjVhNDU0YTEwYTljODBlYzljNzhjYzc4ZGJlMzI5MmQ1ZTgyMmJlNDQ1NjQ2MDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0MjkzMjRjMTc5OTMwMTVmZmFkY2MxMWU3ZDBkOWUyYmI0ZWRjN2Q4YWNiYzQ5NmEzMTZiY2ViMTdjZGU1N2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYzZDM5NjMyZGM2ZmRkNDA2ZGYyZTg1ZGZmY2E3OWQ2YzliMzgyODIyM2E5OWI3YmJmYmM0MTk5OWFlY2U2MzIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f08c9ac75438410da0e0350402c2e726",
+      "statement": "A BotPolicy can target categories, agent IDs or display names, or the `ai` shorthand; its robots output can include a permissive wildcard group, shared disallows, crawl delay, sitemap, and annotations identifying denied agents that do not document robots.txt compliance.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/bot-policy.test.ts#L60-L107",
+          "version": "repo-lines-v1:sha256:94108a52f1e11663100cb0adfea6339d8d315acbbdcef195452083c3ea25d527:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUxNTBlNGQwMjQyYmIzMDlhZDBmN2IzZGQ5MTVjYjUzMTgxMzgyYTRkNTlhOGM2OTYzMjdhM2MwZGVhODE4ZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZlMzY0NWFkODUyNmQ1ZmI5NTJhNDRmZjgyMjU1MDgxZWQyZWU5NDY1YTM1OTMxZGE1NDFhMmEwNDZkZDJmZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAxZDhmZmE5ZTg2ZWE3NjNlYTYzYTdmM2FkMGJmMjQzMzgyM2M5ZWVkZTc2ZjI3ZmE4NTU2MzFiNjZmZmY5ZjcifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/bot-policy.ts#L122-L174",
+          "version": "repo-lines-v1:sha256:d6a01bbd2e5c5b526820b12878e18db9d4e5f019fc0a1b00972fda536b5beab0:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVlMTJiNjExODk0M2UzMGMwMDY4MzNlNzgxNjMwYTUzYjMyZjQxN2VmNWY5Nzk1YzNmMTJmMzMwODAyNGM1ZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/bot-policy.ts#L47-L78",
+          "version": "repo-lines-v1:sha256:6210a0877dd1e3e64ad73dea9380473d4bb04b4b5774544a963082adaa847a7a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4Y2Y4YTEzYWNmOTE1NzZiMmJlMWQ2NjIwMjBkYmFmMGZjMzZmNGUwNmU2MDhlOWQ4ZDQ5MGVhMTcxNzkzM2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiYmUyODMyODY5NzZlM2Y0ZDkwZjJlOTlkNTkwOTUxOGE4ZmM1OGJmNWE2MjUzZjg1ZDhjZGJmYmQxZTNjMTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMDRjMTY2MmJlOWRjMTY1M2Y0YjljZGQwYzEyY2FmZGE4YzNiMTA5M2FhY2Y4M2UzMjBlZGYxOWM3ZGZkZTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQzY2IxMGI4YzhmZmU0MGFkY2RmYzVlOWJlZjY4ZWE5N2I1OTFhNWE3YTc3ZDg1MGNjNjczNjQzYTMzNGExNTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8c1f2a7acf9a473a9e2ff981073d266f",
+      "statement": "The Web Bot Auth verifier processes RFC 9421 signature headers tagged `web-bot-auth`, requires host binding through `@authority` or `@target-uri`, reconstructs the signature base, resolves the claimed key, and verifies it with WebCrypto.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/agent/signature.ts#L1-L12",
+          "version": "repo-lines-v1:sha256:8d2a7d509fc7af73147a5c7e59ee3802c91d883e331e0d5ded2b1ae3817a28c4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkZjhjNzRjODUyMzcxZTA4MjU1OTY3MDE0MTM5MjEyY2VkNDcxNTQxODBiMDExMTdkMTQ0M2FlMjY1MGYxZmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhZGI3OGQwNDkxY2MzZGI4YTkyOTI4MTY2NzA1Zjc0MjJkMGM4ZGRlMDg5NTQwODliNWUzMzg3N2ZlYTg1MDUifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/agent/signature.ts#L187-L240",
+          "version": "repo-lines-v1:sha256:acafa1f1847b341991cd8b2b7f841b68707460acf8893f178295cc23d430ee0e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhYWU1M2UwMWE5OTdjNGZkOWQyN2FlMzg4OGVmN2U2NjNjZDg4ZDAzZWUyYTdkYzUyNjE0OGFhYzMzNTYzZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2ODQyNjE5NzNmN2RkNWJjYjMzN2RlMmUyN2Y3YTdjY2Y0OWVhZmU5ODliODJhOTI2OGI5NDU5ZjU2NWJmNDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzODJkYTlmMmM1MmI2NTQ2NzM4NjNjNjY4ZDM3NmQxMTk2NDU2NmM1ZjU3MmI2NzExMWUyMWI1NmQyNmRkZGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkMmY3YjFmMzZkMDg4OTc0MTU4MmQ1YTMzM2E4YTViMzcxYWYxOTNlNTNkNmI5NTAxYmU4OTAwYWFiYmM1N2YifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/agent/signature.ts#L80-L169",
+          "version": "repo-lines-v1:sha256:1cdba8e8d1e42c67d8d2da971c75eaf5cb0c8f23310b408b2d98c319b96df620:eyJzZWxlY3RlZExpbmVDb3VudCI6OTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmN2Y5NWJhNmQwYjhjZDM0ZTM5NzI2YzNjOTM3MzA0NjI0YzRkYjc5OTg1NTYwN2NiOGE1ZTIxMzM5NmYwMDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyNmFhZWUxOTI3ZDM3MjExODQ4ZjRiMDI2ZDYyNTJhYWJmNDRmMTI0YTVlOTZjOGU4MWFjMzkyYzdiMDFjMzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEzOWIwNjRjMjU4NjFhMWVhMmRlZDNlMzlkYzY2NDk1NjZmMjY3MDY0NTZhMjkzOTVkMjMxNjg0NDk1YTgyODYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0NmQwZmQyNTVjZjZiMGMxMTc4NzY4MDk5Y2VhZjI1MTU0MWJlMDk3OTRkMmZiODgwOTUyMjI2YTI0NDY3OGQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4ac61160eafb4949b6562ac2d38edf51",
+      "statement": "Web Bot Auth outcomes distinguish `verified` trusted-key signatures, `impersonation` failures for a known key, `claimed` malformed or unknown-key signatures, and `none` unsigned traffic; unknown signed traffic is not proof of forgery, and outcome precedence is verified over impersonation over claimed over none.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/agent/signature.ts#L69-L79",
+          "version": "repo-lines-v1:sha256:302dbf1ef03167857f5db1697a14aef915abd8f9a7043b251ef35f5ce7c708ec:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5N2ZkN2UzYjlhYzViZGI4YTQxNzdmOWM1MTdhZGU5ZjUxMDk1N2IyN2M1ODY5ZjAxYThlM2Q5YzJmY2Q5ZGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRjYzgyNzgzNzBiOWVhMjA4YzU1ZDAxMTFkNDliYzI3Y2Y2MTcxOWVjODY2NWYxNWU0NDZkY2E0ZTg4MzY5YWIifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/agent/signature.ts#L85-L180",
+          "version": "repo-lines-v1:sha256:d0f53c8bff9757893b800d37e5fbbc13c79c5d0730bebef9105119407bd25b51:eyJzZWxlY3RlZExpbmVDb3VudCI6OTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiZDQwNmRkMDUxYzI4NjY3NjZiZjdiMzFkYTQ2ZmFjZTE1ZTRlZmNhYzkzY2RhYTgyNzUxNWFjN2IyMTc0NmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM4NzQxZmQyYTZlNWMyOWE2MjFlYzY2OTdlZjA1MWI2ZDkyMjc1MDA3Zjg4ZGY4ZDg3MWMxOThmZTVlNGM5YWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyYTQ5YTczNTNkYzcwMjhiNmM5ZWMxNjdmMGFhMDY5ZGViY2MyZDI2ZjA0NzBlOGRiNmI4NzA0YmU0Yjk4NGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4OTE5MDE4OGQ1NjRmNmMyOWZjOGE5MTgyZGZjODcyY2NjZDMxNWJiM2NhZTk2ZjMzMjEwM2M3MDk3NzlkZGEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/agent/types.ts#L15-L61",
+          "version": "repo-lines-v1:sha256:a2b2d55cd783c9a60c458e89c8f04a45cc9d548d69bef6bad860b16a977396a0:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4MGUzODQ5MjUwY2M4ODdmZjFjN2U2ZmJkYjg4MGQyN2U1ZTYxZjliMTIyYTVjN2FmNmU5MmZiNDY3MjU5NTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjViYWU3YTQxMDIwNGM1NjQ3ZWFmODlkYzQ3ZDAxNzJiYjQ1MmVkMTkzY2NlZGQ4NzQ0YTQyMWFmODE3Yjg5YTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVkOWZhZDY1ZDYyNDBjNDk3Yjk1ZWViYmM2MzI1MTI5MDQ3MzgwZWIzM2E2NzdkNzdhMjQwM2E2MjE0NGE0OTkifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/agent/web-bot-auth.test.ts#L143-L211",
+          "version": "repo-lines-v1:sha256:51bff31efe2335be948eccde03f2526364cb509b05bfa9fa477c9f1ae9af12f1:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyYWRlMWEwMzU5NDZhZDc0MWFiZTRlNWQ1Njk0MDVhNDg0NjY3NzllZjUwOGVmZDIxN2FlMGI0OGU5YTAxZWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyMjgxOWM2ODA0ODhmMDQzNzZmNmQyNDllMzRlNmM5MGM2Y2Y1NmE3ZTdjNGVmZjIxZWI3MWVhMmYxZDEwNGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmMDVlMWM5Mzc2NjY2MTc0ZmI2NjIzNDIyMTAyM2U5NjJhMDUzYTY0YTNjMTE1OGQ5OTdkZmQ2ZTVjYzU2OTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwZWJjMjdhNGZjYTZlMDdjZjZmYTMwZDEyNDVjODgwMDM4OWY5MzQxMTI4NjRmOWQ1OTVlMDgyNmEyYTk4MTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1fe2989b589d415ca22c88f82c105ea5",
+      "statement": "AgentVerifier accepts a WHATWG Request or a plain method/url/headers shape, normalizes it for local verification, maps core outcomes into public verdicts, and exposes an asynchronous `warmup()` plus cached-key diagnostics.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/agent/types.ts#L113-L126",
+          "version": "repo-lines-v1:sha256:5d3a61c74b63de1dbf220755be94414e19511625a7ef7a222dbba3f650219441:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOWUxMjU0NjQyNTU3NmQzZGVhZThjOWI5ZGJmMTI4ZDVkNmRkYWY1ZDdmZTg1NzkzNDkyN2RlZmZhM2I5ZGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyZGFmODMyN2M0NWRkZjlkYjBmNjliZGZkYmI1MjU2YmM1OWYzODgxOTVlYjEwMDRkNmQ0OTcyZTBkMDIxYWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/agent/verifier.ts#L19-L87",
+          "version": "repo-lines-v1:sha256:444aacc204fd248feb8bee74e1c261be40031614eedfa779f86e3a4e8a0d4ec4:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0YWY5NjA0OWRkOTYxYjQzMDlkY2ZiMzYyYmI3NTFjMmVlMWI4N2ZjMTQ0Yzc3NDdmZDBlNTJmNTg2YWUyYjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwMDczY2QxZDExNjQ4NmU5Y2Y3NDQyYWI3NTA2ZmU2YzIxOWUxYjRiOWJhY2Y2YWZlYTUzYTk1MzAyYTQwZGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3MDBiODg2N2U1OTI2ZjM2MDRlYTk1ZWNlZWRkZmRkNDdiZDFlOGFmNjdlNGM2ZWNiZmVkZDNhYTMzOTYwYmYifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/agent/verifier.ts#L89-L112",
+          "version": "repo-lines-v1:sha256:405903cf68a50153309430599f72010b15ac853b164d91bf54af2c2ba5d5f32c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyMzYyZTdkOTBmMmNkZDI0ZmI4YWQ1NTU3NzhhZDMyNTk5MTU3MjI4ZDk5MWIyODQ3MTU5ZTRhOGM2NDQzNjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNlMTc3ZGNlZjI4YmRkNTBmMmRjMDk0YWRiOWVhZTIyOGM1YTAyYTBiZDcxYjA0NGJlNTE1YzNiOGY3NzMxNWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a7ab87db1329485fa624f987b44f08fe",
+      "statement": "Trusted signing keys are fetched only from configured curated directories, never from an incoming `Signature-Agent` value, making the configured directory list the SSRF boundary; default directories are the OpenAI and OpenAI ChatGPT origins.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/agent/directory.ts#L2-L19",
+          "version": "repo-lines-v1:sha256:ec4f1058684aaaad88b4d2ee31782aa3d407bfc27fcbd6c92a6645298907361c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1NzBjM2ViNjk2ZWZjY2NjODg4NmRlZmI5NzliOGU0NmEzNzA2YTJhNTdkYmY4MjIxOWY1NGIxN2Y1OGI5NjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzZDhkNDY1OGU0OWNmNmU5ODU5MDg1OGQ1MmZjYzI4YzhkZWNhYzk2ZDZiZThmMzMyN2RkN2JhZTkxMTc4ODEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoxLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwOGMzYjBhZDNlZTAzYTAwNGYxNDJhMWRlYzA4NzMyM2I2MWFiMjY0ZmRiNzE1YWQxNzU0ZWYxMTEzMjBhMWYifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/agent/directory.ts#L26-L36",
+          "version": "repo-lines-v1:sha256:ed1184b0ef429993784d78c40f64f02d42cd077197f5f34ff84e9eebeb9bb69b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5ZDRmMTIyNTgwNjMxOTEwMTQ1MTBiN2VkYWFkYzBmM2UzYjg2MWU1OGMyNmViMzU4MzczZjFiZmE0Zjg5ZWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMmQyYzBkNmRjNWU3NGQ5MmZhMTRiOTFkYmVhMjY0MDkwYmViMzVmZGI5MTg4ZDliMzQxMTgxZGNlOWY0Y2UiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2MzhjNjdmN2M1YWM1ZTY2ZWY2MzlmMTYyZjdjMDkyZDlkMGEwYjdkMzg0YWNiMWQ4NDEzYzgwZWI1Y2YzZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjYjMxZjE0YzBjYjEwOGZhYzZiZTRlMmY3MmNlMGI5ZThhNjk5NWI3NzUwOGVmZmUwNzgwMDJkOTA1NjkxYWIifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/agent/types.ts#L63-L110",
+          "version": "repo-lines-v1:sha256:f8feade0d3138b4735cd7a4b77e2caacd8bda879992b984ec752fa215b53ac33:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyNDE5OGIwMTZmYmNiYmQ4MWU1ZmJmMDkyYjg3Njg5ZTI3YmE2NmEzODhkNmUwMmMwZjVkYWZhNmYwZDA4ZGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyYWFkNTA0OTRkNGJjZGEzMWU4YWZkMTBlYzM4M2FjZjU0ZjljZTBlM2NmZWRiOWNjNDVjODg0MDIzNGVjZmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwM2UyNzVmNDUxNzU0YzE4NGI2NGNmNzY4ZmVhZWRkMjUxYmVhOWUzNWZkMTYzYWJlNTEwNjUzMWE5YWIzNjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d67e1088410041b19de1476cede12a78",
+      "statement": "DirectoryCache imports supported Ed25519/OKP and RSA JWKs and indexes them by JWK thumbprint rather than mutable key labels, preserving agent name/category and published key validity bounds for verification.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/agent/directory.ts#L172-L228",
+          "version": "repo-lines-v1:sha256:2f91db5a65360abe2d9f6f344178574412b03edb3b22549c05a7a3524f3b8e31:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIwYzBmNTQ5ZjJhZjMwYTcyZTJlZmJjYTNlOTI0MDY2NjdkNDMwODI4ODk3NTkxZDZhNzZlOGQzMmVlZTIzZWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/agent/signature.ts#L20-L37",
+          "version": "repo-lines-v1:sha256:8770a5239c5f4660778fdafeb049169726db7fdb2db45a9d4eac7eff6183d6d1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0NmUwMzUyOGJmMzFmOWE1MzU2YWRkYjkwZDI4MGM2ZDM4OGE2YWVlMTY3MjQyNGJhYzY5NDY4NDJmOTVlNjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjYWYyMWY3MWE4ODFhODU4YTY3NDJjOWFjOGQ3Yzk1ZjRjMjIzNDRlZTVhNjFjNzM2ZmE3Njc5OTFjNTdlNjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNjMjQzYzg1NDM4MjE1ODBiZDE2ZTNhZWZhMWIxY2RlN2YxOGRlZGNjMTcyZDlmZTY2OTNhMGFhZmIyNzdkOWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2OWI3MTVkMTZhODhmZTlmYWE5N2M5NzI1MDExYTNjZDM0NTFjZDkyNWI2YWVhNmZkYmY5Njk0NTM3MjZhN2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e0bd2c4d8fc34f6c979289a634d0748d",
+      "statement": "DirectoryCache has a cold-blocking but warm non-network lifecycle: it serves cached keys, refreshes stale keys in the background with one shared inflight refresh, merges refresh results into last-known-good keys, and backs off cold retries for 30 seconds when all directories fail before any keys are loaded.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/agent/directory.ts#L57-L117",
+          "version": "repo-lines-v1:sha256:51817f77635f3c1f04914478403bd8034aafa7d5c670aa8ecf7bc5134300ed2a:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0MzFmNTk2M2I3MjA2NGY4NmU2ODYzZjIxOGVjNTFhZjJjYmVjNTQyYzg1YzZhNTExZDAzOTNlYjlhNmUwNTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU0OWE5NjFiZTc4MTdkYzE4M2M0ZDA1ZGNlYmExNGZhYWZiODAyMTFjZTNjZjE4YzY0MGU2Y2RjODE1ZDNlNmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY4MDc0MjMxMDMzODUzOTUwZDdiZTVmNTM4ZWM2Zjc1ZjQ4MjYwNDBkOWIwNWUwZGJiZDk5OWQzNDM4YzM3NGYifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/agent/web-bot-auth.test.ts#L225-L272",
+          "version": "repo-lines-v1:sha256:d1e0524c3f5ef71514f7ab844b7ed673046ae430e7c6eee60d8c30285165f101:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4MWM5MDdmOTYxOWVjMjg5YzdhMDY4OGU0NzAzN2Q2ZjFhNWNkN2VjMmVlNmQxMTBlYTVmYzk5Y2IzMmQ5M2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyMDM5ZjkyMjc1MGI0YTE4MjNiY2MwMjIxMzlhZDVjM2U1ZTExODBhZmNiZWI3MTllNjRmMTM2YmEwMTQ5NGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2ZmYzODFmMjRlNmIxNDY1OTNhM2Y1ZjgwMWJmZjU4M2E4ZmI3NTk5NTVmNWE4MDQ4MjNhYzVhN2Q4Nzk0YTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_347453b8e6bf4ba892dd7176be9871d0",
+      "statement": "`WebDecoy.detectBot()` delegates to a shared local AgentVerifier; configuring a `webBotAuth` rule creates and warms that verifier, and asynchronous rule-context construction computes the agent verdict before synchronous rule evaluation.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L121-L135",
+          "version": "repo-lines-v1:sha256:0d248debbb94e49017001f2389c9b34fffa1d6a02d2ba9e21f3d0213daba27ac:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5MjkyZjcwMjU5NWRiODQxYjBlMmZkZDMyYzcyYTI1Mzk5MjMzOTc0ZWQzNDVkZWMwMWJmMDZmZDI4ZTY0MGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2OGMxNGYxYzgyM2QxMDM1NDM3MDBlM2U2MGM1MzFhMDdmMTBkMGIzNzVhNzdjNmYxNWQyNWIyOWNmODk1ZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhZTlhYjEzMWM4NGRlZjBjZmQ0MWE5OTVjMDhlYTY0M2RiMmM2MDNjNTFjZWRiNDk2YjQ3NzhlOTg0MGQxY2YifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L228-L255",
+          "version": "repo-lines-v1:sha256:896563cdb795ed1d0d56b227ef89b7c53e8bd84c6de8cd44a063ab291cb632ec:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5YzdiMTUwMjEzYmJmNjIyZTRkNTQyMTk5ZmZiM2FmODJkOTg3NDU4ZTI3MjVlZDE0YTBiNWM5Y2EwZmEyNWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2M2Y2YTMzZWI4YmYwMzk2NTQ5Y2RkZTg3MWM4MGU5MWFiZGQ0MDA3YmMzNDAxNzQ1OGM0Y2ZkZTlmNjM3NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2MDRlYThmN2VjMDAxOGVjNjNiOWYwNmQyNzQ5MjMzODNmODBiZjc2NDJjMTA4N2RlZjZjNzYwODNjYTNhYWEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L276-L316",
+          "version": "repo-lines-v1:sha256:854c63555af2eecdd5e6804a0276a5d431b12566db0719434ea0f5056658c401:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhlNWE0NDM4MzcwYWY3NzEzYWIxY2I3NTBkYTNiMTdmMTVkZTQ5YzQxNjI2MzhjZjhiYjYwYzhhZDJlMmJhNzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBjZjNlNzEzNGM1ZWM3ZTZiNzU2NmVmZjExMWM0YTYxMDllYWQ4MWZlOTdhNzNiNTBiZTJjMGEwZjg4NGY5NWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ1MTA2ZDRlM2QxMjRjOTUxNDRjZjRjNTFiMGY2MWZiNTY4MjQxYWJhOWMzNzE0ZTExNzlhMzEzYjQ2ZTVkNTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f59168d0d24545eaae06e59789637d91",
+      "statement": "`webBotAuth()` defaults to denying `impersonation` and allowing `claimed`, `none`, and verified agents; `onClaimed`, `allowCategories`, and dry-run can change enforcement, with a verified but disallowed category handled through `onClaimed`.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/web-bot-auth-rule.test.ts#L16-L60",
+          "version": "repo-lines-v1:sha256:f60aa2783fc50c8b40ca31ba4dbc2443e228c31246c7d6d89f58a4a33b9fe9ee:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyNWY3NTU2ZDZjNzliNThlYmEyMTg5MTE2OTNjZDdiYzNlYzE3MDEwZTQ5ODAzMzMyZWU4OGZmNTFmNGE3YTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/web-bot-auth-rule.ts#L18-L95",
+          "version": "repo-lines-v1:sha256:30a44c718f9b7e85756e093ba0b4bbc57080a99765ef91de698fb2b3939121eb:eyJzZWxlY3RlZExpbmVDb3VudCI6NzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiMjYxMGJlY2I4ODE1YzMzNTY4OTJhZmY2N2M4NzM3ZGVhNjc1YTg4MzMyNmM3MmNlZmI3MTBmN2NiOTZmYzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4NzFhNzk2MDQxNWJkZmRiOTlmOGUyYmI4YTc3OTczNWRjNjgxYzljNWRmMzE2NDU2ZTIwODMwYTRhM2I1OTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyMDcwZTBiNTA3NDkxYThkMDk2NTUwZWIwNTk5YmIzNTZhN2ViMmM1NTNkZTkyN2RmYTdlZDMzYmQ1ZWE0YTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZlMDBiMGRiNmMyZjViNWQzYzk3YWY2Yjk3NDU3ZDE1OTQ3MzAwYTVmZjlmNWZmYjA0ZjVmOWUwM2VlMDU4NWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a1aafed468a04f318c4baaad8717e1fb",
+      "statement": "Metadata-based Web Bot Auth verification reconstructs an absolute URL from host or authority headers, forwarded host and protocol, and request path; when no host is present it skips verification, and the Web Bot Auth rule records NOT_RUN while allowing rather than guessing.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/web-bot-auth-rule.ts#L56-L69",
+          "version": "repo-lines-v1:sha256:0ea41741476c42a05e2338daaebb4301231edb3b623abcdaed64cf55f427f82d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3MTU2YWJiYzY1YjBjYjZhMzM3MjQ5MDQxODNmZjAyZWUwZTBkZmM5ZTQzODE2NmVlYTE5NTE1MzU3YzZlODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1ZjFmMDhiMTIyMmM3OTdmZTFmNjgxOGQ0OGQyYzdmNTNhYWUwNjE1YmI5OGZkY2U1NmMyNTBlODI4ZjMyOWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjliYWIyMTRkY2FjOGY1MTJmMGE4OTdhNjUxMWVjYWFjOTEwNjlhZTcwYzljNzc3OTExYmE5ZDkyYzE0OTMxYTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4YWJjYmMyYTAzNjQ3ODE2ZmJlM2Y1NDEyOTY4OGQzMDQxNTI2Mzg5NWRmYmJmMGIzMDllODkxMWRhNWVhMjMifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L708-L741",
+          "version": "repo-lines-v1:sha256:302235d9ce71af7e23046031fa64d94588ce1d0162de5c5d15b997d1bb25a199:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiNTgwZTk2NGY4M2E0NzNmNDNkNDQzODQ2Mjk0OWQ2OGI1NjAwZmRhNzg3ZjE2Mzc0NWQwMGRlODljYmYzNmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_15408e3dd0cd4fcc8f47b1935fd00943",
+      "statement": "The local Web Bot Auth implementation is built on Web Platform APIs rather than Node built-ins and is tested by bundling for and verifying a signed request in a Vercel Edge Runtime VM.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/agent/signature.ts#L1-L13",
+          "version": "repo-lines-v1:sha256:f0a520d325670a7105de23249e176f42d749095f4b1211fd56578be310ade4d3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0ZDlhYjg4YjU5NzdmZDczNGRiOTIwMjYwOTY5M2NlOGRjYWMwNTUyZjNlYTU5MmE2YjM1OTFmNmJlYjZmMTgifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/edge-runtime.test.ts#L2-L8",
+          "version": "repo-lines-v1:sha256:ad69f174f09415e89282bc7eeae519d5e316c76b2aae465408f38cf460c49715:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjU1NmM4NTAxYjJhNzdjN2RlN2Q3YWY3ODY1ZGZlOWY2MTk0YTNmMjE4OTYxZDk1NTM4ZDE1ZmZlOTg2MjE2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTQ1YzJhMzhlM2MxZWMwOTUyOTBmMDgzZWUwNTYxZDlkOGRkMTM3YmZlOGY4NjY4MzBjNjYzMzI1Nzc2ZTI3YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjEsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWFmMjJjZjA3MzI1OTJjMjQ3MTQxY2JlNjFlZmExMTAxMjYxMmY1YTMxMjJiOWFmOWJiYWY1MmY1NzI0ZDE5NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODU5MmQxMjg3OWNjOTRmMDc3Y2JhYzFmMGVkYzQ5MzNhNjgyNTQ0YTVlMGEzOTYxOGUwOTVmNjliYzBmZDZlNCJ9"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/edge-runtime.test.ts#L76-L130",
+          "version": "repo-lines-v1:sha256:3b1c85a4fb6f53599a7fa88bb9f6215a5eff021503c54b4d18238115f21d7930:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0ZjQyMTU4NmU4MTdiZTdjMGUyODQyMjkwZGUyN2UzMWJmMjhkODQwMWI5ZTNlMTA0ZmU2MWI1ODg0YTliMzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIzNjRhZDdhYmQ4ZjhiY2E4ZGNlOGEyODA3NmZjYzUzMjg2NjgzYWRkMTg5ZTllYjQ0YWM4MGIzMGQ1MmQ3ZDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxMWRkZDM1NGFjYjczNzIwM2YxMDlhM2Y4OTBiZjIyM2ZkNTI1MDI5ZTg0ZTViYzZjYTc4MTg0MmFhNWZkYTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bc6985ec016548e598b255db64598979",
+      "statement": "Rules execute in configured order and the first non-dry-run DENY or THROTTLE determines the local result, while outcomes and violations retain rule metadata for each evaluation.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/rule-engine.ts#L41-L113",
+          "version": "repo-lines-v1:sha256:34f8e7ba51aa78ef1538a9f3efa09b3d801ff3ac1daa3c4f1a0f8274a28b929e:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhhNDdjNmMwNDJmZGU4MDI4Y2MyYmNiNTk4YjcyMDM5Mjc5MGNlYmQ5ZDIyNWNlNmNiZDI4NGNmMTc3YjNhMDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyYjkzZDI5OTFlZTQzODA0OGE3NDlkYjc3OTcwYWMxZTcxNGU4NzdhNzM3NDBkYTVmYTQwODZmZjgyMmY0NTEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L417-L452",
+          "version": "repo-lines-v1:sha256:e8ef88f1405fdc61c5fa3da0ed64a4ea824ec1becb3eb6d7224c2e96e9a68623:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyOTEyMzUwMjgzNGZkODdjYTExMGIwM2Q2MjgyMDgyNjM2OTY1OWFhOGI4YjliYjRiZWU3MDMzZmUxMmMyOGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjMTQ5NWE2YWYzMDNjZDMxNDA4MGY4MjUwM2YwZjE5YjdkYjgyZmRkZDVkYWNkMjI1MmIwMWMxMTBjYjVmZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlMmQ2Nzk5MmIzNDYxMzY3NWIzZjM3NmVlNjlhYTBiM2Y1ZDNiZDIxZDM1YzYzYjY0YmM3YzcxZmVjMTM4MmQifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-28T15:55:55.028Z"
+  }
+}

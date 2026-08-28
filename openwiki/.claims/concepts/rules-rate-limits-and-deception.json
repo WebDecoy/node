@@ -1,0 +1,342 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:75039abddbe03aae4dd81361e2a40cc708ddb67da81afe5763c8557432c8b3ce",
+  "claims": [
+    {
+      "id": "claim_a8582c01957a4221be1e0985919ede3b",
+      "statement": "WebDecoy rules receive normalized request data and optional enrichment, agent, edge, caller-key, and prepared values; rules evaluate synchronously but can implement an asynchronous `prepare()` hook that stores network-derived values for later evaluation.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/types.ts#L14-L110",
+          "version": "repo-lines-v1:sha256:bc436b44a0feff883abec44b72932f15f37570f12b653c13343465a9b6bd6afb:eyJzZWxlY3RlZExpbmVDb3VudCI6OTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmYzllYWE0ZDlmYTQ4ZmI4NmUyMzZhZmQwZGIxNTc5MWIwMjVkMDk4Yjc1NTBhZWNjZWY1MTQ4NmQ5NGJmZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzYjE3OGFlMzA3NGY1Y2IzNzg5NTM1ZDI3NTI1MzI4MjVhZmUxMTU5M2NiYmFhNTMxYWIzMWEyMTZiMjI3NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMTRhYjIyMTc2MTgxMTM0MGFiOTNhODAxNGNmOTJjMDE5MTA4NWFhYmE0MWRjNzI4MWFlNTg4YmVjYjBiOTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L201-L255",
+          "version": "repo-lines-v1:sha256:11fee1954da9dbf4db0cbd96f0ccc764dd62c59ee28731d847365af76def817b:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5ZjZkYmQ3YzAwZjY1ZjIyMWZjOGJmMjdkZDExMDc5MWVkZDRiODA5NjFkZjEwNzA1M2RmMWUxODYwNjgwYWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5YzdiMTUwMjEzYmJmNjIyZTRkNTQyMTk5ZmZiM2FmODJkOTg3NDU4ZTI3MjVlZDE0YTBiNWM5Y2EwZmEyNWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyMjZlZjE5OGY0NGQ4NWE2ODQzMjdiZmYyOTdmNGQ5YzBhM2MwZDhlYjA3ZmUzOWI5MWU0Y2IzYzYyZjU3NTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2MDRlYThmN2VjMDAxOGVjNjNiOWYwNmQyNzQ5MjMzODNmODBiZjc2NDJjMTA4N2RlZjZjNzYwODNjYTNhYWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_06ef1eff2bb046cab4fde8254d9d69bf",
+      "statement": "`RuleEngine` evaluates configured rules in order and continues through all of them; the first non-dry-run `DENY` or `THROTTLE` decides the final engine action, while per-rule outcomes and non-allow violations are retained.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/rule-engine.ts#L23-L113",
+          "version": "repo-lines-v1:sha256:7b50f44aa93786c8cccdb17c372fd7700be59e383af33cb45d555e0a7ec1a503:eyJzZWxlY3RlZExpbmVDb3VudCI6OTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3MjdjZTg4ZTZkMTFkYTk5MzVhNjYzMzliZmZkYmVjM2MwODM3NmUwNzEwZGNlNzM5MTI1MzgzOGM5YjYwZWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE2Yjg1ZGI4ZTI4YjI4ODZlMzExMmRjZDJhZjgzNzA5NjYzNjEwOWFkNjdkNzQyZDhlZDY5ZDg1MDVmM2JhYmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyYjkzZDI5OTFlZTQzODA0OGE3NDlkYjc3OTcwYWMxZTcxNGU4NzdhNzM3NDBkYTVmYTQwODZmZjgyMmY0NTEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/types.ts#L260-L279",
+          "version": "repo-lines-v1:sha256:62cbd297c37091b69d220e41d94e557c6fca71ad83483d2c0c701e09c5ead31f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiNGM2ODJlODVmYjc5MTc3YTdlMGRkZTY0NjVmYjZkZjhkYjlkYjcxNTQ5NTM2YWRjNjY4Y2RlMzhkMzBhODUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0Njg3YjI3YWQ4ZjFiYWY0YzAyOTQ4MThlOTU3MWJjMjM4ZDU1NjVkOGYwNmQxMmEwZTk4YjliNDY5MDRmMmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e87fac8ca4f94cd5bbf1b755ce783d60",
+      "statement": "Rule outcomes distinguish `RUN`, `DRY_RUN`, `NOT_RUN`, and `CACHED`; a dry-run match records a deny conclusion while retaining an `ALLOW` action, and a missing prerequisite can be surfaced as `NOT_RUN` rather than a normal passing evaluation.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/decision.ts#L39-L61",
+          "version": "repo-lines-v1:sha256:96ec18a8e7809e0d83ecc6ba2de89b2329f460cca6795a095379646e4c7c8abe:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhYzc1MDUzMjJhZmUzMTAxNTkwOWExMjg2NWM5MWQwZDUwY2M2MTk1ZGJiYmE0MzIxYmIxNzhhZTNmNTVjYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5NzE5ZjI5NWEyOWIyMmI2YWJjNDdkZGM1MjQ0MzgzMzU2YmM2NTM0ODYwMmM4MGUzZDc1OGEyMGZiZjFjZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/filter-rule.ts#L28-L40",
+          "version": "repo-lines-v1:sha256:dd7d08d6f6a9040fca594d8beb35eb97cc4e2e778d5417948db16a43ccea8806:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA3MTU2YWJiYzY1YjBjYjZhMzM3MjQ5MDQxODNmZjAyZWUwZTBkZmM5ZTQzODE2NmVlYTE5NTE1MzU3YzZlODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlNzU1NGQ0NjY1N2NhODM0MjU4MWViOWE3NDZkNjI1YjlkMjhiNjU2Y2I1NmE3MTQxZmI3OWVjYzJmMDExYzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwNWU0YzMzNjU2NDU1OGMyYmNmZGM4N2ZmYTgwODhkMmE3ZjZiNDQ1YzA0NjU1YTA0YjVhNGExNzRmMWU3MjEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/rule-engine.ts#L54-L70",
+          "version": "repo-lines-v1:sha256:b5d61aa14ae1236eddc2b4b51b320e4652359e4786a159734cc8e40ac5029f7e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ1Y2FmNzc3NGY1OTA3ODRjMzI1Yzk1MzEzYTg1OTE5ZWMzZWViOWVjYjBhNWRiYWQyMzczMDk2MjZlYTRjNTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcxN2FmMTEwMWM5N2I3YzJmNTI1NDA3ODJlNjM0Y2M0NDQwZjBlOTcwMzQxZTUyZjk3NTIzMTFkNzhiN2Q3ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQzMWQwNjJjNmY1MWI1YWVmN2JmZjRlZGQ4OWM3MTVmM2VlNTVhYjAyNTU5ZmY5MmMwNDcyMTYxMzBhOGUxOTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUyYzJkZTgwNmFhNjI0MGZmZTc0YmEyN2IzN2M1ZTdmMjk2ZWE2ZTFjMTE2ODI2Y2EzMDYzNmU2ZTliMzNlYjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_66dbd6af4cc741648281ffa1c18373ed",
+      "statement": "Tripwire violations alone may forward the `wd_clearance` cookie token as `clearance`, so a backend can bind a deception hit to the actor fingerprint without attaching that token to other rule classes.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/rule-engine.test.ts#L19-L51",
+          "version": "repo-lines-v1:sha256:ef64d6f28de898c94ce39b43e7e9f9cd9d4a83ba08bae9fb5742f463739809fb:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4OTgzYTJjYjI0M2JjMDZjMDMxNTI1MTY0ODAwMTE2MDUxNmExMWExMTI5MDliOTdhOWI4Y2U4MjkzYTMwMjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0ODQ4MTc2MzVhNTc5ZDk2ZmNkOTg2ZGE1NjU5ZGFhODhjMWMwZGRkMDU1NjI1ZmVjMTFmMTU5Yzk5MTE5OTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4MTdmYmI3M2M5MmIzNmQ1ZTQ4OTZmZjUxYzFiNThlZWMzMzBiYmU5NjFiYTA1ZmM2MjA1Zjg2N2VhMWJjZjYifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/rule-engine.ts#L72-L94",
+          "version": "repo-lines-v1:sha256:f182d99c67707e63e8f6544193a142e7180f1f4f79ef437549d119211883383e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3M2ExOTJhNjNhOTgxYzM5MDg3NDRmNjc3YTY1NGQyYTk4MzhiNWUzNDQ5YzQzNWRiMzQ1OTFjOTFiNTZkNzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4ZjRiMTI5NjM1N2M2Yjk2MGQ5YmU1MDFiOTgzNzczMzU0YTRhMzE5ODc5YTYwMTIyNWFiOWIyZGE4ODBhMzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4OWY1MjExZTExMThkYjU3ZWEzMTZhZGUxMzNkNGFlMjVmZDAwZGNlNzFmMjBmZDU4N2NlYTZlNzA3ZDNiZTkifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/rule-engine.ts#L9-L20",
+          "version": "repo-lines-v1:sha256:81d7fdd6efa2e6d18bf35ef3d0b95359039e25b132f4e8c667f1152d077dd143:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwNjc4NDI0ZDViODk4YTNjNDBlNDQ0MDkxODQ3ODcyZjRhMDAzYTY4Y2I3NzU2ODE5ZDFjZjI0YTNhNTg4YzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1YTYzYTRjNjJjYzYwMTQyMDQ3NDFkYWVlZDBhZmRlNmVlMTgyMTc3ZmU3M2MwOWM2MWI5ZmNmYTZjMzczZWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5M2MxMzNmODQzNjUwY2E1MmJjY2ZjYTQ4MzI5NmVkMmY5Y2ExZmM2MTI1ZGZmZDc5ZDZkODJiNTJiOTBlNmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFlOWM0YWJmMzNkZmJiMzM3NTE5NjUyZTFiYjlmNGM0MjBlMDBiMDM0MGQ5MjI1MjcyMWIzNzZhMGM3Y2VmOTYifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/types.ts#L197-L227",
+          "version": "repo-lines-v1:sha256:90903a7ed708a7d331802be9d99f7d93431243ba89dd73175666522ffce4c66f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0MGU1YzE1ZGVmNzZjNDBmOTBjZWM3NjRjN2EzNmQ0YThkMDQ3ODc1ZmVhNWUxOTQ1Mzg4MmZjNjY3ZDZmOTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3ZGFmYWMwMjBlZTExYTMwMTE3YjUwN2VkNTUyMThjYzBkOGQyOTRjM2RkZjVhOTdjN2RkY2UzZTFlZDNkYWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b1ca9c9646db475794a6c3239ed686ca",
+      "statement": "With an API client and rules present, the SDK buffers rule violations; the reporter flushes on a timer or buffer threshold, sends at most 100 events per request, drops failed batches, and flushes remaining events during destruction.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L140-L151",
+          "version": "repo-lines-v1:sha256:7f469ddb1f3c5d3e329170d2c1416a0dab5e5e1b00b047654b2482fc9cbe7925:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2YWM2MDk2NmY0NmU4MWZkYzM5MWVlYmVkZjczOTg0NTAzNTQ5ZmIzM2Y2ZWNkNDZjNmJmMTg3OTYyYWYyNWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIyMzIwODE0MDNjMWU4ZmZiOTkxYmJmZTY2MDAxZTYyODlhYTZiYmMzMjVjNjkxZWVlM2Q2Y2VmYzQzZTRjNWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVhNGY3MGEzMzk0ZDNjMTBhYmFiYWY5NDFlOTFkOTMzMTYyMjZjODE2M2U2ZjQwNTlhZmJhNmRlMzZjZjllMjgifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L258-L274",
+          "version": "repo-lines-v1:sha256:9c747f4e8c0ca24f40ed7156c89eb61ee42ac036203d7ef184bec0cf31278b67:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzYjk4ODllNGNkNmEzMzEyZTlkNjU5OWZkOTU0MzkxMTZmMDdhM2Q3OTk1YzE1NzM3ZDJjZTYxNjE0ZDA0MTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2M2Y2YTMzZWI4YmYwMzk2NTQ5Y2RkZTg3MWM4MGU5MWFiZGQ0MDA3YmMzNDAxNzQ1OGM0Y2ZkZTlmNjM3NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxMWMxMTA4ZmQ4MWE5ZjVmNGQ5ZTI3NjcyOWRjMjQyNmYyYzlhYjUxZjMzYWRiOWE0MGU5MzNiNTgwMzVjNWEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/violation-reporter.ts#L9-L89",
+          "version": "repo-lines-v1:sha256:499b42629e6143c42a203ba92a8fcf6043d9b07d98fcf4889c0eef35fa2707e3:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiNzFlZmYwNjdiNTM5ZmFlN2VkNWZkMjhiNzJlMDg0MTdmYWNlMmZkY2Y5MzM0YjZhNGQwMDg2NWU3Njk1YzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNhMDY4YmRlZDI3MjFiNjAxZjcyZmI1MTExZGMxYTYwZDZhMzcwYjJjZmZkNTM0YmFiMDllYjY0MDNkMDllZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f82a9a12a21942f286c0339119aa9846",
+      "statement": "The SDK installs a default `tripwire()` when `rules` is omitted, while `rules: []` disables the rule engine; local rules remain usable without an API client.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L101-L151",
+          "version": "repo-lines-v1:sha256:c8497fa05eda993d9349d56fb770eaf56f50000f8c7302b7eaba1aea3542cd9c:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NDU1OTNlOGI4Y2U4Yjc0NzcwODhmNTVmNWQ1MDA2MDIwMGRlZWVkNzc2NmQzNTRjNzlhMzEzZmQ0NDA0YzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVhNGY3MGEzMzk0ZDNjMTBhYmFiYWY5NDFlOTFkOTMzMTYyMjZjODE2M2U2ZjQwNTlhZmJhNmRlMzZjZjllMjgifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L455-L472",
+          "version": "repo-lines-v1:sha256:142023f0e3294267ce2e85f251bce5ec967464010d3149545220951ef89dfc6a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3NmQwOWYyZGI3M2JhNmM0NGIwOGU0NzZiZDc4NmE5ZDljY2FjYzY4YTQ0NTdjODBiZjkyNGU1OWU2YzQ4ZjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5YzEzNTkwNjY1NjMyM2QxYzVlYTQxNjU0ZWU2NmFmYjU4NWFjZGNmYWVhY2ExMjFkNWUzMGJmMTkzZWVkZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg3MzAxZTA0ODZlYWJmYTc0MmJmMzg0Njc4NWJiMTEwY2UyNzc4ZGVhNGZiZDMxZTBhNmFiNTk5ODRkZGIwYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc1ZThjNjlkMDg1ZjY5NGZlYTE2NWQyYzNiYzJmNjc5Y2M1YTVhOWU0ZTAxNDQ2MGU0MDk1NTEzYWVjMmRkODAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d48dac5b6583433d9ac25c35420ed0b7",
+      "statement": "Filters parse their expression at construction and explicitly return `NOT_RUN` when an expression references `ip.*` but IP enrichment is unavailable; locally populated bot and edge context are part of the rule context independently of enrichment.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/filter-rule.ts#L17-L61",
+          "version": "repo-lines-v1:sha256:cb72761c7a063348acd256d3a5e7125c00d0752c835f833b09a7542d857e1271:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIzMDk3NjA5NjQwMTFmZDIzZDI3MDhlNjZmNzNhMjk1ZDZlNWMxNzQzN2QyMjUyZjBhZGZmYWZmNmJmZDU2M2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhYjllMDhjNTViYzBiNTE2N2M3N2E0ZGExNGNkMzUzNDZlODg2ZTJhMmZhZjAzZjEyMTlmMjNmM2EyMTc3NTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/types.ts#L29-L66",
+          "version": "repo-lines-v1:sha256:358ece9e0ece19fa711847304b157a3de2d35ac8c5f6136d442164c946a37dd2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2MTEwOThiNjM3NGQ1ZTBjNTRiYmFiMDk0N2IxYWQ2ZWQ2MWM5OWQ1NzE2MWQxN2ZhNWUzYmI2ZTkxMzBlMjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU0YmYxNzYxMTMxODU5Y2MwOGY0MDY3YWY0ZDdiYWQ1YjU3MTA5YTVlOGVkYjUwODk4ZTNmMzdmOTQyNjU2NDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExOWNhYTAwOWVkZjJjODNhNTI4MjU0NmU2MDBiOGMzNTJlYTJhNTIyYWJmYWM1ODlkZGM4MTQ2MDc2ZGQxOTQifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L201-L245",
+          "version": "repo-lines-v1:sha256:c0f28175cc04ff13d6666148f51f55279908b60460ea4e93ae8a7cca5fe2a696:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5ZjZkYmQ3YzAwZjY1ZjIyMWZjOGJmMjdkZDExMDc5MWVkZDRiODA5NjFkZjEwNzA1M2RmMWUxODYwNjgwYWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5NGZkY2YwM2JhMTE1NjU1YTc4NjY3NmM4NTM4NGYxYmQ5YTIwMWVlZWM5ZTA2N2U4YjgzYWUxN2FjZTlmYWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyMjZlZjE5OGY0NGQ4NWE2ODQzMjdiZmYyOTdmNGQ5YzBhM2MwZDhlYjA3ZmUzOWI5MWU0Y2IzYzYyZjU3NTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVmYzgxNmNiYWI3MjZmMTE1OGU1NmU5OWVkZTUwYWMyMzc5OTJlNjM3YmYyNDhlMTRmODhhYTU0YWNmZTE0MWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d4ee8c9f258640b080023cad1cd67748",
+      "statement": "A rate-limit rule chooses its bucket key from rule-specific `keyBy`, then the SDK caller key, then IP; it supports fixed or sliding windows, defaults to `THROTTLE`, and turns an async store not prepared before evaluation into an explicit `NOT_RUN` result.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/rate-limit-rule.ts#L10-L111",
+          "version": "repo-lines-v1:sha256:89936ae6cb24fb09dd6b5d174c451818d93fac795b7aecc24ed69bf3ae3bcd8a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyMzgwYjA3MmI4YTlmZTI3YzBiM2VhOTRhOWU0NTU0M2IyNjhlMzRjNzliN2ExZTk3M2QwYzQxZTc1ODBjY2UzIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIyN2U1Nzg4ZDVkOWQ3M2QyNGE4MWRiYzBhNWE3NGJmYTgyYzljM2IzYWY5OWU1MmFmNzk2ZTkwYjQ2OGE4YTNkIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJmMGZiYzM4MmMxMjhiODhhZDJkNmJiNWVmMjYzZWQ0Y2E0MDVjOWIzYWM0MjhhYjNkYjMwZGE5Y2E1MjhhOTI0IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIn0"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/types.ts#L113-L138",
+          "version": "repo-lines-v1:sha256:1602c0bb195359e26a54f9bad7ab2ac8293789da93ef842deafbc4ebe95f67ff:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ2ODc3YWRhZGIzOTNmZDdkZTMxNjEwNmExYWIwYjVlMzVlOTg1M2QxMmU2ODU2MjgxYmIzMzFjZGI1YzlmYjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU0NTBlYTQzYmMwNGJkNWRjNjM5YzRhMDAwNGJlMzJhOTQzNjJmMTk2ZTk1NDhjNGUwMDMyYWYyYTc5YmZiYWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6136515f24fc471fae6dd184840d4090",
+      "statement": "The default `MemoryRateLimitStore` is a synchronous, process-local in-memory store, so it is suitable for a single process but does not share counters across replicas or cold starts; a store interface separates inline synchronous consumption from asynchronously prepared consumption.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/rate-limit-store.test.ts#L35-L104",
+          "version": "repo-lines-v1:sha256:d6988564faffbb66f64e77b987516353a3215fcdb5cd96c71af7702d6eec128c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkNGViODNiNjAzMTU2MDE5YjM1Mzg5Y2QyYzBjMGJhODY2OTdhZGRhODcxNDMwMDQyMjM5ZTM4MGZiYjA0MDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNiZWIxZmNiZjE0OTg2ZWRlMWViZWY0MGE1NzUwNWI1NTNiMWZlMzNmYTc5MjI4MWFhNWMwYWEwZTIyZjE1NzcifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/rate-limit-store.ts#L17-L31",
+          "version": "repo-lines-v1:sha256:3c588b82f9f0a29102cb931db7b6d0aed6b37b92fe490ce090351600ea7fd7ad:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYwMmQxNjU1ZjMwMWM0ZmQ2Y2YzMTc4M2MxZTAxMjQ1MGY1OTMxOTgxNjdkMDNmY2Y1ZmM4ZWJkNWM2Y2EzMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwNGQwMzc0NTBkYjI3ODEzZTZjODkzMGUyODFiMjM3YjdhNzQ0NDIyZDY0Y2ZiMTczMzg5NmU4OTgyNWVkZDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiZTFjNzBlMDYxYTA1NDkzNzZjMjI3NTc3ZWVhZWY2OTViZDFlMDI4ZjU0M2MxZmFkYzhmNTgyM2Y4ZGI3ZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3YjUwY2I3MmZlMzE0YTFlZGRkZDdjYWUxYmU4ODNkOTVmY2QzYjhjMjFmNWQ4OThmNDUwMThhNGRiYWVmYjgifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/rate-limit-store.ts#L51-L91",
+          "version": "repo-lines-v1:sha256:9b276dd667922ebe3064a9d6dba7580a28fcc4e324a6b30f75381457d9c1a7ce:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUxOTQzNWU1ZWVjMWIwYjliYWZlYjQ3YzcyYjc1ZjBiYThhYzNlODY3NjI4MGIzNDlkNWUxNGMyMTIxOGJmZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5be436c13402418f94a27f7afb91a973",
+      "statement": "`UpstashRateLimitStore` is an asynchronous shared counter store implemented with HTTP `fetch` to Upstash Redis pipelines; it supports fixed and sliding algorithms, uses a timeout, and has explicit `onError` fail-open default or fail-closed behavior.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/rate-limit-store.test.ts#L130-L193",
+          "version": "repo-lines-v1:sha256:ea4bfbe958b0c6ab401b38c37fc7b6b06523038adffd0aa51c978b120be67833:eyJzZWxlY3RlZExpbmVDb3VudCI6NjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUzYzE2NjM5NjUyYjQxNmQ1ZDRiMWExMDcwM2I3OTI3Yzk3NzczYjAyMjQxY2Q2NDUzMjZmNmJlNzQ0NWU0YjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjMDFlZWEyOTE5NGRkOWZiNWFmMzYzMDhhNzVhMDc5NzcwYWYzZjQ5MWRjOGQ5MjVjN2Q4NDE0OGM0ZjQ1MzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1N2FlNTYwNjdkZjEyMmU5OWUwNGVlYmFiNmI1OWRkM2EwYWQ0NGI1MjA1NDQ0YTMxNTkwZTk0M2ZmMDE4NGQifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/upstash-store.ts#L32-L91",
+          "version": "repo-lines-v1:sha256:b8e3f2cd3eb64db7434ea4230bbf85bdfb5c9d840ffe18ba22e0c3ceeab8c5dd:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyNGQ3MTRiMWYyYjZkNzFmNTFhNTBiODlmZGVjZjFkZTY1MzY4Y2YzYzc4YWMwMTJhYWIwYWM2NDY4YTA5NzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNkZTM3YzZhYzg1N2I1NjY1OGVmNWRlNzA5ODYxYTU1YjM2Nzg5NTBjOTc1NDlkNTgxNGNiN2RjNmQ4MjA0MWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzNTgzYmRkNTllYWI1NWI5MTY3YjU4NWEwMjAzNTU5YWFiYjZlNTM3M2UzNDdmZGE0Mjk3ZWEyODM0OTIwYzUifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/upstash-store.ts#L4-L15",
+          "version": "repo-lines-v1:sha256:b05828e82aa5958b56c2b6e129b0f75cfe1f5a9bd3ebc2e60c2da0bb35453c05:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhNzQ1YjVkMGRkMGE3MDFkYThlZjNlNTk4MmRmMDU3MmVlYWQxMjAwYjA2ZDM5ODE3MmIyNDdmMGU4OWNkZTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmZTFiNzUwYWJiYTNmYTliNTUxNDYwMjFlZjcxMzA2YTI5MmRjYjAzYTY5MWYxODM2YTMwN2M0MjQzZjRkOTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiZjhhMGZjMWVmODYyY2ZmZmE0MzA0MmJmZTM1ODZmNGRhYzFjODkyMjQ0NTU4NWYwNmFkODM1MmVhNWNjZGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZlZTdmZjc4ZDVkM2JlZjUxMTgwNzVhNWVmMDc5NTlmMGRlM2E2MjcyOTA0Y2ZmZjZjYTcyOTJkYTdkODcyY2IifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/upstash-store.ts#L93-L176",
+          "version": "repo-lines-v1:sha256:e132caff1bd266ac0de9e0fe229a2e574e1333c74161ca87b74e80fcd98d3f05:eyJzZWxlY3RlZExpbmVDb3VudCI6ODQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFmY2Y1NzEyZThhNDM2MGRjNzFiYzUxMWJjZTA3MDQzNDM2MDUxY2IxYzBmMzZhOTI3ZjUwNTNkNjcxYWZjMzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZDg2MzJlNTRlOTI5OGFiYjk1ODcyN2UyZDUxNDA4YWJhZjEzNjYwMzUzNzkxMDE0MGFiZjY1YjMwYWI2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a19527d5d6804b8f9c7cc1bbfd991ae9",
+      "statement": "`TripwireRule` matches normalized paths against exact paths, prefixes, regular expressions, and enabled built-in scanner bait; it defaults to denial and produces 100-confidence metadata for a hit.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/tripwire-rule.ts#L19-L84",
+          "version": "repo-lines-v1:sha256:ca40c0d48a375eabebc562e778ba6e6e3fd3136e0440e9448bea92aa92484eed:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgzZmY5NTU1ZTEzYWFkZGMyNmM4OWI0NWFkZGQ4ODBhNWRlMjk4NWY4YjhkZDhhMzVmNzUzNjU0YjEyOTNhMmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/tripwire.test.ts#L8-L58",
+          "version": "repo-lines-v1:sha256:6ef7d7106ebacb640915e387fa5a0643a3f6bd224a6a94b257133b3947347ab2:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjYjA1YjBlNTQyYTgzOTUwNGM0MmE3MDA1ZDY3YmM5ZjRhYzJiYmYzZGNiYTMxNDY4Y2I4ZmUwYzc0YzE1YmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVmNDMxOWZmNWMwZWUwMjQ1OTI1NjQyY2VlMzQyODhhNjU5MjEzYTQ3NjM3ZTgzZDQ4Y2NiZTdhNDg0NDY3MDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjljMjcyY2JjOWE0MjZmZGZiYjFhM2JjNWFkNzRhNDFkNGQ3YmJiNmUyNzNmM2I1NTc0YTdkZDA2NmNhMzdhMDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e776c68d08ea4a6ea6be19bc52beab4d",
+      "statement": "`honeytoken()` creates a random or configured trap path and a hidden nofollow, accessibility-hidden link, but callers must register that path with a tripwire and inject the link themselves.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/honeytoken.ts#L1-L49",
+          "version": "repo-lines-v1:sha256:aaa891b522bc1eb0b513780e25d66a6255fdb60642b49878e30d9875014ef633:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyNjhkZTZhNjQ4OTBmNzRlZTExZWRiZTI0YTIxNGM2Yjc2NmEzYTE2ZDMwOGI5MzE0NjM3YmExYzM3MDlmZWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/index.ts#L96-L118",
+          "version": "repo-lines-v1:sha256:9f9f3ccb59808fdcc2ed64ee7a4ce64e657735b94d494f5b5e99170f8451d2d1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYxNTY4MTc0ODdiMWRhOTEyYjY0OWY2Y2VhZDkyM2EyMjJiYzllNjc0NjQ0MzNlMmY5YjBkMTY3YWJiZmFjZGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyZTk2NTIyZTg2NDZkZTcxZWI1ZmQyMjMwZjZmMDVhOTI5OTliMGI4ODQ5ZmQwZWE1MGQwYTUzZTEzNWIxZDcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6de6087c251e4b1a9f478d657bc2ce35",
+      "statement": "`siteHoneytoken()` derives a stable HMAC path from a shared secret so replicas agree without stored coordination; optional rotation advertises today while keeping yesterday armed, and the injected link is designed to avoid cooperative-crawler and assistive-technology access.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/honeytoken-site.test.ts#L16-L62",
+          "version": "repo-lines-v1:sha256:1924a09793382ee113f52b906f3476604a94cb10bc71aa75e096c01e431400e4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0ZTE1NWMwOGU5YzA5Nzg2MzBhM2NmMDAxYzNlZmFlMTcwMzM1M2FhYmE0MTc5YTFjMWQyZjdlNDU2NzBmOTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2MGJkNjQ3MWU4Mjc2Y2Q0M2FlMjEzNGIwNDA4NTc5ZDUwMDk4YzUzMDRiYjk0MmUzZDJiZmJlZjFlMzIzMjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjljZjE4MmE5NWU1YTViYWE3OWExZDFkZjhkZDNiODJhNTU3Yjk0YjU2NDNkY2Y1OTVkMDdhNTA3YWQ4NTZjN2UifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/honeytoken-site.ts#L1-L30",
+          "version": "repo-lines-v1:sha256:bf8a4a2263d7113f6e14db54125da914aacc0ebdb9f34bc86ff3aaf5a89f987e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3ZmEyODQ2NTZhN2RkNTE5MDQxNzY5NzU5MDQxNTJmNjg5YzkwMzY3MmNiZjNlOTg1NmJlNWM3MTJjMjdkZjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM0NzhlZTM5YTU4OGZhNWRhNGU3Y2I5YzgxYjZmM2RmM2M0NmY5ODA1MmVkN2U2NjhkNTFmYTY4YTA1MTRlNWUifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/honeytoken-site.ts#L104-L187",
+          "version": "repo-lines-v1:sha256:2a314534520d0dfc5544af85a629258cc071c6cdf8806e1b54b4b7b0baf18c99:eyJzZWxlY3RlZExpbmVDb3VudCI6ODQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1NTM1NjJkMGY4MjM1MGVjMjMwMjdkNmI0YzliYzZmN2ZmMGI3NzNjYjU2MzY0NTI3YmE3Yzg0MWVhMTc4YzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2MzEwMjM2MmE3MDgyOGQ2ZTUwYjRmMDljYjQ4NjQ5MWNjM2YyZDYyMmZjNmU1NDYyMjE4NGM5MmI2NmZlYWMifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/honeytoken-site.ts#L41-L89",
+          "version": "repo-lines-v1:sha256:98ddeffa3a0dce24ee5cb683a4d572c97043f7bcb0df9f99bef9404199577f91:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyNmNjNmY2NjQ4YTRiN2I5MmIwMzY5NDQ5MmVkOTUyNDkzNjUxMTg1MTBlYzU2MDA4MDc3NDY1ZGVkYjJhNDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjczNjI0NDM2ZjNiZTllMTBhM2EzYzcyNzIwZTZjMTk3ZjlkYWNiYmU4NWYwZWFhNWU2MTk1NzVkZjQ0MGViOWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlMWFjOWFhMjE5ZDY0MTZhNWYxOTExNDE5ZmI3NDc4M2YzZTNhMWExMjA5MjhmY2FkOTIwZDRkYjVmMTE3YmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7417937da4294af7be41f955d8f2c82a",
+      "statement": "Adapter-core derives and arms a site honeytoken before advertising it by adding a tripwire for every active path; on derivation failure it reports through an optional callback and returns no token.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/adapter-core.ts#L125-L151",
+          "version": "repo-lines-v1:sha256:3b3068b7b3afbc5fdbe84c7631db8930a987a554f5e65af068c5273eca5ccb55:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRiZjNiYzZjYzdkNDZkNDMyZWI1MTE5ZWI4ODcwNzY1YTUxY2QyODMxMTAzODNlOTIzNjZmOWRlOGU3NTBjMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_93816a3bf0b947d5b80b4481f429ae62",
+      "statement": "Honeytoken link injection only rewrites complete `text/html` documents, inserts before `</body>` or `</html>`, avoids duplicate insertion, and leaves fragments or other content types unchanged.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/honeytoken-site.test.ts#L65-L123",
+          "version": "repo-lines-v1:sha256:3e707438635d3a3bffe7a91bb0f8f95c7b4654eed602c1bf2fe7389d5d5eae66:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM5ZDA4MWJmNjE5Y2M0ODdmZGMzOTEzODEwZWY1MjBkNjJmMDcxOGZkM2RhMjk1ODFiZDI0NGU3NjMzM2FjNGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4Njc5M2M2MWMyYTc4MzEwNDVjMWUyMjNkZTA1NjhjNDZlNGRlZGRjZjQ1ZTcxNzA5YjJiZjBmYzI2NTQzYTUifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/honeytoken-site.ts#L189-L224",
+          "version": "repo-lines-v1:sha256:5d499a884bb85f18250ae299573405934c6bc9dd89a040cf1c25709b9bfd5cef:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkyMDQwZTA5NWE5NGUyYWRhNzRlNDIxZjM3MTg3NTFhOTFhODEwYmZkNjZmNDhmNGU5MzljN2I3NDgwZWI2NzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_030229be9dca45b68b1b831279a8c56c",
+      "statement": "`BotRule` enforces categories, named agents, or all AI agents identified from the User-Agent registry, with allow-list exemptions taking precedence; unrecognized user agents are allowed and a match is deliberately reported with confidence 70 rather than tripwire certainty.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/bot-rule.test.ts#L24-L85",
+          "version": "repo-lines-v1:sha256:4ff7a83d9e5748eb83d11d23d9b493151bbb9b3ccf10c9a40133aa8ccf15d76d:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExNzJmMzA5MzQ1ZjY4ZWY2NTUwOGMwY2RjODkxZWJiOTk0NGU5ZTBiYWYyNGYxOTU0MjQ3OWIzOWY5YjYxOTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkYjRmZDRmZGIzMmExNjYxYTcwY2U0YjMwZDYzNWRlOTY1NGM2YjkwYzBkNWUwZTlmYjZkZmY2NGQzM2FiNzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1OGFmMDFhYjg1YWI5ODNkMmE2MjBiZTUyNDZjMTQ5NWI4YTJkODYxMjUyYjMyNjVlZTQ3YzE5MDM5Mjk5MGIifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/bot-rule.ts#L15-L85",
+          "version": "repo-lines-v1:sha256:ab606ca1bb682dbc57f9159ca694a5f4e901ebb62d6706256b5311ce973e4f73:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3MzE4ZjA3NDFkZjliZjQ0NTI5NGNmNjA0MmYxNzUzZDZhZTIwOGI3MDE2NTY2MDBjNmM2OWJhYzkyOTg2ZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc0MGJkZWEwZmQ4ZTFjOThlNmM3ZTI3ZjAzM2E2MDZiNmE3NzA4ZjhkNzUzN2UxNjRmMmExYTVkOTQ5YThkZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_887695a559494c28bc60e82c3726e3be",
+      "statement": "`BotPolicy` resolves one registry-derived denied set and uses it both for its enforcing `BotRule` and generated `robots.txt`; it identifies denied agents that do not document robots compliance, because robots instructions are voluntary rather than enforcement.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/bot-policy.test.ts#L28-L82",
+          "version": "repo-lines-v1:sha256:ddc3dce2375479074f21f9f05d9fc7402e316467918eb33b52af4d9c5f60673f:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3ZTQ2ZTIyZjc4OTc1MTM1YWY4MTRkZTE0YWI1Yjk4Y2Y3MWE2MGM0ZjIwODlmZjllZTllMTY4ZTMwZTk1MGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyNzliNjgwNTIwZWQ1MjZkY2M0YzhhYTM3MzUyNzU5MGUyODE5NWU0MGZiZTYxMDdlMWU1YjQ5NWE0NTc3MzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4ZWE5NDI3NjY3YmE4ZGUzZThlYjBjN2E5M2ZiMDliNTEzNWFmZWY5ZTFkNDg2ODEyNDY5MTYwN2M4YTVkMTEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/bot-policy.ts#L4-L32",
+          "version": "repo-lines-v1:sha256:eb23afa57cf12e32689e921b35983188dc29163c43dd5e28e99c2bebcc1510b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZiNmVhYWZkZTE4YjhiNTFjNDk4MzhlNzdjNTUyMDk3YWM0NzA5NjA1OTRlMjBkMGYwYzUyMGNkMDY1MWE4NGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzMmVhODg3MDQ1M2VjYWU5NjcxZDIwOTVhYTMwMDg4N2NhMzEyYWRmZjQwNDg4MDA0NzA4NDU5MTk5NzUwZmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkMzg3NjUxMTI3MTA1Y2Q0MzkyOGI5MTFmMjllNWY5OTQzMjgyMjEzNzBjNGVmYTE0M2VjY2Q4YzhjNDZhZmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViODQ2YmJmNzg1YzdmNWIyMDg3MWQyMDNjNWIxMDM3YWUwODljNGY0NWM4MGE1YWZlNDdmMzQyYzVjZDUzYjUifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/bot-policy.ts#L81-L180",
+          "version": "repo-lines-v1:sha256:174f90ea8eef902d6f528b835d74afe2c0a6bb91f94195806047e9b8555d6b08:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiNmI5ODE2NjE1MTNiMTFjNWI1YTQ1NGExMGE5YzgwZWM5Yzc4Y2M3OGRiZTMyOTJkNWU4MjJiZTQ0NTY0NjA4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJjN2JmMzJhM2VlMmM4NDdjNWEyNzQ0OGM0ZDBlZjFhZDljMGEzNjM4NzY5ZDNlNTY1MDg5OGZjYWU2NTUzODNlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5NDI5MzI0YzE3OTkzMDE1ZmZhZGNjMTFlN2QwZDllMmJiNGVkYzdkOGFjYmM0OTZhMzE2YmNlYjE3Y2RlNTdiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5MDk4NDgwZWY1Y2NmMTQ1NmJhNTE1Y2NkMjZlOWNlNDRjMjg2YTk5ZTkxMjA2ZmQ0Mzk0NGFlNjhmMzJlNDY1In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_7e90fae2b5734091887f2907a328cff1",
+      "statement": "`attackSignatures()` is intentionally a small curated signature rule rather than a WAF: it defaults to path and query inspection, makes body and header inspection opt-in, excludes cookies even when headers are scanned, and should use dry run for higher-false-positive surfaces.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/attack-signatures.test.ts#L88-L108",
+          "version": "repo-lines-v1:sha256:508db34956dc4fec7f7278e98b4608c64a4f05ce5a68fefd1095dc0e4eec2ed6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3NmU4MWU5Y2U0NThhYTRmYjRmNTc3MjNhNjI4MDQ5Y2RkOTNhMTBiOGM2ZWE1MmU5N2U0ODJlN2UyOTI1MzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2ZmU2NjdmYjVjM2M5NDU1MzkxOTMxMzIyZGM4ODU0OGM5YTE5MDgyZjJjZDQ4Y2QwMTEyNzdiN2FmZWNmOWQifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/attack-signatures.ts#L108-L132",
+          "version": "repo-lines-v1:sha256:a284d34561c0201b4b163fab15a9d63f83df537169e521cbe6beed3ae8971fa7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4NDU0NDg2ODY5YmY0YWQzMTVmYmJmOTM2NzdlZWJkMmM5Y2RlYTU4OTExY2JmOTVkMmEzNzI5NDJkODYyNzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlZmFjYTBhOGIwMjA3MWM4MDI3NDllZjBlNGYxM2U4NzJhMGYwN2NlYzNkYmI5ZTE4NDVmMTA2ZDNhYjg3OGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY2NDBiZjZkNzJiZGE4ZmNhMTZmMzVlYjhkZjk3MTA5YmI0MjFmNmFlOTE4YTkyY2E0NjlkZTQ4NzhmMGU0ZjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM3OTI5ZTkxZTBmOTljM2U4MjVkZTY5YjQzNWZiNjQ4NGQxYjBhMWRmMmY0NjU2MWFiZjFhMjlmMDQxODhiODgifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/attack-signatures.ts#L205-L230",
+          "version": "repo-lines-v1:sha256:85c4ea5dfec2e84ff1048a67caefe9b7a260badd15a7f0f53372cd2519fed53f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjNmE5MTY2YTFiNTM0MTg0MDNjMTBjOTg1N2NhMTViY2FmNTNiZTIxODBlZjQzNjJiZjE5MDA4OTUxY2VmY2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM4YjRhYzNkMWJiNmYxNmM0YjFlZWE0MGYwMWU3MWRmOTVjYmJlYWVkY2YyMzQ3NzczOGE3NzgzYmNjZDc4MTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUzNjViOWQ0MTc1NTIzOTJkZjUyMmZmYmRhMWY3NDRjNGJlYmI2MDYwMGM5YjZmNGIzZDIwZDJjZTEwNzZiMTQifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/attack-signatures.ts#L4-L34",
+          "version": "repo-lines-v1:sha256:0b95441ed65d103d5f6e43e43ec3d9b8044d77265c1daaefdc0fa2a910b7890d:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxNjY5YjczMDIxNDdmYjJjZWEzYjQ2Yzk3MmYyYzcyMDE5YjQyYzJkOTEyZGM4OWIyZTc2N2Q2NmZiMDFmNTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyZTM0ODE1ZjU0ZjAwNjAzMTk5MTVkMWVjNDJlYjI1M2ZmYzdlZTNmZDAwYzQ4NDgwNzkyMjZhZDdhNWJkOTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlkZjI2Zjc1ODEyZGM2YWRjNmViYjU1ZTFjYzIxYTlhNmNiZGYzMDRkMmM1OWM3NTliZWQ1NWZlZjlmYTZhOGYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3744e7a992be4023ba6e8768304c9958",
+      "statement": "Attack-signature matching bounds attacker-controlled work by truncating each inspected part and decoding percent encoding at most twice; matches expose signature/location metadata and configuration supports exclusions, throttling, and dry run.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/rules/attack-signatures.test.ts#L111-L155",
+          "version": "repo-lines-v1:sha256:fbb9933ae08a0a6e04bd129c5d894acf678f0a9e92d114480b3084dfad7d6469:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxNTcyOWNiOTk3MzI2NmFlNTE5ZmVmNjg0MGVkMGQxMjkxMTIzNjYxMGRkNWI5M2FkMDAwMGJjOTgyZmZhMWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhM2U0NmY5NDI3NmI2ZjZmNGVkMWYwMmFmNzhiZWY2YTJlZTFjNDM5ZGQ1NTg0Yjk3Mzk0ODMxMzIxNGQyYjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI3NzlkMTE4ZDZlM2NiZjQ1MDUzOTc0OGRlZTdhNDMwN2FjYmU2NDQ2Y2JhMjk3ZjI3NjBmYTVkMGJiYTFiYzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/attack-signatures.ts#L135-L160",
+          "version": "repo-lines-v1:sha256:caf4af78f346a402332168df1322759394882754a42657583652a1d4147cd1c7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkYTdiZDlkOGM4Y2I5OWQ4N2EwMDg1ZGE2ZjFmYTdmZjYwN2Q5OGFhN2YzNjM2ZGI4MWVhNjM5MTA3MjkwZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM3ZGFmYWMwMjBlZTExYTMwMTE3YjUwN2VkNTUyMThjYzBkOGQyOTRjM2RkZjVhOTdjN2RkY2UzZTFlZDNkYWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4YzcyMDFhNTllYmQwOWU5Y2E0NzVkMzJlNWUwNmJhM2QyZmVkMzYxOTFjZWEyOGUzZjQzNGM5NjEwNWI4MWYifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/rules/attack-signatures.ts#L163-L203",
+          "version": "repo-lines-v1:sha256:6fb896c5df127d9e6c63904b40a37bf9add15b70b4a977d3e7906e4c86aa10f2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwNmZhNDY3ZTI0MTllMjE0ZGViMTczMjZkODcyMzAyMDg0MjEzOTEzZWM1YmRhMjRjNmI3NjgwNjdlOGMzZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmMDlmM2JjZTlhMzNkY2M4YmViNjdmYTdiOGVmM2FjODU2MGYzOGMzYmYxMjAyYmZmMTAzYTU3MGY3MmJlZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3MTlkMDI3MGJkNjgwYjAzY2MyYzgxMWYzZjRhYzFlNzA4MDE5Yjc2Yzg3MmViZDNlN2ZkYWEzMGZmYTMwZmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7ae6ce4b26324998bc7ad20f53ab4f81",
+      "statement": "`protect()` builds one context, performs prerequisite fetches and preparation when required, evaluates local rules before cache or remote detection, and does not cache local refusals so rate limits advance and tripwire hits remain reportable on every request.",
+      "evidence": [
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L228-L274",
+          "version": "repo-lines-v1:sha256:fcbfe9c5c366ce2c0166fa065a61f79e600f816551f2db864fd400dfc59b584b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMmEyZjk5NmYwOGU2ODBiZDI5MjEzNWE2ZmE0OTc4YmRhMjZlNjAyZDg0ZjMzY2IxZDU5NDc3NWQ0MzA0YjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ZTU3ODhkNWQ5ZDczZDI0YTgxZGJjMGE1YTc0YmZhODJjOWMzYjNhZjk5ZTUyYWY3OTZlOTBiNDY4YThhM2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2M2Y2YTMzZWI4YmYwMzk2NTQ5Y2RkZTg3MWM4MGU5MWFiZGQ0MDA3YmMzNDAxNzQ1OGM0Y2ZkZTlmNjM3NGYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxMWMxMTA4ZmQ4MWE5ZjVmNGQ5ZTI3NjcyOWRjMjQyNmYyYzlhYjUxZjMzYWRiOWE0MGU5MzNiNTgwMzVjNWEifQ"
+        },
+        {
+          "resource": "repo://packages/webdecoy/src/sdk.ts#L417-L479",
+          "version": "repo-lines-v1:sha256:0cab903da95ade8e45d47b80d473b03bae5cf9b8de55a845bffdeb1f8f5643c3:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyOTEyMzUwMjgzNGZkODdjYTExMGIwM2Q2MjgyMDgyNjM2OTY1OWFhOGI4YjliYjRiZWU3MDMzZmUxMmMyOGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhOWQzYmRmMGNkNDE0MGYyOTk2ODI2YTBlNzkwMTViZWQxNjQzZDcyYzZiMWIxNjQzM2ZhMzY4YzliZjJlNTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFjMTQ5NWE2YWYzMDNjZDMxNDA4MGY4MjUwM2YwZjE5YjdkYjgyZmRkZDVkYWNkMjI1MmIwMWMxMTBjYjVmZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmMTM0NDAyZGVmMmEyNTZjM2MyY2E1NTlkMWE2NGRkY2NjODA4M2MwMTAyYWIzODU0MmE1ZTY5NzhkNDMyYmQifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.4.3",
+    "at": "2026-08-28T15:55:55.028Z"
+  }
+}
