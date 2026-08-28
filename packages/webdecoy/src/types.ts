@@ -24,8 +24,10 @@ export interface WebDecoyConfig {
   apiKey?: string;
 
   /**
-   * API URL for the Web Decoy ingest service
-   * @default 'https://ingest.webdecoy.com'
+   * API URL for the Web Decoy ingest service. Server-to-server traffic
+   * fronts through Cloudflare at in.webdecoy.com; only the browser tag
+   * stays on the direct hostname.
+   * @default 'https://in.webdecoy.com'
    */
   apiUrl?: string;
 
