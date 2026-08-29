@@ -132,16 +132,21 @@ function calculateLocalScore(
 }
 
 /**
- * Determine if server-side verification is needed
+ * Determine if server-side verification is needed.
+ *
+ * Only bot traffic should reach ingest, so this forwards on a genuine local
+ * bot signal — a bot/automation user agent, or a request missing headers every
+ * real browser sends (`suspiciousHeaders`) — or when TLS info is present for
+ * the server to fingerprint. A datacenter/VPN IP and an absent Sec-CH-UA are
+ * deliberately NOT enough on their own: a human on a VPN, and a Firefox or
+ * Safari user (who never sends Sec-CH-UA), are legitimate, and forwarding every
+ * one of them buried real sites in their own traffic — a quiet SDK canary
+ * showed tens of thousands of "detections" that were mostly human. Those two
+ * signals still ride the payload for the server to weigh when something else
+ * already warranted a look; they just no longer trigger the look themselves.
  */
-function needsVerification(localScore: number, hasTLSInfo: boolean): boolean {
-  // Always verify if we have TLS info (for fingerprinting)
-  if (hasTLSInfo) {
-    return true;
-  }
-
-  // Verify if local score is moderate to high
-  return localScore >= 30;
+function needsVerification(suspiciousHeaders: boolean, hasTLSInfo: boolean): boolean {
+  return hasTLSInfo || suspiciousHeaders;
 }
 
 /**
@@ -192,7 +197,7 @@ export function analyzeRequest(metadata: RequestMetadata): LocalAnalysis {
 
   const localScore = calculateLocalScore(suspiciousHeaders, missingSecCHUA, datacenterIP);
   const hasTLSInfo = Boolean(metadata.tls_info);
-  const needsVerify = needsVerification(localScore, hasTLSInfo);
+  const needsVerify = needsVerification(suspiciousHeaders, hasTLSInfo);
   const flags = buildFlags(suspiciousHeaders, missingSecCHUA, datacenterIP, metadata);
 
   return {

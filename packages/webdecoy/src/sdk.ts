@@ -503,8 +503,12 @@ export class WebDecoy {
         localAnalysis.needs_verification ||
         (this.config.enableTLSFingerprinting && metadata.tls_info);
 
-      if (!shouldCallServer && localAnalysis.local_score < 50) {
-        // Low risk, allow without server verification
+      if (!shouldCallServer) {
+        // No local bot signal and nothing to fingerprint: a legitimate
+        // request. Allow it locally and never touch the server — only bot
+        // traffic reaches ingest. (A datacenter/VPN IP or a missing Sec-CH-UA
+        // can lift local_score without indicating a bot, so the score alone no
+        // longer forces a round trip.)
         return new Decision({
           conclusion: 'ALLOW',
           detection: {
