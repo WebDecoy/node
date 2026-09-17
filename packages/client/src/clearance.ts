@@ -1,8 +1,8 @@
 /**
- * wd_clearance minting (WAF Enforcement PRD FR6 / closes the #124 loop).
+ * wd_clearance minting.
  *
  * Real browsers earn a signed clearance token from WebDecoy's ingest service and
- * carry it in a first-party cookie. The edge validator (FR7) lets tokened
+ * carry it in a first-party cookie. The edge validator lets tokened
  * sessions through; a decoy hit denies the token's fp (deny-at-mint + live-token
  * revocation). This is the *allow-and-observe* path — it mints silently during
  * normal browsing so the loop covers monitor mode, not just the enforce-mode
