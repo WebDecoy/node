@@ -7,15 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- **OpenTelemetry spans** around `protect()` and rule evaluation. Pass a tracer: `new WebDecoy({ tracer: trace.getTracer('webdecoy') })`. Injected rather than imported, so the package stays dependency-free and edge-safe — the `Tracer` type is a structural subset of OpenTelemetry's, so `trace.getTracer()` works with no adapter, and omitting it means no spans, no dependency and no behaviour change. Attributes cover the decision id (which joins a span to its dashboard row), the conclusion, the deciding rule, and whether the request cost a round trip to ingest. A tracer that throws cannot fail a request.
+## [0.15.1] - 2026-09-16
 
 ### Changed
 
 - **`ClearanceOptions.scope` is documented as reserved.** It was described as a route-group scope that limits where a token is valid. No validator enforces that: a clearance token is bound to the organization, and each protected path's verification level is the way to require stronger proof. Passing `scope` (or `data-scope` on the script tag) still works and still has no effect.
 
+## [0.15.0] - 2026-08-28
+
+### Fixed
+
+- **A datacenter or VPN IP alone no longer forwards a request for server verification.** Local analysis scored a datacenter/VPN address high enough on its own to forward the request, so a real visitor on a VPN, with a normal browser and full headers, was sent for server-side scoring exactly like a bot. The SDK now forwards on a genuine local bot signal (a bot or automation user agent, or missing headers every real browser sends) or when TLS details are available to fingerprint. A datacenter IP and an absent `Sec-CH-UA` no longer force a forward, alone or together; both still travel with a request that is forwarded for another reason. Trade-off: a bot that perfectly imitates a browser from a datacenter IP, with no TLS details, is no longer forwarded on the IP alone.
+
+## [0.14.0] - 2026-08-28
+
+### Changed
+
+- **Breaking: server-to-server traffic defaults to `https://in.webdecoy.com`.** The default `apiUrl` moved from `https://ingest.webdecoy.com`. Server-to-server calls carry no browser fingerprint, so the fronted hostname costs nothing and adds DDoS absorption and rate limiting in front of ingest. If you set `apiUrl` explicitly, nothing changes. `@webdecoy/client` keeps the direct hostname, because a browser's own TLS handshake is part of what it reports.
+
 - **One adapter core.** Express, Fastify, Next.js (middleware and Pages wrapper) and the fetch guard each carried their own copy of skip-path matching, the 429 and 403 payloads, and honeytoken arming — five copies of one set of decisions, and five places the next correction can fail to land. They now share `adapter-core.ts`; the framework-specific response mechanics are untouched, and every honeytoken-injection test passes unchanged. Fastify keeps its awaited arming, which has no window where early requests are served without the link.
+
+### Added
+
+- **OpenTelemetry spans** around `protect()` and rule evaluation. Pass a tracer: `new WebDecoy({ tracer: trace.getTracer('webdecoy') })`. Injected rather than imported, so the package stays dependency-free and edge-safe — the `Tracer` type is a structural subset of OpenTelemetry's, so `trace.getTracer()` works with no adapter, and omitting it means no spans, no dependency and no behaviour change. Attributes cover the decision id (which joins a span to its dashboard row), the conclusion, the deciding rule, and whether the request cost a round trip to ingest. A tracer that throws cannot fail a request.
+
+- **Six more crawlers are recognised:** DuckAssistBot, SofyaBot, Reflectionbot, xAI-SearchBot, LinkupBot, and IbouBot (classified as a search crawler).
 
 ## [0.13.0] - 2026-08-22
 
