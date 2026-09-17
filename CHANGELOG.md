@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **`ClearanceOptions.scope` is documented as reserved.** It was described as a route-group scope that limits where a token is valid. No validator enforces that: a clearance token is bound to the organization, and each protected path's verification level is the way to require stronger proof. Passing `scope` (or `data-scope` on the script tag) still works and still has no effect.
+
 - **One adapter core.** Express, Fastify, Next.js (middleware and Pages wrapper) and the fetch guard each carried their own copy of skip-path matching, the 429 and 403 payloads, and honeytoken arming — five copies of one set of decisions, and five places the next correction can fail to land. They now share `adapter-core.ts`; the framework-specific response mechanics are untouched, and every honeytoken-injection test passes unchanged. Fastify keeps its awaited arming, which has no window where early requests are served without the link.
 
 ## [0.13.0] - 2026-08-22
