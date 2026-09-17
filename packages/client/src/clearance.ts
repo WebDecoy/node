@@ -152,7 +152,13 @@ export interface ClearanceOptions {
   siteKey: string;
   /** WebDecoy ingest origin. Defaults to DEFAULT_INGEST_URL. */
   ingestUrl?: string;
-  /** Route-group scope; '' = tenant-wide (default), valid on every route. */
+  /**
+   * Reserved. Sent with the mint request, but no validator restricts a token by
+   * it. A clearance token is bound to the organization: any of its sites accepts
+   * it, subject to expiry, the fingerprint deny list and the verification level
+   * required by the path it is used on. Use a path's verification level to ask
+   * for stronger proof on sensitive routes.
+   */
   scope?: string;
   /**
    * Collect interaction aggregates and upgrade the token to a graded
