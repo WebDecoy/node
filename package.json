@@ -7,7 +7,7 @@
     "type": "git",
     "url": "git+https://github.com/WebDecoy/node.git"
   },
-  "author": "Web Decoy",
+  "author": "WebDecoy LLC",
   "license": "MIT",
   "workspaces": [
     "packages/*",
