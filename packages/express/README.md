@@ -25,7 +25,6 @@ const app = express();
 app.use(
   webdecoy({
     apiKey: process.env.WEBDECOY_API_KEY,
-    threatScoreThreshold: 70,
     skipPaths: ['/health'],
   })
 );
@@ -39,48 +38,70 @@ app.get('/api/data', (req, res) => {
 app.listen(3000);
 ```
 
+The SDK does not read `WEBDECOY_API_KEY` by itself: pass it as `apiKey`. Without one, the middleware runs local rules only and nothing reports to your dashboard.
+
+It starts in **monitor** mode: detections are recorded and every request is still served. Watch what it would have blocked, then set `mode: 'enforce'`.
+
 ## Middleware Options
 
 ```typescript
 interface WebDecoyMiddlewareOptions {
-  // Required: Web Decoy API key
-  apiKey: string;
+  // Web Decoy API key. Without it, nothing reports (local rules only).
+  apiKey?: string;
 
-  // Optional: API endpoint (default: 'https://ingest.webdecoy.com')
-  apiUrl?: string;
+  // 'monitor' (default) records and serves; 'enforce' blocks.
+  mode?: 'monitor' | 'enforce';
 
-  // Optional: Threat score threshold for blocking (default: 80)
+  // Threat score above which a request counts as blocked (default: 80)
   threatScoreThreshold?: number;
+  // Per-request override of the same threshold
+  threshold?: number;
 
-  // Optional: Request timeout in milliseconds (default: 5000)
-  timeout?: number;
+  // Inject a hidden honeytoken link into HTML responses (default: on with an apiKey)
+  honeytoken?: boolean;
 
-  // Optional: Enable debug logging (default: false)
-  debug?: boolean;
+  // Local rules such as tripwire() and rate limits, evaluated first
+  rules?: Rule[];
 
-  // Optional: Paths to skip protection
-  skipPaths?: string[] | RegExp[];
+  // How much of X-Forwarded-For to trust: hop count, 'cloudflare', or proxy CIDRs.
+  // Unset, Express decides via req.ip and your app's `trust proxy` setting.
+  trustProxy?: TrustedProxies;
 
-  // Optional: Custom IP extraction function
+  // Custom IP extraction. Overrides trustProxy.
   getIP?: (req: Request) => string;
 
-  // Optional: Custom blocked request handler
-  onBlocked?: (req: Request, res: Response, detection: any) => void;
+  // Paths to skip protection
+  skipPaths?: string[] | RegExp[];
 
-  // Optional: Custom error handler
+  // Called when a request would be blocked. Call next() to serve it anyway.
+  onBlocked?: (req, res, detection, next, decision) => void;
+
+  // Custom error handler (default: log and allow, fail open)
   onError?: (req: Request, res: Response, error: Error) => void;
+
+  // Capture TLS details from the socket (needs a proxy that exposes them)
+  extractTLS?: boolean;
+
+  // API endpoint (default: 'https://in.webdecoy.com')
+  apiUrl?: string;
+
+  // Request timeout in milliseconds (default: 5000)
+  timeout?: number;
+
+  // Enable debug logging (default: false)
+  debug?: boolean;
 }
 ```
 
-## Custom IP Extraction
+## Client IP
 
-By default, the middleware checks `X-Forwarded-For`, `X-Real-IP`, and `req.ip`. You can customize this:
+By default the middleware uses `req.ip`, which honours your app's `trust proxy` setting. It does not read the leftmost `X-Forwarded-For` value, because the client writes that one itself. Behind a proxy, set `trust proxy` in Express or pass `trustProxy`:
 
 ```typescript
 app.use(
   webdecoy({
     apiKey: process.env.WEBDECOY_API_KEY,
-    getIP: (req) => req.headers['cf-connecting-ip'] as string, // Cloudflare
+    trustProxy: 'cloudflare',
   })
 );
 ```
@@ -91,7 +112,8 @@ app.use(
 app.use(
   webdecoy({
     apiKey: process.env.WEBDECOY_API_KEY,
-    onBlocked: (req, res, detection) => {
+    mode: 'enforce',
+    onBlocked: (req, res, detection, next) => {
       res.status(403).render('blocked', {
         detectionId: detection.detection_id,
         threatLevel: detection.threat_level,
@@ -169,14 +191,14 @@ This package uses [@webdecoy/node](https://www.npmjs.com/package/@webdecoy/node)
 ## Getting an API Key
 
 1. Sign up at [app.webdecoy.com](https://app.webdecoy.com)
-2. Create a new organization and property
-3. Generate an API key in Settings
+2. Add your site
+3. Create an API key on the **API Keys** page
 
 API keys start with `sk_live_` for production or `sk_test_` for testing.
 
 ## Documentation
 
-For full documentation, visit the [GitHub repository](https://github.com/WebDecoy/node).
+Full documentation: [docs.webdecoy.com/sdk-plugins/express](https://docs.webdecoy.com/sdk-plugins/express/).
 
 ## License
 
