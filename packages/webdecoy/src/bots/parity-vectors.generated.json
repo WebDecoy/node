@@ -362,25 +362,25 @@
   {
     "userAgent": "chatgpt-user",
     "id": "chatgpt-user",
-    "category": "training_crawler",
+    "category": "ai_assistant",
     "matched": true
   },
   {
     "userAgent": "Mozilla/5.0 (compatible; chatgpt-user/1.0; +http://example.com/bot)",
     "id": "chatgpt-user",
-    "category": "training_crawler",
+    "category": "ai_assistant",
     "matched": true
   },
   {
     "userAgent": "chatgpt",
     "id": "chatgpt-user",
-    "category": "training_crawler",
+    "category": "ai_assistant",
     "matched": true
   },
   {
     "userAgent": "Mozilla/5.0 (compatible; chatgpt/1.0; +http://example.com/bot)",
     "id": "chatgpt-user",
-    "category": "training_crawler",
+    "category": "ai_assistant",
     "matched": true
   },
   {
@@ -1430,13 +1430,13 @@
   {
     "userAgent": "oai-searchbot",
     "id": "oai-searchbot",
-    "category": "training_crawler",
+    "category": "ai_search_crawler",
     "matched": true
   },
   {
     "userAgent": "Mozilla/5.0 (compatible; oai-searchbot/1.0; +http://example.com/bot)",
     "id": "oai-searchbot",
-    "category": "training_crawler",
+    "category": "ai_search_crawler",
     "matched": true
   },
   {
