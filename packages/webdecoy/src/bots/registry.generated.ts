@@ -11,7 +11,7 @@
  * agents share User-Agent substrings, so sorting this array changes how real
  * traffic is classified.
  *
- * 175 agents across 15 categories.
+ * 182 agents across 15 categories.
  */
 
 /**
@@ -81,6 +81,7 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "oai-searchbot", name: "OAI-SearchBot", category: "training_crawler", organization: "OpenAI", baseScore: 80, respectsRobots: true, uaPatterns: ["oai-searchbot"] },
   { id: "claudebot", name: "ClaudeBot", category: "training_crawler", organization: "Anthropic", baseScore: 85, respectsRobots: true, uaPatterns: ["claudebot"] },
   { id: "anthropic", name: "Anthropic", category: "training_crawler", organization: "Anthropic", baseScore: 85, respectsRobots: true, uaPatterns: ["anthropic"] },
+  { id: "claude-web", name: "Claude-Web", category: "training_crawler", organization: "Anthropic", baseScore: 85, respectsRobots: true, uaPatterns: ["claude-web"] },
   { id: "ccbot", name: "CCBot", category: "training_crawler", organization: "Common Crawl", baseScore: 80, respectsRobots: true, uaPatterns: ["ccbot"] },
   { id: "google-extended", name: "Google-Extended", category: "training_crawler", organization: "Google", baseScore: 80, respectsRobots: true, uaPatterns: ["google-extended"] },
   { id: "bytespider", name: "ByteSpider", category: "training_crawler", organization: "ByteDance", baseScore: 75, respectsRobots: false, uaPatterns: ["bytespider"] },
@@ -126,7 +127,9 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "multion", name: "MultiOn", category: "ai_agent", organization: "MultiOn", baseScore: 70, respectsRobots: false, uaPatterns: ["multion"] },
   { id: "iboubot", name: "IbouBot", category: "search_crawler", organization: "Ibou", baseScore: 30, respectsRobots: true, uaPatterns: ["iboubot"] },
   { id: "googlebot", name: "Googlebot", category: "search_crawler", organization: "Google", baseScore: 30, respectsRobots: true, uaPatterns: ["googlebot"] },
+  { id: "google-inspectiontool", name: "Google-InspectionTool", category: "search_crawler", organization: "Google", baseScore: 30, respectsRobots: true, uaPatterns: ["google-inspectiontool"] },
   { id: "bingbot", name: "Bingbot", category: "search_crawler", organization: "Microsoft", baseScore: 30, respectsRobots: true, uaPatterns: ["bingbot"] },
+  { id: "msnbot", name: "MSNBot", category: "search_crawler", organization: "Microsoft", baseScore: 30, respectsRobots: true, uaPatterns: ["msnbot"] },
   { id: "yandexbot", name: "YandexBot", category: "search_crawler", organization: "Yandex", baseScore: 35, respectsRobots: true, uaPatterns: ["yandexbot"] },
   { id: "baiduspider", name: "Baiduspider", category: "search_crawler", organization: "Baidu", baseScore: 40, respectsRobots: true, uaPatterns: ["baiduspider"] },
   { id: "duckduckbot", name: "DuckDuckBot", category: "search_crawler", organization: "DuckDuckGo", baseScore: 30, respectsRobots: true, uaPatterns: ["duckduckbot"] },
@@ -201,6 +204,7 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "heritrix", name: "Heritrix", category: "archiver", organization: "Internet Archive", baseScore: 30, respectsRobots: true, uaPatterns: ["heritrix"] },
   { id: "brozzler", name: "Brozzler", category: "archiver", organization: "Internet Archive", baseScore: 30, respectsRobots: true, uaPatterns: ["brozzler"] },
   { id: "facebookexternalhit", name: "Facebook", category: "fetcher", organization: "Meta", baseScore: 25, respectsRobots: true, uaPatterns: ["facebookexternalhit"] },
+  { id: "facebot", name: "Facebot", category: "fetcher", organization: "Meta", baseScore: 25, respectsRobots: true, uaPatterns: ["facebot"] },
   { id: "twitterbot", name: "Twitterbot", category: "fetcher", organization: "X Corp", baseScore: 25, respectsRobots: true, uaPatterns: ["twitterbot"] },
   { id: "linkedinbot", name: "LinkedInBot", category: "fetcher", organization: "LinkedIn", baseScore: 25, respectsRobots: true, uaPatterns: ["linkedinbot"] },
   { id: "slackbot", name: "Slackbot", category: "fetcher", organization: "Slack", baseScore: 25, respectsRobots: true, uaPatterns: ["slackbot"] },
@@ -228,7 +232,10 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "freshping", name: "Freshping", category: "monitoring", organization: "Freshworks", baseScore: 20, respectsRobots: true, uaPatterns: ["freshping"] },
   { id: "hetrixtools", name: "HetrixTools", category: "monitoring", organization: "HetrixTools", baseScore: 20, respectsRobots: true, uaPatterns: ["hetrixtools"] },
   { id: "nodeping", name: "NodePing", category: "monitoring", organization: "NodePing", baseScore: 20, respectsRobots: true, uaPatterns: ["nodeping"] },
+  { id: "gtmetrix", name: "GTmetrix", category: "monitoring", organization: "GTmetrix", baseScore: 20, respectsRobots: true, uaPatterns: ["gtmetrix"] },
+  { id: "chrome-lighthouse", name: "Lighthouse", category: "monitoring", organization: "Google", baseScore: 20, respectsRobots: true, uaPatterns: ["chrome-lighthouse", "google page speed"] },
   { id: "feedly", name: "Feedly", category: "feed_reader", organization: "Feedly", baseScore: 25, respectsRobots: true, uaPatterns: ["feedly"] },
+  { id: "feedfetcher-google", name: "Feedfetcher-Google", category: "feed_reader", organization: "Google", baseScore: 25, respectsRobots: true, uaPatterns: ["feedfetcher"] },
   { id: "newsblur", name: "NewsBlur", category: "feed_reader", organization: "NewsBlur", baseScore: 25, respectsRobots: true, uaPatterns: ["newsblur"] },
   { id: "inoreader", name: "Inoreader", category: "feed_reader", organization: "Inoreader", baseScore: 25, respectsRobots: true, uaPatterns: ["inoreader"] },
   { id: "theoldreader", name: "The Old Reader", category: "feed_reader", organization: "The Old Reader", baseScore: 25, respectsRobots: true, uaPatterns: ["theoldreader"] },

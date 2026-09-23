@@ -396,6 +396,18 @@
     "matched": true
   },
   {
+    "userAgent": "claude-web",
+    "id": "claude-web",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; claude-web/1.0; +http://example.com/bot)",
+    "id": "claude-web",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
     "userAgent": "claudebot",
     "id": "claudebot",
     "category": "training_crawler",
@@ -672,6 +684,18 @@
     "matched": true
   },
   {
+    "userAgent": "facebot",
+    "id": "facebot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; facebot/1.0; +http://example.com/bot)",
+    "id": "facebot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
     "userAgent": "faraday",
     "id": "faraday",
     "category": "generic_scraper",
@@ -692,6 +716,18 @@
   {
     "userAgent": "Mozilla/5.0 (compatible; feedbin/1.0; +http://example.com/bot)",
     "id": "feedbin",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "feedfetcher",
+    "id": "feedfetcher-google",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; feedfetcher/1.0; +http://example.com/bot)",
+    "id": "feedfetcher-google",
     "category": "feed_reader",
     "matched": true
   },
@@ -756,6 +792,18 @@
     "matched": true
   },
   {
+    "userAgent": "gtmetrix",
+    "id": "gtmetrix",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; gtmetrix/1.0; +http://example.com/bot)",
+    "id": "gtmetrix",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
     "userAgent": "gemini",
     "id": "gemini",
     "category": "training_crawler",
@@ -813,6 +861,18 @@
     "userAgent": "Mozilla/5.0 (compatible; google-extended/1.0; +http://example.com/bot)",
     "id": "google-extended",
     "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "google-inspectiontool",
+    "id": "google-inspectiontool",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; google-inspectiontool/1.0; +http://example.com/bot)",
+    "id": "google-inspectiontool",
+    "category": "search_crawler",
     "matched": true
   },
   {
@@ -1068,6 +1128,30 @@
     "matched": true
   },
   {
+    "userAgent": "chrome-lighthouse",
+    "id": "chrome-lighthouse",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; chrome-lighthouse/1.0; +http://example.com/bot)",
+    "id": "chrome-lighthouse",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "google page speed",
+    "id": "chrome-lighthouse",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; google page speed/1.0; +http://example.com/bot)",
+    "id": "chrome-lighthouse",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
     "userAgent": "linkedinbot",
     "id": "linkedinbot",
     "category": "fetcher",
@@ -1101,6 +1185,18 @@
     "userAgent": "Mozilla/5.0 (compatible; mj12bot/1.0; +http://example.com/bot)",
     "id": "mj12bot",
     "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "msnbot",
+    "id": "msnbot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; msnbot/1.0; +http://example.com/bot)",
+    "id": "msnbot",
+    "category": "search_crawler",
     "matched": true
   },
   {
