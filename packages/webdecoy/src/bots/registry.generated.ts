@@ -11,7 +11,7 @@
  * agents share User-Agent substrings, so sorting this array changes how real
  * traffic is classified.
  *
- * 182 agents across 15 categories.
+ * 186 agents across 15 categories.
  */
 
 /**
@@ -78,7 +78,7 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "reflectionbot", name: "Reflectionbot", category: "training_crawler", organization: "Reflection AI", baseScore: 70, respectsRobots: true, uaPatterns: ["reflectionbot"] },
   { id: "gptbot", name: "GPTBot", category: "training_crawler", organization: "OpenAI", baseScore: 85, respectsRobots: true, uaPatterns: ["gptbot"] },
   { id: "claudebot", name: "ClaudeBot", category: "training_crawler", organization: "Anthropic", baseScore: 85, respectsRobots: true, uaPatterns: ["claudebot"] },
-  { id: "anthropic", name: "Anthropic", category: "training_crawler", organization: "Anthropic", baseScore: 85, respectsRobots: true, uaPatterns: ["anthropic"] },
+  { id: "anthropic", name: "Anthropic", category: "training_crawler", organization: "Anthropic", baseScore: 85, respectsRobots: true, uaPatterns: ["anthropic-ai"] },
   { id: "claude-web", name: "Claude-Web", category: "training_crawler", organization: "Anthropic", baseScore: 85, respectsRobots: true, uaPatterns: ["claude-web"] },
   { id: "ccbot", name: "CCBot", category: "training_crawler", organization: "Common Crawl", baseScore: 80, respectsRobots: true, uaPatterns: ["ccbot"] },
   { id: "google-extended", name: "Google-Extended", category: "training_crawler", organization: "Google", baseScore: 80, respectsRobots: true, uaPatterns: ["google-extended"] },
@@ -87,10 +87,9 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "facebookbot", name: "FacebookBot", category: "training_crawler", organization: "Meta", baseScore: 70, respectsRobots: true, uaPatterns: ["facebookbot"] },
   { id: "meta-externalagent", name: "Meta-ExternalAgent", category: "training_crawler", organization: "Meta", baseScore: 75, respectsRobots: true, uaPatterns: ["meta-externalagent"] },
   { id: "cohere-ai", name: "Cohere", category: "training_crawler", organization: "Cohere", baseScore: 80, respectsRobots: true, uaPatterns: ["cohere-ai", "cohere"] },
-  { id: "perplexitybot", name: "PerplexityBot", category: "training_crawler", organization: "Perplexity AI", baseScore: 80, respectsRobots: true, uaPatterns: ["perplexitybot"] },
   { id: "applebot-extended", name: "Applebot-Extended", category: "training_crawler", organization: "Apple", baseScore: 75, respectsRobots: true, uaPatterns: ["applebot-extended"] },
   { id: "youbot", name: "YouBot", category: "training_crawler", organization: "You.com", baseScore: 75, respectsRobots: true, uaPatterns: ["youbot"] },
-  { id: "mistral", name: "MistralBot", category: "training_crawler", organization: "Mistral AI", baseScore: 80, respectsRobots: true, uaPatterns: ["mistral"] },
+  { id: "mistral", name: "MistralBot", category: "training_crawler", organization: "Mistral AI", baseScore: 80, respectsRobots: true, uaPatterns: ["mistralbot"] },
   { id: "gemini", name: "Gemini", category: "training_crawler", organization: "Google", baseScore: 80, respectsRobots: true, uaPatterns: ["gemini"] },
   { id: "ai2bot", name: "AI2Bot", category: "training_crawler", organization: "Allen Institute for AI", baseScore: 75, respectsRobots: true, uaPatterns: ["ai2bot"] },
   { id: "deepseek", name: "DeepSeek", category: "training_crawler", organization: "DeepSeek", baseScore: 80, respectsRobots: true, uaPatterns: ["deepseek"] },
@@ -107,6 +106,8 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "sofyabot", name: "SofyaBot", category: "ai_search_crawler", organization: "Sofya", baseScore: 65, respectsRobots: true, uaPatterns: ["sofyabot"] },
   { id: "xai-searchbot", name: "xAI-SearchBot", category: "ai_search_crawler", organization: "xAI", baseScore: 70, respectsRobots: true, uaPatterns: ["xai-searchbot"] },
   { id: "linkupbot", name: "LinkupBot", category: "ai_search_crawler", organization: "Linkup", baseScore: 65, respectsRobots: true, uaPatterns: ["linkupbot"] },
+  { id: "perplexitybot", name: "PerplexityBot", category: "ai_search_crawler", organization: "Perplexity AI", baseScore: 80, respectsRobots: true, uaPatterns: ["perplexitybot"] },
+  { id: "claude-searchbot", name: "Claude-SearchBot", category: "ai_search_crawler", organization: "Anthropic", baseScore: 75, respectsRobots: true, uaPatterns: ["claude-searchbot"] },
   { id: "oai-searchbot", name: "OAI-SearchBot", category: "ai_search_crawler", organization: "OpenAI", baseScore: 80, respectsRobots: true, uaPatterns: ["oai-searchbot"] },
   { id: "searchgpt", name: "SearchGPT", category: "ai_search_crawler", organization: "OpenAI", baseScore: 75, respectsRobots: true, uaPatterns: ["searchgpt"] },
   { id: "phind", name: "Phind", category: "ai_search_crawler", organization: "Phind", baseScore: 70, respectsRobots: true, uaPatterns: ["phind"] },
@@ -252,7 +253,10 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "apify", name: "Apify", category: "commercial_scraper", organization: "Apify", baseScore: 65, respectsRobots: true, uaPatterns: ["apify"] },
   { id: "crawlbase", name: "Crawlbase", category: "commercial_scraper", organization: "Crawlbase", baseScore: 65, respectsRobots: true, uaPatterns: ["crawlbase"] },
   { id: "webscrapingapi", name: "WebScrapingAPI", category: "commercial_scraper", organization: "WebScrapingAPI", baseScore: 65, respectsRobots: true, uaPatterns: ["webscrapingapi"] },
-  { id: "chatgpt-user", name: "ChatGPT-User", category: "ai_assistant", organization: "OpenAI", baseScore: 85, respectsRobots: true, uaPatterns: ["chatgpt-user", "chatgpt"] },
+  { id: "chatgpt-user", name: "ChatGPT-User", category: "ai_assistant", organization: "OpenAI", baseScore: 85, respectsRobots: true, uaPatterns: ["chatgpt-user"] },
+  { id: "perplexity-user", name: "Perplexity-User", category: "ai_assistant", organization: "Perplexity AI", baseScore: 75, respectsRobots: false, uaPatterns: ["perplexity-user"] },
+  { id: "mistralai-user", name: "MistralAI-User", category: "ai_assistant", organization: "Mistral AI", baseScore: 75, respectsRobots: true, uaPatterns: ["mistralai-user"] },
+  { id: "meta-externalfetcher", name: "Meta-ExternalFetcher", category: "ai_assistant", organization: "Meta", baseScore: 70, respectsRobots: false, uaPatterns: ["meta-externalfetcher"] },
   { id: "gemini-deep-research", name: "Gemini-Deep-Research", category: "ai_assistant", organization: "Google", baseScore: 65, respectsRobots: true, uaPatterns: ["gemini-deep-research"] },
   { id: "copilot", name: "Microsoft Copilot", category: "ai_assistant", organization: "Microsoft", baseScore: 65, respectsRobots: true, uaPatterns: ["copilot"] },
   { id: "cortana", name: "Cortana", category: "ai_assistant", organization: "Microsoft", baseScore: 60, respectsRobots: true, uaPatterns: ["cortana"] },
