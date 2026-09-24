@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-09-24
+
+### Changed
+
+- **AI search crawlers and user-triggered fetchers are no longer classified as training crawlers.** Matching is by substring with training crawlers checked first, and two over-broad patterns caught other agents: every Anthropic user agent carries an `@anthropic.com` contact, so Claude-User and Claude-SearchBot matched the legacy `anthropic` crawler as `training_crawler`, and MistralAI-User matched `mistral` the same way. PerplexityBot is now `ai_search_crawler`, as Perplexity documents it (not used for training). A rule written as `bot.category == "training_crawler"` stops matching these agents, which is the point: a page a person asked an assistant about is not training.
+- **ChatGPT-User is `ai_assistant` and OAI-SearchBot is `ai_search_crawler`**, as OpenAI documents them, rather than `training_crawler`.
+
+### Added
+
+- **Newly recognised:** Claude-SearchBot (`ai_search_crawler`); Perplexity-User, MistralAI-User and Meta-ExternalFetcher (`ai_assistant`); and the crawlers previously known only to the WordPress plugin. The registry now has 186 agents.
+
 ## [0.15.1] - 2026-09-16
 
 ### Changed
