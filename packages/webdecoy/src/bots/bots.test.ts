@@ -20,6 +20,27 @@ describe('matchUserAgent', () => {
     expect(claude?.category).toBe('training_crawler');
   });
 
+  it('keeps AI search and user-triggered fetchers out of training', () => {
+    // Every Anthropic UA carries an @anthropic.com contact, so a bare
+    // "anthropic" training pattern once caught all of them.
+    const user = matchUserAgent(
+      'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Claude-User/1.0; +Claude-User@anthropic.com)',
+    );
+    expect(user?.id).toBe('claude-user');
+    expect(user?.category).toBe('ai_agent');
+
+    const search = matchUserAgent(
+      'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; PerplexityBot/1.0; +https://perplexity.ai/perplexitybot)',
+    );
+    expect(search?.category).toBe('ai_search_crawler');
+
+    const mistral = matchUserAgent(
+      'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; MistralAI-User/1.0; +https://docs.mistral.ai/robots)',
+    );
+    expect(mistral?.id).toBe('mistralai-user');
+    expect(mistral?.category).toBe('ai_assistant');
+  });
+
   it('is case-insensitive, because User-Agent casing is not a contract', () => {
     expect(matchUserAgent('GPTBOT/1.1')?.id).toBe('gptbot');
     expect(matchUserAgent('gptbot/1.1')?.id).toBe('gptbot');
@@ -60,7 +81,7 @@ describe('matchUserAgent', () => {
 
 describe('registry integrity', () => {
   it('carries the full generated table', () => {
-    expect(BOT_REGISTRY.length).toBe(182);
+    expect(BOT_REGISTRY.length).toBe(186);
     expect(BOT_CATEGORIES).toContain('training_crawler');
     expect(BOT_CATEGORIES).toContain('search_crawler');
   });

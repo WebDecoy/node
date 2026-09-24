@@ -84,13 +84,13 @@
     "matched": true
   },
   {
-    "userAgent": "anthropic",
+    "userAgent": "anthropic-ai",
     "id": "anthropic",
     "category": "training_crawler",
     "matched": true
   },
   {
-    "userAgent": "Mozilla/5.0 (compatible; anthropic/1.0; +http://example.com/bot)",
+    "userAgent": "Mozilla/5.0 (compatible; anthropic-ai/1.0; +http://example.com/bot)",
     "id": "anthropic",
     "category": "training_crawler",
     "matched": true
@@ -372,15 +372,15 @@
     "matched": true
   },
   {
-    "userAgent": "chatgpt",
-    "id": "chatgpt-user",
-    "category": "ai_assistant",
+    "userAgent": "claude-searchbot",
+    "id": "claude-searchbot",
+    "category": "ai_search_crawler",
     "matched": true
   },
   {
-    "userAgent": "Mozilla/5.0 (compatible; chatgpt/1.0; +http://example.com/bot)",
-    "id": "chatgpt-user",
-    "category": "ai_assistant",
+    "userAgent": "Mozilla/5.0 (compatible; claude-searchbot/1.0; +http://example.com/bot)",
+    "id": "claude-searchbot",
+    "category": "ai_search_crawler",
     "matched": true
   },
   {
@@ -1224,6 +1224,18 @@
     "matched": true
   },
   {
+    "userAgent": "meta-externalfetcher",
+    "id": "meta-externalfetcher",
+    "category": "ai_assistant",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; meta-externalfetcher/1.0; +http://example.com/bot)",
+    "id": "meta-externalfetcher",
+    "category": "ai_assistant",
+    "matched": true
+  },
+  {
     "userAgent": "metaphor",
     "id": "metaphor",
     "category": "ai_search_crawler",
@@ -1260,13 +1272,25 @@
     "matched": true
   },
   {
-    "userAgent": "mistral",
+    "userAgent": "mistralai-user",
+    "id": "mistralai-user",
+    "category": "ai_assistant",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; mistralai-user/1.0; +http://example.com/bot)",
+    "id": "mistralai-user",
+    "category": "ai_assistant",
+    "matched": true
+  },
+  {
+    "userAgent": "mistralbot",
     "id": "mistral",
     "category": "training_crawler",
     "matched": true
   },
   {
-    "userAgent": "Mozilla/5.0 (compatible; mistral/1.0; +http://example.com/bot)",
+    "userAgent": "Mozilla/5.0 (compatible; mistralbot/1.0; +http://example.com/bot)",
     "id": "mistral",
     "category": "training_crawler",
     "matched": true
@@ -1524,15 +1548,27 @@
     "matched": true
   },
   {
+    "userAgent": "perplexity-user",
+    "id": "perplexity-user",
+    "category": "ai_assistant",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; perplexity-user/1.0; +http://example.com/bot)",
+    "id": "perplexity-user",
+    "category": "ai_assistant",
+    "matched": true
+  },
+  {
     "userAgent": "perplexitybot",
     "id": "perplexitybot",
-    "category": "training_crawler",
+    "category": "ai_search_crawler",
     "matched": true
   },
   {
     "userAgent": "Mozilla/5.0 (compatible; perplexitybot/1.0; +http://example.com/bot)",
     "id": "perplexitybot",
-    "category": "training_crawler",
+    "category": "ai_search_crawler",
     "matched": true
   },
   {
