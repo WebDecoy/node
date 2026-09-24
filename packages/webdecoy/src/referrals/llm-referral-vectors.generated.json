@@ -1,0 +1,397 @@
+[
+  {
+    "referer": "https://chat.deepseek.com/c/123",
+    "page_url": "https://site.example/",
+    "platform": "DeepSeek"
+  },
+  {
+    "referer": "https://CHAT.DEEPSEEK.COM/",
+    "page_url": "https://site.example/",
+    "platform": "DeepSeek"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=chat.deepseek.com",
+    "platform": "DeepSeek"
+  },
+  {
+    "referer": "https://chat.openai.com/c/123",
+    "page_url": "https://site.example/",
+    "platform": "ChatGPT"
+  },
+  {
+    "referer": "https://CHAT.OPENAI.COM/",
+    "page_url": "https://site.example/",
+    "platform": "ChatGPT"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=chat.openai.com",
+    "platform": "ChatGPT"
+  },
+  {
+    "referer": "https://chatgpt.com/c/123",
+    "page_url": "https://site.example/",
+    "platform": "ChatGPT"
+  },
+  {
+    "referer": "https://CHATGPT.COM/",
+    "page_url": "https://site.example/",
+    "platform": "ChatGPT"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=chatgpt.com",
+    "platform": "ChatGPT"
+  },
+  {
+    "referer": "https://claude.ai/c/123",
+    "page_url": "https://site.example/",
+    "platform": "Claude"
+  },
+  {
+    "referer": "https://CLAUDE.AI/",
+    "page_url": "https://site.example/",
+    "platform": "Claude"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=claude.ai",
+    "platform": "Claude"
+  },
+  {
+    "referer": "https://copilot.microsoft.com/c/123",
+    "page_url": "https://site.example/",
+    "platform": "Copilot"
+  },
+  {
+    "referer": "https://COPILOT.MICROSOFT.COM/",
+    "page_url": "https://site.example/",
+    "platform": "Copilot"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=copilot.microsoft.com",
+    "platform": "Copilot"
+  },
+  {
+    "referer": "https://deepseek.com/c/123",
+    "page_url": "https://site.example/",
+    "platform": "DeepSeek"
+  },
+  {
+    "referer": "https://DEEPSEEK.COM/",
+    "page_url": "https://site.example/",
+    "platform": "DeepSeek"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=deepseek.com",
+    "platform": "DeepSeek"
+  },
+  {
+    "referer": "https://gemini.google.com/c/123",
+    "page_url": "https://site.example/",
+    "platform": "Gemini"
+  },
+  {
+    "referer": "https://GEMINI.GOOGLE.COM/",
+    "page_url": "https://site.example/",
+    "platform": "Gemini"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=gemini.google.com",
+    "platform": "Gemini"
+  },
+  {
+    "referer": "https://grok.com/c/123",
+    "page_url": "https://site.example/",
+    "platform": "Grok"
+  },
+  {
+    "referer": "https://GROK.COM/",
+    "page_url": "https://site.example/",
+    "platform": "Grok"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=grok.com",
+    "platform": "Grok"
+  },
+  {
+    "referer": "https://kagi.com/c/123",
+    "page_url": "https://site.example/",
+    "platform": "Kagi"
+  },
+  {
+    "referer": "https://KAGI.COM/",
+    "page_url": "https://site.example/",
+    "platform": "Kagi"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=kagi.com",
+    "platform": "Kagi"
+  },
+  {
+    "referer": "https://meta.ai/c/123",
+    "page_url": "https://site.example/",
+    "platform": "Meta AI"
+  },
+  {
+    "referer": "https://META.AI/",
+    "page_url": "https://site.example/",
+    "platform": "Meta AI"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=meta.ai",
+    "platform": "Meta AI"
+  },
+  {
+    "referer": "https://perplexity.ai/c/123",
+    "page_url": "https://site.example/",
+    "platform": "Perplexity"
+  },
+  {
+    "referer": "https://PERPLEXITY.AI/",
+    "page_url": "https://site.example/",
+    "platform": "Perplexity"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=perplexity.ai",
+    "platform": "Perplexity"
+  },
+  {
+    "referer": "https://phind.com/c/123",
+    "page_url": "https://site.example/",
+    "platform": "Phind"
+  },
+  {
+    "referer": "https://PHIND.COM/",
+    "page_url": "https://site.example/",
+    "platform": "Phind"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=phind.com",
+    "platform": "Phind"
+  },
+  {
+    "referer": "https://www.deepseek.com/c/123",
+    "page_url": "https://site.example/",
+    "platform": "DeepSeek"
+  },
+  {
+    "referer": "https://WWW.DEEPSEEK.COM/",
+    "page_url": "https://site.example/",
+    "platform": "DeepSeek"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=www.deepseek.com",
+    "platform": "DeepSeek"
+  },
+  {
+    "referer": "https://www.grok.com/c/123",
+    "page_url": "https://site.example/",
+    "platform": "Grok"
+  },
+  {
+    "referer": "https://WWW.GROK.COM/",
+    "page_url": "https://site.example/",
+    "platform": "Grok"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=www.grok.com",
+    "platform": "Grok"
+  },
+  {
+    "referer": "https://www.kagi.com/c/123",
+    "page_url": "https://site.example/",
+    "platform": "Kagi"
+  },
+  {
+    "referer": "https://WWW.KAGI.COM/",
+    "page_url": "https://site.example/",
+    "platform": "Kagi"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=www.kagi.com",
+    "platform": "Kagi"
+  },
+  {
+    "referer": "https://www.meta.ai/c/123",
+    "page_url": "https://site.example/",
+    "platform": "Meta AI"
+  },
+  {
+    "referer": "https://WWW.META.AI/",
+    "page_url": "https://site.example/",
+    "platform": "Meta AI"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=www.meta.ai",
+    "platform": "Meta AI"
+  },
+  {
+    "referer": "https://www.perplexity.ai/c/123",
+    "page_url": "https://site.example/",
+    "platform": "Perplexity"
+  },
+  {
+    "referer": "https://WWW.PERPLEXITY.AI/",
+    "page_url": "https://site.example/",
+    "platform": "Perplexity"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=www.perplexity.ai",
+    "platform": "Perplexity"
+  },
+  {
+    "referer": "https://www.phind.com/c/123",
+    "page_url": "https://site.example/",
+    "platform": "Phind"
+  },
+  {
+    "referer": "https://WWW.PHIND.COM/",
+    "page_url": "https://site.example/",
+    "platform": "Phind"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=www.phind.com",
+    "platform": "Phind"
+  },
+  {
+    "referer": "https://www.you.com/c/123",
+    "page_url": "https://site.example/",
+    "platform": "You.com"
+  },
+  {
+    "referer": "https://WWW.YOU.COM/",
+    "page_url": "https://site.example/",
+    "platform": "You.com"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=www.you.com",
+    "platform": "You.com"
+  },
+  {
+    "referer": "https://you.com/c/123",
+    "page_url": "https://site.example/",
+    "platform": "You.com"
+  },
+  {
+    "referer": "https://YOU.COM/",
+    "page_url": "https://site.example/",
+    "platform": "You.com"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=you.com",
+    "platform": "You.com"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?ref=ChatGPT",
+    "platform": "ChatGPT"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?ref=Claude",
+    "platform": "Claude"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?ref=Copilot",
+    "platform": "Copilot"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?ref=DeepSeek",
+    "platform": "DeepSeek"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?ref=Gemini",
+    "platform": "Gemini"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?ref=Grok",
+    "platform": "Grok"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?ref=Kagi",
+    "platform": "Kagi"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?ref=Meta AI",
+    "platform": "Meta AI"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?ref=Perplexity",
+    "platform": "Perplexity"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?ref=Phind",
+    "platform": "Phind"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?ref=You.com",
+    "platform": "You.com"
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_medium=chatgpt.com\u0026utm_source=newsletter",
+    "platform": "ChatGPT"
+  },
+  {
+    "referer": "https://www.google.com/",
+    "page_url": "https://site.example/p?utm_source=chatgpt.com",
+    "platform": ""
+  },
+  {
+    "referer": "https://site.example/other",
+    "page_url": "https://site.example/p",
+    "platform": ""
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=ai",
+    "platform": ""
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p?utm_source=referral",
+    "platform": ""
+  },
+  {
+    "referer": "",
+    "page_url": "https://site.example/p",
+    "platform": ""
+  },
+  {
+    "referer": "not a url",
+    "page_url": "https://site.example/p",
+    "platform": ""
+  },
+  {
+    "referer": "https://chatgpt.com.evil.example/",
+    "page_url": "https://site.example/p",
+    "platform": ""
+  }
+]
