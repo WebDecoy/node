@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-09-24
+
 ### Added
 
 - **AI referral counting.** With an API key, the SDK now counts page visits that ChatGPT, Claude, Perplexity, Gemini, Copilot and other AI products send to your application, and reports the totals about once a minute for the AI Traffic page. Only a browser loading a page counts (a GET whose fetch metadata says it is a document navigation). What is sent is aggregate: the AI platform, the landing path and a count, never anything about the visitor. It needs an API key scoped to one site; turn it off with `countAIReferrals: false`.
