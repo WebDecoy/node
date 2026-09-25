@@ -7,6 +7,7 @@
  * Workers) alike.
  */
 
+import type { AIReferralBatch } from './referrals/referral-counter';
 import { SDKDetectionRequest, SDKDetectionResponse } from './types';
 import type { ViolationEvent, IPEnrichmentData } from './rules/types';
 
@@ -154,6 +155,24 @@ export class WebDecoyClient {
         console.error('[WebDecoy] Failed to send violations:', error);
       }
       // Silently fail — violations are best-effort
+    }
+  }
+
+  /**
+   * Send AI referral counts. Resolves true when the batch needs no retry:
+   * accepted, or refused for a reason a retry cannot fix (a 4xx). Only a
+   * server error or a network failure resolves false, so the caller retries
+   * the same batch id.
+   */
+  async sendAIReferrals(batch: AIReferralBatch): Promise<boolean> {
+    try {
+      const response = await this.request('POST', '/api/v1/sdk/ai-referrals', batch);
+      return response.status < 500;
+    } catch (error) {
+      if (this.config.debug) {
+        console.error('[WebDecoy] Failed to send AI referrals:', error);
+      }
+      return false;
     }
   }
 

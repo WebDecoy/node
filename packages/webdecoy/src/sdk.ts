@@ -8,6 +8,7 @@ import { analyzeRequest } from './local-analysis';
 import { RuleEngine } from './rules/rule-engine';
 import { tripwire } from './rules';
 import { ViolationReporter } from './violation-reporter';
+import { AIReferralCounter } from './referrals/referral-counter';
 import { IPEnrichmentClient } from './ip-enrichment';
 import { AgentVerifier } from './agent/verifier';
 import type { AgentRequestInput, AgentVerdict } from './agent/types';
@@ -40,6 +41,7 @@ export class WebDecoy {
     apiKey?: string;
   };
   private ruleEngine: RuleEngine | null;
+  private referralCounter: AIReferralCounter | null = null;
   private violationReporter: { report(violations: ViolationEvent[]): void; flush(): Promise<void>; destroy(): Promise<void> } | null = null;
   private ipEnrichmentClient: IPEnrichmentClient | null = null;
   private _hasFilterRules = false;
@@ -75,6 +77,7 @@ export class WebDecoy {
       timeout: config.timeout ?? 5000,
       debug: config.debug ?? false,
       tlsRejectUnauthorized: config.tlsRejectUnauthorized ?? true,
+      countAIReferrals: config.countAIReferrals ?? true,
     };
 
     this.log = resolveLogger(config.logger, this.config.debug);
@@ -140,6 +143,12 @@ export class WebDecoy {
     // Auto-create IP enrichment client when apiKey + filter rules exist
     if (this.client && this._hasFilterRules) {
       this.ipEnrichmentClient = new IPEnrichmentClient(this.client);
+    }
+
+    // AI referral counting, on by default wherever there is an API key to
+    // report with. Aggregate counts only; see AIReferralCounter.
+    if (this.client && this.config.countAIReferrals !== false) {
+      this.referralCounter = new AIReferralCounter(this.client);
     }
 
     // Auto-create violation reporter when apiKey + rules are both present
@@ -348,6 +357,7 @@ export class WebDecoy {
     // present on every outcome — and a per-return copy is a line someone would
     // eventually forget on the branch that mattered.
     const edge = readEdgeVerdict(metadata.headers);
+    this.referralCounter?.observe(metadata);
 
     const span = startSpan(this.tracer, 'webdecoy.protect');
     try {
@@ -706,6 +716,7 @@ export class WebDecoy {
     if (this.violationReporter) {
       await this.violationReporter.destroy();
     }
+    await this.referralCounter?.destroy();
   }
 }
 

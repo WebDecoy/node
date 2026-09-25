@@ -57,6 +57,16 @@ export interface WebDecoyConfig {
   debug?: boolean;
 
   /**
+   * Count visits AI products send to this application (ChatGPT, Claude,
+   * Perplexity and others), for the AI Traffic page. Aggregate counts only:
+   * the AI platform, the landing path and a number, sent about once a
+   * minute. Nothing about a visitor is kept or sent. Needs an API key scoped
+   * to one site.
+   * @default true when an apiKey is set
+   */
+  countAIReferrals?: boolean;
+
+  /**
    * Whether to reject unauthorized TLS certificates
    * Set to false for development/testing with self-signed certificates
    * @default true
