@@ -65,7 +65,7 @@ export interface WebDecoyPluginOptions extends ProtectOptions {
    * it to override that for WebDecoy alone — a number of trusted hops,
    * `'cloudflare'`, `'railway'`, or CIDRs of your proxies.
    *
-   * Prefer this over Fastify's own option for a hop count: since Fastify 5.12 a
+   * Prefer this over Fastify's own option for a hop count: since Fastify 5.12.1 a
    * numeric server `trustProxy` trusts no hop at all (a count cannot tell a
    * proxy from a direct client), so `request.ip` stays the socket address.
    *

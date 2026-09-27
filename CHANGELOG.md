@@ -7,13 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-09-27
+
 ### Added
 
 - **`trustProxy: 'railway'`.** Railway's edge replaces any `X-Forwarded-For` the client sent with exactly `<client>, <edge>`, so the visitor is two entries from the right. A depth of `1`, and the Next.js and Hono default, names Railway's edge for every visitor instead. `'railway'` is the same answer as a depth of `2`, under a name you do not have to work out. Works in every adapter.
 
 ### Changed
 
-- **Fastify: pass the hop count to the plugin, not to Fastify.** Since Fastify 5.12 a numeric server `trustProxy` trusts no hop at all, so `request.ip` stays the socket address. The plugin's own `trustProxy` is unaffected; its documentation now says so.
+- **Fastify: pass the hop count to the plugin, not to Fastify.** Since Fastify 5.12.1 a numeric server `trustProxy` trusts no hop at all, so `request.ip` stays the socket address. The plugin's own `trustProxy` is unaffected; its documentation now says so.
 
 ## [0.17.0] - 2026-09-24
 
