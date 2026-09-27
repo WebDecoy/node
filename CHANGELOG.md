@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-09-27
+
 ### Added
 
 - **`trustProxy: 'railway'`.** Railway's edge replaces any `X-Forwarded-For` the client sent with exactly `<client>, <edge>`, so the visitor is two entries from the right. A depth of `1`, and the Next.js and Hono default, names Railway's edge for every visitor instead. `'railway'` is the same answer as a depth of `2`, under a name you do not have to work out. Works in every adapter.
