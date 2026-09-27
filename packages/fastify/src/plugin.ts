@@ -94,7 +94,7 @@ export interface WebDecoyPluginOptions extends ProtectOptions {
     req: FastifyRequest,
     reply: FastifyReply,
     detection: SDKDetectionResponse,
-    decision: ProtectResult
+    decision: ProtectResult,
   ) => void;
 
   /**
@@ -141,7 +141,7 @@ function resolveIP(req: FastifyRequest, trustProxy: TrustedProxies | undefined):
 function defaultOnBlocked(
   req: FastifyRequest,
   reply: FastifyReply,
-  detection: SDKDetectionResponse
+  detection: SDKDetectionResponse,
 ): void {
   reply.status(403).send({
     error: 'Forbidden',
@@ -354,7 +354,7 @@ async function webdecoyPluginImpl(
               '[WebDecoy] HTML is being streamed, so the honeytoken link was not injected. ' +
                 'Render to a string, or embed the link yourself: ' +
                 `<a href="${ht.primaryPath}" aria-hidden="true" tabindex="-1" rel="nofollow noindex" ` +
-                'style="position:absolute;left:-9999px">.</a>'
+                'style="position:absolute;left:-9999px">.</a>',
             );
           }
           return payload;

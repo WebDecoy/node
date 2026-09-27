@@ -101,7 +101,7 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
     res: Response,
     detection: SDKDetectionResponse,
     next: NextFunction,
-    decision: ProtectResult
+    decision: ProtectResult,
   ) => void;
 
   /**
@@ -139,7 +139,9 @@ function resolveIP(req: Request, trustProxy: TrustedProxies | undefined): string
   }
 
   return (
-    resolveClientIp({ headers: req.headers, peer, trustProxy }) ?? normalizeIp(peer) ?? '127.0.0.1'
+    resolveClientIp({ headers: req.headers, peer, trustProxy }) ??
+    normalizeIp(peer) ??
+    '127.0.0.1'
   );
 }
 
@@ -150,7 +152,7 @@ function defaultOnBlocked(
   req: Request,
   res: Response,
   detection: SDKDetectionResponse,
-  _next: NextFunction
+  _next: NextFunction,
 ): void {
   res.status(403).json({
     error: 'Forbidden',

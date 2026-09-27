@@ -73,7 +73,7 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
   onBlocked?: (
     req: NextRequest,
     detection: SDKDetectionResponse,
-    decision: ProtectResult
+    decision: ProtectResult,
   ) => NextResponse;
 
   /**

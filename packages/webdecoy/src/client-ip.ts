@@ -308,5 +308,5 @@ export function resolveClientIp(options: ResolveClientIpOptions): string | undef
   }
   // Every hop was trusted, which means the outermost one is as far as the chain
   // goes — that address is the client.
-  return full[0] ?? undefined ?? singleHeaderFallback() ?? peer;
+  return (full[0] ?? undefined) ?? singleHeaderFallback() ?? peer;
 }
