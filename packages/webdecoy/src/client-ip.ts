@@ -40,11 +40,16 @@
  * - `'cloudflare'` — use `CF-Connecting-IP`. Only meaningful if the origin is
  *   unreachable except through Cloudflare, since the header is otherwise just
  *   another thing a client can send.
+ * - `'railway'` — the app runs on Railway with nothing else in front. Railway's
+ *   edge replaces any `X-Forwarded-For` the client sent with exactly
+ *   `<client>, <edge>`, so the client is two entries from the right. The
+ *   common guess of `1` names Railway's edge for every visitor. With a CDN in
+ *   front of Railway, configure for the CDN instead (`'cloudflare'`).
  * - `string[]` — CIDRs (or bare addresses) of the proxies you run. The chain is
  *   walked right to left and the first address that isn't one of yours is the
  *   client. Use this when the depth varies.
  */
-export type TrustedProxies = false | number | 'cloudflare' | string[];
+export type TrustedProxies = false | number | 'cloudflare' | 'railway' | string[];
 
 /** Headers as either a Node-style bag or a WHATWG `Headers`. */
 export type HeaderSource =
@@ -260,6 +265,12 @@ export function resolveClientIp(options: ResolveClientIpOptions): string | undef
     return normalizeIp(readHeader(headers, 'cf-connecting-ip')) ?? peer;
   }
 
+  // A name for a depth, not a new rule: Railway's edge rewrites the chain to
+  // `<client>, <edge>`, which is two trusted hops under the counting model.
+  if (trustProxy === 'railway') {
+    return resolveClientIp({ headers, peer: options.peer, trustProxy: 2 });
+  }
+
   const chain = forwardedChain(headers);
 
   // A proxy that sets only `X-Real-IP` (nginx's default) or the platform's own
@@ -297,5 +308,5 @@ export function resolveClientIp(options: ResolveClientIpOptions): string | undef
   }
   // Every hop was trusted, which means the outermost one is as far as the chain
   // goes — that address is the client.
-  return (full[0] ?? undefined) ?? singleHeaderFallback() ?? peer;
+  return full[0] ?? undefined ?? singleHeaderFallback() ?? peer;
 }

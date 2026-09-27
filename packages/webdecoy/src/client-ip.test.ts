@@ -203,16 +203,51 @@ describe('resolveClientIp', () => {
     });
 
     it('falls back to the peer when the header is missing or junk', () => {
-      expect(
-        resolveClientIp({ headers: h({}), peer: '10.0.0.1', trustProxy: 'cloudflare' }),
-      ).toBe('10.0.0.1');
+      expect(resolveClientIp({ headers: h({}), peer: '10.0.0.1', trustProxy: 'cloudflare' })).toBe(
+        '10.0.0.1'
+      );
       expect(
         resolveClientIp({
           headers: h({ 'cf-connecting-ip': 'nope' }),
           peer: '10.0.0.1',
           trustProxy: 'cloudflare',
-        }),
+        })
       ).toBe('10.0.0.1');
+    });
+  });
+
+  describe('railway', () => {
+    // The shape Railway's edge produces: whatever the client sent is replaced by
+    // `<client>, <edge>`, and the socket peer is an internal address.
+    const railway = h({ 'x-forwarded-for': '203.0.113.9, 198.51.100.7' });
+
+    it('reads the client two entries from the right', () => {
+      expect(resolveClientIp({ headers: railway, peer: '100.64.0.2', trustProxy: 'railway' })).toBe(
+        '203.0.113.9'
+      );
+    });
+
+    it('works without a peer, as in edge middleware', () => {
+      expect(resolveClientIp({ headers: railway, trustProxy: 'railway' })).toBe('203.0.113.9');
+    });
+
+    it('answers exactly what a depth of 2 answers', () => {
+      for (const xff of [
+        '203.0.113.9, 198.51.100.7',
+        '1.2.3.4, 203.0.113.9, 198.51.100.7',
+        '203.0.113.9',
+        '',
+      ]) {
+        const headers = h(xff ? { 'x-forwarded-for': xff } : {});
+        expect(resolveClientIp({ headers, peer: '100.64.0.2', trustProxy: 'railway' })).toBe(
+          resolveClientIp({ headers, peer: '100.64.0.2', trustProxy: 2 })
+        );
+      }
+    });
+
+    it('does not name the edge, which a depth of 1 would', () => {
+      expect(resolveClientIp({ headers: railway, trustProxy: 1 })).toBe('198.51.100.7');
+      expect(resolveClientIp({ headers: railway, trustProxy: 'railway' })).not.toBe('198.51.100.7');
     });
   });
 

@@ -59,7 +59,7 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
    * Leave this unset and Express decides: `req.ip` already honours the app's own
    * `trust proxy` setting, which defaults to the socket address. Set it to
    * override that for WebDecoy alone — a number of trusted hops, `'cloudflare'`,
-   * or CIDRs of your proxies.
+   * `'railway'`, or CIDRs of your proxies.
    *
    * THIS CHANGED IN 0.12.0, and it is a behaviour change worth reading.
    *
@@ -101,7 +101,7 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
     res: Response,
     detection: SDKDetectionResponse,
     next: NextFunction,
-    decision: ProtectResult,
+    decision: ProtectResult
   ) => void;
 
   /**
@@ -139,9 +139,7 @@ function resolveIP(req: Request, trustProxy: TrustedProxies | undefined): string
   }
 
   return (
-    resolveClientIp({ headers: req.headers, peer, trustProxy }) ??
-    normalizeIp(peer) ??
-    '127.0.0.1'
+    resolveClientIp({ headers: req.headers, peer, trustProxy }) ?? normalizeIp(peer) ?? '127.0.0.1'
   );
 }
 
@@ -152,7 +150,7 @@ function defaultOnBlocked(
   req: Request,
   res: Response,
   detection: SDKDetectionResponse,
-  _next: NextFunction,
+  _next: NextFunction
 ): void {
   res.status(403).json({
     error: 'Forbidden',

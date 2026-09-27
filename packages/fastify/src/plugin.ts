@@ -63,7 +63,11 @@ export interface WebDecoyPluginOptions extends ProtectOptions {
    * Leave this unset and Fastify decides: `request.ip` already honours the
    * server's own `trustProxy` option, which defaults to the socket address. Set
    * it to override that for WebDecoy alone — a number of trusted hops,
-   * `'cloudflare'`, or CIDRs of your proxies.
+   * `'cloudflare'`, `'railway'`, or CIDRs of your proxies.
+   *
+   * Prefer this over Fastify's own option for a hop count: since Fastify 5.12 a
+   * numeric server `trustProxy` trusts no hop at all (a count cannot tell a
+   * proxy from a direct client), so `request.ip` stays the socket address.
    *
    * Fastify's default was already the safe one, so unlike the Express and
    * Next.js adapters nothing changes here in 0.12.0. The option exists so all
@@ -90,7 +94,7 @@ export interface WebDecoyPluginOptions extends ProtectOptions {
     req: FastifyRequest,
     reply: FastifyReply,
     detection: SDKDetectionResponse,
-    decision: ProtectResult,
+    decision: ProtectResult
   ) => void;
 
   /**
@@ -137,7 +141,7 @@ function resolveIP(req: FastifyRequest, trustProxy: TrustedProxies | undefined):
 function defaultOnBlocked(
   req: FastifyRequest,
   reply: FastifyReply,
-  detection: SDKDetectionResponse,
+  detection: SDKDetectionResponse
 ): void {
   reply.status(403).send({
     error: 'Forbidden',
@@ -350,7 +354,7 @@ async function webdecoyPluginImpl(
               '[WebDecoy] HTML is being streamed, so the honeytoken link was not injected. ' +
                 'Render to a string, or embed the link yourself: ' +
                 `<a href="${ht.primaryPath}" aria-hidden="true" tabindex="-1" rel="nofollow noindex" ` +
-                'style="position:absolute;left:-9999px">.</a>',
+                'style="position:absolute;left:-9999px">.</a>'
             );
           }
           return payload;

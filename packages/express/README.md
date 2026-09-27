@@ -106,6 +106,8 @@ app.use(
 );
 ```
 
+On Railway, use `trustProxy: 'railway'` (or `app.set('trust proxy', 2)`). Railway's edge writes `X-Forwarded-For: <client>, <edge>`, so trusting one hop records Railway's edge as every visitor.
+
 ## Custom Block Handler
 
 ```typescript
