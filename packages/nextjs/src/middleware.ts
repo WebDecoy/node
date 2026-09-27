@@ -45,7 +45,9 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
    * Fastify adapters there is no safe "believe nothing" default here — `1` is
    * correct on Vercel and on any single-proxy deployment. Behind a CDN in front
    * of your platform, set `2`. Behind Cloudflare with the origin locked to it,
-   * `'cloudflare'` is stronger than counting.
+   * `'cloudflare'` is stronger than counting. On Railway, set `'railway'`: its
+   * edge writes two entries, so the default of `1` names the edge, not the
+   * visitor.
    */
   trustProxy?: TrustedProxies;
 

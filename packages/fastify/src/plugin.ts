@@ -63,7 +63,11 @@ export interface WebDecoyPluginOptions extends ProtectOptions {
    * Leave this unset and Fastify decides: `request.ip` already honours the
    * server's own `trustProxy` option, which defaults to the socket address. Set
    * it to override that for WebDecoy alone — a number of trusted hops,
-   * `'cloudflare'`, or CIDRs of your proxies.
+   * `'cloudflare'`, `'railway'`, or CIDRs of your proxies.
+   *
+   * Prefer this over Fastify's own option for a hop count: since Fastify 5.12 a
+   * numeric server `trustProxy` trusts no hop at all (a count cannot tell a
+   * proxy from a direct client), so `request.ip` stays the socket address.
    *
    * Fastify's default was already the safe one, so unlike the Express and
    * Next.js adapters nothing changes here in 0.12.0. The option exists so all

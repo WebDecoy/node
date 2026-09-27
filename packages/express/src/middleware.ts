@@ -59,7 +59,7 @@ export interface WebDecoyMiddlewareOptions extends ProtectOptions {
    * Leave this unset and Express decides: `req.ip` already honours the app's own
    * `trust proxy` setting, which defaults to the socket address. Set it to
    * override that for WebDecoy alone — a number of trusted hops, `'cloudflare'`,
-   * or CIDRs of your proxies.
+   * `'railway'`, or CIDRs of your proxies.
    *
    * THIS CHANGED IN 0.12.0, and it is a behaviour change worth reading.
    *
