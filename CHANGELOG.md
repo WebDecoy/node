@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Fastify: pass the hop count to the plugin, not to Fastify.** Since Fastify 5.12 a numeric server `trustProxy` trusts no hop at all, so `request.ip` stays the socket address. The plugin's own `trustProxy` is unaffected; its documentation now says so.
+- **Fastify: pass the hop count to the plugin, not to Fastify.** Since Fastify 5.12.1 a numeric server `trustProxy` trusts no hop at all, so `request.ip` stays the socket address. The plugin's own `trustProxy` is unaffected; its documentation now says so.
 
 ## [0.17.0] - 2026-09-24
 
