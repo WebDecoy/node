@@ -10,6 +10,7 @@
  */
 
 import { AgentVerifier } from './verifier';
+import { DEFAULT_SIGNED_AGENT_DIRECTORIES } from './directory';
 import { jwkThumbprint, rsaThumbprint } from './thumbprint';
 import type { SignedAgentDirectory } from './types';
 
@@ -278,5 +279,47 @@ describe('JWK thumbprint', () => {
     const n =
       '0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw';
     expect(await rsaThumbprint(n, 'AQAB')).toBe('NzbLsXh8uDCcd-6MNwXF4W_7noWXFZAfHkxZsRGC9Xs');
+  });
+});
+
+describe('DEFAULT_SIGNED_AGENT_DIRECTORIES', () => {
+  // Mirrors the backend's curated signed-agent list, which the edge validator
+  // is fed from. The SDK and the edge must trust the same directories, or a
+  // request verified at one is "claimed" at the other.
+  it('matches the curated directories the platform trusts', () => {
+    expect(DEFAULT_SIGNED_AGENT_DIRECTORIES.map((d) => [d.directory, d.category])).toEqual([
+      ['https://chatgpt.com', 'ai_crawlers'],
+      ['https://agent.bot.goog', 'ai_crawlers'],
+      ['https://bot.webdecoy.com', 'monitoring'],
+    ]);
+  });
+
+  it('does not list operator.openai.com, which no longer resolves', () => {
+    expect(DEFAULT_SIGNED_AGENT_DIRECTORIES.map((d) => d.directory)).not.toContain(
+      'https://operator.openai.com',
+    );
+  });
+
+  it('is what a verifier fetches when no directories are configured', async () => {
+    const fetched: string[] = [];
+    const verifier = new AgentVerifier({
+      fetchImpl: (async (url: string) => {
+        fetched.push(String(url));
+        return new Response(JSON.stringify({ keys: [] }), { status: 200 });
+      }) as unknown as typeof fetch,
+    });
+    const kp = (await crypto.subtle.generateKey({ name: 'Ed25519' }, true, [
+      'sign',
+      'verify',
+    ])) as CryptoKeyPair;
+    const jwk = (await crypto.subtle.exportKey('jwk', kp.publicKey)) as { kty: string; crv: string; x: string };
+    const keyid = await jwkThumbprint({ kty: jwk.kty, crv: jwk.crv, x: jwk.x });
+    const headers = await signHeaders({ privateKey: kp.privateKey, keyid, url: 'https://site.example/' });
+    await verifier.verify(new Request('https://site.example/', { headers }));
+    expect(fetched.sort()).toEqual(
+      DEFAULT_SIGNED_AGENT_DIRECTORIES.map(
+        (d) => `${d.directory}/.well-known/http-message-signatures-directory`,
+      ).sort(),
+    );
   });
 });

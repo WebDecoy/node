@@ -113,7 +113,7 @@ export class WebDecoyClient {
       response = await this.request<SDKDetectionResponse & ApiErrorBody>(
         'POST',
         '/api/v1/sdk/detect',
-        request,
+        toWireDetectionRequest(request),
       );
     } catch (error) {
       if (error instanceof Error && (error.name === 'AbortError' || error.name === 'TimeoutError')) {
@@ -229,4 +229,24 @@ export class WebDecoyClient {
       return true;
     }
   }
+}
+
+/**
+ * Shape a detection request for the wire. The detection service reads the
+ * client's ALPN list from `tls_info.alpn`; the SDK once documented it as
+ * `alpn_protocols`, which the service ignores. Callers still passing the old
+ * name get it sent under the name the service reads, and the old key is never
+ * sent.
+ */
+export function toWireDetectionRequest(request: SDKDetectionRequest): SDKDetectionRequest {
+  const tls = request.request_metadata.tls_info;
+  if (!tls || tls.alpn_protocols === undefined) return request;
+  const { alpn_protocols, ...rest } = tls;
+  return {
+    ...request,
+    request_metadata: {
+      ...request.request_metadata,
+      tls_info: { ...rest, alpn: rest.alpn ?? alpn_protocols },
+    },
+  };
 }

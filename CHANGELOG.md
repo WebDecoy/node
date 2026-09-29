@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **ALPN in `tls_info` now reaches the server.** The SDK documented the client's ALPN list as `tls_info.alpn_protocols`, but the detection service reads `tls_info.alpn` and ignored the other name. The field is now `alpn`. `alpn_protocols` still works, is marked deprecated, and is sent as `alpn` when `alpn` is not set.
+- **Web Bot Auth default directories match the platform's.** `DEFAULT_SIGNED_AGENT_DIRECTORIES` no longer lists `https://operator.openai.com`, which no longer resolves and so never supplied keys. It now lists ChatGPT (`https://chatgpt.com`), Google Agent (`https://agent.bot.goog`, Google's AI browsing agent, not Googlebot) and WebDecoyBot (`https://bot.webdecoy.com`, category `monitoring`), the same set the edge validator trusts. If you pass your own `directories`, nothing changes.
+- **`captcha.verifyToken()` example awaits the result.** The `@webdecoy/node` README called it without `await`, so `result.valid` was always `undefined` and the check always failed.
+
+### Changed
+
+- **`trustedJA4Headers` is documented as it behaves.** The self-hosted captcha reads a JA4 fingerprint from the trusted headers you list, but the built-in JA4 table is empty, so the value does not change the score and is not reported anywhere. The README's TLS fingerprinting description now says that server-side fingerprinting is JA3, from `tls_info` you supply.
+
 ## [0.18.0] - 2026-09-27
 
 ### Added

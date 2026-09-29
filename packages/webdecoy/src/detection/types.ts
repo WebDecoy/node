@@ -273,7 +273,12 @@ export interface DetectionContext {
   headers?: Record<string, string>;
   /** Client-supplied JA3 hash (spoofable). */
   ja3Hash?: string | null;
-  /** Trusted reverse-proxy header names carrying a JA4 fingerprint. */
+  /**
+   * Trusted reverse-proxy header names carrying a JA4 fingerprint, matched
+   * against the lower-cased `headers` keys. The value is checked against
+   * `KNOWN_BOT_JA4_HASHES`, which ships empty, so it does not currently
+   * change the score.
+   */
   trustedJA4Headers?: string[];
   /** Proof-of-work verification outcome (supplied by the PoW subsystem). */
   pow?: PoWOutcome;
