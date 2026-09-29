@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.1] - 2026-09-29
+
 ### Fixed
 
 - **ALPN in `tls_info` now reaches the server.** The SDK documented the client's ALPN list as `tls_info.alpn_protocols`, but the detection service reads `tls_info.alpn` and ignored the other name. The field is now `alpn`. `alpn_protocols` still works, is marked deprecated, and is sent as `alpn` when `alpn` is not set.
