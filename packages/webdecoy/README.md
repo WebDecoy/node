@@ -170,8 +170,8 @@ import { Captcha } from '@webdecoy/node';
 
 const captcha = new Captcha({ secret: process.env.WEBDECOY_SECRET });
 
-app.post('/login', (req, res) => {
-  const result = captcha.verifyToken(req.body.webdecoy_token, req.ip);
+app.post('/login', async (req, res) => {
+  const result = await captcha.verifyToken(req.body.webdecoy_token, req.ip);
   if (!result.valid) return res.status(403).json({ error: 'captcha failed' });
   // ...proceed
 });

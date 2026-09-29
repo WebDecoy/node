@@ -129,15 +129,18 @@ of agents on an allowlist — never a URL taken from the incoming request's
 middleware fetch an arbitrary origin (no SSRF), and the warm path stays on
 in-memory keys.
 
-The default list tracks the agents that sign production traffic today (OpenAI
-Operator, ChatGPT). Override it — for example to add your own signed crawlers —
-via the constructor:
+The default list, `DEFAULT_SIGNED_AGENT_DIRECTORIES`, tracks the agents that
+sign production traffic today (ChatGPT, Google Agent, WebDecoyBot) and matches
+the list the WebDecoy edge validator trusts. Passing `directories` replaces it,
+so spread the defaults in to add your own signed crawlers:
 
 ```typescript
+import { WebDecoy, DEFAULT_SIGNED_AGENT_DIRECTORIES } from '@webdecoy/node';
+
 const wd = new WebDecoy({
   webBotAuth: {
     directories: [
-      { name: 'OpenAI', category: 'ai_crawlers', directory: 'https://operator.openai.com' },
+      ...DEFAULT_SIGNED_AGENT_DIRECTORIES,
       { name: 'Acme Crawler', category: 'monitoring', directory: 'https://crawler.acme.example' },
     ],
     cacheTtlMs: 6 * 60 * 60 * 1000, // stale-while-revalidate; default 6h
