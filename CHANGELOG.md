@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.2] - 2026-09-29
+
 ### Fixed
 
 - **`withBotProtection` (`@webdecoy/nextjs`) honours `mode` and monitors by default.** It ignored `mode` and returned 403 for any request `protect()` did not allow, unlike `withWebDecoy` and every other adapter. It now runs your handler in monitor mode and records the verdict on `req.webdecoyDecision`; set `mode: 'enforce'` to refuse requests. **If you relied on it blocking, add `mode: 'enforce'`.**
