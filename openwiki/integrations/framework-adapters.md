@@ -65,7 +65,7 @@ This page is about the integration contract. For the meaning of conclusions, rul
 | Express on Node | `@webdecoy/express`: `webdecoy()` | Express middleware | `req.webdecoyDecision` |
 | Fastify on Node | `@webdecoy/fastify`: default export or `webdecoyPlugin` | Registered plugin with a `preHandler` hook | `request.webdecoyDecision` |
 | Next.js Edge middleware | `@webdecoy/nextjs`: `withWebDecoy()` | `middleware.ts` wrapper returning `NextResponse` | Request headers forwarded to the Next application |
-| Next.js Pages API route | `@webdecoy/nextjs`: `withBotProtection()` | Per-handler higher-order wrapper | `req.webdecoyDecision` on an allowed request |
+| Next.js Pages API route | `@webdecoy/nextjs`: `withBotProtection()` | Per-handler higher-order wrapper | `req.webdecoyDecision` on every request it lets through (always, in monitor mode) |
 | Hono on Workers, Bun, Deno, or Node | `@webdecoy/hono`: `webdecoy()` | Hono middleware | `c.get('webdecoyDecision')` or `c.get('webdecoy')` |
 | Any WHATWG fetch handler | `@webdecoy/node`: `createFetchGuard()` | Explicit `check()` and optional `decorate()` calls | Returned `GuardOutcome.decision` |
 
@@ -151,7 +151,7 @@ For a Next Edge application, read annotations from the incoming request in a rou
 
 `withWebDecoy()` is for Edge middleware. Scope it with Next's module-level middleware configuration, for example `export const config = { matcher: [...] }`. Although `WebDecoyMiddlewareOptions` declares a `matcher` field, the wrapper implementation does not consume that option; do not rely on `withWebDecoy({ matcher: ... })` to limit execution. Use Next's exported matcher and `skipPaths` for the distinct scoping mechanisms they are.
 
-`withBotProtection()` is the Pages API-route compatibility wrapper, not the Edge middleware in another form. It runs on Node and therefore has a socket peer available for its safe proxy default. It protects the wrapped handler with `blockThreshold` (default 80), blocks immediately when the result is not allowed, attaches `req.webdecoy` and `req.webdecoyDecision` only on the allowed path, and fails open on an exception. It does not implement the Edge wrapper's monitor mode, `skipPaths`, or `onBlocked` callback contract. Use `withWebDecoy()` for an Edge middleware boundary and the Pages wrapper only where a Pages API handler is the actual integration boundary.
+`withBotProtection()` is the Pages API-route compatibility wrapper, not the Edge middleware in another form. It runs on Node and therefore has a socket peer available for its safe proxy default. It protects the wrapped handler with `blockThreshold` (default 80) and honours `mode`: in monitor mode (the default) it runs the handler and attaches `req.webdecoy` and `req.webdecoyDecision`, whose `allowed` says what enforce would have done; with `mode: 'enforce'` it refuses a request that is not allowed. It fails open on an exception. It does not implement the Edge wrapper's `skipPaths` or `onBlocked` callback contract. Use `withWebDecoy()` for an Edge middleware boundary and the Pages wrapper only where a Pages API handler is the actual integration boundary.
 
 ## Client IP and proxy defaults
 
