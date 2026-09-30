@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.3] - 2026-09-30
+
+### Fixed
+
+- **Hidden-path tripwires catch obfuscated scans.** `TripwireRule` matched the raw request path, so a scan dressed up as `//.env`, `/%2Eenv`, `/%252Eenv` or `/static/..%2f.git/config` slipped past while a webserver still resolved it to the decoy path. The path is now canonicalized before matching (drop query/fragment, ASCII percent-decode, collapse duplicate slashes, resolve `.`/`..`), and configured decoy paths are canonicalized the same way.
+
 ## [0.18.2] - 2026-09-29
 
 ### Fixed
