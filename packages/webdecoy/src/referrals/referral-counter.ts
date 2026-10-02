@@ -79,8 +79,12 @@ export class AIReferralCounter {
       if (entry) {
         entry.count++;
       } else {
+        // While an unsent batch is waiting, new pairs past the cap are not
+        // kept: memory stays bounded and each new pair does not trigger
+        // another send attempt. Existing pairs keep counting.
+        if (this.pending && this.counts.size >= MAX_ENTRIES) return;
         this.counts.set(key, { platform, path: landing, count: 1 });
-        if (this.counts.size >= MAX_ENTRIES) void this.flush();
+        if (this.counts.size >= MAX_ENTRIES && !this.pending) void this.flush();
       }
     } catch {
       // Counting must never affect the request.

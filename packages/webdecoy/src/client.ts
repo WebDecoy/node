@@ -34,10 +34,36 @@ interface ApiResponse<T> {
   data: T | undefined;
 }
 
+/**
+ * Thrown without touching the network while the client is paused after
+ * WebDecoy refused work or did not answer. Callers fail open exactly as they
+ * do for any other error; the type lets them stay quiet about it, because the
+ * failure that started the pause was already reported.
+ */
+export class WebDecoyUnavailableError extends Error {
+  constructor(readonly retryAt: number) {
+    super('WebDecoy is temporarily unavailable; requests are paused');
+    this.name = 'WebDecoyUnavailableError';
+    // Keeps `instanceof` working when compiled to ES5, where extending Error
+    // loses the subclass prototype.
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
+/** First pause after a failure; doubles per consecutive failure. */
+const PAUSE_BASE_MS = 1_000;
+/** Longest pause without a Retry-After. */
+const PAUSE_MAX_MS = 60_000;
+/** Longest pause a Retry-After can ask for. */
+const RETRY_AFTER_MAX_MS = 300_000;
+
 export class WebDecoyClient {
   private config: ClientConfig;
   private baseUrl: string;
   private headers: Record<string, string>;
+  /** No request is made before this time (epoch ms). */
+  private pausedUntil = 0;
+  private consecutiveFailures = 0;
 
   constructor(config: ClientConfig) {
     this.config = config;
@@ -56,7 +82,35 @@ export class WebDecoyClient {
     }
   }
 
+  /**
+   * Whether a request would be attempted right now. False while paused after
+   * WebDecoy refused work (429, 5xx) or did not answer, so a caller with
+   * something to keep (a buffer) can hold it rather than lose it.
+   */
+  isAvailable(now = Date.now()): boolean {
+    return now >= this.pausedUntil;
+  }
+
+  /**
+   * Pause every call to WebDecoy after a refusal or no answer: the Retry-After
+   * when one was given, otherwise 1s doubling per consecutive failure up to
+   * 60s. Without this, each request during an outage waited out the full
+   * timeout in the caller's request path.
+   */
+  private pause(retryAfter: string | null): void {
+    const seconds = retryAfter ? Number(retryAfter) : NaN;
+    const ms =
+      Number.isFinite(seconds) && seconds > 0
+        ? Math.min(Math.max(seconds * 1000, PAUSE_BASE_MS), RETRY_AFTER_MAX_MS)
+        : Math.min(PAUSE_BASE_MS * 2 ** this.consecutiveFailures, PAUSE_MAX_MS);
+    this.consecutiveFailures++;
+    this.pausedUntil = Date.now() + ms;
+  }
+
   private async request<T>(method: 'GET' | 'POST', path: string, body?: unknown): Promise<ApiResponse<T>> {
+    if (!this.isAvailable()) {
+      throw new WebDecoyUnavailableError(this.pausedUntil);
+    }
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), this.config.timeout);
     // Node returns a Timeout object that would otherwise hold the process open;
@@ -91,8 +145,16 @@ export class WebDecoyClient {
         console.log('[WebDecoy] Response:', { status: response.status, data });
       }
 
+      if (response.status === 429 || response.status >= 500) {
+        this.pause(response.headers.get('retry-after'));
+      } else {
+        this.consecutiveFailures = 0;
+      }
+
       return { status: response.status, data };
     } catch (error) {
+      // No answer at all: a timeout or a connection failure.
+      this.pause(null);
       if (this.config.debug) {
         console.error('[WebDecoy] Error:', {
           message: error instanceof Error ? error.message : String(error),
@@ -167,7 +229,8 @@ export class WebDecoyClient {
   async sendAIReferrals(batch: AIReferralBatch): Promise<boolean> {
     try {
       const response = await this.request('POST', '/api/v1/sdk/ai-referrals', batch);
-      return response.status < 500;
+      // 429 is "not now", not "never": keep the batch for the next flush.
+      return response.status < 500 && response.status !== 429;
     } catch (error) {
       if (this.config.debug) {
         console.error('[WebDecoy] Failed to send AI referrals:', error);

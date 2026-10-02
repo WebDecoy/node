@@ -3,7 +3,7 @@
  * Main SDK class for bot detection and protection
  */
 
-import { WebDecoyClient } from './client';
+import { WebDecoyClient, WebDecoyUnavailableError } from './client';
 import { analyzeRequest } from './local-analysis';
 import { RuleEngine } from './rules/rule-engine';
 import { tripwire } from './rules';
@@ -579,7 +579,11 @@ export class WebDecoy {
     } catch (error) {
       // An error here means no verdict was reached, which the operator wants to
       // know about whether or not they turned debug on.
-      this.log.error('Protection error', {
+      // While the client is paused after an outage, every request lands here.
+      // The failure that started the pause was already logged as an error;
+      // logging each paused request too would flood the operator's logs.
+      const log = error instanceof WebDecoyUnavailableError ? this.log.debug.bind(this.log) : this.log.error.bind(this.log);
+      log('Protection error', {
         error: error instanceof Error ? error.message : String(error),
       });
 
