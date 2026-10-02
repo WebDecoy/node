@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Requests no longer wait on an unavailable WebDecoy.** After a 429, a 5xx or no answer, the client pauses calls to WebDecoy (honouring `Retry-After`, otherwise 1s doubling to 60s) and `protect()` fails open at once with an `ERROR` decision instead of waiting out the timeout on every request. The failure that starts a pause is logged as an error; requests during the pause log at debug, so an outage no longer floods your logs.
+- **Bounded memory during an outage.** Violation events are held (up to 1,000, oldest dropped) while WebDecoy is unavailable and sent when it returns; the IP enrichment cache is capped at 10,000 IPs; AI referral counting keeps existing pairs counting but stops adding new ones while an unsent batch waits.
+- **AI referral counts refused with 429 are kept and retried** under the same batch id instead of being treated as delivered.
+
 ## [0.18.3] - 2026-09-30
 
 ### Fixed

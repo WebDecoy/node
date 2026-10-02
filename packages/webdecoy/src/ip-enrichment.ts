@@ -11,6 +11,9 @@ interface CachedEntry {
   expiresAt: number;
 }
 
+/** Most IPs cached at once; the oldest entry is evicted past this. */
+export const MAX_ENRICHMENT_ENTRIES = 10_000;
+
 export class IPEnrichmentClient {
   private client: WebDecoyClient;
   private cache = new Map<string, CachedEntry>();
@@ -54,10 +57,16 @@ export class IPEnrichmentClient {
     const data = await this.client.getIPEnrichment(ip);
 
     if (data) {
+      this.cache.delete(ip);
       this.cache.set(ip, {
         data,
         expiresAt: Date.now() + this.ttlMs,
       });
+      if (this.cache.size > MAX_ENRICHMENT_ENTRIES) {
+        // Map iterates in insertion order: this is the oldest entry.
+        const oldest = this.cache.keys().next();
+        if (!oldest.done) this.cache.delete(oldest.value);
+      }
     }
 
     return data;
