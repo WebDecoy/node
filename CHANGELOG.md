@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.4] - 2026-10-02
+
 ### Fixed
 
 - **Requests no longer wait on an unavailable WebDecoy.** After a 429, a 5xx or no answer, the client pauses calls to WebDecoy (honouring `Retry-After`, otherwise 1s doubling to 60s) and `protect()` fails open at once with an `ERROR` decision instead of waiting out the timeout on every request. The failure that starts a pause is logged as an error; requests during the pause log at debug, so an outage no longer floods your logs.
