@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Security
+
+- **Credential headers never leave your server.** Detection reports carried the request's full header map, so a visitor's session cookie, `Authorization` bearer token or API key header was sent to WebDecoy with every report. Reports now send those headers by name only, with an empty value; the one cookie kept is WebDecoy's own `wd_clearance`. Rules and characteristics still see the full request, so a rate-limit key derived from `x-api-key` behaves as before. Credential headers are matched by name (`cookie`, `auth`, `token`, `secret`, `password`, `session`, `csrf`, `api-key` and similar), and WebDecoy's ingest service applies the same rule to reports from older SDK versions.
+
 ## [0.18.4] - 2026-10-02
 
 ### Fixed
