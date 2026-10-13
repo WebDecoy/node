@@ -244,6 +244,14 @@ if (!result.allowed) {
 | [@webdecoy/hono](https://www.npmjs.com/package/@webdecoy/hono) | [![npm](https://img.shields.io/npm/v/@webdecoy/hono.svg)](https://www.npmjs.com/package/@webdecoy/hono) | Hono middleware (Workers, Bun, Deno) |
 | [@webdecoy/client](https://www.npmjs.com/package/@webdecoy/client) | [![npm](https://img.shields.io/npm/v/@webdecoy/client.svg)](https://www.npmjs.com/package/@webdecoy/client) | Browser-side signal collector |
 
+## Browser session clearance
+
+`@webdecoy/client` 0.18.5 or later keeps browser clearance renewing during long
+sessions, including startup with an existing cookie. It coalesces repeated
+startup, bounds mint failures with a timeout and backoff, and stops automatic
+attempts when the server refuses clearance. Application fetch/XHR requests are
+not intercepted or replayed. See the [browser client guide](packages/client/README.md#session-clearance).
+
 ## One bot policy, published and enforced
 
 `botPolicy()` produces both the `robots.txt` you publish and the rule that

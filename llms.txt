@@ -49,6 +49,15 @@ dashboard.
 - `@webdecoy/client` — browser signal collector and proof-of-work captcha
 - `@webdecoy/node/testing` — test-suite helpers, offline by default
 
+Browser session clearance (`@webdecoy/client` 0.18.5+): call
+`startClearance({ siteKey: 'YOUR_PUBLISHABLE_ORGANIZATION_ID' })`. Startup is
+deferred to idle; fresh cookies are reused and renewed before expiry. Repeated
+startup shares one lifecycle per page. Mint requests time out after 10 seconds;
+transient failures back off from one minute to five minutes. Explicit refusal
+stops automatic attempts on that page. Cookie expiry is only a scheduling hint;
+server/edge verification remains authoritative. The client does not intercept
+or replay application fetch/XHR requests. See packages/client/README.md.
+
 For Bun, Deno, Astro, Nitro, SvelteKit or Remix use `createFetchGuard()` from
 `@webdecoy/node` directly — no adapter package needed.
 
