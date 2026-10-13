@@ -513,3 +513,22 @@ describe('JA3 fingerprint matching', () => {
     expect(hasReasonIncluding(v, 'TLS fingerprint matches')).toBe(true);
   });
 });
+
+describe('JA4 from trusted headers', () => {
+  // The documented behaviour of `trustedJA4Headers` is that it does not change
+  // the score, because the built-in JA4 table is empty. If JA4 data is ever
+  // added, this fails so the option's documentation is updated with it.
+  it('reads the header but does not change the score', () => {
+    const engine = new DetectionEngine();
+    const base: DetectionContext = {
+      ip: '73.15.22.100',
+      siteKey: 'test',
+      userAgent: UA_CHROME_WIN,
+      headers: { 'user-agent': UA_CHROME_WIN, ...GOOD_HEADERS, 'x-ja4': 't13d1516h2_8daaf6152771_02713d6af862' },
+    };
+    const without = engine.score({}, base);
+    const withJA4 = engine.score({}, { ...base, trustedJA4Headers: ['x-ja4'] });
+    expect(withJA4.score).toBe(without.score);
+    expect(hasReasonIncluding(withJA4, 'JA4')).toBe(false);
+  });
+});

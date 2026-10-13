@@ -194,7 +194,7 @@ The honest rule of thumb: enforce tripwires you control the surface of, and use 
 Everything above runs locally and free, forever. Add an API key to turn on the hosted platform when you want deeper detection and visibility:
 
 - **`protect()`** — full server-side analysis (a threat score + allow/block/challenge decision), not just local rules.
-- **TLS fingerprinting** — JA3/JA4 hashing and matching against known automation (curl, wget, Selenium, …) and spoofed-browser (TLS↔UA mismatch) detection.
+- **TLS fingerprinting** — when you pass the client's TLS ClientHello details in `tls_info`, the server computes a JA3 fingerprint, matches it against known automation (curl, wget, Selenium, …) and checks it against the claimed browser (TLS↔UA mismatch). The adapters do not fill `tls_info`, because Node does not expose the client's ClientHello; this applies when your own TLS terminator can supply it.
 - **IP enrichment** — reputation, geo, and Tor/VPN/proxy/hosting detection that powers `filter()` expressions.
 - **Dashboard & analytics** — every tripwire hit and violation, tracked over time.
 
@@ -231,7 +231,7 @@ if (!result.allowed) {
 |------|------|:---:|
 | **0 — Tripwires** | Requests for hidden honeypot paths are blocked immediately, before any scoring. Deterministic, zero-FP. | No |
 | **1 — Local analysis** | Fast on-server heuristics: suspicious/missing headers, datacenter IPs, known bot user-agents, missing `Sec-CH-UA`. | No |
-| **2 — Server verification** | JA3/JA4 TLS fingerprinting, known-bot database, TLS↔UA mismatch, IP reputation, GeoIP (Tor/VPN/proxy). | Yes |
+| **2 — Server verification** | Known-bot database, IP reputation, GeoIP (Tor/VPN/proxy), and JA3 TLS fingerprinting with TLS↔UA mismatch when `tls_info` is supplied. | Yes |
 
 ## Packages
 

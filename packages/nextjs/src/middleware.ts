@@ -284,6 +284,9 @@ export interface WithBotProtectionOptions extends WebDecoyMiddlewareOptions {
  * export default withBotProtection(handler, {
  *   apiKey: process.env.WEBDECOY_API_KEY!,
  *   blockThreshold: 70,
+ *   // Monitor is the default: the handler always runs and
+ *   // req.webdecoyDecision.allowed says what enforce would have done.
+ *   mode: 'enforce',
  * });
  * ```
  */
@@ -293,6 +296,9 @@ export function withBotProtection<T extends (...args: any[]) => any>(
 ): T {
   const sdk = new WebDecoy(config);
   const threshold = config.blockThreshold ?? 80;
+  // Monitor by default, like withWebDecoy and every other adapter: a wrapper
+  // that says nothing about mode must never refuse a request.
+  const mode = config.mode ?? 'monitor';
 
   return (async (...args: Parameters<T>) => {
     const [req, res] = args;
@@ -325,7 +331,7 @@ export function withBotProtection<T extends (...args: any[]) => any>(
         metadata: config.metadata,
       });
 
-      if (!result.allowed) {
+      if (!result.allowed && mode === 'enforce') {
         // Same shared refusal shape as the middleware and every other adapter.
         // This wrapper was the fourth copy of it.
         const block = ruleBlockResponse(result);

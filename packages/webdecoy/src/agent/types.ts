@@ -68,7 +68,7 @@ export interface SignedAgentDirectory {
   category: AgentCategory;
   /**
    * Origin (scheme + host) whose well-known HTTP Message Signatures directory
-   * publishes the agent's keys, e.g. `https://operator.openai.com`. The
+   * publishes the agent's keys, e.g. `https://chatgpt.com`. The
    * `/.well-known/http-message-signatures-directory` path is appended
    * automatically. A full URL ending in a path is also accepted verbatim.
    */

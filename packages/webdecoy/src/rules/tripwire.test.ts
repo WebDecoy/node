@@ -36,6 +36,28 @@ describe('TripwireRule', () => {
     expect(rule.evaluate(ctx('/.git/config#x')).action).toBe('DENY');
   });
 
+  it('catches a scan that obfuscates the decoy path (#57)', () => {
+    const rule = new TripwireRule();
+    // A server resolves each of these to a decoy path; matching the raw string
+    // would miss the scan.
+    for (const p of [
+      '//.env', // duplicate leading slash
+      '/%2Eenv', // percent-encoded dot
+      '/%252Eenv', // double-encoded dot
+      '/static/..%2f.git/config', // traversal with an encoded slash
+      '/x/../.env', // plain traversal
+    ]) {
+      expect(rule.evaluate(ctx(p)).action).toBe('DENY');
+    }
+  });
+
+  it('does not trip on a legitimate path that merely resembles a decoy (#57)', () => {
+    const rule = new TripwireRule();
+    for (const p of ['/environment', '/env/config', '/assets/env.js']) {
+      expect(rule.evaluate(ctx(p)).action).toBe('ALLOW');
+    }
+  });
+
   it('respects includeDefaults: false', () => {
     const rule = new TripwireRule({ paths: ['/trap'], includeDefaults: false });
     expect(rule.evaluate(ctx('/.env')).action).toBe('ALLOW');

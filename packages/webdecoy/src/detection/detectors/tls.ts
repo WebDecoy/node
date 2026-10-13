@@ -21,7 +21,12 @@ export const KNOWN_BOT_JA3_HASHES: Record<string, string> = {
   '5d7974c9fe7862e0f9a3eb35a6a5d9c8': 'Puppeteer default',
 };
 
-/** Populate with observed automation JA4 fingerprints per deployment. */
+/**
+ * Known automation JA4 fingerprints. Ships empty: the SDK has no curated JA4
+ * data, so {@link checkJA4Fingerprint} never matches and a JA4 read from
+ * `trustedJA4Headers` does not change the score. The platform computes JA4
+ * only where it terminates the TLS handshake itself.
+ */
 export const KNOWN_BOT_JA4_HASHES: Record<string, string> = {};
 
 export function checkJA3Fingerprint(ja3Hash?: string | null): Detection[] {

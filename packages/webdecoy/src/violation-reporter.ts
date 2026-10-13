@@ -15,6 +15,12 @@ export interface ViolationReporterConfig {
   debug?: boolean;
 }
 
+/**
+ * Most events held while WebDecoy is unavailable. The oldest are dropped past
+ * this, so an outage can never grow the process's memory without bound.
+ */
+export const MAX_BUFFERED_VIOLATIONS = 1_000;
+
 export class ViolationReporter {
   private client: WebDecoyClient;
   private buffer: ViolationEvent[] = [];
@@ -43,6 +49,9 @@ export class ViolationReporter {
    */
   report(violations: ViolationEvent[]): void {
     this.buffer.push(...violations);
+    if (this.buffer.length > MAX_BUFFERED_VIOLATIONS) {
+      this.buffer.splice(0, this.buffer.length - MAX_BUFFERED_VIOLATIONS);
+    }
 
     if (this.buffer.length >= this.maxBufferSize) {
       // Fire-and-forget flush
@@ -54,7 +63,9 @@ export class ViolationReporter {
    * Flush buffered violations to the backend
    */
   async flush(): Promise<void> {
-    if (this.flushing || this.buffer.length === 0) return;
+    // While the client is paused, hold the buffer (capped above) rather than
+    // drain it into requests that cannot be made.
+    if (this.flushing || this.buffer.length === 0 || !this.client.isAvailable()) return;
     this.flushing = true;
 
     // Drain the buffer

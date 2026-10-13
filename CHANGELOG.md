@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.4] - 2026-10-02
+
+### Fixed
+
+- **Requests no longer wait on an unavailable WebDecoy.** After a 429, a 5xx or no answer, the client pauses calls to WebDecoy (honouring `Retry-After`, otherwise 1s doubling to 60s) and `protect()` fails open at once with an `ERROR` decision instead of waiting out the timeout on every request. The failure that starts a pause is logged as an error; requests during the pause log at debug, so an outage no longer floods your logs.
+- **Bounded memory during an outage.** Violation events are held (up to 1,000, oldest dropped) while WebDecoy is unavailable and sent when it returns; the IP enrichment cache is capped at 10,000 IPs; AI referral counting keeps existing pairs counting but stops adding new ones while an unsent batch waits.
+- **AI referral counts refused with 429 are kept and retried** under the same batch id instead of being treated as delivered.
+
+## [0.18.3] - 2026-09-30
+
+### Fixed
+
+- **Hidden-path tripwires catch obfuscated scans.** `TripwireRule` matched the raw request path, so a scan dressed up as `//.env`, `/%2Eenv`, `/%252Eenv` or `/static/..%2f.git/config` slipped past while a webserver still resolved it to the decoy path. The path is now canonicalized before matching (drop query/fragment, ASCII percent-decode, collapse duplicate slashes, resolve `.`/`..`), and configured decoy paths are canonicalized the same way.
+
+## [0.18.2] - 2026-09-29
+
+### Fixed
+
+- **`withBotProtection` (`@webdecoy/nextjs`) honours `mode` and monitors by default.** It ignored `mode` and returned 403 for any request `protect()` did not allow, unlike `withWebDecoy` and every other adapter. It now runs your handler in monitor mode and records the verdict on `req.webdecoyDecision`; set `mode: 'enforce'` to refuse requests. **If you relied on it blocking, add `mode: 'enforce'`.**
+
+## [0.18.1] - 2026-09-29
+
+### Fixed
+
+- **ALPN in `tls_info` now reaches the server.** The SDK documented the client's ALPN list as `tls_info.alpn_protocols`, but the detection service reads `tls_info.alpn` and ignored the other name. The field is now `alpn`. `alpn_protocols` still works, is marked deprecated, and is sent as `alpn` when `alpn` is not set.
+- **Web Bot Auth default directories match the platform's.** `DEFAULT_SIGNED_AGENT_DIRECTORIES` no longer lists `https://operator.openai.com`, which no longer resolves and so never supplied keys. It now lists ChatGPT (`https://chatgpt.com`), Google Agent (`https://agent.bot.goog`, Google's AI browsing agent, not Googlebot) and WebDecoyBot (`https://bot.webdecoy.com`, category `monitoring`), the same set the edge validator trusts. If you pass your own `directories`, nothing changes.
+- **`captcha.verifyToken()` example awaits the result.** The `@webdecoy/node` README called it without `await`, so `result.valid` was always `undefined` and the check always failed.
+
+### Changed
+
+- **`trustedJA4Headers` is documented as it behaves.** The self-hosted captcha reads a JA4 fingerprint from the trusted headers you list, but the built-in JA4 table is empty, so the value does not change the score and is not reported anywhere. The README's TLS fingerprinting description now says that server-side fingerprinting is JA3, from `tls_info` you supply.
+
 ## [0.18.0] - 2026-09-27
 
 ### Added

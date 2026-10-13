@@ -161,7 +161,7 @@ Configure additional trusted agents only when their directory is expected and co
 const wd = new WebDecoy({
   webBotAuth: {
     directories: [
-      { name: 'OpenAI', category: 'ai_crawlers', directory: 'https://operator.openai.com' },
+      ...DEFAULT_SIGNED_AGENT_DIRECTORIES, // passing `directories` replaces the defaults
       { name: 'Acme Crawler', category: 'monitoring', directory: 'https://crawler.acme.example' },
     ],
     cacheTtlMs: 6 * 60 * 60 * 1000,

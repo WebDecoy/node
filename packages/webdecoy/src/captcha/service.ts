@@ -33,7 +33,15 @@ export interface CaptchaOptions {
   secret?: string;
   /** Override per-category detection weights. */
   weights?: Record<string, number>;
-  /** Trusted reverse-proxy header names carrying a JA4 fingerprint. */
+  /**
+   * Trusted reverse-proxy header names carrying a JA4 fingerprint, matched
+   * against the lower-cased request header keys (e.g. `['x-ja4']`).
+   *
+   * Today this has no effect on the score: the value is read and compared with
+   * a built-in table of known automation JA4 fingerprints that ships empty, so
+   * nothing matches. It is not recorded on the verdict and not sent anywhere.
+   * Only list headers your own proxy sets, since a client can send any header.
+   */
   trustedJA4Headers?: string[];
   /** Pluggable stores (default to in-memory; swap for Redis in production). */
   challengeStore?: ChallengeStore;

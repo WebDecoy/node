@@ -164,7 +164,14 @@ export interface TLSInfo {
   /** Server name indication */
   server_name?: string;
 
-  /** ALPN protocols */
+  /** ALPN protocols offered by the client, in wire order (e.g. `['h2', 'http/1.1']`). */
+  alpn?: string[];
+
+  /**
+   * @deprecated Use {@link TLSInfo.alpn}. The detection service reads `alpn`
+   * and ignores this name. It is still accepted here and is sent as `alpn`
+   * when `alpn` itself is not set.
+   */
   alpn_protocols?: string[];
 }
 

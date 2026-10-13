@@ -29,10 +29,18 @@ const COLD_RETRY_BACKOFF_MS = 30_000;
 /**
  * The default curated allowlist. These are the agents that sign production
  * traffic today; kept in lock-step with the backend's curated list.
+ *
+ * `https://operator.openai.com` is not listed: that host no longer resolves,
+ * so it contributed no keys. OpenAI's signed traffic verifies against the
+ * `https://chatgpt.com` directory.
+ *
+ * Google Agent is Google's AI browsing agent, not Googlebot. Googlebot does not
+ * sign requests and is verified by IP range and reverse DNS instead.
  */
 export const DEFAULT_SIGNED_AGENT_DIRECTORIES: SignedAgentDirectory[] = [
-  { name: 'OpenAI', category: 'ai_crawlers', directory: 'https://operator.openai.com' },
   { name: 'OpenAI ChatGPT', category: 'ai_crawlers', directory: 'https://chatgpt.com' },
+  { name: 'Google Agent', category: 'ai_crawlers', directory: 'https://agent.bot.goog' },
+  { name: 'WebDecoyBot', category: 'monitoring', directory: 'https://bot.webdecoy.com' },
 ];
 
 interface DirectoryCacheOptions {
