@@ -250,7 +250,9 @@ if (!result.allowed) {
 sessions, including startup with an existing cookie. It coalesces repeated
 startup, bounds mint failures with a timeout and backoff, and stops automatic
 attempts when the server refuses clearance. Application fetch/XHR requests are
-not intercepted or replayed. See the [browser client guide](packages/client/README.md#session-clearance).
+not intercepted or replayed globally. Version 0.19.0 adds an opt-in
+`createClearanceFetch()` helper for one GET/HEAD retry through your own clearance
+flow; mutations and policy refusals never recover automatically. See the [browser client guide](packages/client/README.md#session-clearance).
 
 ## One bot policy, published and enforced
 

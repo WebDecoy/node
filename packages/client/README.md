@@ -87,8 +87,8 @@ edge validator continue to verify every token and enforce revocation.
 The cookie is Secure, SameSite Lax and host-only. Accepted interaction aggregates
 remain on renewal requests, and the server evaluates them again; pass
 `behavior: false` to disable the behavioral upgrade. The client does not intercept
-or retry application fetch/XHR requests: an edge API challenge is a JSON 403
-that your application must handle explicitly.
+or retry application fetch/XHR requests globally. An edge API challenge is a JSON
+403; the opt-in helper below handles safe reads through your application’s flow.
 
 ## What it collects
 
@@ -131,3 +131,74 @@ and Next.js adapters and the full detection/scoring reference.
 ## License
 
 MIT
+
+## API challenge recovery
+
+With `@webdecoy/client` **0.19.0 or later** and an updated edge validator, opt in
+for the API reads your application wants to recover:
+
+```ts
+import { createClearanceFetch } from '@webdecoy/client';
+import { earnClearance } from './clearance-flow'; // your application's flow
+
+const fetchProtected = createClearanceFetch({
+  origin: location.origin,
+  timeoutMs: 10_000,
+  recover: ({ origin, challenge, signal }) =>
+    earnClearance({ origin, reason: challenge.reason, signal }),
+  onEvent: event => console.debug(event.type, event.status),
+});
+
+const controller = new AbortController();
+const response = await fetchProtected('/api/catalog', {
+  credentials: 'same-origin',
+  signal: controller.signal, // your application's AbortController
+});
+// Handle response.ok/status/body just as with native fetch.
+```
+
+`earnClearance` is application code, not an SDK export. It must earn and install
+the host's `wd_clearance` cookie through your configured issuance/verification
+flow and return `true` only when ready to retry. `startClearance()` returns
+`void`; awaiting it does not wait for a token. A self-hosted captcha widget token
+is not a clearance cookie. A stronger-grade response needs a flow that earns the
+route's required grade; simply replacing a token cannot grant that grade.
+
+The helper retries **GET/HEAD once** after a recognized recoverable challenge.
+Concurrent calls through one adapter share one recovery callback for its
+configured origin; that callback receives the first challenge's reason. Use one
+adapter for each origin/recovery flow. The edge evaluates every retry again.
+POST/PATCH/PUT/DELETE and other methods pass through once with their original
+body. There is no mutation replay opt-in and no XHR interception. The standalone
+script exposes the same helpers at `window.WebDecoyClearance`.
+
+Recovery and the retry share a deadline after the first challenge: 10 seconds by
+default, configurable from 1 ms to 60 seconds. Refusal, resolver rejection,
+offline state, or deadline expiry returns the original readable challenge
+response. Caller cancellation and fetch network errors reject as native fetch
+does. One cancelled caller does not cancel other callers waiting for the shared
+flow; when none remain, the recovery signal aborts. Your flow must stop network
+work and close its UI on that signal. If it ignores cancellation, later calls
+remain attached to that stopped attempt until it settles, rather than opening
+overlapping recovery dialogs. Browsers without `AbortSignal.any()` return the
+challenge without attempting recovery.
+
+Only version-1 responses with the exact WebDecoy challenge headers qualify.
+Ordinary application 403s, unsupported/malformed contracts, revoked sessions,
+crawler-policy refusals and agent impersonation do not trigger recovery.
+Redirected responses, different origins and `credentials: 'omit'` also do not.
+The helper preserves request options and leaves response bodies/streams unread.
+It adds no request headers or CORS permission. Cross-origin calls need
+`credentials: 'include'`, the protected host's cookie, and an application-approved
+CORS policy that exposes the four challenge headers; otherwise the browser
+cannot identify the response. A cookie set on the page's host does not clear a
+different API host.
+
+`onEvent` reports `challenge-served`, `recovery-attempted`,
+`recovery-succeeded`/`recovery-failed`, and the retried `enforcement-outcome`
+(status). Attempts are per waiting request; count callback invocations separately
+for shared flows. Success means the retry returned an OK response, not a new
+trust grade. These local observations send no telemetry automatically and must
+remain distinct from the validator's verdict counts. Observation failures cannot
+change the request. Interactive application flows must provide keyboard access,
+focus restoration, an announced status and cancellation; the helper renders no UI.

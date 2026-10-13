@@ -147,3 +147,5 @@ Offline by default: an API key in the environment is ignored unless
 - Web Bot Auth guide: https://github.com/WebDecoy/node/blob/main/docs/verify-ai-agents-web-bot-auth.md
 - Dashboard: https://app.webdecoy.com
 - Docs: https://docs.webdecoy.com
+
+API recovery (`@webdecoy/client` 0.19.0+): `createClearanceFetch({ origin, recover, timeoutMs?, onEvent? })` returns an explicit fetch adapter. `recover({ origin, challenge, signal })` must earn/install the protected origin's clearance cookie and resolve true; `startClearance()` is not awaitable recovery. Exact v1 challenge headers, GET/HEAD only, one retry, shared callback per adapter, 10s default/60s max recovery-and-retry deadline. Refusal/timeout returns the original response; caller abort/network errors reject. Mutations, ordinary 403, revoked/crawler-refused/agent-impersonation, redirects and omitted credentials never recover. Cross-origin needs include credentials, host cookie and approved CORS exposing the challenge headers. No global interception, XHR support or automatic telemetry. Standalone global: `window.WebDecoyClearance`.

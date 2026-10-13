@@ -12,11 +12,13 @@
 
 import { WebDecoyCaptcha } from './client';
 import { startClearance } from './clearance';
+import { createClearanceFetch, readClearanceChallenge } from './clearance-fetch';
 
 // Capture the script tag before any async hop invalidates document.currentScript.
 const selfScript = document.currentScript as HTMLScriptElement | null;
 
 (window as unknown as Record<string, unknown>).WebDecoyCaptcha = WebDecoyCaptcha;
+(window as unknown as Record<string, unknown>).WebDecoyClearance = { createClearanceFetch, readClearanceChallenge };
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => WebDecoyCaptcha.autoInit());
@@ -34,3 +36,4 @@ if (siteKey) {
 }
 
 export { WebDecoyCaptcha };
+export { createClearanceFetch, readClearanceChallenge };

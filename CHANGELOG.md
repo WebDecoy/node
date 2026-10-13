@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-10-12
+
+### Added
+- Explicit `createClearanceFetch()` adapter and `readClearanceChallenge()` parser for the version-1 edge API challenge contract. Available as library exports and `window.WebDecoyClearance` in the standalone bundle.
+- GET/HEAD recovery with one retry, shared recovery per adapter/protected origin, a bounded deadline, cancellation, and local observation hooks. Applications provide their own clearance flow; refusal remains server-owned.
+- Policy refusals, ordinary origin 403s, unsupported contracts, omitted credentials, redirects, offline state, and all mutations do not trigger automatic recovery. No global fetch interception or XHR handling.
+
 ## [0.18.5] - 2026-10-12
 
 ### Fixed
