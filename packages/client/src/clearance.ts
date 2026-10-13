@@ -8,8 +8,8 @@
  * normal browsing so the loop covers monitor mode, not just the enforce-mode
  * challenge interstitial.
  *
- * PERFORMANCE: the mint is deferred to idle, runs at most once per session (skips
- * when a fresh cookie already exists), and never solves a proof-of-work. The only
+ * PERFORMANCE: the initial mint is deferred to idle, fresh cookies are reused,
+ * renewal is bounded, and minting never solves a proof-of-work. The only
  * device-tier work — one canvas + one WebGL read — is done by the collector, once.
  * computeDeviceFP itself does NO canvas/WebGL: it consumes the collector's output.
  */
@@ -88,6 +88,12 @@ interface MintResponse {
   expires_in?: number;
 }
 
+type MintResult = { token: string; expiresIn: number } | { denied: true } | null;
+const REFRESH_MARGIN_MS = 120_000;
+const COOKIE_CHECK_MS = 60_000;
+const MAX_TOKEN_AGE_MS = 1_800_000;
+const MINT_TIMEOUT_MS = 10_000;
+
 /** Call the public issuance endpoint. Returns null on any failure (fail open).
  *  `behavior`, when present, carries the session's interaction aggregates and
  *  can earn the token a graded 'human-likely' trust level. */
@@ -97,7 +103,9 @@ async function mint(
   fp: string,
   scope: string,
   behavior?: BehaviorAggregate,
-): Promise<{ token: string; expiresIn: number } | null> {
+): Promise<MintResult> {
+  const abort = new AbortController();
+  const timeout = setTimeout(() => abort.abort(), MINT_TIMEOUT_MS);
   try {
     const res = await fetch(ingestUrl.replace(/\/$/, '') + '/api/v1/clearance', {
       method: 'POST',
@@ -111,14 +119,18 @@ async function mint(
         headless: /HeadlessChrome/.test(navigator.userAgent),
         ...(behavior ? { behavior } : {}),
       }),
+      signal: abort.signal,
     });
+    if (!res.ok) return null;
     const out = (await res.json()) as MintResponse;
     if (out.granted && out.token) {
-      return { token: out.token, expiresIn: out.expires_in || 1800 };
+      const ttl = out.expires_in;
+      return { token: out.token, expiresIn: typeof ttl === 'number' && Number.isFinite(ttl) && ttl > 0 ? Math.min(ttl, 1800) : 1800 };
     }
+    if (out.granted === false) return { denied: true };
   } catch {
     /* fail open */
-  }
+  } finally { clearTimeout(timeout); }
   return null;
 }
 
@@ -139,10 +151,10 @@ function setClearanceCookie(token: string, maxAgeSec: number): void {
 
 /** Defer work to browser idle time, with a timeout fallback. */
 function whenIdle(fn: () => void): void {
-  const ric = (window as unknown as { requestIdleCallback?: (cb: () => void) => void })
+  const ric = (window as unknown as { requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => void })
     .requestIdleCallback;
   if (typeof ric === 'function') {
-    ric(fn);
+    ric.call(window, fn, { timeout: 1200 });
   } else {
     setTimeout(fn, 1200);
   }
@@ -172,84 +184,172 @@ export interface ClearanceOptions {
   behavior?: boolean;
 }
 
-/** One behavioral upgrade per page load, no matter how many times clearance is
- *  started or refreshed — the token refresh loop re-enters startClearance, and
- *  each entry must not attach another set of listeners. */
+/** One behavioral upgrade per page load; repeated startup must not add listeners. */
 let upgradeStarted = false;
+
+interface ClearanceSession {
+  key: string;
+  opts: ClearanceOptions;
+  token: string | null;
+  expiresAt: number;
+  renewAt: number;
+  retryAt: number;
+  timer?: ReturnType<typeof setTimeout>;
+  running: boolean;
+  stopped: boolean;
+  failures: number;
+  fingerprint?: Promise<string>;
+  behavior?: BehaviorAggregate;
+  lastBehavior?: BehaviorAggregate;
+  wake: () => void;
+}
+let session: ClearanceSession | undefined;
+
+// The unsigned payload is ONLY a scheduling hint. Server and edge verification
+// remain authoritative. Remember the bound on first seeing a token, so a bogus
+// distant expiry cannot postpone renewal forever.
+function expiryHint(token: string): number {
+  try {
+    const encoded = token.split('.')[0];
+    if (encoded.length > 8192) return Date.now() + COOKIE_CHECK_MS + REFRESH_MARGIN_MS;
+    const base64 = encoded.replace(/-/g, '+').replace(/_/g, '/');
+    const exp = JSON.parse(atob(base64)).exp;
+    if (typeof exp === 'number' && Number.isFinite(exp) && exp > 0) {
+      return Math.min(exp * 1000, Date.now() + MAX_TOKEN_AGE_MS);
+    }
+  } catch { /* old or malformed cookies get one bounded grace period */ }
+  return Date.now() + COOKIE_CHECK_MS + REFRESH_MARGIN_MS;
+}
+
+function schedule(s: ClearanceSession, delay: number): void {
+  if (s.timer !== undefined) clearTimeout(s.timer);
+  if (s !== session || s.stopped) return;
+  s.timer = setTimeout(() => { s.timer = undefined; void maintain(s); }, Math.max(1000, delay));
+}
+
+async function maintain(s: ClearanceSession): Promise<void> {
+  if (s !== session || s.stopped || s.running) return;
+  const token = readCookie(CLEARANCE_COOKIE);
+  if (token !== s.token) {
+    s.token = token;
+    s.expiresAt = token ? expiryHint(token) : 0;
+    s.renewAt = s.expiresAt - Math.min(REFRESH_MARGIN_MS, Math.max(0, s.expiresAt - Date.now()) / 3);
+  }
+  if (s.retryAt > Date.now()) {
+    schedule(s, s.retryAt - Date.now());
+    return;
+  }
+  if (!s.behavior && token && s.renewAt > Date.now()) {
+    schedule(s, Math.min(COOKIE_CHECK_MS, s.renewAt - Date.now()));
+    return;
+  }
+  s.running = true;
+  const behavior = s.behavior;
+  s.behavior = undefined;
+  try {
+    if (!s.fingerprint) {
+      s.fingerprint = (async () => {
+        const env = new EnvironmentalCollector();
+        return computeDeviceFP({ canvasHash: env._getCanvasHash(), webglInfo: env._getWebGLInfo() });
+      })();
+    }
+    const fp = await s.fingerprint;
+    const result = await mint(s.opts.ingestUrl || DEFAULT_INGEST_URL, s.opts.siteKey, fp, s.opts.scope || '', behavior || s.lastBehavior);
+    if (s !== session) return; // an old in-flight request cannot replace a new site's cookie
+    if (result && 'token' in result) {
+      setClearanceCookie(result.token, result.expiresIn);
+      s.token = readCookie(CLEARANCE_COOKIE);
+      s.expiresAt = Date.now() + result.expiresIn * 1000;
+      s.renewAt = s.expiresAt - Math.min(REFRESH_MARGIN_MS, result.expiresIn * 1000 / 3);
+      s.failures = 0;
+      if (behavior) s.lastBehavior = behavior;
+      s.retryAt = 0;
+      schedule(s, Math.min(COOKIE_CHECK_MS, s.renewAt - Date.now()));
+    } else if (result && 'denied' in result) {
+      // Refusal is not an outage. Do not repeatedly attempt to replace denied
+      // clearance; the edge still decides what the existing cookie may access.
+      s.stopped = true;
+      if (s.timer !== undefined) clearTimeout(s.timer);
+    } else {
+      s.failures++;
+      const delay = Math.min(300_000, COOKIE_CHECK_MS * Math.pow(2, Math.min(s.failures - 1, 3)));
+      s.retryAt = Date.now() + delay;
+      schedule(s, delay);
+    }
+  } catch {
+    s.fingerprint = undefined;
+    s.failures++;
+    const delay = Math.min(300_000, COOKIE_CHECK_MS * Math.pow(2, Math.min(s.failures - 1, 3)));
+    s.retryAt = Date.now() + delay;
+    schedule(s, delay);
+  } finally {
+    s.running = false;
+    if (s.behavior && !s.stopped && s === session) schedule(s, 1000);
+  }
+}
 
 /**
  * Watch for real interaction and, once there is enough of it, re-mint the
  * session's token with the behavioral evidence attached.
  *
- * The device fingerprint is computed INSIDE the callback, not up front: it is
- * the only expensive step (one canvas + one WebGL read), and a session that
- * never interacts must never pay for it. A failed upgrade leaves the existing
- * clean token untouched.
+ * Upgrade only after real interaction, sharing the renewal request and cached
+ * fingerprint. A failed upgrade leaves the existing cookie untouched.
  */
-function startBehavioralUpgrade(ingestUrl: string, siteKey: string, scope: string): void {
+function startBehavioralUpgrade(s: ClearanceSession): void {
   if (upgradeStarted) return;
   upgradeStarted = true;
 
   watchInteraction((behavior) => {
-    void (async () => {
-      try {
-        const env = new EnvironmentalCollector();
-        const fp = await computeDeviceFP({
-          canvasHash: env._getCanvasHash(),
-          webglInfo: env._getWebGLInfo(),
-        });
-        const minted = await mint(ingestUrl, siteKey, fp, scope, behavior);
-        if (minted) setClearanceCookie(minted.token, minted.expiresIn);
-      } catch {
-        /* fail open — the session keeps whatever token it already had */
-      }
-    })();
+    if (s !== session || s.stopped) return;
+    s.behavior = behavior;
+    void maintain(s);
   });
 }
 
 /**
- * Start silent clearance minting. Idempotent guard, deferred to idle, at most once
- * per session: if a fresh cookie already exists it only schedules a refresh; only
- * an absent/near-expiry cookie triggers a collect + mint. Never blocks paint or
- * interaction; failures are swallowed (the edge validator fails open regardless).
+ * Start one silent clearance lifecycle. Initial work is deferred to idle; fresh
+ * cookies schedule renewal and only absent/near-expiry cookies trigger minting.
+ * Transient failures back off; server refusals stop automatic attempts. The edge
+ * remains authoritative, including when the browser cannot obtain clearance.
  */
 export function startClearance(opts: ClearanceOptions): void {
   if (!opts.siteKey || typeof document === 'undefined') return;
   const ingestUrl = opts.ingestUrl || DEFAULT_INGEST_URL;
-  const scope = opts.scope || '';
-
-  const run = async (): Promise<void> => {
-    if (readCookie(CLEARANCE_COOKIE)) {
-      // Already cleared this session; re-check periodically to refresh near expiry.
-      return;
+  const key = JSON.stringify([ingestUrl.replace(/\/$/, ''), opts.siteKey, opts.scope || '']);
+  if (!session || session.key !== key) {
+    if (session) {
+      if (session.timer !== undefined) clearTimeout(session.timer);
+      document.removeEventListener('visibilitychange', session.wake);
     }
-    const env = new EnvironmentalCollector();
-    const fp = await computeDeviceFP({
-      canvasHash: env._getCanvasHash(),
-      webglInfo: env._getWebGLInfo(),
-    });
-    const minted = await mint(ingestUrl, opts.siteKey, fp, scope);
-    if (minted) {
-      setClearanceCookie(minted.token, minted.expiresIn);
-      // Re-mint a little before expiry so a real browser stays continuously cleared.
-      const refreshMs = Math.max(60_000, (minted.expiresIn - 120) * 1000);
-      setTimeout(() => startClearance(opts), refreshMs);
-    }
-  };
-
-  whenIdle(() => {
-    void run();
-  });
+    upgradeStarted = false;
+    const s: ClearanceSession = {
+      key, opts: { ...opts }, token: null, expiresAt: 0, renewAt: 0, retryAt: 0, running: false, stopped: false, failures: 0,
+      wake: () => { if (document.visibilityState === 'visible') void maintain(s); },
+    };
+    session = s;
+    document.addEventListener('visibilitychange', s.wake);
+    whenIdle(() => { void maintain(s); });
+  }
 
   // Independent of the mint above: a session that already holds a token can
   // still upgrade it once the visitor interacts, and one that mints a fresh
   // clean token upgrades that. Never blocks, never fires without interaction.
   if (opts.behavior !== false) {
-    startBehavioralUpgrade(ingestUrl, opts.siteKey, scope);
+    startBehavioralUpgrade(session);
   }
 }
 
 /** Reset the once-per-page-load upgrade guard. Test-only. */
 export function _resetBehavioralUpgradeForTests(): void {
+  upgradeStarted = false;
+}
+
+/** Reset the renewal lifecycle. Test-only. */
+export function _resetClearanceForTests(): void {
+  if (session) {
+    if (session.timer !== undefined) clearTimeout(session.timer);
+    document.removeEventListener('visibilitychange', session.wake);
+  }
+  session = undefined;
   upgradeStarted = false;
 }

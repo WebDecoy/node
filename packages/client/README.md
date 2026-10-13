@@ -65,6 +65,31 @@ const result = await WebDecoyCaptcha.execute('pk_live_...', { action: 'login' })
 if (result.success) { /* result.token */ }
 ```
 
+## Session clearance
+
+```js
+import { startClearance } from '@webdecoy/client';
+
+startClearance({ siteKey: 'YOUR_PUBLISHABLE_ORGANIZATION_ID' });
+```
+
+With version **0.18.5 or later**, the client defers initial minting to browser
+idle, reuses fresh `wd_clearance` cookies, and renews before expiry throughout
+long sessions. Repeated startup shares one lifecycle and collected fingerprint
+per page. Cookie changes from another tab are noticed during periodic checks;
+returning to a visible page checks clearance again.
+
+Mint requests time out after 10 seconds. Transient failures retry with backoff
+from one minute to five minutes; explicit server refusal stops automatic
+attempts on that page. Unsigned expiry is only a scheduling hint. The server and
+edge validator continue to verify every token and enforce revocation.
+
+The cookie is Secure, SameSite Lax and host-only. Accepted interaction aggregates
+remain on renewal requests, and the server evaluates them again; pass
+`behavior: false` to disable the behavioral upgrade. The client does not intercept
+or retry application fetch/XHR requests: an edge API challenge is a JSON 403
+that your application must handle explicitly.
+
 ## What it collects
 
 | Group | Signals |
