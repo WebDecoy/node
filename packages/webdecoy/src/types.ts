@@ -191,7 +191,10 @@ export interface RequestMetadata {
   /** User-Agent header */
   user_agent?: string;
 
-  /** All request headers */
+  /**
+   * All request headers. Rules see every value; a detection report sends
+   * credential headers (cookies, tokens, API keys) by name only.
+   */
   headers: Record<string, string>;
 
   /**

@@ -9,6 +9,7 @@
 
 import type { AIReferralBatch } from './referrals/referral-counter';
 import { SDKDetectionRequest, SDKDetectionResponse } from './types';
+import { reportableHeaders } from './report-headers';
 import type { ViolationEvent, IPEnrichmentData } from './rules/types';
 
 export interface ClientConfig {
@@ -295,21 +296,26 @@ export class WebDecoyClient {
 }
 
 /**
- * Shape a detection request for the wire. The detection service reads the
- * client's ALPN list from `tls_info.alpn`; the SDK once documented it as
- * `alpn_protocols`, which the service ignores. Callers still passing the old
- * name get it sent under the name the service reads, and the old key is never
- * sent.
+ * Shape a detection request for the wire. The one place a report takes its
+ * final form, so everything it must never carry is removed here.
+ *
+ * Credential header values (cookies, bearer tokens, API keys) are dropped; see
+ * {@link reportableHeaders}.
+ *
+ * The detection service reads the client's ALPN list from `tls_info.alpn`; the
+ * SDK once documented it as `alpn_protocols`, which the service ignores.
+ * Callers still passing the old name get it sent under the name the service
+ * reads, and the old key is never sent.
  */
 export function toWireDetectionRequest(request: SDKDetectionRequest): SDKDetectionRequest {
-  const tls = request.request_metadata.tls_info;
-  if (!tls || tls.alpn_protocols === undefined) return request;
-  const { alpn_protocols, ...rest } = tls;
-  return {
-    ...request,
-    request_metadata: {
-      ...request.request_metadata,
-      tls_info: { ...rest, alpn: rest.alpn ?? alpn_protocols },
-    },
+  const metadata = {
+    ...request.request_metadata,
+    headers: reportableHeaders(request.request_metadata.headers ?? {}),
   };
+  const tls = metadata.tls_info;
+  if (tls && tls.alpn_protocols !== undefined) {
+    const { alpn_protocols, ...rest } = tls;
+    metadata.tls_info = { ...rest, alpn: rest.alpn ?? alpn_protocols };
+  }
+  return { ...request, request_metadata: metadata };
 }
