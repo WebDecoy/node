@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.1] - 2026-10-15
+
+### Security
+
+- Improved detection-report privacy: recognized credential headers are reported by name with their values withheld. WebDecoy clearance-cookie support is preserved, and local rules and characteristics continue to use the original request.
+
 ## [0.19.0] - 2026-10-12
 
 ### Added
@@ -21,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Browser clearance keeps renewing during long sessions.** The refresh callback previously returned while the cookie was present and scheduled no successor; starting with an existing cookie also scheduled no renewal. `startClearance()` now keeps one lifecycle per page, renews before expiry, notices cookie changes from another tab, and checks again when the page becomes visible. Repeated startup and behavioral upgrades share requests and cached fingerprint collection.
 - **Clearance mint failures are bounded.** Requests time out after 10 seconds and transient failures back off from one minute to five minutes. An explicit server refusal stops automatic attempts on that page. Cookie expiry is only a bounded scheduling hint; server and edge verification remain authoritative.
 - **Accepted behavioral aggregates remain on renewal requests.** The server re-evaluates the evidence on each mint. Browser clearance still does not intercept or automatically replay application fetch/XHR requests.
+
 
 ## [0.18.4] - 2026-10-02
 

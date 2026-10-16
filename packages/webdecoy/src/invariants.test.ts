@@ -209,3 +209,22 @@ describe('the edge build stays edge-compatible', () => {
     }
   });
 });
+
+describe('one answer to "what may a report carry"', () => {
+  it('every detection report is shaped by toWireDetectionRequest', () => {
+    // That function removes credential header values. A second call site for
+    // the detect endpoint would send the visitor's cookies and tokens again,
+    // and read perfectly reasonably while doing it.
+    const callers = sourceFiles().flatMap((f) => hits(f, /\/api\/v1\/sdk\/detect\b/));
+    expect(callers).toHaveLength(1);
+    expect(callers[0]).toMatch(/webdecoy[\\/]src[\\/]client\.ts:/);
+
+    const client = readFileSync(join(PACKAGES, 'webdecoy', 'src', 'client.ts'), 'utf8');
+    const call = client.slice(
+      client.indexOf("'/api/v1/sdk/detect'"),
+      client.indexOf("'/api/v1/sdk/detect'") + 120
+    );
+    expect(call).toContain('toWireDetectionRequest(request)');
+    expect(client).toMatch(/headers: reportableHeaders\(/);
+  });
+});

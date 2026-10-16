@@ -81,6 +81,6 @@ describe('tls_info on the wire', () => {
 
   it('leaves a request without the deprecated name untouched', () => {
     const req = request({ cipher_suites: [4865], alpn: ['h2'] });
-    expect(toWireDetectionRequest(req)).toBe(req);
+    expect(toWireDetectionRequest(req)).toEqual(req);
   });
 });
