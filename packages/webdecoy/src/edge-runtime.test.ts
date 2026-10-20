@@ -153,4 +153,66 @@ describe('Edge Runtime compatibility', () => {
     expect(result.score).toBe(0.25);
     expect(result.replayReason).toBe('token_already_used');
   });
+  it('runs the Vercel clearance middleware in an Edge VM: challenge without a token, pass with one', async () => {
+    const built = buildSync({
+      entryPoints: [path.join(__dirname, 'vercel.ts')],
+      bundle: true,
+      write: false,
+      platform: 'browser',
+      format: 'cjs',
+      logLevel: 'silent',
+    });
+
+    // A real Ed25519 token, minted here and verified inside the VM.
+    const pair = (await crypto.subtle.generateKey({ name: 'Ed25519' }, true, ['sign', 'verify'])) as CryptoKeyPair;
+    const pub = Buffer.from(new Uint8Array(await crypto.subtle.exportKey('raw', pair.publicKey))).toString('base64');
+    const b64url = (b: Uint8Array) =>
+      Buffer.from(b).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    const payload = new TextEncoder().encode(
+      JSON.stringify({ kid: 'k1', tenant: 'org-1', fp: 'wdfp1-x', exp: Math.floor(Date.now() / 1000) + 600 })
+    );
+    const sig = new Uint8Array(await crypto.subtle.sign({ name: 'Ed25519' }, pair.privateKey, payload));
+    const token = `${b64url(payload)}.${b64url(sig)}`;
+    const config = {
+      mode: 'enforce',
+      allow: { search_engines: true, ai_crawlers: true, monitoring: true },
+      keys: [{ kid: 'k1', public_key: pub }],
+      active_credentials: [],
+      denied_fps: [],
+      generated_at: 0,
+      routes: ['/docs/*'],
+    };
+
+    const vm = new EdgeVM();
+    vm.evaluate('var module = { exports: {} }; var exports = module.exports;');
+    vm.evaluate(built.outputFiles[0].text);
+    // The verdict telemetry's delayed flush would otherwise hold jest open
+    // (on Vercel, waitUntil keeps it alive past the response), so the VM's
+    // timers are tracked and cleared once the test has its answer.
+    vm.evaluate(`(() => { const realSetTimeout = globalThis.setTimeout;
+      globalThis.__wdTimers = [];
+      globalThis.setTimeout = (f, ms, ...a) => { const t = realSetTimeout(f, ms, ...a); globalThis.__wdTimers.push(t); return t; };
+      // The stubbed fetch answers at once; a real 3 s abort timer would outlive the test.
+      AbortSignal.timeout = () => new AbortController().signal; })();`);
+    vm.evaluate(`globalThis.fetch = async (u) => String(u).includes('/api/v1/clearance/config')
+      ? new Response(${JSON.stringify(JSON.stringify(config))}, { status: 200 })
+      : new Response('{}', { status: 200 });`);
+
+    const result = await vm.evaluate<Promise<{ challenged: number | null; passed: string | null }>>(`
+      (async () => {
+        const mw = module.exports.clearanceMiddleware({ siteKey: 'org-1', scannerId: 's-1', sensorKey: 'wds1.x' });
+        const ua = 'Mozilla/5.0 (Macintosh) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36';
+        const a = await mw(new Request('https://edge.example/docs/a', { headers: { accept: 'text/html', 'user-agent': ua } }));
+        const b = await mw(new Request('https://edge.example/docs/a', {
+          headers: { accept: 'text/html', 'user-agent': ua, cookie: 'wd_clearance=${token}' },
+        }));
+        return { challenged: a ? a.status : null, passed: b ? b.headers.get('x-middleware-request-x-wd-clearance') : null };
+      })()
+    `);
+
+    vm.evaluate('for (const t of globalThis.__wdTimers) clearTimeout(t);');
+
+    expect(result.challenged).toBe(403);
+    expect(result.passed).toBe('valid');
+  });
 });

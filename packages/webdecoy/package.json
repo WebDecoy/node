@@ -1,6 +1,6 @@
 {
   "name": "@webdecoy/node",
-  "version": "0.19.1",
+  "version": "0.20.0",
   "description": "Web Decoy SDK for Node.js - Bot detection with TLS fingerprinting",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -14,18 +14,23 @@
       "require": "./dist/testing.js",
       "import": "./dist/testing.mjs",
       "types": "./dist/testing.d.ts"
+    },
+    "./vercel": {
+      "require": "./dist/vercel.js",
+      "import": "./dist/vercel.mjs",
+      "types": "./dist/vercel.d.ts"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/testing.ts --format cjs,esm --dts --clean",
-    "dev": "tsup src/index.ts src/testing.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts src/testing.ts src/vercel.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts src/testing.ts src/vercel.ts --format cjs,esm --dts --watch",
     "test": "jest",
     "lint": "eslint src --max-warnings 9",
     "clean": "rm -rf dist",
-    "check:edge": "node ../../scripts/check-edge.mjs src/index.ts"
+    "check:edge": "node ../../scripts/check-edge.mjs src/index.ts src/vercel.ts"
   },
   "keywords": [
     "web-decoy",

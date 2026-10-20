@@ -179,6 +179,21 @@ const wd = new WebDecoy({ rules: [webBotAuth()] }); // denies known-agent impers
 
 Full guide: [**Verify AI agents with Web Bot Auth in Next.js**](docs/verify-ai-agents-web-bot-auth.md).
 
+## Clearance enforcement on Vercel
+
+With a WebDecoy account, the paths you protect can require a clearance token, checked in middleware before the page renders. A real browser earns one automatically; a scraper that never runs JavaScript never gets the page. It works with any framework on Vercel, follows the site's WebDecoy mode (monitor until you switch to enforce) and fails open.
+
+```typescript
+// middleware.ts (Astro, SvelteKit, Nuxt, Remix, static)
+export { default } from '@webdecoy/node/vercel';
+
+// middleware.ts (Next.js)
+import { withClearance } from '@webdecoy/nextjs';
+export default withClearance();
+```
+
+Set `WEBDECOY_SITE_KEY`, `WEBDECOY_SCANNER_ID` and `WEBDECOY_SENSOR_KEY` from **Enforcement, Setup**. Full guide: [Vercel middleware](https://docs.webdecoy.com/installation/vercel-middleware/).
+
 ## What counts as a false positive?
 
 The zero-false-positive claim is about *design*, and it holds if you know the edge cases:
