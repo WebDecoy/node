@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-10-20
+
+### Added
+
+- **Clearance enforcement on Vercel, for any framework.** WebDecoy's clearance validator, the same decision the Cloudflare, AWS and Netlify validators make, now runs as Vercel middleware with no proxy in front of the site. On the paths you protect in WebDecoy, a visitor needs a clearance token: a real browser earns one on a short check page and is sent back, a client that runs no JavaScript never gets the page. Follows the site's WebDecoy mode, so it blocks nothing until you switch to Enforce, and it fails open whenever WebDecoy cannot be reached.
+  - `@webdecoy/node/vercel`: Routing Middleware for Astro, SvelteKit, Nuxt, Remix or static sites (`export { default } from '@webdecoy/node/vercel'`).
+  - `withClearance()` in `@webdecoy/nextjs` for Next.js middleware.
+  - `createClearanceGate()` in `@webdecoy/node` for other edge adapters.
+  - Configured by `WEBDECOY_SITE_KEY`, `WEBDECOY_SCANNER_ID` and `WEBDECOY_SENSOR_KEY`, shown on Enforcement, Setup. Verified search crawlers are recognised by forward-confirmed reverse DNS over HTTPS; signed agents (Web Bot Auth) pass.
+
 ## [0.19.1] - 2026-10-15
 
 ### Security

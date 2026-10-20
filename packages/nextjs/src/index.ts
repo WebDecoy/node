@@ -19,6 +19,11 @@
 export { withWebDecoy, withBotProtection } from './middleware';
 export type { WebDecoyMiddlewareOptions, WithBotProtectionOptions } from './middleware';
 
+// The clearance gate, in this middleware: a protected page needs a WebDecoy
+// clearance token, with no proxy in front of the site.
+export { withClearance } from './clearance';
+export type { ClearanceGateOptions } from './clearance';
+
 // The edge validator's verdict, readable from a route handler or server
 // component — not only from middleware.
 export { getEdgeVerdict } from './edge-verdict';

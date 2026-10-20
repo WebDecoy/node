@@ -73,6 +73,13 @@ export type { TrustedProxies, ResolveClientIpOptions, HeaderSource } from './cli
 export { readEdgeVerdict, EDGE_CLASS_HEADER, EDGE_CLEARANCE_HEADER } from './edge';
 export type { EdgeClass, EdgeVerdict } from './edge';
 
+// The clearance gate itself, for middleware in front of the page: the same
+// decision WebDecoy's Cloudflare, AWS and Netlify validators make, built from
+// their source. `@webdecoy/node/vercel` wraps it for Vercel Routing Middleware
+// and `withClearance()` in @webdecoy/nextjs for Next.js.
+export { createClearanceGate, resolveGateEnv, CLEARANCE_GATE_BUILD } from './clearance';
+export type { ClearanceGateOptions, ClearanceContext, GateEnv, GateOutcome } from './clearance';
+
 // Declared-agent classification. Exported as values for the same reason
 // as readEdgeVerdict: code outside protect() — a route handler deciding whether
 // to serve a paywall, a robots.txt generator — needs the same answer without

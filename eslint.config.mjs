@@ -28,6 +28,10 @@ export default tseslint.config(
       // Lint findings here are not actionable: the fix belongs in the
       // generator, and the file is overwritten on every regeneration.
       '**/*.generated.ts',
+      // The clearance gate, bundled from WebDecoy's validator source
+      // (edge/vercel-validator in the main repo). Same reasoning.
+      '**/*.generated.js',
+      '**/*.generated.d.ts',
     ],
   },
 
