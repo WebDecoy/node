@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-10-22
+
+### Added
+
+- **See which bots the Vercel validator blocked, or would have.** When the validator refuses a request on Vercel, or would in monitor mode, it now reports a match key for it: a salted SHA-256 of the client IP and path, never the values themselves. WebDecoy labels the detection of that same request on the Detections page ("Would block" or "Blocked", with the reason), and the Enforcement page links each count to them. A refused request that was never recorded as a bot detection stays a count only.
+
 ## [0.20.0] - 2026-10-20
 
 ### Added
