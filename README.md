@@ -1,14 +1,15 @@
 # Stealth-scraper tripwires for Node.js
 
-**Catch scrapers with honeypot paths, not fingerprinting.** Deterministic, zero-false-positive bot detection for Express, Fastify, and Next.js — **no account, no API key, three lines of code.**
+**Turn requests to decoy paths into evidence you can act on.** WebDecoy adds tripwires and local rate limits to Express, Fastify, Next.js and Hono — **no account or API key required for local rules.**
 
-Fingerprint- and challenge-based detection loses to purpose-built stealth scrapers ([botasaurus](https://github.com/omkarcloud/botasaurus), undetected-chromedriver, SeleniumBase-UC) that present a genuine browser fingerprint. Tripwires win a different fight: a hidden honeypot path a real user can never reach, so **any request for it is automated by construction** — it detects *intent*, which a better fingerprint can't spoof away.
+Real-browser scrapers can resemble ordinary browsers. A hidden decoy link gives you another signal: a request for a path outside your normal user journey. Inspect the request and your legitimate traffic before choosing to block it.
 
 [![npm version](https://img.shields.io/npm/v/@webdecoy/node.svg)](https://www.npmjs.com/package/@webdecoy/node)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-<!-- TODO: add a short terminal GIF here — a scraper follows the hidden link and gets 403'd.
-![A scraper hits a tripwire and gets blocked](docs/tripwire-demo.gif) -->
+[Install the Express adapter](#framework-integration-still-no-api-key) · [Verify your first detection](#verify-your-first-detection) · [Express documentation](https://docs.webdecoy.com/sdk-plugins/express/?utm_source=github&utm_medium=readme&utm_campaign=node_sdk_install)
+
+The middleware starts in **monitor mode**: it records verdicts without blocking requests. A local rules setup needs no cloud connection; an API key is needed to send detections to the WebDecoy dashboard.
 
 ## Quick start — no API key
 
@@ -31,11 +32,11 @@ const wd = new WebDecoy({
 });
 
 // Inject the invisible, rel=nofollow decoy link into your HTML. Real users
-// never see or follow it; a link-following scraper requests it and is blocked.
+// do not encounter it in the normal UI. Inspect requests to the decoy path.
 html = html.replace('</body>', `${trap.linkHtml}</body>`);
 ```
 
-That's the whole thing. Runs entirely on your server, in memory, with no account and no outbound calls. With the [framework middleware](#framework-integration-still-no-api-key), a tripwire hit becomes a `403` automatically.
+This creates the detector and decoy link; use the [framework middleware](#framework-integration-still-no-api-key) to inspect incoming requests. Local rules run on your server without an account or outbound calls. A tripwire hit is recorded in monitor mode and can return `403` in enforce mode.
 
 Register your own paths, prefixes, or patterns too:
 
@@ -50,20 +51,20 @@ tripwire({
 });
 ```
 
-## Why tripwires beat fingerprinting
+## Why add tripwires
 
-Modern scraping frameworks are built specifically to defeat fingerprint- and challenge-based bot management. They run a real Chrome, strip `navigator.webdriver`, spoof canvas/WebGL/audio, and solve CAPTCHAs. Independent data: residential-proxy scrapers bypass major CDNs 80–99% of the time. Fingerprinting is an arms race you re-run every release.
+Scraping frameworks can use real browsers and alter browser signals. Tripwires add evidence from requested paths alongside other detection methods.
 
-A tripwire sidesteps the arms race. It doesn't ask *"does this look like a bot?"* — it exploits the one thing automation does that humans don't: **following links and hitting paths a person can never see.**
+A tripwire evaluates whether a request matches a decoy or scanner-bait path. A hit is a reason to investigate; legitimate crawlers, link scanners and accidental requests still need consideration.
 
 - **Deterministic.** A hit isn't a probability; it's a request for a path that only exists to trap automation.
-- **Zero-false-positive by design.** The decoy link is invisible and `rel=nofollow`; the default bait paths (`/.env`, `/.git/config`, `/wp-config.php`, …) are never requested by real traffic. (See [false positives](#what-counts-as-a-false-positive) for the honest edge cases.)
-- **Unspoofable.** It catches *intent*, not a fingerprint — so a stealthier browser doesn't help the scraper.
+- **Reviewable.** See [false positives](#what-counts-as-a-false-positive) before enforcing; hidden links and `rel=nofollow` do not guarantee that every requester is malicious.
+- **Independent of browser appearance.** A matching request still matches when the requester uses a real browser.
 - **Instant.** Evaluated locally before any scoring, model, or network call.
 
 ## Framework integration (still no API key)
 
-Tripwires (and the other [local rules](#more-local-rules)) are enforced automatically by the middleware — a hit returns `403`, no extra code.
+The middleware evaluates tripwires and other [local rules](#more-local-rules). The default monitor mode records verdicts without blocking; enable enforcement only after reviewing your traffic.
 
 ### Express
 
@@ -91,6 +92,19 @@ app.use(
 ```
 
 Fastify (`@webdecoy/fastify`), Next.js (`@webdecoy/nextjs`) and Hono (`@webdecoy/hono`) expose the same rule-based middleware.
+
+### Verify your first detection
+
+After mounting the Express middleware above, log `req.webdecoyDecision` from a route after the middleware, then send a controlled request to your **local development app**:
+
+```bash
+curl -i http://localhost:3000/.env
+curl -i http://localhost:3000/
+```
+
+The first request should produce a tripwire verdict; inspect `req.webdecoyDecision?.deniedBy('tripwire')` and `.results`. Monitor mode leaves your route’s HTTP response unchanged, so a `200` or `404` alone does not tell you whether a rule matched. Compare the ordinary `/` request too. Review real traffic before choosing `mode: 'enforce'`.
+
+Need the cloud dashboard? [Create a WebDecoy account](https://app.webdecoy.com/?utm_source=github&utm_medium=readme&utm_campaign=node_sdk_install) and configure your own API key. A keyless local verdict is not a cloud detection.
 
 ### Hono — Workers, Bun, Deno
 
