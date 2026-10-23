@@ -210,11 +210,11 @@ Set `WEBDECOY_SITE_KEY`, `WEBDECOY_SCANNER_ID` and `WEBDECOY_SENSOR_KEY` from **
 
 ## What counts as a false positive?
 
-The zero-false-positive claim is about *design*, and it holds if you know the edge cases:
+Tripwire matching is deterministic, but a match does not guarantee malicious intent. Review these edge cases before enforcing:
 
-- **The honeytoken link** is rendered hidden and `rel=nofollow`, and isn't in your sitemap or nav — so real users and well-behaved crawlers (Googlebot respects `nofollow`) never follow it. A scraper that ignores `nofollow` and follows every link does.
+- **The honeytoken link** is rendered hidden and `rel=nofollow`, outside your normal sitemap and navigation. Those properties reduce ordinary discovery; they do not guarantee that legitimate software will never request it, or that a scraper will follow it.
 - **Aggressive link-prefetchers and unfurl/preview bots** (e.g. some browsers' speculative prefetch, chat link previews) *can* fetch a hidden link. If you serve link previews or use prefetching, start with `dryRun: true` to measure before enforcing, or scope the trap to paths those bots won't touch.
-- **The default scanner-bait paths** (`/.env`, `/.git/config`, …) are never hit by legitimate traffic — but *your own* security scanners or uptime checks might. Exclude them or run `dryRun` first.
+- **The default scanner-bait paths** (`/.env`, `/.git/config`, …) can also be requested by your own security scanners, uptime checks or users troubleshooting a site. Exclude known legitimate activity or run `dryRun` first.
 
 The honest rule of thumb: enforce tripwires you control the surface of, and use `dryRun` to observe any path you're unsure about.
 
