@@ -1,5 +1,7 @@
 # See a WebDecoy tripwire work in Express
 
+![Controlled local test: ordinary traffic returns200; the decoy records DENY in monitor mode and403 only when enforcement is enabled.](docs/tripwire-demo.png)
+
 Run a local server, compare an ordinary request with a controlled decoy request,
 and inspect the verdict before choosing to block. Local rules need no account
 or API key. This demo starts in monitor mode and binds to `127.0.0.1`.

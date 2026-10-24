@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="672" viewBox="0 0 1600 672">
+  <rect width="1600" height="672" fill="#090b0e"/>
+  <rect x="0" y="0" width="12" height="672" fill="#ef3889"/>
+  <text x="80" y="80" font-family="Arial,sans-serif" font-size="26" font-weight="700" fill="#f276ae" letter-spacing="5">WEBDECOY / EXPRESS</text>
+  <text x="78" y="175" font-family="Arial,sans-serif" font-size="66" font-weight="700" fill="#faf7f3">Test your Express bot trap.</text>
+  <text x="80" y="225" font-family="Arial,sans-serif" font-size="28" fill="#b8bbc6">Two requests. A visible verdict. Your choice to enforce.</text>
+  <rect x="80" y="280" width="1440" height="100" rx="12" fill="#141820" stroke="#383d49"/>
+  <text x="110" y="339" font-family="monospace" font-size="30" fill="#faf7f3">GET /</text>
+  <text x="585" y="339" font-family="Arial,sans-serif" font-size="28" fill="#b8bbc6">200</text>
+  <text x="920" y="339" font-family="monospace" font-size="30" fill="#faf7f3">ALLOW</text>
+  <rect x="80" y="400" width="1440" height="100" rx="12" fill="#21151e" stroke="#ef3889"/>
+  <text x="110" y="459" font-family="monospace" font-size="30" fill="#faf7f3">GET /demo-decoy</text>
+  <text x="585" y="459" font-family="Arial,sans-serif" font-size="28" fill="#b8bbc6">404 in monitor</text>
+  <text x="920" y="459" font-family="monospace" font-size="30" fill="#f276ae">DENY</text>
+  <text x="80" y="564" font-family="Arial,sans-serif" font-size="25" fill="#b8bbc6">Enable enforcement on the local demo:</text>
+  <text x="690" y="564" font-family="monospace" font-size="31" font-weight="700" fill="#f276ae">/demo-decoy → 403</text>
+  <text x="80" y="622" font-family="Arial,sans-serif" font-size="21" fill="#858b9a">CONTROLLED LOCAL TEST · NODE SDK 0.21.0 · NO API KEY REQUIRED</text>
+</svg>
