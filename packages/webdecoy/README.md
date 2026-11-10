@@ -58,7 +58,7 @@ Behind a proxy, `req.socket.remoteAddress` is the proxy. Use `resolveClientIp()`
 
 `apiKey` is optional. Without it the SDK runs **local rules only** (tripwires by default, plus any rules you add), makes no network calls, and reports nothing to the dashboard. With it, the SDK also sends suspicious requests for server-side detection and reports rule hits to your dashboard.
 
-The SDK does **not** read `WEBDECOY_API_KEY` from the environment by itself. Pass it as `apiKey`, as above.
+`new WebDecoy()` does **not** read `WEBDECOY_API_KEY` from the environment by itself (only the Vercel middleware does). Pass it as `apiKey`, as above.
 
 To get a key: sign up at [app.webdecoy.com](https://app.webdecoy.com), add your site, then create a key on the **API Keys** page. Keys start with `sk_live_` (production) or `sk_test_` (testing); any other prefix throws when the SDK is constructed. Keep the key on the server and out of committed files.
 
@@ -146,16 +146,35 @@ export default {
 
 Options: everything in [Configuration](#configuration), plus `mode` (default `'monitor'`), `skipPaths`, `trustProxy` (default `1`), `getIP`, `honeytoken` (default on when an `apiKey` is set; injects a hidden trap link into HTML through `decorate()`) and `onBlocked`.
 
-## Clearance enforcement on Vercel
+## Vercel middleware: detection and clearance
 
-With a WebDecoy account, the paths you protect can require a clearance token, checked in Vercel Routing Middleware before the page renders. It follows the site's mode in WebDecoy (monitor until you switch it) and fails open.
+One Routing Middleware file for Astro, SvelteKit, Nuxt, Remix or a static site on Vercel. It reports bots to WebDecoy and runs the clearance gate on the paths you protect, both configured from the project's environment.
 
 ```ts
-// middleware.ts (Astro, SvelteKit, Nuxt, Remix or a static site)
+// middleware.ts (project root)
 export { default } from '@webdecoy/node/vercel';
+
+export const config = {
+  // Everything but static assets. Keep /.well-known: the challenge uses it.
+  matcher: ['/((?!_astro/|_next/static/|favicon.ico|.*\\.(?:css|js|png|jpg|svg|webp|woff2?)$).*)'],
+};
 ```
 
-Next.js sites use `withClearance()` from `@webdecoy/nextjs` instead. Set `WEBDECOY_SITE_KEY`, `WEBDECOY_SCANNER_ID` and `WEBDECOY_SENSOR_KEY` (a secret) from **Enforcement, Setup** in the dashboard. Guide: [Vercel middleware](https://docs.webdecoy.com/installation/vercel-middleware/).
+| Variable | Turns on | Secret? |
+|---|---|---|
+| `WEBDECOY_API_KEY` | Detection: bots, tripwire hits and agents the bot registry names are reported to your dashboard. From the **API Keys** page. | Yes |
+| `WEBDECOY_SITE_KEY`, `WEBDECOY_SCANNER_ID` | The clearance gate, with the sensor key. From **Enforcement, Setup**. | No |
+| `WEBDECOY_SENSOR_KEY` | The clearance gate. From **Enforcement, Setup**. | Yes |
+
+Either half works without the other; with neither, every request passes. Detection starts in monitor mode (the request is served and the verdict rides on the request as `x-webdecoy-decision`, `x-webdecoy-detection-id` and `x-webdecoy-would-block`), and the gate follows the site's mode in WebDecoy, monitor until you switch it. Every failure, WebDecoy unreachable included, lets the request through. Without `WEBDECOY_API_KEY` the middleware is the clearance gate alone, exactly as before.
+
+To customize it, use `createVercelMiddleware(options)` from `@webdecoy/node/vercel`: it takes the core [Configuration](#configuration) options (`rules`, `threatScoreThreshold`, ...), `mode`, `skipPaths`, `trustProxy` and the gate's `siteKey`, `scannerId`, `sensorKey` and `ingest`, each defaulting to the environment. `clearanceMiddleware()` is the gate alone. Next.js sites use `@webdecoy/nextjs/vercel`, the same middleware in Next's types. Guide: [Vercel middleware](https://docs.webdecoy.com/installation/vercel-middleware/).
+
+Verify it with the reserved test User-Agent; a detection labeled **Test** appears within a few seconds:
+
+```bash
+curl -A "WebDecoy-Test/1.0" https://your-site.vercel.app/
+```
 
 ## Environment variables
 
@@ -163,11 +182,12 @@ The SDK reads only these, and only in the features named:
 
 | Variable | Read by |
 |---|---|
+| `WEBDECOY_API_KEY` | The Vercel middleware (`@webdecoy/node/vercel`, `createDetectAndGate()`), when `apiKey` is not passed. |
 | `WEBDECOY_SITE_KEY`, `WEBDECOY_SCANNER_ID`, `WEBDECOY_SENSOR_KEY` | The clearance gate (`@webdecoy/node/vercel`, `createClearanceGate()`), when the matching option is not passed. |
 | `WEBDECOY_INGEST` | The clearance gate, to override its ingest endpoint. Optional. |
 | `NODE_ENV` | The self-hosted captcha: with `production`, a missing or default `secret` throws. |
 
-`WEBDECOY_API_KEY` is a naming convention used in these docs, not something the SDK reads.
+Everywhere else `WEBDECOY_API_KEY` is a naming convention used in these docs: pass its value as `apiKey`.
 
 ## Configuration
 

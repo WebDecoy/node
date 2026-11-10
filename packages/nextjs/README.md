@@ -13,7 +13,47 @@ npm install @webdecoy/nextjs @webdecoy/node
 
 `@webdecoy/node` is the core SDK. Install it directly: rules such as `tripwire()` and `rateLimit()` are imported from it. Requires Next.js 13 or later.
 
-## Quick start: detection middleware
+## Quick start on Vercel: one middleware, from the environment
+
+Detection and clearance enforcement in one file, configured entirely by environment variables:
+
+```ts
+// middleware.ts (Next.js 13-15), or proxy.ts (Next.js 16)
+import webdecoy from '@webdecoy/nextjs/vercel';
+
+export default webdecoy;
+
+export const config = {
+  // Everything but static assets. Keep /.well-known: the challenge uses it.
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+};
+```
+
+Write it as import then export. Next.js 16 does not follow `export { default } from '@webdecoy/nextjs/vercel'` when it checks the file for a default export, and fails the build. `config` must be declared in the file itself.
+
+| Variable | Turns on | Secret? |
+|---|---|---|
+| `WEBDECOY_API_KEY` | Detection: bots, tripwire hits and agents the bot registry names are reported to your dashboard. From the **API Keys** page. | Yes |
+| `WEBDECOY_SITE_KEY`, `WEBDECOY_SCANNER_ID` | The clearance gate, with the sensor key. From **Enforcement, Setup**. | No |
+| `WEBDECOY_SENSOR_KEY` | The clearance gate. From **Enforcement, Setup**. | Yes |
+
+Either half works without the other; with neither, every request passes. Detection starts in monitor mode and passes its verdict to your app as request headers (see [Monitor mode](#monitor-mode)); the gate follows the site's mode in WebDecoy, monitor until you switch it, and hands the page its verdict as `x-wd-clearance` (read it with `getEdgeVerdict()`). Every failure, WebDecoy unreachable included, lets the request through.
+
+To customize, use `createVercelMiddleware(options)` from the same path. It takes the core SDK options (`apiKey`, `rules`, `threatScoreThreshold`, ...), `mode`, `skipPaths`, `trustProxy`, `onBlocked` as `(request, decision) => Response`, and the gate's `siteKey`, `scannerId`, `sensorKey` and `ingest`; the key and the gate's identity come from the environment when not passed.
+
+```ts
+// middleware.ts
+import { createVercelMiddleware } from '@webdecoy/nextjs/vercel';
+import { tripwire } from '@webdecoy/node';
+
+export default createVercelMiddleware({
+  rules: [tripwire({ paths: ['/admin-backup.zip'] })],
+});
+
+export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'] };
+```
+
+## Detection middleware
 
 ```ts
 // middleware.ts (project root, or src/ if you use it)
@@ -31,7 +71,7 @@ export const config = {
 
 ### API key
 
-`apiKey` is optional. Without it the middleware runs local rules only (the built-in tripwire paths by default) and nothing reports to your dashboard. The middleware does **not** read `WEBDECOY_API_KEY` from the environment by itself: pass it as `apiKey`, as above.
+`apiKey` is optional. Without it the middleware runs local rules only (the built-in tripwire paths by default) and nothing reports to your dashboard. `withWebDecoy` does **not** read `WEBDECOY_API_KEY` from the environment by itself: pass it as `apiKey`, as above. (`@webdecoy/nextjs/vercel` does read it.)
 
 To get a key: sign up at [app.webdecoy.com](https://app.webdecoy.com), add your site, then create a key on the **API Keys** page. Keys start with `sk_live_` or `sk_test_`. Set it in your deployment's environment (for example the Vercel project settings), never in committed code.
 
@@ -109,7 +149,7 @@ export const config = {
 
 If any of the first three is missing, the gate passes every request and logs a warning once. Guide: [Vercel middleware](https://docs.webdecoy.com/installation/vercel-middleware/).
 
-A project has one `middleware.ts`, so choose `withWebDecoy` or `withClearance` for it.
+A project has one `middleware.ts`. `@webdecoy/nextjs/vercel` runs detection and the gate together; `withWebDecoy` and `withClearance` are each one half.
 
 ## Pages Router API routes
 
@@ -140,7 +180,7 @@ It reads the socket address and trusts no forwarding header unless you pass `tru
 
 ## Environment variables
 
-Only `withClearance()` reads environment variables (table above). `WEBDECOY_API_KEY` and `WEBDECOY_SECRET` are naming conventions: pass their values as `apiKey` and `secret`.
+`@webdecoy/nextjs/vercel` reads `WEBDECOY_API_KEY` and the clearance variables; `withClearance()` reads the clearance variables (table above). Elsewhere `WEBDECOY_API_KEY` and `WEBDECOY_SECRET` are naming conventions: pass their values as `apiKey` and `secret`.
 
 ## Verify the install
 

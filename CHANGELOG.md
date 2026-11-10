@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **One Vercel middleware for detection and clearance.** `@webdecoy/nextjs/vercel` (new) and `@webdecoy/node/vercel` now run detection and the clearance gate in one middleware, configured from `WEBDECOY_API_KEY`, `WEBDECOY_SITE_KEY`, `WEBDECOY_SCANNER_ID` and `WEBDECOY_SENSOR_KEY`. With the API key set, bots are reported to your dashboard, including the reserved test trigger (`curl -A "WebDecoy-Test/1.0"`), so Astro, SvelteKit, Nuxt and other frameworks on Vercel get detections from middleware alone. Detection starts in monitor mode, and a request the gate refuses, or would refuse, is still reported with the match key that labels its detection. Without `WEBDECOY_API_KEY`, `@webdecoy/node/vercel` is the clearance gate exactly as before; with nothing set, every request passes. `createVercelMiddleware(options)` in both packages customizes it, and `createDetectAndGate()` in `@webdecoy/node` is the framework-free core.
+
+  ```ts
+  // Next.js: middleware.ts, or proxy.ts on Next.js 16
+  import webdecoy from '@webdecoy/nextjs/vercel';
+  export default webdecoy;
+  export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'] };
+  ```
+
+  Next.js 16 fails the build on `export { default } from '@webdecoy/nextjs/vercel'` (it does not follow the re-export when checking for a default export), so import then export.
+
+### Changed
+
+- **Agents the bot registry names are reported to WebDecoy by every adapter**, even when they send browser-like headers. Assistants that fetch a page for a person, such as ChatGPT-User, match none of the generic bot patterns, so local analysis used to treat them as browsers and report nothing.
+
+### Fixed
+
+- **`@webdecoy/node/vercel`, `@webdecoy/node/testing` and `@webdecoy/nextjs/vercel` resolve their types under `"moduleResolution": "node"`**, through `typesVersions`, as well as under `bundler` and `node16`.
+
 ## [0.21.3] - 2026-11-10
 
 ### Fixed

@@ -80,6 +80,11 @@ export type { EdgeClass, EdgeVerdict } from './edge';
 export { createClearanceGate, resolveGateEnv, CLEARANCE_GATE_BUILD } from './clearance';
 export type { ClearanceGateOptions, ClearanceContext, GateEnv, GateOutcome } from './clearance';
 
+// Detection and the gate in one middleware: what `@webdecoy/node/vercel` and
+// `@webdecoy/nextjs/vercel` export by default, each in its framework's shape.
+export { createDetectAndGate } from './detect-and-gate';
+export type { DetectAndGateOptions, DetectAndGateOutcome } from './detect-and-gate';
+
 // Declared-agent classification. Exported as values for the same reason
 // as readEdgeVerdict: code outside protect() — a route handler deciding whether
 // to serve a paywall, a robots.txt generator — needs the same answer without
