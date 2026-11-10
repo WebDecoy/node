@@ -42,7 +42,7 @@ you decide what to do:
 import { NextRequest, NextResponse } from 'next/server';
 import { WebDecoy } from '@webdecoy/node';
 
-const wd = new WebDecoy(); // no API key needed for local verification
+const wd = new WebDecoy({}); // no API key needed for local verification
 
 export async function middleware(req: NextRequest) {
   const verdict = await wd.detectBot(req);

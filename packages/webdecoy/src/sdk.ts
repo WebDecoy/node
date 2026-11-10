@@ -56,7 +56,7 @@ export class WebDecoy {
   private readonly tracer?: Tracer;
   private readonly decisionCache: DecisionCache | null;
 
-  constructor(config: WebDecoyConfig) {
+  constructor(config: WebDecoyConfig = {}) {
     const hasApiKey = !!config.apiKey;
 
     // Validate API key format if provided
