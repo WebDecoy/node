@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **The Vercel validator no longer grants an outage pass because of a rate limit.** Its check of whether WebDecoy can issue clearance tokens now treats a rate-limited answer as working, so a client cannot trigger an outage pass by filling a shared rate-limit bucket. A real outage still lets visitors through as before.
+
 ## [0.21.0] - 2026-10-22
 
 ### Added
