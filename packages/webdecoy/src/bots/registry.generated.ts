@@ -11,7 +11,7 @@
  * agents share User-Agent substrings, so sorting this array changes how real
  * traffic is classified.
  *
- * 186 agents across 15 categories.
+ * 191 agents across 15 categories.
  */
 
 /**
@@ -112,7 +112,9 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "searchgpt", name: "SearchGPT", category: "ai_search_crawler", organization: "OpenAI", baseScore: 75, respectsRobots: true, uaPatterns: ["searchgpt"] },
   { id: "phind", name: "Phind", category: "ai_search_crawler", organization: "Phind", baseScore: 70, respectsRobots: true, uaPatterns: ["phind"] },
   { id: "kagi", name: "Kagi", category: "ai_search_crawler", organization: "Kagi", baseScore: 65, respectsRobots: true, uaPatterns: ["kagi"] },
-  { id: "exa", name: "Exa", category: "ai_search_crawler", organization: "Exa AI", baseScore: 70, respectsRobots: true, uaPatterns: ["exa.ai", "exabot"] },
+  { id: "exa", name: "Exa", category: "ai_search_crawler", organization: "Exa AI", baseScore: 70, respectsRobots: true, uaPatterns: ["exasearchbot", "exabot"] },
+  { id: "shapbot", name: "ShapBot", category: "ai_search_crawler", organization: "Parallel Web Systems", baseScore: 65, respectsRobots: true, uaPatterns: ["shapbot"] },
+  { id: "meta-webindexer", name: "Meta-WebIndexer", category: "ai_search_crawler", organization: "Meta", baseScore: 70, respectsRobots: true, uaPatterns: ["meta-webindexer"] },
   { id: "metaphor", name: "Metaphor", category: "ai_search_crawler", organization: "Metaphor", baseScore: 70, respectsRobots: true, uaPatterns: ["metaphor"] },
   { id: "tavily", name: "Tavily", category: "ai_search_crawler", organization: "Tavily", baseScore: 70, respectsRobots: true, uaPatterns: ["tavily"] },
   { id: "brave-search", name: "BraveSearch", category: "ai_search_crawler", organization: "Brave", baseScore: 65, respectsRobots: true, uaPatterns: ["bravesearch"] },
@@ -124,6 +126,7 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "amazon-buyforme", name: "AmazonBuyForMe", category: "ai_agent", organization: "Amazon", baseScore: 70, respectsRobots: true, uaPatterns: ["amazonbuyforme", "buyforme"] },
   { id: "browser-use", name: "Browser-Use", category: "ai_agent", organization: "Open Source", baseScore: 70, respectsRobots: false, uaPatterns: ["browser-use"] },
   { id: "stagehand", name: "Stagehand", category: "ai_agent", organization: "Browserbase", baseScore: 70, respectsRobots: false, uaPatterns: ["stagehand"] },
+  { id: "manus-user", name: "Manus-User", category: "ai_agent", organization: "Manus", baseScore: 70, respectsRobots: false, uaPatterns: ["manus-user"] },
   { id: "multion", name: "MultiOn", category: "ai_agent", organization: "MultiOn", baseScore: 70, respectsRobots: false, uaPatterns: ["multion"] },
   { id: "iboubot", name: "IbouBot", category: "search_crawler", organization: "Ibou", baseScore: 30, respectsRobots: true, uaPatterns: ["iboubot"] },
   { id: "googlebot", name: "Googlebot", category: "search_crawler", organization: "Google", baseScore: 30, respectsRobots: true, uaPatterns: ["googlebot"] },
@@ -256,6 +259,8 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "chatgpt-user", name: "ChatGPT-User", category: "ai_assistant", organization: "OpenAI", baseScore: 85, respectsRobots: true, uaPatterns: ["chatgpt-user"] },
   { id: "perplexity-user", name: "Perplexity-User", category: "ai_assistant", organization: "Perplexity AI", baseScore: 75, respectsRobots: false, uaPatterns: ["perplexity-user"] },
   { id: "mistralai-user", name: "MistralAI-User", category: "ai_assistant", organization: "Mistral AI", baseScore: 75, respectsRobots: true, uaPatterns: ["mistralai-user"] },
+  { id: "exauser", name: "ExaUser", category: "ai_assistant", organization: "Exa AI", baseScore: 70, respectsRobots: false, uaPatterns: ["exauser"] },
+  { id: "shap-user", name: "Shap-User", category: "ai_assistant", organization: "Parallel Web Systems", baseScore: 65, respectsRobots: false, uaPatterns: ["shap-user"] },
   { id: "meta-externalfetcher", name: "Meta-ExternalFetcher", category: "ai_assistant", organization: "Meta", baseScore: 70, respectsRobots: false, uaPatterns: ["meta-externalfetcher"] },
   { id: "gemini-deep-research", name: "Gemini-Deep-Research", category: "ai_assistant", organization: "Google", baseScore: 65, respectsRobots: true, uaPatterns: ["gemini-deep-research"] },
   { id: "copilot", name: "Microsoft Copilot", category: "ai_assistant", organization: "Microsoft", baseScore: 65, respectsRobots: true, uaPatterns: ["copilot"] },
