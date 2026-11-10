@@ -26,6 +26,12 @@ const ctx = (over: Partial<RuleContext> = {}): RuleContext => ({
 });
 
 describe('the decision the SDK returns', () => {
+  it('constructs with no config at all', async () => {
+    const wd = new WebDecoy();
+    const d = await wd.protect(req({ path: '/.env' }));
+    expect(d.deniedBy('tripwire')).toBe(true);
+  });
+
   it('keeps `allowed` meaning what it meant before', async () => {
     const wd = new WebDecoy({ rules: [] });
     const d = await wd.protect(req());
