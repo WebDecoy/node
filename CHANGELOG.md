@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.0] - 2026-11-10
+
 ### Added
 
 - **One Vercel middleware for detection and clearance.** `@webdecoy/nextjs/vercel` (new) and `@webdecoy/node/vercel` now run detection and the clearance gate in one middleware, configured from `WEBDECOY_API_KEY`, `WEBDECOY_SITE_KEY`, `WEBDECOY_SCANNER_ID` and `WEBDECOY_SENSOR_KEY`. With the API key set, bots are reported to your dashboard, including the reserved test trigger (`curl -A "WebDecoy-Test/1.0"`), so Astro, SvelteKit, Nuxt and other frameworks on Vercel get detections from middleware alone. Detection starts in monitor mode, and a request the gate refuses, or would refuse, is still reported with the match key that labels its detection. Without `WEBDECOY_API_KEY`, `@webdecoy/node/vercel` is the clearance gate exactly as before; with nothing set, every request passes. `createVercelMiddleware(options)` in both packages customizes it, and `createDetectAndGate()` in `@webdecoy/node` is the framework-free core.
