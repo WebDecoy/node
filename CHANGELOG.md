@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Documentation
+
+- **`@webdecoy/fastify`, `@webdecoy/nextjs` and `@webdecoy/hono` now ship a README**, so their npm pages show install steps, a working snippet, options, monitor mode and the environment variables each one reads.
+- **The `@webdecoy/node` README describes the current API.** `apiKey` is optional (local rules only without it), `protect()` returns a decision with `conclusion`, `results` and `deniedBy()`, adapters start in monitor mode, and `WEBDECOY_API_KEY` is not read automatically. API keys are created on the **API Keys** page.
+- **Install snippets add `@webdecoy/node` next to each adapter**, since rules such as `tripwire()` are imported from it.
+- **The documented `apiUrl` default is `https://in.webdecoy.com`**, matching the code. `new WebDecoy()` with no argument in two examples is now `new WebDecoy({})`: the constructor requires a config object.
+
 ## [0.21.2] - 2026-11-10
 
 ### Changed

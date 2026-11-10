@@ -69,8 +69,12 @@ The middleware evaluates tripwires and other [local rules](#more-local-rules). T
 ### Express
 
 ```bash
-npm install @webdecoy/express
+npm install @webdecoy/express @webdecoy/node
 ```
+
+Install `@webdecoy/node` alongside every adapter: `tripwire()`, `rateLimit()` and the other rules are imported from it.
+
+The SDK and adapters do not read `WEBDECOY_API_KEY` from the environment. Without an `apiKey` option they run local rules only; to report to the dashboard, pass `apiKey: process.env.WEBDECOY_API_KEY`.
 
 ```typescript
 import express from 'express';
@@ -109,7 +113,7 @@ Need the cloud dashboard? [Create a WebDecoy account](https://app.webdecoy.com/?
 ### Hono — Workers, Bun, Deno
 
 ```bash
-npm install @webdecoy/hono
+npm install @webdecoy/hono @webdecoy/node
 ```
 
 ```typescript
@@ -177,7 +181,7 @@ from someone forging its identity.
 ```typescript
 import { WebDecoy } from '@webdecoy/node';
 
-const wd = new WebDecoy();
+const wd = new WebDecoy({});
 
 const verdict = await wd.detectBot(request); // a WHATWG Request, or { method, url, headers }
 // verdict.status: 'verified' | 'impersonation' | 'claimed' | 'none'
@@ -220,7 +224,7 @@ The honest rule of thumb: enforce tripwires you control the surface of, and use 
 
 ## Optional: the WebDecoy platform (API key)
 
-Everything above runs locally and free, forever. Add an API key to turn on the hosted platform when you want deeper detection and visibility:
+The local rules above run without an account. Add an API key to turn on the hosted platform when you want deeper detection and visibility:
 
 - **`protect()`** — full server-side analysis (a threat score + allow/block/challenge decision), not just local rules.
 - **TLS fingerprinting** — when you pass the client's TLS ClientHello details in `tls_info`, the server computes a JA3 fingerprint, matches it against known automation (curl, wget, Selenium, …) and checks it against the claimed browser (TLS↔UA mismatch). The adapters do not fill `tls_info`, because Node does not expose the client's ClientHello; this applies when your own TLS terminator can supply it.
@@ -231,7 +235,7 @@ Everything above runs locally and free, forever. Add an API key to turn on the h
 import { WebDecoy } from '@webdecoy/node';
 
 const wd = new WebDecoy({
-  apiKey: process.env.WEBDECOY_API_KEY, // from app.webdecoy.com
+  apiKey: process.env.WEBDECOY_API_KEY, // not read automatically: pass it
 });
 
 const result = await wd.protect({
@@ -243,6 +247,8 @@ const result = await wd.protect({
   timestamp: Date.now(),
 });
 
+// result.conclusion: 'ALLOW' | 'DENY' | 'CHALLENGE' | 'ERROR'.
+// protect() blocks nothing itself; refuse only once you have reviewed decisions.
 if (!result.allowed) {
   return res.status(403).json({ error: 'Access denied' });
 }
@@ -251,14 +257,14 @@ if (!result.allowed) {
 ### Getting an API key
 
 1. Sign up at [app.webdecoy.com](https://app.webdecoy.com)
-2. Create an organization and a property for your app
-3. Generate an API key in Settings (`sk_live_` for production, `sk_test_` for testing)
+2. Add your site
+3. Create an API key on the **API Keys** page (`sk_live_` for production, `sk_test_` for testing)
 
 ## How it works
 
 | Tier | What | Needs a key? |
 |------|------|:---:|
-| **0 — Tripwires** | Requests for hidden honeypot paths are blocked immediately, before any scoring. Deterministic, zero-FP. | No |
+| **0 — Tripwires** | Requests for decoy and scanner-bait paths match before any scoring (recorded in monitor mode, refused in enforce mode). Deterministic matching; see [false positives](#what-counts-as-a-false-positive). | No |
 | **1 — Local analysis** | Fast on-server heuristics: suspicious/missing headers, datacenter IPs, known bot user-agents, missing `Sec-CH-UA`. | No |
 | **2 — Server verification** | Known-bot database, IP reputation, GeoIP (Tor/VPN/proxy), and JA3 TLS fingerprinting with TLS↔UA mismatch when `tls_info` is supplied. | Yes |
 
@@ -437,8 +443,8 @@ The same option is accepted by `webdecoyCaptcha()` / `createCaptchaHandler()`, a
 
 ```typescript
 const wd = new WebDecoy({
-  apiKey: 'sk_live_xxxxx',                 // optional — only for platform features
-  apiUrl: 'https://ingest.webdecoy.com',   // optional (defaults to production)
+  apiKey: process.env.WEBDECOY_API_KEY,    // optional — only for platform features
+  apiUrl: 'https://in.webdecoy.com',       // optional (this is the default)
   enableTLSFingerprinting: true,           // optional (default: true)
   threatScoreThreshold: 70,                // optional, 0–100 (default: 80)
   timeout: 5000,                           // optional, ms (default: 5000)
@@ -582,7 +588,7 @@ See [examples](./examples) for complete working setups — e.g. [express-basic](
 
 ## FAQ
 
-**Will this slow down my app?** Local rules (tripwires, rate limiting) add <1ms and make no network calls. Server verification (with a key) typically takes 50–200ms and runs asynchronously for low-risk requests.
+**Will this slow down my app?** Local rules (tripwires, in-memory rate limiting) run in-process and make no network calls. With an API key, a request goes to WebDecoy only when local analysis flags it for verification; that call is awaited, bounded by `timeout` (default 5000 ms), and fails open. Requests local analysis does not flag make no call.
 
 **What if the WebDecoy service is down?** Local rules are unaffected (they never call out). Platform `protect()` fails open by default, so requests continue.
 
