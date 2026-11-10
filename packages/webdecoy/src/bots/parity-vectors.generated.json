@@ -636,13 +636,13 @@
     "matched": true
   },
   {
-    "userAgent": "exa.ai",
+    "userAgent": "exasearchbot",
     "id": "exa",
     "category": "ai_search_crawler",
     "matched": true
   },
   {
-    "userAgent": "Mozilla/5.0 (compatible; exa.ai/1.0; +http://example.com/bot)",
+    "userAgent": "Mozilla/5.0 (compatible; exasearchbot/1.0; +http://example.com/bot)",
     "id": "exa",
     "category": "ai_search_crawler",
     "matched": true
@@ -657,6 +657,18 @@
     "userAgent": "Mozilla/5.0 (compatible; exabot/1.0; +http://example.com/bot)",
     "id": "exa",
     "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "exauser",
+    "id": "exauser",
+    "category": "ai_assistant",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; exauser/1.0; +http://example.com/bot)",
+    "id": "exauser",
+    "category": "ai_assistant",
     "matched": true
   },
   {
@@ -1200,6 +1212,18 @@
     "matched": true
   },
   {
+    "userAgent": "manus-user",
+    "id": "manus-user",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; manus-user/1.0; +http://example.com/bot)",
+    "id": "manus-user",
+    "category": "ai_agent",
+    "matched": true
+  },
+  {
     "userAgent": "mechanize",
     "id": "mechanize",
     "category": "generic_scraper",
@@ -1233,6 +1257,18 @@
     "userAgent": "Mozilla/5.0 (compatible; meta-externalfetcher/1.0; +http://example.com/bot)",
     "id": "meta-externalfetcher",
     "category": "ai_assistant",
+    "matched": true
+  },
+  {
+    "userAgent": "meta-webindexer",
+    "id": "meta-webindexer",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; meta-webindexer/1.0; +http://example.com/bot)",
+    "id": "meta-webindexer",
+    "category": "ai_search_crawler",
     "matched": true
   },
   {
@@ -1905,6 +1941,30 @@
     "userAgent": "Mozilla/5.0 (compatible; seznambot/1.0; +http://example.com/bot)",
     "id": "seznam",
     "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "shap-user",
+    "id": "shap-user",
+    "category": "ai_assistant",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; shap-user/1.0; +http://example.com/bot)",
+    "id": "shap-user",
+    "category": "ai_assistant",
+    "matched": true
+  },
+  {
+    "userAgent": "shapbot",
+    "id": "shapbot",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; shapbot/1.0; +http://example.com/bot)",
+    "id": "shapbot",
+    "category": "ai_search_crawler",
     "matched": true
   },
   {
