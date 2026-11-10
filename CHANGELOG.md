@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.2] - 2026-11-10
+
+### Changed
+
+- **Five more AI agents are recognized by name.** Meta-WebIndexer and ShapBot (Parallel) are classified as search crawlers, ExaUser and Shap-User as AI assistants, and Manus-User as an AI agent. Exa's crawler now matches on its product token, so ExaUser, which fetches a page when a user asks for it, is no longer counted as Exa's search crawler. The Vercel validator's bundled agent table carries the same update.
+
 ## [0.21.1] - 2026-11-10
 
 ### Fixed
