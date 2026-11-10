@@ -21,6 +21,16 @@
       "types": "./dist/vercel.d.ts"
     }
   },
+  "typesVersions": {
+    "*": {
+      "testing": [
+        "./dist/testing.d.ts"
+      ],
+      "vercel": [
+        "./dist/vercel.d.ts"
+      ]
+    }
+  },
   "files": [
     "dist"
   ],

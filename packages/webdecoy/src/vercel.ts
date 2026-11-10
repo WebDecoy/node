@@ -1,9 +1,8 @@
 /**
- * WebDecoy clearance for Vercel Routing Middleware, any framework.
+ * WebDecoy for Vercel Routing Middleware, any framework.
  *
  * Astro, SvelteKit, Nuxt, Remix or a static site on Vercel: put this in
- * `middleware.ts` at the project root and set WEBDECOY_SITE_KEY,
- * WEBDECOY_SCANNER_ID and WEBDECOY_SENSOR_KEY in the project's environment.
+ * `middleware.ts` at the project root.
  *
  * ```ts
  * // middleware.ts
@@ -15,17 +14,31 @@
  * };
  * ```
  *
- * Next.js sites use `withClearance()` from @webdecoy/nextjs instead.
+ * It reads the project's environment:
  *
- * Starts in whatever mode the site has in WebDecoy, monitor by default, and
- * enforces only once it is switched there and paths are protected.
+ *  - `WEBDECOY_API_KEY` turns on detection: the request is classified and bots
+ *    are reported to WebDecoy, including the reserved test trigger
+ *    (`curl -A "WebDecoy-Test/1.0" https://your-site/`).
+ *  - `WEBDECOY_SITE_KEY`, `WEBDECOY_SCANNER_ID` and `WEBDECOY_SENSOR_KEY` turn on
+ *    the clearance gate for the paths the site protects in WebDecoy.
+ *
+ * Either half works without the other, and with neither every request passes.
+ * Detection starts in monitor mode and the gate in whatever mode the site has
+ * in WebDecoy (monitor by default), so installing this changes no response
+ * until you choose to enforce. Every failure lets the request through.
+ *
+ * Next.js sites use `@webdecoy/nextjs/vercel`, the same middleware in Next's
+ * types.
  */
 
 import { createClearanceGate } from './clearance';
 import type { ClearanceGateOptions, ClearanceContext } from './clearance';
 import type { GateOutcome } from './clearance';
+import { createDetectAndGate } from './detect-and-gate';
+import type { DetectAndGateOptions } from './detect-and-gate';
 
 export type { ClearanceGateOptions, ClearanceContext } from './clearance';
+export type { DetectAndGateOptions } from './detect-and-gate';
 
 /**
  * Turn the gate's answer into what Vercel middleware returns.
@@ -50,7 +63,10 @@ export function toMiddlewareResponse(outcome: GateOutcome): Response | undefined
   return new Response(null, { headers: instructions });
 }
 
-/** Routing Middleware bound to one site. Options default to the environment. */
+/**
+ * The clearance gate alone, as Routing Middleware. Options default to the
+ * environment. Reports no detections; {@link createVercelMiddleware} does both.
+ */
 export function clearanceMiddleware(
   options: ClearanceGateOptions = {}
 ): (request: Request, context?: ClearanceContext) => Promise<Response | undefined> {
@@ -64,6 +80,37 @@ export function clearanceMiddleware(
   };
 }
 
+/**
+ * Detection and the clearance gate as Routing Middleware, for customizing
+ * what the default export does. Options default to the environment.
+ *
+ * ```ts
+ * // middleware.ts
+ * import { createVercelMiddleware } from '@webdecoy/node/vercel';
+ * import { tripwire } from '@webdecoy/node';
+ *
+ * export default createVercelMiddleware({
+ *   rules: [tripwire({ paths: ['/admin-backup.zip'] })],
+ * });
+ *
+ * export const config = { matcher: ['/((?!_astro/|favicon.ico).*)'] };
+ * ```
+ *
+ * Without an API key it is exactly {@link clearanceMiddleware}.
+ */
+export function createVercelMiddleware(
+  options: DetectAndGateOptions = {}
+): (request: Request, context?: ClearanceContext) => Promise<Response | undefined> {
+  const decide = createDetectAndGate(options);
+  return async (request, context) => {
+    try {
+      return toMiddlewareResponse((await decide(request, context)).outcome);
+    } catch {
+      return undefined; // fail open
+    }
+  };
+}
+
 /** The middleware configured from WEBDECOY_* environment variables. */
-const middleware = clearanceMiddleware();
+const middleware = createVercelMiddleware();
 export default middleware;

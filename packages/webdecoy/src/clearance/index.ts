@@ -50,7 +50,8 @@ export interface ClearanceContext {
   waitUntil?: (promise: Promise<unknown>) => void;
 }
 
-function fromEnv(name: string): string {
+/** One environment variable, trimmed; empty when unset or when there is no `process`. */
+export function fromEnv(name: string): string {
   try {
     const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env;
     return (env?.[name] ?? '').trim();

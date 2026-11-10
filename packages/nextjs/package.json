@@ -9,18 +9,30 @@
       "require": "./dist/index.js",
       "import": "./dist/index.mjs",
       "types": "./dist/index.d.ts"
+    },
+    "./vercel": {
+      "require": "./dist/vercel.js",
+      "import": "./dist/vercel.mjs",
+      "types": "./dist/vercel.d.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "vercel": [
+        "./dist/vercel.d.ts"
+      ]
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts src/vercel.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts src/vercel.ts --format cjs,esm --dts --watch",
     "test": "jest --passWithNoTests",
     "lint": "eslint src --max-warnings 2",
     "clean": "rm -rf dist",
-    "check:edge": "node ../../scripts/check-edge.mjs src/index.ts"
+    "check:edge": "node ../../scripts/check-edge.mjs src/index.ts src/vercel.ts"
   },
   "keywords": [
     "web-decoy",

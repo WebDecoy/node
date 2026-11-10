@@ -39,6 +39,13 @@ describe('analyzeRequest forwarding decision', () => {
     expect(a.needs_verification).toBe(true);
   });
 
+  it('forwards an agent the bot registry names, even with browser headers', () => {
+    const ua = 'Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0 Safari/537.36; ChatGPT-User/1.0';
+    const a = analyzeRequest(base({ user_agent: ua }));
+    expect(a.suspicious_headers).toBe(true);
+    expect(a.needs_verification).toBe(true);
+  });
+
   it('forwards when TLS info is present, for fingerprinting', () => {
     const a = analyzeRequest(base({ tls_info: { ja3: 'abc' } } as Partial<RequestMetadata>));
     expect(a.needs_verification).toBe(true);

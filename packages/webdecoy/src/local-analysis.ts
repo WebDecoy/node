@@ -4,6 +4,7 @@
  */
 
 import { LocalAnalysis, RequestMetadata } from './types';
+import { matchUserAgent } from './bots';
 
 /**
  * Known datacenter IP ranges (CIDR notation)
@@ -94,8 +95,13 @@ function hasSuspiciousHeaders(metadata: RequestMetadata): boolean {
   const userAgent = metadata.user_agent || '';
   const headers = metadata.headers || {};
 
-  // Check for bot-like user agents
-  const hasBotUA = SUSPICIOUS_PATTERNS.userAgents.some((pattern) => pattern.test(userAgent));
+  // Check for bot-like user agents. An agent the bot registry names counts
+  // too: several (ChatGPT-User, Claude-User and other assistants fetching for a
+  // person) match none of the generic patterns and send browser-like headers,
+  // and they are exactly the traffic a site installs this to see.
+  const hasBotUA =
+    SUSPICIOUS_PATTERNS.userAgents.some((pattern) => pattern.test(userAgent)) ||
+    matchUserAgent(userAgent) !== undefined;
 
   // Check for missing common browser headers
   const missingCommonHeaders = SUSPICIOUS_PATTERNS.missingHeaders.filter(
