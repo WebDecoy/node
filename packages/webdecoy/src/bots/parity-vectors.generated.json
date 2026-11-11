@@ -228,6 +228,18 @@
     "matched": true
   },
   {
+    "userAgent": "barkrowler",
+    "id": "barkrowler",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; barkrowler/1.0; +http://example.com/bot)",
+    "id": "barkrowler",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
     "userAgent": "beautifulsoup",
     "id": "beautifulsoup",
     "category": "generic_scraper",
@@ -320,6 +332,18 @@
   {
     "userAgent": "Mozilla/5.0 (compatible; luminati/1.0; +http://example.com/bot)",
     "id": "bright-data",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "brightbot",
+    "id": "brightbot",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; brightbot/1.0; +http://example.com/bot)",
+    "id": "brightbot",
     "category": "commercial_scraper",
     "matched": true
   },
@@ -489,6 +513,30 @@
     "userAgent": "Mozilla/5.0 (compatible; claudebot/1.0; +http://example.com/bot)",
     "id": "claudebot",
     "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "cloudflarebrowserrenderingcrawler",
+    "id": "cloudflare-crawl",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; cloudflarebrowserrenderingcrawler/1.0; +http://example.com/bot)",
+    "id": "cloudflare-crawl",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "developers.cloudflare.com/security-center",
+    "id": "cloudflare-security-center",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; developers.cloudflare.com/security-center/1.0; +http://example.com/bot)",
+    "id": "cloudflare-security-center",
+    "category": "security_scanner",
     "matched": true
   },
   {
@@ -1272,6 +1320,18 @@
     "matched": true
   },
   {
+    "userAgent": "isonsearchbot",
+    "id": "isonsearchbot",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; isonsearchbot/1.0; +http://example.com/bot)",
+    "id": "isonsearchbot",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
     "userAgent": "java/",
     "id": "java",
     "category": "generic_scraper",
@@ -1449,6 +1509,18 @@
     "userAgent": "Mozilla/5.0 (compatible; linkupbot/1.0; +http://example.com/bot)",
     "id": "linkupbot",
     "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "livelapbot",
+    "id": "livelapbot",
+    "category": "feed_reader",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; livelapbot/1.0; +http://example.com/bot)",
+    "id": "livelapbot",
+    "category": "feed_reader",
     "matched": true
   },
   {
@@ -1884,6 +1956,18 @@
     "matched": true
   },
   {
+    "userAgent": "palo alto networks",
+    "id": "paloalto-xpanse",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; palo alto networks/1.0; +http://example.com/bot)",
+    "id": "paloalto-xpanse",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
     "userAgent": "perplexity-user",
     "id": "perplexity-user",
     "category": "ai_assistant",
@@ -2076,6 +2160,18 @@
     "matched": true
   },
   {
+    "userAgent": "recordedfuture",
+    "id": "recordedfuture",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; recordedfuture/1.0; +http://example.com/bot)",
+    "id": "recordedfuture",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
     "userAgent": "reddit",
     "id": "reddit",
     "category": "fetcher",
@@ -2096,6 +2192,18 @@
   {
     "userAgent": "Mozilla/5.0 (compatible; reflectionbot/1.0; +http://example.com/bot)",
     "id": "reflectionbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "riverbot",
+    "id": "riverbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; riverbot/1.0; +http://example.com/bot)",
+    "id": "riverbot",
     "category": "training_crawler",
     "matched": true
   },
@@ -2204,6 +2312,18 @@
   {
     "userAgent": "Mozilla/5.0 (compatible; screaming frog/1.0; +http://example.com/bot)",
     "id": "screaming-frog",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "scrunchbot",
+    "id": "scrunchbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; scrunchbot/1.0; +http://example.com/bot)",
+    "id": "scrunchbot",
     "category": "seo_crawler",
     "matched": true
   },
@@ -2448,6 +2568,18 @@
     "matched": true
   },
   {
+    "userAgent": "stripebot",
+    "id": "stripebot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; stripebot/1.0; +http://example.com/bot)",
+    "id": "stripebot",
+    "category": "fetcher",
+    "matched": true
+  },
+  {
     "userAgent": "tavily",
     "id": "tavily",
     "category": "ai_search_crawler",
@@ -2553,6 +2685,18 @@
     "userAgent": "Mozilla/5.0 (compatible; velenpublicwebcrawler/1.0; +http://example.com/bot)",
     "id": "velenpublicwebcrawler",
     "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "virustotalcloud",
+    "id": "virustotal-cloud",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; virustotalcloud/1.0; +http://example.com/bot)",
+    "id": "virustotal-cloud",
+    "category": "security_scanner",
     "matched": true
   },
   {
@@ -2736,6 +2880,18 @@
     "matched": true
   },
   {
+    "userAgent": "ev-crawler",
+    "id": "ev-crawler",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; ev-crawler/1.0; +http://example.com/bot)",
+    "id": "ev-crawler",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
     "userAgent": "img2dataset",
     "id": "img2dataset",
     "category": "training_crawler",
@@ -2792,6 +2948,18 @@
   {
     "userAgent": "Mozilla/5.0 (compatible; trendictionbot/1.0; +http://example.com/bot)",
     "id": "trendictionbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "webxtrendbot",
+    "id": "webxtrendbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; webxtrendbot/1.0; +http://example.com/bot)",
+    "id": "webxtrendbot",
     "category": "seo_crawler",
     "matched": true
   },
