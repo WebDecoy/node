@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.1] - 2026-11-11
+
+### Changed
+
+- **PetalBot (Huawei's Petal Search crawler) is recognized by name** and classified as a search crawler. Its requests were previously reported as an unnamed bot. The Vercel validator's bundled agent table carries the same update.
+
 ## [0.22.0] - 2026-11-10
 
 ### Added
