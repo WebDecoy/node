@@ -1608,6 +1608,18 @@
     "matched": true
   },
   {
+    "userAgent": "petalbot",
+    "id": "petalbot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; petalbot/1.0; +http://example.com/bot)",
+    "id": "petalbot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
     "userAgent": "phantomjs",
     "id": "phantomjs",
     "category": "headless_browser",
