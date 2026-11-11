@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.2] - 2026-11-11
+
+### Changed
+
+- **29 more bots are recognized by name** (221 in total). Training crawlers: ElevenlabsCrawler, KimiBot, MoonshotBot, ChatGLM-Spider. AI search crawlers: Kimi-SearchBot, KeenableBot, AzureAI-SearchBot, GrokBot. AI agents and assistants: OpenCode-User, Kimi-User, Keenable-User, ElevenlabsBot, KlaviyoAIBot. Search crawlers: Bravebot, Coc Coc, YisouSpider, YepBot. SEO and marketing crawlers: meta-externalads, DataForSeoBot, SERankingBacklinksBot, AwarioBot, SEOJuice-SearchBot, trendictionbot, HubSpot Crawler. Fetchers: AdsBot-Google, Google-Read-Aloud, Google-Safety, OAI-AdsBot, KakaoBot.
+- **Qwant and Ibou are recognized by their current user agents** (`Qwantbot`, `ibou-search`). Only their older names were matched before.
+- The Vercel validator's bundled agent table carries the same update.
+
 ## [0.22.1] - 2026-11-11
 
 ### Changed
