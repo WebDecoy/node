@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.3] - 2026-11-11
+
+### Changed
+
+- **14 more bots are recognized by name** (235 in total). Training crawler: RiverBot. AI search crawler: IsonSearchBot. SEO and marketing crawlers: Barkrowler, Scrunchbot, webXtrendBot. Security scanners: Palo Alto Networks Cortex Xpanse, Recorded Future, Cloudflare Security Center, VirusTotal. Fetcher: Stripebot. Feed reader: LivelapBot. Commercial scrapers: Brightbot, Cloudflare Browser Rendering Crawler, ev-crawler.
+- The Vercel validator's bundled agent table carries the same update.
+
 ## [0.22.2] - 2026-11-11
 
 ### Changed
