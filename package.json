@@ -17,11 +17,12 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "test": "turbo run test && npm run test:playground",
+    "test": "turbo run test && npm run test:playground && npm run test:signed-agent",
     "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "check:edge": "npm run check:edge -w @webdecoy/node -w @webdecoy/nextjs -w @webdecoy/hono",
-    "test:playground": "npm ci --prefix playgrounds/express --ignore-scripts --no-audit --no-fund && npm test --prefix playgrounds/express"
+    "test:playground": "npm ci --prefix playgrounds/express --ignore-scripts --no-audit --no-fund && npm test --prefix playgrounds/express",
+    "test:signed-agent": "npm ci --prefix playgrounds/signed-agent --ignore-scripts --no-audit --no-fund && npm test --prefix playgrounds/signed-agent"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
