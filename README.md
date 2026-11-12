@@ -1,13 +1,41 @@
-# Stealth-scraper tripwires for Node.js
+<p align="center">
+  <img src="docs/assets/node-banner.png" alt="WebDecoy Node.js SDK: bot detection, AI agent verification and local rules for Express, Fastify, Next.js and Hono. Example tripwire verdict shown in monitor mode." width="100%">
+</p>
 
-**Turn requests to decoy paths into evidence you can act on.** WebDecoy adds tripwires and local rate limits to Express, Fastify, Next.js and Hono — **no account or API key required for local rules.**
+# WebDecoy for Node.js — Bot Detection & AI Agent Verification
 
-Real-browser scrapers can resemble ordinary browsers. A hidden decoy link gives you another signal: a request for a path outside your normal user journey. Inspect the request and your legitimate traffic before choosing to block it.
+**Know the bots. Own the decision.** Add bot detection and protection to your Node.js app with honeypot tripwires, rate limiting, AI crawler policies and signed-agent verification. Use local rules without an account or API key; connect WebDecoy when you want hosted analysis and dashboard reporting.
 
-[![npm version](https://img.shields.io/npm/v/@webdecoy/node.svg)](https://www.npmjs.com/package/@webdecoy/node)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/WebDecoy/node/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/WebDecoy/node/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/%40webdecoy%2Fnode?color=dc318c)](https://www.npmjs.com/package/@webdecoy/node)
+[![TypeScript](https://img.shields.io/badge/TypeScript-types_included-3178c6)](packages/webdecoy/src/index.ts)
+[![License: MIT](https://img.shields.io/badge/License-MIT-dc318c)](LICENSE)
 
-[Install the Express adapter](#framework-integration-still-no-api-key) · [Verify your first detection](#verify-your-first-detection) · [Express documentation](https://docs.webdecoy.com/sdk-plugins/express/?utm_source=github&utm_medium=readme&utm_campaign=node_sdk_install)
+[Quick start](#quick-start--no-api-key) · [Choose your framework](#choose-your-framework) · [Verify a detection](#verify-your-first-detection) · [SDK documentation](https://docs.webdecoy.com/sdk-plugins/node-sdk/?utm_source=github&utm_medium=readme&utm_campaign=node_sdk_install) · [Examples](#examples)
+
+## What you can do
+
+| Need | Start here |
+| --- | --- |
+| Detect requests to hidden decoys and scanner-bait paths | [Honeypot tripwires](#why-add-tripwires) |
+| Limit repeated requests to your app or API | [Local rules](#more-local-rules) and [shared rate limits](#rate-limits-across-more-than-one-process) |
+| Check supported signed AI-agent identities | [Web Bot Auth verification](#verify-ai-agents-web-bot-auth) |
+| Publish and enforce an AI crawler policy | [One bot policy](#one-bot-policy-published-and-enforced) |
+| Add browser interaction evidence to server decisions | [Client signals](#catching-a-real-browser-that-isnt-a-real-user) |
+| See server-side analysis and detections in a dashboard | [Optional WebDecoy platform](#optional-the-webdecoy-platform-api-key) |
+
+WebDecoy works alongside Cloudflare and other CDN protections. Server middleware observes requests that reach your application; requests served or blocked before it runs are outside its view. A crawler name is a claim until supported identity checks establish more.
+
+## Choose your framework
+
+| Your app | Package and setup |
+| --- | --- |
+| Express | [Express middleware](packages/express/README.md) |
+| Fastify | [Fastify plugin](packages/fastify/README.md) |
+| Next.js | [Next.js middleware](packages/nextjs/README.md) |
+| Hono, Cloudflare Workers, Bun or Deno | [Hono middleware](packages/hono/README.md) |
+| Astro, SvelteKit, Remix or another fetch handler | [`createFetchGuard()`](#any-other-fetch-runtime--no-package-needed) |
+| A custom Node.js server | [Core SDK](packages/webdecoy/README.md) |
 
 The middleware starts in **monitor mode**: it records verdicts without blocking requests. A local rules setup needs no cloud connection; an API key is needed to send detections to the WebDecoy dashboard.
 
@@ -172,7 +200,7 @@ const wd = new WebDecoy({
 
 ## Verify AI agents (Web Bot Auth)
 
-AI agents like OpenAI's Operator now **cryptographically sign** their requests
+Some AI agents support **cryptographically signed** requests
 ([Web Bot Auth](https://datatracker.ietf.org/wg/webbotauth/about/), RFC 9421).
 WebDecoy verifies those signatures **locally** — on Node and on the edge, with no
 API key and no network on the warm path — so you can tell a real verified agent
