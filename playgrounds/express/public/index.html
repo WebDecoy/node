@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Try WebDecoy bot detection in Express. Send real requests, inspect local tripwire decisions, and compare monitoring with enforcement. No API key required.">
+  <title>Try bot detection in Express | WebDecoy</title>
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/playground.js"></script>
+</head>
+<body>
+  <main>
+    <header><a class="brand" href="https://github.com/WebDecoy/node" target="_blank" rel="noopener noreferrer"><img src="/logo.png" width="46" height="46" alt="">WebDecoy <span>/ Node.js</span></a><span class="local">LOCAL RULES · FREE TO TRY</span></header>
+    <section class="intro">
+      <p class="eyebrow">EXPRESS BOT DETECTION PLAYGROUND</p>
+      <h1>Send a request.<br><span>See the decision.</span></h1>
+      <p class="lede">Run a bot tripwire without an account or API key. These buttons send real requests to Express and show the WebDecoy verdict.</p>
+    </section>
+    <section class="workspace" aria-label="Request playground">
+      <div class="controls">
+        <div class="mode-heading"><span class="step">01 / CHOOSE A MODE</span><span id="mode-badge">MONITOR</span></div>
+        <label class="switch"><input type="checkbox" id="enforce"><span>Enable enforcement for this demo</span></label>
+        <p id="mode-help">Monitor records rule decisions and preserves the route response.</p>
+        <div class="actions"><button type="button" data-probe="normal">Send ordinary request <span>GET /</span></button><button class="primary" type="button" data-probe="decoy">Send decoy request <span>GET /demo-decoy</span></button></div>
+        <p class="hint">Start with the ordinary request, then compare the decoy. Enable enforcement to see the decoy return HTTP 403.</p>
+      </div>
+      <div class="result" aria-live="polite" aria-atomic="true">
+        <div class="result-heading"><span class="step">02 / INSPECT THE RESPONSE</span><span id="http-status">READY</span></div>
+        <p id="request-path">Your request will appear here.</p>
+        <pre id="response-body">Run a request to see its HTTP response
+and the local rule decision.</pre>
+        <p id="result-explanation">A monitor-mode DENY verdict does not itself block the request.</p>
+      </div>
+    </section>
+    <section class="install">
+      <div><p class="eyebrow">ADD IT TO YOUR APP</p><h2>Keep the rules.<br>Make them yours.</h2></div>
+      <div class="install-detail"><code>npm i @webdecoy/express @webdecoy/node</code><p>Mount the middleware before your routes and inspect <code>req.webdecoyDecision</code>. Review your traffic before enabling enforcement.</p><nav aria-label="Next steps"><a href="https://github.com/WebDecoy/node/tree/main/playgrounds/express" target="_blank" rel="noopener noreferrer">Read the source ↗</a><a href="https://docs.webdecoy.com/sdk-plugins/express/?utm_source=stackblitz&amp;utm_medium=playground&amp;utm_campaign=node_local_proof" target="_blank" rel="noopener noreferrer">Express setup ↗</a><a href="https://github.com/WebDecoy/node" target="_blank" rel="noopener noreferrer">Star the repo ↗</a></nav></div>
+    </section>
+    <footer>Controlled path requests demonstrate rule matching, not malicious intent or detection accuracy. Legitimate scanners and prefetchers can hit decoys. This keyless playground does not send detections to the WebDecoy dashboard.</footer>
+  </main>
+</body>
+</html>

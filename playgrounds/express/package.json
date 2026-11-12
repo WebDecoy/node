@@ -1,0 +1,18 @@
+{
+  "name": "webdecoy-express-playground",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Try real WebDecoy bot tripwire decisions in Express, without an API key",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "test": "node --test app.test.mjs"
+  },
+  "dependencies": {
+    "@webdecoy/express": "0.22.3",
+    "@webdecoy/node": "0.22.3",
+    "express": "4.22.3"
+  },
+  "engines": { "node": ">=20" }
+}

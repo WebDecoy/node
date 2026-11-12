@@ -13,6 +13,18 @@
 
 [Quick start](#quick-start--no-api-key) · [Choose your framework](#choose-your-framework) · [Verify a detection](#verify-your-first-detection) · [SDK documentation](https://docs.webdecoy.com/sdk-plugins/node-sdk/?utm_source=github&utm_medium=readme&utm_campaign=node_sdk_install) · [Examples](#examples)
 
+## Try it in your browser
+
+**[Open the Express playground in StackBlitz](https://stackblitz.com/github/WebDecoy/node/tree/main/playgrounds/express?file=app.mjs)** · **[Watch the 30-second demo](https://youtu.be/4jeuH3tKeos)**
+
+Send an ordinary request, then a decoy request. Inspect the actual HTTP response
+and local tripwire verdict. Start in monitor mode; enable enforcement explicitly
+in the playground to compare the response. No WebDecoy account or API key required.
+StackBlitz runs the standalone Express example in a browser Node.js runtime.
+See the [playground source and local alternative](playgrounds/express/README.md).
+
+[![Watch the WebDecoy Express demo: send a request and inspect the decision](docs/assets/node-demo.png)](https://youtu.be/4jeuH3tKeos)
+
 ## What you can do
 
 | Need | Start here |
