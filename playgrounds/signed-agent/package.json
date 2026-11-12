@@ -1,0 +1,14 @@
+{
+  "name": "webdecoy-signed-agent-proof",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Verify signed and tampered demo-agent requests with the real WebDecoy Node SDK",
+  "scripts": {
+    "dev": "node demo.mjs",
+    "start": "node demo.mjs",
+    "test": "node --test proof.test.mjs"
+  },
+  "dependencies": { "@webdecoy/node": "0.22.3" },
+  "engines": { "node": ">=20" }
+}

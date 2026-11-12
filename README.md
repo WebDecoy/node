@@ -237,6 +237,11 @@ const wd = new WebDecoy({ rules: [webBotAuth()] }); // denies known-agent impers
 
 Full guide: [**Verify AI agents with Web Bot Auth in Next.js**](docs/verify-ai-agents-web-bot-auth.md).
 
+[Run the signed-agent proof](playgrounds/signed-agent/README.md): generated Ed25519
+signatures, a tampered target, an expired signature, an unknown signer and an
+unsigned control. Uses the published SDK with a controlled public-key directory;
+no provider traffic or detection-accuracy claim.
+
 ## Clearance enforcement on Vercel
 
 With a WebDecoy account, the paths you protect can require a clearance token, checked in middleware before the page renders. A real browser earns one automatically; a scraper that never runs JavaScript never gets the page. It works with any framework on Vercel, follows the site's WebDecoy mode (monitor until you switch to enforce) and fails open.
