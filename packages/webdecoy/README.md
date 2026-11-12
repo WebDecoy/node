@@ -11,6 +11,8 @@ TypeScript bot detection and protection for Node.js and edge runtimes. Run honey
 
 Full documentation: [docs.webdecoy.com/sdk-plugins/node-sdk](https://docs.webdecoy.com/sdk-plugins/node-sdk/). Copy-paste install snippets for every stack: [docs.webdecoy.com/installation/install-with-ai](https://docs.webdecoy.com/installation/install-with-ai/).
 
+**[Try the Express playground in your browser](https://stackblitz.com/github/WebDecoy/node/tree/main/playgrounds/express?file=app.mjs)** · [Watch the 30-second demo](https://youtu.be/4jeuH3tKeos)
+
 ## Using a framework? Install its adapter
 
 Most apps should install a framework adapter alongside this package. The adapters handle request mapping, client IP, monitor mode and honeytoken injection for you. Install `@webdecoy/node` too: it is where `tripwire()`, `rateLimit()` and the other rules are imported from.
