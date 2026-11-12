@@ -1,7 +1,7 @@
 {
   "name": "@webdecoy/node",
   "version": "0.22.3",
-  "description": "Web Decoy SDK for Node.js - Bot detection with TLS fingerprinting",
+  "description": "Bot detection and AI agent verification for Node.js and edge runtimes. Local honeypot tripwires, rate limiting and AI crawler policies, with optional WebDecoy dashboard reporting.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -43,13 +43,25 @@
     "check:edge": "node ../../scripts/check-edge.mjs src/index.ts src/vercel.ts"
   },
   "keywords": [
-    "web-decoy",
+    "webdecoy",
+    "nodejs",
+    "typescript",
     "bot-detection",
-    "tls-fingerprinting",
-    "ja3",
-    "ja4",
-    "security",
-    "middleware"
+    "bot-protection",
+    "ai-agents",
+    "ai-crawlers",
+    "web-bot-auth",
+    "honeypot",
+    "tripwire",
+    "rate-limiting",
+    "anti-scraping",
+    "middleware",
+    "express",
+    "fastify",
+    "nextjs",
+    "hono",
+    "edge-runtime",
+    "tls-fingerprinting"
   ],
   "author": "WebDecoy LLC",
   "license": "MIT",

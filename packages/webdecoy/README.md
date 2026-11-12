@@ -1,6 +1,10 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/WebDecoy/node/main/docs/assets/node-banner.png" alt="WebDecoy for Node.js: bot detection, AI agent verification and local rules" width="100%">
+</p>
+
 # @webdecoy/node
 
-The core WebDecoy SDK for Node.js and edge runtimes: tripwires, rate limits and other local rules, plus optional server-side bot detection reported to your WebDecoy dashboard.
+TypeScript bot detection and protection for Node.js and edge runtimes. Run honeypot tripwires, rate limits, AI crawler policies and signed-agent verification locally without an account or API key. Add optional hosted analysis and WebDecoy dashboard reporting when you need them.
 
 [![npm version](https://img.shields.io/npm/v/@webdecoy/node.svg)](https://www.npmjs.com/package/@webdecoy/node)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

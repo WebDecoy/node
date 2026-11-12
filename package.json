@@ -2,7 +2,7 @@
   "name": "webdecoy-monorepo",
   "version": "0.1.0",
   "private": true,
-  "description": "Web Decoy Node.js SDK - Bot detection with TLS fingerprinting",
+  "description": "WebDecoy Node.js SDK and framework middleware for bot detection, AI agent verification and local protection rules.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/WebDecoy/node.git"
