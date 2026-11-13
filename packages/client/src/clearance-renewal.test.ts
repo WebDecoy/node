@@ -21,8 +21,11 @@ beforeEach(() => {
   fetchMock = jest.fn(async () => response());
   globalThis.fetch = fetchMock;
   jest.clearAllMocks();
+  // Renewal spread pinned to zero so the timings below are exact; the spread
+  // has its own tests.
+  jest.spyOn(Math, 'random').mockReturnValue(0);
 });
-afterEach(() => { _resetClearanceForTests(); jest.useRealTimers(); });
+afterEach(() => { _resetClearanceForTests(); jest.useRealTimers(); jest.restoreAllMocks(); });
 test('active clearance renews through two lifetimes and reuses collected fingerprint', async () => {
   startClearance(opts);
   await advance(1200);
@@ -84,6 +87,36 @@ test('short server TTLs do not create a rapid renewal loop', async () => {
   expect(fetchMock).toHaveBeenCalledTimes(1);
   await advance(1);
   expect(fetchMock).toHaveBeenCalledTimes(2);
+});
+test('the renewal spread moves renewal earlier, by at most half the margin', async () => {
+  (Math.random as jest.Mock).mockReturnValue(0.999);
+  cookie = 'wd_clearance=' + token();
+  startClearance(opts);
+  await advance(1200);
+  // 1800 s token, 120 s margin, spread just under 1: renews ~180 s before expiry.
+  await advance(1_620_000 - 1200 - 1000);
+  expect(fetchMock).not.toHaveBeenCalled();
+  await advance(2000);
+  expect(fetchMock).toHaveBeenCalledTimes(1);
+});
+test('two pages with different spreads renew at different times', async () => {
+  // A tab is one page and one session; model the second tab by restarting
+  // with a different spread and the same shared cookie.
+  const firstRenewal = async (spread: number) => {
+    _resetClearanceForTests();
+    fetchMock.mockClear();
+    (Math.random as jest.Mock).mockReturnValue(spread);
+    jest.setSystemTime(new Date('2026-10-12T00:00:00Z'));
+    cookie = 'wd_clearance=' + token();
+    startClearance(opts);
+    await advance(1200);
+    let elapsed = 1200;
+    while (fetchMock.mock.calls.length === 0 && elapsed < 1_800_000) { await advance(1000); elapsed += 1000; }
+    return elapsed;
+  };
+  const a = await firstRenewal(0.1);
+  const b = await firstRenewal(0.9);
+  expect(a - b).toBeGreaterThanOrEqual(45_000);
 });
 test('a cookie renewed by another tab postpones local minting', async () => {
   cookie = 'wd_clearance=' + token();

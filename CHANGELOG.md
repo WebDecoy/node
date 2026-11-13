@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Clearance renewal is spread across tabs.** Every tab shares one clearance cookie, so every tab used to reach the same renewal instant and could each mint a token. Each page now renews at a random point between the refresh margin and one and a half times it (120 to 180 seconds before expiry for a 30-minute token). The first tab's new cookie is usually in place before the next tab checks, and that tab defers.
+- **`createClearanceFetch` reports `recovery-succeeded` when the retry passes the clearance gate**, whatever the origin then answers. Previously a cleared retry that the origin answered with a 404 or 500 was reported as `recovery-failed`. The origin's status is still reported, once, as the `enforcement-outcome` status. A retry that is challenged again is still `recovery-failed`.
+
 ## [0.23.0] - 2026-11-12
 
 ### Changed

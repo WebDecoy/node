@@ -197,8 +197,9 @@ different API host.
 `onEvent` reports `challenge-served`, `recovery-attempted`,
 `recovery-succeeded`/`recovery-failed`, and the retried `enforcement-outcome`
 (status). Attempts are per waiting request; count callback invocations separately
-for shared flows. Success means the retry returned an OK response, not a new
-trust grade. These local observations send no telemetry automatically and must
+for shared flows. Success means the retry got past the clearance gate (it was
+not challenged again), whatever the origin then answered; the origin's status is
+the `enforcement-outcome` status. It does not mean a new trust grade. These local observations send no telemetry automatically and must
 remain distinct from the validator's verdict counts. Observation failures cannot
 change the request. Interactive application flows must provide keyboard access,
 focus restoration, an announced status and cancellation; the helper renders no UI.
