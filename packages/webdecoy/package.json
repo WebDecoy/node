@@ -1,6 +1,6 @@
 {
   "name": "@webdecoy/node",
-  "version": "0.22.3",
+  "version": "0.23.0",
   "description": "Bot detection and AI agent verification for Node.js and edge runtimes. Local honeypot tripwires, rate limiting and AI crawler policies, with optional WebDecoy dashboard reporting.",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

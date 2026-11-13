@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.23.0] - 2026-11-12
+
 ### Changed
 
 - **Web Bot Auth verification follows draft-ietf-webbotauth-httpsig-protocol-01.** A `Signature-Agent` value is the URL of the agent's key set, and a key now verifies only for the directory that published it, so a key reused by another directory, or published at a different URL on the same host, no longer borrows the trusted agent's name. A bare origin, the form agents send today, still means that origin's well-known directory. Members carrying parameters are ignored, a signature must cover the `Signature-Agent` member it relies on, and directory fetches no longer follow redirects. Signatures that cannot be attributed report `claimed`, never `verified`.
