@@ -95,8 +95,8 @@ describe('Edge Runtime compatibility', () => {
       .replace(/=+$/, '');
 
     const created = Math.floor(Date.now() / 1000);
-    const sigParams = `("@authority");created=${created};expires=${created + 300};keyid="${keyid}";tag="web-bot-auth"`;
-    const base = `"@authority": bot.example\n"@signature-params": ${sigParams}`;
+    const sigParams = `("@authority" "signature-agent";key="sig1");created=${created};expires=${created + 300};keyid="${keyid}";tag="web-bot-auth"`;
+    const base = `"@authority": bot.example\n"signature-agent";key="sig1": "https://bot.example"\n"@signature-params": ${sigParams}`;
     const sig = await crypto.subtle.sign({ name: 'Ed25519' }, kp.privateKey, enc.encode(base));
     const sigHeader = `sig1=:${Buffer.from(new Uint8Array(sig)).toString('base64')}:`;
     const sigInput = `sig1=${sigParams}`;
@@ -118,6 +118,7 @@ describe('Edge Runtime compatibility', () => {
           headers: {
             'signature-input': ${JSON.stringify(sigInput)},
             'signature': ${JSON.stringify(sigHeader)},
+            'signature-agent': 'sig1="https://bot.example"',
           },
         });
         const verdict = await verifier.verify(req);

@@ -13,6 +13,8 @@ import { AgentVerifier } from './verifier';
 import { DEFAULT_SIGNED_AGENT_DIRECTORIES } from './directory';
 import { jwkThumbprint, rsaThumbprint } from './thumbprint';
 import type { SignedAgentDirectory } from './types';
+import { resolveSignatureAgent } from './identity';
+import resolution from './signature-agent-resolution.json';
 
 const enc = new TextEncoder();
 
@@ -51,6 +53,14 @@ interface SignOpts {
   tag?: string;
   tamper?: boolean;
   label?: string;
+  /**
+   * The Signature-Agent member value as serialized on the wire (an sf-string,
+   * optionally with parameters). Covered as `"signature-agent";key=<label>`.
+   * Defaults to the test directory; `null` sends no Signature-Agent at all.
+   */
+  agentMember?: string | null;
+  /** Send the legacy bare-string Signature-Agent form instead. */
+  legacyAgent?: string;
 }
 
 /** Produce the Signature-Input / Signature header pair for a request. */
@@ -64,11 +74,20 @@ async function signHeaders(opts: SignOpts): Promise<Record<string, string>> {
   const tag = opts.tag ?? 'web-bot-auth';
   const label = opts.label ?? 'sig1';
 
-  const inner = '(' + components.map((c) => `"${c}"`).join(' ') + ')';
+  const agentMember = opts.agentMember === undefined ? '"https://bot.example"' : opts.agentMember;
+
+  const ids = components.map((c) => `"${c}"`);
+  const lines = components.map((c) => `"${c}": ${componentValue(c, u, method)}`);
+  if (opts.legacyAgent !== undefined) {
+    ids.push('"signature-agent"');
+    lines.push(`"signature-agent": "${opts.legacyAgent}"`);
+  } else if (agentMember !== null) {
+    ids.push(`"signature-agent";key="${label}"`);
+    lines.push(`"signature-agent";key="${label}": ${agentMember}`);
+  }
+  const inner = '(' + ids.join(' ') + ')';
   const params = `;created=${created};expires=${expires};keyid="${opts.keyid}";tag="${tag}"`;
   const sigParamsValue = inner + params;
-
-  const lines = components.map((c) => `"${c}": ${componentValue(c, u, method)}`);
   lines.push(`"@signature-params": ${sigParamsValue}`);
   const base = lines.join('\n');
 
@@ -80,6 +99,11 @@ async function signHeaders(opts: SignOpts): Promise<Record<string, string>> {
   return {
     'signature-input': `${label}=${sigParamsValue}`,
     signature: `${label}=:${b64}:`,
+    ...(opts.legacyAgent !== undefined
+      ? { 'signature-agent': `"${opts.legacyAgent}"` }
+      : agentMember !== null
+        ? { 'signature-agent': `${label}=${agentMember}` }
+        : {}),
   };
 }
 
@@ -321,5 +345,68 @@ describe('DEFAULT_SIGNED_AGENT_DIRECTORIES', () => {
         (d) => `${d.directory}/.well-known/http-message-signatures-directory`,
       ).sort(),
     );
+  });
+});
+
+// Draft 01 (draft-ietf-webbotauth-httpsig-protocol-01): a Signature-Agent
+// value is a JWK Set URL and that URL is the agent's identity.
+describe('Signature-Agent identity (draft 01)', () => {
+  const sign = async (extra: Partial<SignOpts>) => {
+    const f = await fixture();
+    const headers = await signHeaders({ privateKey: f.privateKey, keyid: f.keyid, url: 'https://site.example/', ...extra });
+    return { verdict: await f.verifier.verify(new Request('https://site.example/', { headers })), keyid: f.keyid };
+  };
+
+  it('agrees with the Go library on every shared resolution vector', () => {
+    for (const v of resolution.valid) {
+      expect(resolveSignatureAgent(v.value).identifier).toBe(v.identifier);
+    }
+    for (const bad of resolution.invalid) {
+      expect(() => resolveSignatureAgent(bad)).toThrow();
+    }
+  });
+
+  it('verifies the legacy bare-string form deployed signers still send', async () => {
+    expect((await sign({ legacyAgent: 'https://bot.example' })).verdict.status).toBe('verified');
+  });
+
+  it('matches a curated origin when the agent sends its full well-known URL', async () => {
+    const { verdict } = await sign({
+      agentMember: '"https://bot.example/.well-known/http-message-signatures-directory"',
+    });
+    expect(verdict.status).toBe('verified');
+  });
+
+  it('does not lend a key to a different directory that reuses it', async () => {
+    expect((await sign({ agentMember: '"https://mallory.example"' })).verdict.status).toBe('claimed');
+  });
+
+  it('does not lend an origin-curated key to another JWK Set URL on the same host', async () => {
+    expect((await sign({ agentMember: '"https://bot.example/agents/other.json"' })).verdict.status).toBe('claimed');
+  });
+
+  it('ignores a member that carries parameters', async () => {
+    const { verdict } = await sign({ agentMember: '"https://bot.example";type=directory' });
+    expect(verdict.status).toBe('claimed');
+  });
+
+  it('cannot attribute a signature that carries no Signature-Agent', async () => {
+    expect((await sign({ agentMember: null })).verdict.status).toBe('claimed');
+  });
+
+  it('refuses to follow directory redirects', async () => {
+    const seen: RequestInit[] = [];
+    const verifier = new AgentVerifier({
+      directories: [TEST_DIR],
+      fetchImpl: (async (_url: string, init: RequestInit) => {
+        seen.push(init);
+        return new Response(JSON.stringify({ keys: [] }), { status: 200 });
+      }) as unknown as typeof fetch,
+    });
+    await verifier.verify(new Request('https://site.example/', { headers: { 'signature-input': 'x', signature: 'y' } }));
+    verifier.warmup();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(seen.length).toBeGreaterThan(0);
+    expect(seen.every((i) => i.redirect === 'error')).toBe(true);
   });
 });

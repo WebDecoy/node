@@ -22,8 +22,7 @@
 import { jwkThumbprint, type JWK } from './thumbprint';
 import type { VerificationKey, KeyResolver } from './signature';
 import type { SignedAgentDirectory } from './types';
-
-const WELL_KNOWN = '/.well-known/http-message-signatures-directory';
+import { resolveSignatureAgent } from './identity';
 const COLD_RETRY_BACKOFF_MS = 30_000;
 
 /**
@@ -62,10 +61,14 @@ export class DirectoryCache {
     this.opts = opts;
   }
 
-  /** Resolve a keyid to a verification key, fetching/refreshing as needed. */
-  resolveKey: KeyResolver = async (keyId: string) => {
+  /**
+   * Resolve a keyid published by one agent identity (a resolved
+   * Signature-Agent URL) to a verification key, fetching/refreshing as
+   * needed. A key is only ever attributed to the directory that published it.
+   */
+  resolveKey: KeyResolver = async (keyId: string, agent: string) => {
     await this.ensureFresh();
-    return this.keys.get(keyId);
+    return this.keys.get(cacheKey(agent, keyId));
   };
 
   /** Kick off a fetch without blocking — call at startup to warm the cache. */
@@ -110,7 +113,7 @@ export class DirectoryCache {
     for (const keys of results) {
       if (keys === null) continue;
       fetchedAny = true;
-      for (const k of keys) next.set(k.thumbprint, k.key);
+      for (const k of keys) next.set(cacheKey(k.identifier, k.thumbprint), k.key);
     }
 
     if (fetchedAny) {
@@ -127,8 +130,15 @@ export class DirectoryCache {
 
   private async fetchDirectory(
     src: SignedAgentDirectory,
-  ): Promise<{ thumbprint: string; key: VerificationKey }[] | null> {
-    const url = directoryUrl(src.directory);
+  ): Promise<{ identifier: string; thumbprint: string; key: VerificationKey }[] | null> {
+    let url: string;
+    let identifier: string;
+    try {
+      ({ fetch: url, identifier } = resolveSignatureAgent(src.directory));
+    } catch {
+      this.debug(`${src.name}: directory is not an https URL`);
+      return null;
+    }
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), this.opts.fetchTimeoutMs);
     try {
@@ -138,7 +148,8 @@ export class DirectoryCache {
           Accept:
             'application/http-message-signatures-directory+json, application/jwk-set+json, application/json',
         },
-        redirect: 'follow',
+        // Web Bot Auth draft 01 §5.5: redirects are a discovery failure.
+        redirect: 'error',
       });
       if (!res.ok) {
         this.debug(`${src.name}: HTTP ${res.status}`);
@@ -149,10 +160,10 @@ export class DirectoryCache {
         this.debug(`${src.name}: no keys in directory`);
         return null;
       }
-      const out: { thumbprint: string; key: VerificationKey }[] = [];
+      const out: { identifier: string; thumbprint: string; key: VerificationKey }[] = [];
       for (const jwk of body.keys) {
         const resolved = await importKey(jwk, src);
-        if (resolved) out.push(resolved);
+        if (resolved) out.push({ identifier, ...resolved });
       }
       this.debug(`${src.name}: ${out.length} key(s)`);
       return out;
@@ -169,12 +180,8 @@ export class DirectoryCache {
   }
 }
 
-/** Append the well-known path unless the directory string already carries one. */
-function directoryUrl(directory: string): string {
-  const u = new URL(directory);
-  if (u.pathname && u.pathname !== '/') return u.toString();
-  u.pathname = WELL_KNOWN;
-  return u.toString();
+function cacheKey(agent: string, keyId: string): string {
+  return `${agent} ${keyId}`;
 }
 
 /**
