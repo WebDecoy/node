@@ -13,7 +13,23 @@
 
 [Quick start](#quick-start--no-api-key) · [Choose your framework](#choose-your-framework) · [Verify a detection](#verify-your-first-detection) · [SDK documentation](https://docs.webdecoy.com/sdk-plugins/node-sdk/?utm_source=github&utm_medium=readme&utm_campaign=node_sdk_install) · [Examples](#examples)
 
-## Try it in your browser
+## See bot requests your browser analytics can miss
+
+A request can reach your server without running your analytics tag. Try a
+controlled request first, inspect the result, then add detection to your app.
+WebDecoy complements the edge controls you already use; it only observes
+requests that reach its middleware.
+
+| Try it | What you will see | What you need |
+| --- | --- | --- |
+| [Express browser playground](https://stackblitz.com/github/WebDecoy/node/tree/main/playgrounds/express?file=app.mjs) | Send an ordinary request and a decoy request; compare the HTTP response with the local tripwire decision. | No account or API key. |
+| [Next.js 16 on Vercel](https://webdecoy.com/blog/see-bots-ai-crawlers-nextjs/?utm_source=github&utm_medium=readme&utm_campaign=node_demo_to_star&utm_content=nextjs_walkthrough) | Run the downloadable diagnostic app, send a labeled test and match its record in your dashboard. | Your own server-side WebDecoy API key for reporting. |
+
+The [25-second Vercel proof](https://youtu.be/W_mB8VX0vk0) animates the verified
+HTTP response and matching **Test → Logged, not blocked** record. This is a
+controlled setup test, not real AI crawler traffic or an accuracy benchmark.
+
+### Try Express in your browser
 
 **[Open the Express playground in StackBlitz](https://stackblitz.com/github/WebDecoy/node/tree/main/playgrounds/express?file=app.mjs)** · **[Watch the 30-second demo](https://youtu.be/4jeuH3tKeos)**
 
@@ -22,6 +38,8 @@ and local tripwire verdict. Start in monitor mode; enable enforcement explicitly
 in the playground to compare the response. No WebDecoy account or API key required.
 StackBlitz runs the standalone Express example in a browser Node.js runtime.
 See the [playground source and local alternative](playgrounds/express/README.md).
+
+After you have tried an example, **[star WebDecoy/node](https://github.com/WebDecoy/node)** if it is useful to you. To use it in your app, [choose your framework](#choose-your-framework) below.
 
 [![Watch the WebDecoy Express demo: send a request and inspect the decision](docs/assets/node-demo.png)](https://youtu.be/4jeuH3tKeos)
 

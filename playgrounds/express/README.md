@@ -12,6 +12,10 @@ runtime startup and dependency installation may take a moment.
 3. Check **Enable enforcement for this demo**, then send the decoy again: HTTP403.
 4. Send the ordinary request again: HTTP200.
 
+Useful after trying it? [Star WebDecoy/node](https://github.com/WebDecoy/node),
+then follow the [Express setup](https://docs.webdecoy.com/sdk-plugins/express/)
+to add the middleware to your own app.
+
 The monitor response comes from our demo route; the enforce response comes from
 the real SDK before that route runs. Status alone is not a detection receipt.
 
