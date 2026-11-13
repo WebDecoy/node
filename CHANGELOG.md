@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.24.0] - 2026-11-13
+
 ### Changed
 
 - **Clearance renewal is spread across tabs.** Every tab shares one clearance cookie, so every tab used to reach the same renewal instant and could each mint a token. Each page now renews at a random point between the refresh margin and one and a half times it (120 to 180 seconds before expiry for a 30-minute token). The first tab's new cookie is usually in place before the next tab checks, and that tab defers.
