@@ -91,6 +91,20 @@ interface MintResponse {
 type MintResult = { token: string; expiresIn: number } | { denied: true } | null;
 const REFRESH_MARGIN_MS = 120_000;
 const COOKIE_CHECK_MS = 60_000;
+
+/**
+ * When to renew a token that expires at `expiresAt` and lives `lifetimeMs`.
+ *
+ * The lead time is the refresh margin (a third of the lifetime for short
+ * tokens) plus up to half of it again, chosen once per page. Tabs share one
+ * cookie, so without the spread every tab reaches the same renewal instant and
+ * each mints its own token. Spread out, the first tab's new cookie is usually
+ * in place before the next tab checks, and that tab defers instead.
+ */
+function renewalTime(expiresAt: number, lifetimeMs: number, spread: number): number {
+  const margin = Math.min(REFRESH_MARGIN_MS, Math.max(0, lifetimeMs) / 3);
+  return expiresAt - margin * (1 + spread / 2);
+}
 const MAX_TOKEN_AGE_MS = 1_800_000;
 const MINT_TIMEOUT_MS = 10_000;
 
@@ -198,6 +212,8 @@ interface ClearanceSession {
   running: boolean;
   stopped: boolean;
   failures: number;
+  /** Per-page renewal spread in [0, 1); see renewalTime. */
+  spread: number;
   fingerprint?: Promise<string>;
   behavior?: BehaviorAggregate;
   lastBehavior?: BehaviorAggregate;
@@ -233,7 +249,7 @@ async function maintain(s: ClearanceSession): Promise<void> {
   if (token !== s.token) {
     s.token = token;
     s.expiresAt = token ? expiryHint(token) : 0;
-    s.renewAt = s.expiresAt - Math.min(REFRESH_MARGIN_MS, Math.max(0, s.expiresAt - Date.now()) / 3);
+    s.renewAt = renewalTime(s.expiresAt, s.expiresAt - Date.now(), s.spread);
   }
   if (s.retryAt > Date.now()) {
     schedule(s, s.retryAt - Date.now());
@@ -260,7 +276,7 @@ async function maintain(s: ClearanceSession): Promise<void> {
       setClearanceCookie(result.token, result.expiresIn);
       s.token = readCookie(CLEARANCE_COOKIE);
       s.expiresAt = Date.now() + result.expiresIn * 1000;
-      s.renewAt = s.expiresAt - Math.min(REFRESH_MARGIN_MS, result.expiresIn * 1000 / 3);
+      s.renewAt = renewalTime(s.expiresAt, result.expiresIn * 1000, s.spread);
       s.failures = 0;
       if (behavior) s.lastBehavior = behavior;
       s.retryAt = 0;
@@ -323,7 +339,7 @@ export function startClearance(opts: ClearanceOptions): void {
     }
     upgradeStarted = false;
     const s: ClearanceSession = {
-      key, opts: { ...opts }, token: null, expiresAt: 0, renewAt: 0, retryAt: 0, running: false, stopped: false, failures: 0,
+      key, opts: { ...opts }, token: null, expiresAt: 0, renewAt: 0, retryAt: 0, running: false, stopped: false, failures: 0, spread: Math.random(),
       wake: () => { if (document.visibilityState === 'visible') void maintain(s); },
     };
     session = s;

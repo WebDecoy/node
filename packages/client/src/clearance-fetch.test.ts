@@ -33,6 +33,29 @@ test.each(['GET', 'HEAD'])('%s retries once and preserves request options', asyn
   expect(events.mock.calls.map(call => call[0].type)).toEqual(['challenge-served', 'recovery-attempted', 'enforcement-outcome', 'recovery-succeeded']);
 });
 
+test('recovery succeeds when the retry passes the gate, whatever the origin answers', async () => {
+  const fetcher = jest.fn().mockResolvedValueOnce(challenged()).mockResolvedValueOnce(new Response('missing', { status: 404 }));
+  const events = jest.fn();
+  const fetch = createClearanceFetch({ origin, recover: async () => true, fetch: fetcher, onEvent: events });
+  const result = await fetch(origin + '/data');
+  expect(result.status).toBe(404);
+  const seen = events.mock.calls.map(call => [call[0].type, call[0].status]);
+  expect(seen).toContainEqual(['enforcement-outcome', 404]);
+  expect(seen).toContainEqual(['recovery-succeeded', 404]);
+  expect(seen.map(e => e[0])).not.toContain('recovery-failed');
+});
+
+test('recovery fails when the retry is challenged again', async () => {
+  const fetcher = jest.fn().mockResolvedValueOnce(challenged()).mockResolvedValueOnce(challenged());
+  const events = jest.fn();
+  const fetch = createClearanceFetch({ origin, recover: async () => true, fetch: fetcher, onEvent: events });
+  const result = await fetch(origin + '/data');
+  expect(result.status).toBe(403);
+  const types = events.mock.calls.map(call => call[0].type);
+  expect(types).toContain('recovery-failed');
+  expect(types).not.toContain('recovery-succeeded');
+});
+
 test('concurrent challenges coalesce and retry each read only once', async () => {
   const pending = deferred<boolean>();
   const recover = jest.fn(() => pending.promise);

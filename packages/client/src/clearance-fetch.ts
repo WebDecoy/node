@@ -144,8 +144,12 @@ export function createClearanceFetch(options: ClearanceFetchOptions): typeof fet
       // we return the headers and remove the recovery listener below.
       const retrySignal = AbortSignal.any([request.signal, controller.signal]);
       const retried = await abortable(nativeFetch(new Request(request, { signal: retrySignal })), controller.signal);
-      observe('enforcement-outcome', method, readClearanceChallenge(retried) ?? challenge, retried.status);
-      observe(retried.ok ? 'recovery-succeeded' : 'recovery-failed', method, challenge, retried.status);
+      // Recovery succeeded when the retry got past the clearance gate. What the
+      // origin then answered (404, 500, ...) is the application's business and
+      // is reported once, as the enforcement-outcome status.
+      const rechallenged = readClearanceChallenge(retried);
+      observe('enforcement-outcome', method, rechallenged ?? challenge, retried.status);
+      observe(rechallenged ? 'recovery-failed' : 'recovery-succeeded', method, challenge, retried.status);
       return retried;
     } catch (error) {
       observe('recovery-failed', method, challenge);
