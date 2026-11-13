@@ -12,7 +12,8 @@
  * `atob`, and `URL` are used.
  */
 
-import { parseDictionary, type DictEntry, type BareItem } from './sfv';
+import { parseDictionary, parseBareString, type DictEntry, type BareItem } from './sfv';
+import { resolveSignatureAgent } from './identity';
 
 const TAG = 'web-bot-auth';
 const encoder = new TextEncoder();
@@ -33,8 +34,12 @@ export interface VerificationKey {
   exp?: number;
 }
 
-/** Resolves a JWK-thumbprint keyid to a verification key, or undefined if unknown. */
-export type KeyResolver = (keyId: string) => Promise<VerificationKey | undefined>;
+/**
+ * Resolves a JWK-thumbprint keyid, as published by one agent identity (a
+ * resolved Signature-Agent URL), to a verification key, or undefined if that
+ * identity publishes no such key.
+ */
+export type KeyResolver = (keyId: string, agent: string) => Promise<VerificationKey | undefined>;
 
 export type CoreOutcome = 'none' | 'verified' | 'impersonation' | 'claimed';
 
@@ -116,7 +121,18 @@ export async function verifyWebBotAuth(
     // Must bind the host, per the profile.
     if (!m.components.some((c) => c.name === '@authority' || c.name === '@target-uri')) continue;
 
-    const key = await resolveKey(keyid);
+    // The key is looked up under the Signature-Agent identity this signature
+    // covers, so a key reused by two directories never borrows the other's
+    // name. A signature that binds no identity cannot be attributed.
+    let agent: string;
+    try {
+      agent = coveredSignatureAgent(req, m);
+    } catch {
+      best = higher(best, { outcome: 'claimed', keyId: keyid, reason: 'unbound-agent' });
+      continue;
+    }
+
+    const key = await resolveKey(keyid, agent);
     if (!key) {
       // Unknown agent — a claim we can't confirm or refute.
       best = higher(best, { outcome: 'claimed', keyId: keyid, reason: 'unknown-key' });
@@ -246,6 +262,35 @@ function dictMemberValue(header: string, key: string): string {
   const found = dict.find((d) => d.key === key);
   if (!found) throw new Error(`signature-agent has no member ${key}`);
   return found.raw;
+}
+
+/**
+ * The identity of the Signature-Agent member a signature covers. Draft 01
+ * §5.2.1: members are https URLs, a member with parameters MUST be ignored,
+ * and the legacy bare-string form is still accepted for deployed signers.
+ */
+function coveredSignatureAgent(req: NormalizedRequest, m: SigInputMember): string {
+  const header = req.headers.get('signature-agent');
+  if (header === null) throw new Error('missing signature-agent');
+  const component = m.components.find((c) => c.name.toLowerCase() === 'signature-agent');
+  if (!component) throw new Error('signature-agent is not covered');
+  const trimmed = header.trim();
+  let value: string;
+  if (trimmed.startsWith('"')) {
+    if (component.keyParam !== undefined) throw new Error('legacy string cannot select a member');
+    value = parseBareString(trimmed);
+  } else {
+    // Covering the whole dictionary would not say which member is ours.
+    if (component.keyParam === undefined) throw new Error('dictionary member is not covered');
+    const member = parseDictionary(trimmed).find((d) => d.key === component.keyParam);
+    const item = member?.items[0];
+    if (!member || member.isList || member.items.length !== 1 || typeof item?.value !== 'string') {
+      throw new Error('signature-agent member is not a string');
+    }
+    if (item.params.size > 0) throw new Error('signature-agent member carries parameters');
+    value = item.value;
+  }
+  return resolveSignatureAgent(value).identifier;
 }
 
 // --- header parsing ---

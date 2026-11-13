@@ -51,6 +51,16 @@ class Cursor {
 }
 
 /** Parse an RFC 8941 dictionary header value. Throws on malformed input. */
+/** Parse a header value that is exactly one sf-string (RFC 8941 §3.3.3). */
+export function parseBareString(input: string): string {
+  const p = new Cursor(input);
+  p.skipSP();
+  const value = parseString(p);
+  p.skipSP();
+  if (!p.eof()) throw new Error('trailing data after string');
+  return value;
+}
+
 export function parseDictionary(input: string): DictEntry[] {
   const p = new Cursor(input);
   const out: DictEntry[] = [];

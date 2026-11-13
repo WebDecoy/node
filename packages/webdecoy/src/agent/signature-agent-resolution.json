@@ -1,0 +1,72 @@
+{
+  "_comment": "Signature-Agent member value -> (fetch URL, draft-01 identifier). Generated from and checked by ResolveSignatureAgent; the edge and SDK TypeScript ports test against a copy. Ports may differ on the fetch URL's spelling (case, default port) but must agree on the identifier.",
+  "valid": [
+    {
+      "value": "https://agent.example",
+      "fetch": "https://agent.example/.well-known/http-message-signatures-directory",
+      "identifier": "https://agent.example/.well-known/http-message-signatures-directory"
+    },
+    {
+      "value": "https://agent.example/",
+      "fetch": "https://agent.example/.well-known/http-message-signatures-directory",
+      "identifier": "https://agent.example/.well-known/http-message-signatures-directory"
+    },
+    {
+      "value": "https://Agent.Example:443",
+      "fetch": "https://Agent.Example:443/.well-known/http-message-signatures-directory",
+      "identifier": "https://agent.example/.well-known/http-message-signatures-directory"
+    },
+    {
+      "value": "https://agent.example/.well-known/http-message-signatures-directory",
+      "fetch": "https://agent.example/.well-known/http-message-signatures-directory",
+      "identifier": "https://agent.example/.well-known/http-message-signatures-directory"
+    },
+    {
+      "value": "https://agent.example/jwks.json",
+      "fetch": "https://agent.example/jwks.json",
+      "identifier": "https://agent.example/jwks.json"
+    },
+    {
+      "value": "https://agent.example/keys?rev=3",
+      "fetch": "https://agent.example/keys?rev=3",
+      "identifier": "https://agent.example/keys"
+    },
+    {
+      "value": "https://agent.example/?rev=3",
+      "fetch": "https://agent.example/?rev=3",
+      "identifier": "https://agent.example/"
+    },
+    {
+      "value": "https://agent.example/a/../keys",
+      "fetch": "https://agent.example/a/../keys",
+      "identifier": "https://agent.example/keys"
+    },
+    {
+      "value": "https://agent.example/k%c3%a9ys",
+      "fetch": "https://agent.example/k%c3%a9ys",
+      "identifier": "https://agent.example/k%C3%A9ys"
+    },
+    {
+      "value": "https://agent.example/keys#frag",
+      "fetch": "https://agent.example/keys",
+      "identifier": "https://agent.example/keys"
+    },
+    {
+      "value": "https://agent.example:8443/keys",
+      "fetch": "https://agent.example:8443/keys",
+      "identifier": "https://agent.example:8443/keys"
+    },
+    {
+      "value": "https://crawler.agent.example/jwks.json",
+      "fetch": "https://crawler.agent.example/jwks.json",
+      "identifier": "https://crawler.agent.example/jwks.json"
+    }
+  ],
+  "invalid": [
+    "http://agent.example",
+    "https:///keys",
+    "https://user:pw@agent.example/keys",
+    "agent.example",
+    ""
+  ]
+}
