@@ -177,3 +177,84 @@ test('native idle scheduling is bound to the window and has a deadline', async (
     expect(fetchMock).toHaveBeenCalledTimes(1);
   } finally { delete (window as unknown as { requestIdleCallback?: unknown }).requestIdleCallback; }
 });
+describe('returning after a failure while away', () => {
+  const setVisibility = (value: 'visible' | 'hidden') => {
+    Object.defineProperty(document, 'visibilityState', { configurable: true, value });
+    document.dispatchEvent(new Event('visibilitychange'));
+  };
+  const setOnline = (value: boolean) => Object.defineProperty(navigator, 'onLine', { configurable: true, value });
+  afterEach(() => {
+    Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'visible' });
+    setOnline(true);
+  });
+
+  test('a renewal that failed while hidden is retried as soon as the page is visible', async () => {
+    // A computer asleep: the token expires, the page wakes briefly, its
+    // renewal fails, and the backoff would otherwise outlast the wake.
+    cookie = 'wd_clearance=' + token(60);
+    startClearance(opts);
+    setVisibility('hidden');
+    fetchMock.mockRejectedValue(new Error('offline'));
+    await advance(61_000);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(jest.getTimerCount()).toBe(1);
+    fetchMock.mockResolvedValue(response());
+    setVisibility('visible');
+    await advance(0);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(cookie).toMatch(/^wd_clearance=/);
+    expect(jest.getTimerCount()).toBe(1);
+  });
+
+  test('the early retry happens once; a failure while visible keeps its delay', async () => {
+    setVisibility('hidden');
+    fetchMock.mockRejectedValue(new Error('offline'));
+    startClearance(opts);
+    await advance(1200);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    setVisibility('visible');
+    await advance(0);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    for (let i = 0; i < 5; i++) setVisibility('visible');
+    await advance(119_999);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    await advance(1);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  test('hide and show while the last failure was visible does not skip the delay', async () => {
+    fetchMock.mockRejectedValue(new Error('offline'));
+    startClearance(opts);
+    await advance(1200);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    for (let i = 0; i < 3; i++) { setVisibility('hidden'); setVisibility('visible'); }
+    await advance(59_999);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  test('a renewal that failed while offline is retried when the network returns', async () => {
+    setOnline(false);
+    fetchMock.mockRejectedValue(new Error('offline'));
+    startClearance(opts);
+    await advance(1200);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    fetchMock.mockResolvedValue(response());
+    setOnline(true);
+    window.dispatchEvent(new Event('online'));
+    await advance(0);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(cookie).toMatch(/^wd_clearance=/);
+  });
+
+  test('stopping the session removes the online listener', async () => {
+    setOnline(false);
+    fetchMock.mockRejectedValue(new Error('offline'));
+    startClearance(opts);
+    await advance(1200);
+    _resetClearanceForTests();
+    setOnline(true);
+    window.dispatchEvent(new Event('online'));
+    await advance(0);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});

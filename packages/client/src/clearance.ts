@@ -212,12 +212,46 @@ interface ClearanceSession {
   running: boolean;
   stopped: boolean;
   failures: number;
+  /**
+   * The last failure happened while the page was hidden or offline, for
+   * example while the computer slept. That failure says nothing about whether
+   * a retry will work once the page is back, so it earns one early retry.
+   */
+  failedAway: boolean;
   /** Per-page renewal spread in [0, 1); see renewalTime. */
   spread: number;
   fingerprint?: Promise<string>;
   behavior?: BehaviorAggregate;
   lastBehavior?: BehaviorAggregate;
   wake: () => void;
+}
+
+function isAway(): boolean {
+  return document.visibilityState === 'hidden' || (typeof navigator !== 'undefined' && navigator.onLine === false);
+}
+
+function backOff(s: ClearanceSession): void {
+  s.failures++;
+  s.failedAway = isAway();
+  const delay = Math.min(300_000, COOKIE_CHECK_MS * Math.pow(2, Math.min(s.failures - 1, 3)));
+  s.retryAt = Date.now() + delay;
+  schedule(s, delay);
+}
+
+/**
+ * The page is visible and online again. If the last attempt failed while it
+ * was away, retry now rather than waiting out the delay: after a long sleep the
+ * token has usually expired and every protected request is refused until the
+ * next mint. One early retry per absence; a failure while present keeps its
+ * delay, so repeated events cannot drive repeated requests.
+ */
+function returned(s: ClearanceSession): void {
+  if (isAway()) return;
+  if (s.failedAway) {
+    s.failedAway = false;
+    s.retryAt = 0;
+  }
+  void maintain(s);
 }
 let session: ClearanceSession | undefined;
 
@@ -278,6 +312,7 @@ async function maintain(s: ClearanceSession): Promise<void> {
       s.expiresAt = Date.now() + result.expiresIn * 1000;
       s.renewAt = renewalTime(s.expiresAt, result.expiresIn * 1000, s.spread);
       s.failures = 0;
+      s.failedAway = false;
       if (behavior) s.lastBehavior = behavior;
       s.retryAt = 0;
       schedule(s, Math.min(COOKIE_CHECK_MS, s.renewAt - Date.now()));
@@ -287,17 +322,11 @@ async function maintain(s: ClearanceSession): Promise<void> {
       s.stopped = true;
       if (s.timer !== undefined) clearTimeout(s.timer);
     } else {
-      s.failures++;
-      const delay = Math.min(300_000, COOKIE_CHECK_MS * Math.pow(2, Math.min(s.failures - 1, 3)));
-      s.retryAt = Date.now() + delay;
-      schedule(s, delay);
+      backOff(s);
     }
   } catch {
     s.fingerprint = undefined;
-    s.failures++;
-    const delay = Math.min(300_000, COOKIE_CHECK_MS * Math.pow(2, Math.min(s.failures - 1, 3)));
-    s.retryAt = Date.now() + delay;
-    schedule(s, delay);
+    backOff(s);
   } finally {
     s.running = false;
     if (s.behavior && !s.stopped && s === session) schedule(s, 1000);
@@ -336,14 +365,16 @@ export function startClearance(opts: ClearanceOptions): void {
     if (session) {
       if (session.timer !== undefined) clearTimeout(session.timer);
       document.removeEventListener('visibilitychange', session.wake);
+    if (typeof window !== 'undefined') window.removeEventListener('online', session.wake);
     }
     upgradeStarted = false;
     const s: ClearanceSession = {
-      key, opts: { ...opts }, token: null, expiresAt: 0, renewAt: 0, retryAt: 0, running: false, stopped: false, failures: 0, spread: Math.random(),
-      wake: () => { if (document.visibilityState === 'visible') void maintain(s); },
+      key, opts: { ...opts }, token: null, expiresAt: 0, renewAt: 0, retryAt: 0, running: false, stopped: false, failures: 0, failedAway: false, spread: Math.random(),
+      wake: () => returned(s),
     };
     session = s;
     document.addEventListener('visibilitychange', s.wake);
+    if (typeof window !== 'undefined') window.addEventListener('online', s.wake);
     whenIdle(() => { void maintain(s); });
   }
 
@@ -365,6 +396,7 @@ export function _resetClearanceForTests(): void {
   if (session) {
     if (session.timer !== undefined) clearTimeout(session.timer);
     document.removeEventListener('visibilitychange', session.wake);
+    if (typeof window !== 'undefined') window.removeEventListener('online', session.wake);
   }
   session = undefined;
   upgradeStarted = false;
