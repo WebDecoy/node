@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **The checkbox widget works with screen readers.** The checkbox now has an accessible name ("I'm not a robot"). "Verifying", "Verified" and failure messages are announced through a polite status region, and the checkbox reports busy while it verifies. It shows a visible focus ring for keyboard users.
+- **A failure message stays on screen until the next attempt.** It used to disappear after three seconds, which could be before a person had read it.
+
 ## [0.24.0] - 2026-11-13
 
 ### Changed
