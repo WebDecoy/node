@@ -31,6 +31,7 @@ export class CaptchaWidget {
   private checkbox!: HTMLElement;
   private spinner!: HTMLElement;
   private label!: HTMLElement;
+  private status!: HTMLElement;
 
   constructor(container: string | HTMLElement, options?: WidgetOptions) {
     const el = typeof container === 'string' ? document.getElementById(container) : container;
@@ -102,6 +103,11 @@ export class CaptchaWidget {
             transition: all 0.15s ease; flex-shrink: 0;
           }
           .webdecoy-checkbox:hover { border-color: #00bcd4; }
+          .webdecoy-checkbox:focus-visible { outline: 2px solid #00bcd4; outline-offset: 2px; }
+          .webdecoy-sr-only {
+            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+          }
           .webdecoy-checkbox.loading { border-color: #00bcd4; }
           .webdecoy-checkbox.verified { background: #4caf50; border-color: #4caf50; }
           .webdecoy-checkbox.failed { background: #f44336; border-color: #f44336; }
@@ -120,12 +126,13 @@ export class CaptchaWidget {
           .webdecoy-branding { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
           .webdecoy-brand { font-size: 11px; font-weight: 600; color: #ff2a6d; letter-spacing: 0.5px; }
         </style>
-        <div class="webdecoy-checkbox" role="checkbox" aria-checked="false" tabindex="0">
+        <div class="webdecoy-checkbox" role="checkbox" aria-checked="false" aria-label="I'm not a robot" tabindex="0">
           <div class="webdecoy-spinner" style="display: none;"></div>
           <span class="webdecoy-checkmark">✓</span>
           <span class="webdecoy-x">✕</span>
         </div>
-        <span class="webdecoy-label">I'm not a robot</span>
+        <span class="webdecoy-label" aria-hidden="true">I'm not a robot</span>
+        <span class="webdecoy-status webdecoy-sr-only" role="status" aria-live="polite"></span>
         <div class="webdecoy-branding">
           <span class="webdecoy-brand">WebDecoy</span>
         </div>
@@ -135,6 +142,13 @@ export class CaptchaWidget {
     this.checkbox = this.container.querySelector('.webdecoy-checkbox') as HTMLElement;
     this.spinner = this.container.querySelector('.webdecoy-spinner') as HTMLElement;
     this.label = this.container.querySelector('.webdecoy-label') as HTMLElement;
+    this.status = this.container.querySelector('.webdecoy-status') as HTMLElement;
+  }
+
+  /** Visible label plus a polite announcement for screen readers. */
+  private _setStatus(visible: string, announce: string): void {
+    this.label.textContent = visible;
+    this.status.textContent = announce;
   }
 
   private _attachListeners(): void {
@@ -176,7 +190,9 @@ export class CaptchaWidget {
 
     this.checkbox.classList.add('loading');
     this.spinner.style.display = 'block';
-    this.label.textContent = 'Verifying...';
+    this.checkbox.setAttribute('aria-busy', 'true');
+    this.checkbox.setAttribute('aria-disabled', 'true');
+    this._setStatus('Verifying...', 'Verifying, please wait.');
 
     try {
       const behavioralData = this.behavioral.analyze();
@@ -314,8 +330,9 @@ export class CaptchaWidget {
     this.checkbox.classList.remove('loading');
     this.checkbox.classList.add('verified');
     this.checkbox.setAttribute('aria-checked', 'true');
+    this.checkbox.removeAttribute('aria-busy');
     this.spinner.style.display = 'none';
-    this.label.textContent = 'Verified';
+    this._setStatus('Verified', 'Verified.');
 
     if (this.options.callback) this.options.callback(token);
     this.container.dispatchEvent(new CustomEvent('webdecoy:verified', { detail: { token } }));
@@ -324,15 +341,16 @@ export class CaptchaWidget {
   private _showFailure(message?: string): void {
     this.checkbox.classList.remove('loading');
     this.checkbox.classList.add('failed');
+    this.checkbox.removeAttribute('aria-busy');
+    this.checkbox.removeAttribute('aria-disabled');
     this.spinner.style.display = 'none';
-    this.label.textContent = message || 'Verification failed';
+    const text = message || 'Verification failed';
+    // The message stays until the next attempt, so it can't vanish before it is read.
+    this._setStatus(text, `${text} Press Space or Enter on the checkbox to try again.`);
 
     if (this.options.errorCallback) this.options.errorCallback(message);
 
-    setTimeout(() => {
-      this.checkbox.classList.remove('failed');
-      this.label.textContent = "I'm not a robot";
-    }, 3000);
+    setTimeout(() => this.checkbox.classList.remove('failed'), 3000);
   }
 
   getToken(): string | null {
@@ -350,8 +368,10 @@ export class CaptchaWidget {
     this.powManager.reset();
     this.checkbox.classList.remove('verified', 'failed', 'loading');
     this.checkbox.setAttribute('aria-checked', 'false');
+    this.checkbox.removeAttribute('aria-busy');
+    this.checkbox.removeAttribute('aria-disabled');
     this.spinner.style.display = 'none';
-    this.label.textContent = "I'm not a robot";
+    this._setStatus("I'm not a robot", '');
     void this._fetchChallenge();
   }
 }
