@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.24.1] - 2026-11-15
+
 ### Fixed
 
+- **The Vercel clearance gate recognizes ARTEX and Norma clients** as the agents they declare, matching the other WebDecoy validators.
 - **The checkbox widget works with screen readers.** The checkbox now has an accessible name ("I'm not a robot"). "Verifying", "Verified" and failure messages are announced through a polite status region, and the checkbox reports busy while it verifies. It shows a visible focus ring for keyboard users.
 - **A failure message stays on screen until the next attempt.** It used to disappear after three seconds, which could be before a person had read it.
 - **Clearance recovers as soon as a page comes back from sleep.** When a computer sleeps longer than the token lasts, the browser can wake briefly in the background, try to renew while it has no network, fail and back off. After the real wake the page then waited out that backoff, up to several minutes, while protected requests were refused. A renewal that failed while the page was hidden or offline is now retried as soon as the page is visible and online again. This happens once per absence; a renewal that fails while the page is in view keeps its delay.
