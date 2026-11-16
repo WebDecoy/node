@@ -84,8 +84,32 @@ describe('the Hono middleware', () => {
 
 describe('honeytoken injection through Hono', () => {
   const withKey = { apiKey: 'sk_live_hono_test', skipLocalAnalysis: true, mode: 'monitor' as const };
+  const realFetch = global.fetch;
   /** The token derives via async HMAC; give it a tick to settle. */
   const settle = () => new Promise((r) => setTimeout(r, 50));
+
+  beforeEach(() => {
+    // These are response-decoration tests, not ingest integration tests. A
+    // dummy API key must never turn them into live requests or make their
+    // runtime depend on the production service.
+    global.fetch = jest.fn(async () =>
+      new Response(
+        JSON.stringify({
+          decision: 'allow',
+          confidence: 0,
+          threat_level: 'MINIMAL',
+          bot_detected: false,
+          detection_id: 'hono-test',
+          rule_enforced: false,
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      ),
+    ) as unknown as typeof fetch;
+  });
+
+  afterEach(() => {
+    global.fetch = realFetch;
+  });
 
   it('injects into an HTML response', async () => {
     const app = appWith(withKey);
@@ -93,6 +117,7 @@ describe('honeytoken injection through Hono', () => {
     const body = await (await app.request('/page')).text();
     expect(body).toMatch(/<a [^>]*href="\/__wd\//);
     expect(body).toContain('<h1>hi</h1>');
+    expect(global.fetch).toHaveBeenCalledTimes(1);
   });
 
   it('leaves JSON completely alone', async () => {
