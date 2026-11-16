@@ -3,6 +3,38 @@ import http from 'node:http';
 import { AddressInfo } from 'node:net';
 import { webdecoy } from './middleware';
 
+const realFetch = global.fetch;
+
+function allowDetection(): Response {
+  return new Response(
+    JSON.stringify({
+      decision: 'allow',
+      confidence: 0,
+      threat_level: 'MINIMAL',
+      bot_detected: false,
+      detection_id: 'express-test',
+      rule_enforced: false,
+    }),
+    { status: 200, headers: { 'content-type': 'application/json' } },
+  );
+}
+
+beforeEach(() => {
+  // Keep local app traffic real, but never let a dummy API key turn these
+  // response-decoration tests into production ingest requests.
+  global.fetch = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url =
+      typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+    if (url.startsWith('http://127.0.0.1:')) return realFetch(input, init);
+    if (url === 'https://in.webdecoy.com/api/v1/sdk/detect') return allowDetection();
+    throw new Error(`Unexpected external fetch in Express test: ${url}`);
+  }) as unknown as typeof fetch;
+});
+
+afterEach(() => {
+  global.fetch = realFetch;
+});
+
 /**
  * Honeytoken injection through a real Express app.
  *
@@ -52,6 +84,10 @@ describe('honeytoken injection', () => {
     expect(res.status).toBe(200);
     expect(res.body).toContain('<h1>hi</h1>');
     expect(res.body).toMatch(/<a href="\/__wd\/[0-9a-f]{12}"/);
+    expect(global.fetch).toHaveBeenCalledWith(
+      'https://in.webdecoy.com/api/v1/sdk/detect',
+      expect.any(Object),
+    );
     // Before </body>, not appended after the document.
     expect(res.body.indexOf('/__wd/')).toBeLessThan(res.body.indexOf('</body>'));
   });

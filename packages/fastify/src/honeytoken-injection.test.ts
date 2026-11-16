@@ -2,6 +2,35 @@ import Fastify, { FastifyInstance } from 'fastify';
 import { Readable } from 'node:stream';
 import { webdecoyPlugin } from './plugin';
 
+const realFetch = global.fetch;
+
+beforeEach(() => {
+  // These tests exercise Fastify response hooks, not the live detector. Stub
+  // the only expected remote call so CI is deterministic and offline.
+  global.fetch = jest.fn(async (input: RequestInfo | URL) => {
+    const url =
+      typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+    if (url !== 'https://in.webdecoy.com/api/v1/sdk/detect') {
+      throw new Error(`Unexpected external fetch in Fastify test: ${url}`);
+    }
+    return new Response(
+      JSON.stringify({
+        decision: 'allow',
+        confidence: 0,
+        threat_level: 'MINIMAL',
+        bot_detected: false,
+        detection_id: 'fastify-test',
+        rule_enforced: false,
+      }),
+      { status: 200, headers: { 'content-type': 'application/json' } },
+    );
+  }) as unknown as typeof fetch;
+});
+
+afterEach(() => {
+  global.fetch = realFetch;
+});
+
 /**
  * Honeytoken injection through a real Fastify app.
  *
@@ -45,6 +74,7 @@ describe('honeytoken injection', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body).toContain('<h1>hi</h1>');
     expect(res.body).toMatch(/<a href="\/__wd\/[0-9a-f]{12}"/);
+    expect(global.fetch).toHaveBeenCalledTimes(1);
     // Before </body>, not appended after the document — an anchor outside the
     // body can be relocated by the parser in ways that make it visible.
     expect(res.body.indexOf('__wd')).toBeLessThan(res.body.indexOf('</body>'));
