@@ -20,10 +20,10 @@ controlled request first, inspect the result, then add detection to your app.
 WebDecoy complements the edge controls you already use; it only observes
 requests that reach its middleware.
 
-| Try it                                                                                                                                                                           | What you will see                                                                                         | What you need                                        |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| [Express browser playground](https://stackblitz.com/github/WebDecoy/node/tree/main/playgrounds/express?file=app.mjs)                                                             | Send an ordinary request and a decoy request; compare the HTTP response with the local tripwire decision. | No account or API key.                               |
-| [Next.js 16 on Vercel](https://webdecoy.com/blog/see-bots-ai-crawlers-nextjs/?utm_source=github&utm_medium=readme&utm_campaign=node_demo_to_star&utm_content=nextjs_walkthrough) | Run the downloadable diagnostic app, send a labeled test and match its record in your dashboard.          | Your own server-side WebDecoy API key for reporting. |
+| Try it | What you will see | What you need |
+| --- | --- | --- |
+| [Express browser playground](https://stackblitz.com/github/WebDecoy/node/tree/main/playgrounds/express?file=app.mjs) | Send an ordinary request and a decoy request; compare the HTTP response with the local tripwire decision. | No account or API key. |
+| [Next.js 16 on Vercel](https://webdecoy.com/blog/see-bots-ai-crawlers-nextjs/?utm_source=github&utm_medium=readme&utm_campaign=node_demo_to_star&utm_content=nextjs_walkthrough) | Run the downloadable diagnostic app, send a labeled test and match its record in your dashboard. | Your own server-side WebDecoy API key for reporting. |
 
 The [25-second Vercel proof](https://youtu.be/W_mB8VX0vk0) animates the verified
 HTTP response and matching **Test → Logged, not blocked** record. This is a
@@ -45,27 +45,27 @@ After you have tried an example, **[star WebDecoy/node](https://github.com/WebDe
 
 ## What you can do
 
-| Need                                                    | Start here                                                                                           |
-| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Detect requests to hidden decoys and scanner-bait paths | [Honeypot tripwires](#why-add-tripwires)                                                             |
-| Limit repeated requests to your app or API              | [Local rules](#more-local-rules) and [shared rate limits](#rate-limits-across-more-than-one-process) |
-| Check supported signed AI-agent identities              | [Web Bot Auth verification](#verify-ai-agents-web-bot-auth)                                          |
-| Publish and enforce an AI crawler policy                | [One bot policy](#one-bot-policy-published-and-enforced)                                             |
-| Add browser interaction evidence to server decisions    | [Client signals](#catching-a-real-browser-that-isnt-a-real-user)                                     |
-| See server-side analysis and detections in a dashboard  | [Optional WebDecoy platform](#optional-the-webdecoy-platform-api-key)                                |
+| Need | Start here |
+| --- | --- |
+| Detect requests to hidden decoys and scanner-bait paths | [Honeypot tripwires](#why-add-tripwires) |
+| Limit repeated requests to your app or API | [Local rules](#more-local-rules) and [shared rate limits](#rate-limits-across-more-than-one-process) |
+| Check supported signed AI-agent identities | [Web Bot Auth verification](#verify-ai-agents-web-bot-auth) |
+| Publish and enforce an AI crawler policy | [One bot policy](#one-bot-policy-published-and-enforced) |
+| Add browser interaction evidence to server decisions | [Client signals](#catching-a-real-browser-that-isnt-a-real-user) |
+| See server-side analysis and detections in a dashboard | [Optional WebDecoy platform](#optional-the-webdecoy-platform-api-key) |
 
 WebDecoy works alongside Cloudflare and other CDN protections. Server middleware observes requests that reach your application; requests served or blocked before it runs are outside its view. A crawler name is a claim until supported identity checks establish more.
 
 ## Choose your framework
 
-| Your app                                         | Package and setup                                                   |
-| ------------------------------------------------ | ------------------------------------------------------------------- |
-| Express                                          | [Express middleware](packages/express/README.md)                    |
-| Fastify                                          | [Fastify plugin](packages/fastify/README.md)                        |
-| Next.js                                          | [Next.js middleware](packages/nextjs/README.md)                     |
-| Hono, Cloudflare Workers, Bun or Deno            | [Hono middleware](packages/hono/README.md)                          |
+| Your app | Package and setup |
+| --- | --- |
+| Express | [Express middleware](packages/express/README.md) |
+| Fastify | [Fastify plugin](packages/fastify/README.md) |
+| Next.js | [Next.js middleware](packages/nextjs/README.md) |
+| Hono, Cloudflare Workers, Bun or Deno | [Hono middleware](packages/hono/README.md) |
 | Astro, SvelteKit, Remix or another fetch handler | [`createFetchGuard()`](#any-other-fetch-runtime--no-package-needed) |
-| A custom Node.js server                          | [Core SDK](packages/webdecoy/README.md)                             |
+| A custom Node.js server | [Core SDK](packages/webdecoy/README.md) |
 
 The middleware starts in **monitor mode**: it records verdicts without blocking requests. A local rules setup needs no cloud connection; an API key is needed to send detections to the WebDecoy dashboard.
 
@@ -104,8 +104,8 @@ tripwire({
   prefixes: ['/.git/'],
   patterns: [/\/wp-admin\//],
   includeDefaults: true, // built-in scanner-bait paths (default: true)
-  action: 'DENY', // or 'THROTTLE'
-  dryRun: false, // log only, don't block (observe before enforcing)
+  action: 'DENY',        // or 'THROTTLE'
+  dryRun: false,         // log only, don't block (observe before enforcing)
 });
 ```
 
@@ -144,7 +144,10 @@ const app = express();
 app.use(
   webdecoy({
     // No apiKey → purely local rules (tripwires + rate limiting).
-    rules: [tripwire({ paths: ['/.env', '/wp-config.php'] }), rateLimit({ max: 100, window: 60 })],
+    rules: [
+      tripwire({ paths: ['/.env', '/wp-config.php'] }),
+      rateLimit({ max: 100, window: 60 }),
+    ],
     skipPaths: ['/health', '/public'],
   })
 );
@@ -197,7 +200,7 @@ const guard = createFetchGuard({ mode: 'enforce', rules: [tripwire()] });
 export default {
   async fetch(request: Request): Promise<Response> {
     const { response } = await guard.check(request);
-    if (response) return response; // denied
+    if (response) return response;              // denied
     return guard.decorate(await handle(request)); // injects the honeytoken link
   },
 };
@@ -212,8 +215,8 @@ import { WebDecoy, rateLimit, tripwire, filter } from '@webdecoy/node';
 
 const wd = new WebDecoy({
   rules: [
-    rateLimit({ max: 100, window: 60 }), // 100 req / 60s per IP
-    tripwire({ paths: ['/.env', '/wp-config.php'] }), // honeypot paths
+    rateLimit({ max: 100, window: 60 }),                        // 100 req / 60s per IP
+    tripwire({ paths: ['/.env', '/wp-config.php'] }),           // honeypot paths
     filter({ expression: 'ip.tor or ip.vpn', action: 'DENY' }), // needs an API key (IP enrichment)
   ],
 });
@@ -241,8 +244,7 @@ const wd = new WebDecoy({});
 const verdict = await wd.detectBot(request); // a WHATWG Request, or { method, url, headers }
 // verdict.status: 'verified' | 'impersonation' | 'claimed' | 'none'
 if (verdict.status === 'impersonation') return new Response('Forbidden', { status: 403 });
-if (verdict.status === 'verified')
-  console.log('verified agent:', verdict.agentName, verdict.category);
+if (verdict.status === 'verified') console.log('verified agent:', verdict.agentName, verdict.category);
 ```
 
 Or drop it into the rules engine to deny impersonation automatically:
@@ -278,7 +280,7 @@ Set `WEBDECOY_SITE_KEY`, `WEBDECOY_SCANNER_ID` and `WEBDECOY_SENSOR_KEY` from **
 Tripwire matching is deterministic, but a match does not guarantee malicious intent. Review these edge cases before enforcing:
 
 - **The honeytoken link** is rendered hidden and `rel=nofollow`, outside your normal sitemap and navigation. Those properties reduce ordinary discovery; they do not guarantee that legitimate software will never request it, or that a scraper will follow it.
-- **Aggressive link-prefetchers and unfurl/preview bots** (e.g. some browsers' speculative prefetch, chat link previews) _can_ fetch a hidden link. If you serve link previews or use prefetching, start with `dryRun: true` to measure before enforcing, or scope the trap to paths those bots won't touch.
+- **Aggressive link-prefetchers and unfurl/preview bots** (e.g. some browsers' speculative prefetch, chat link previews) *can* fetch a hidden link. If you serve link previews or use prefetching, start with `dryRun: true` to measure before enforcing, or scope the trap to paths those bots won't touch.
 - **The default scanner-bait paths** (`/.env`, `/.git/config`, …) can also be requested by your own security scanners, uptime checks or users troubleshooting a site. Exclude known legitimate activity or run `dryRun` first.
 
 The honest rule of thumb: enforce tripwires you control the surface of, and use `dryRun` to observe any path you're unsure about.
@@ -315,27 +317,6 @@ if (!result.allowed) {
 }
 ```
 
-### Confirm an SSRF callback
-
-For a route that intentionally performs a server-side fetch, mint a short-lived
-canary and report its initiation immediately before the fetch:
-
-```typescript
-const canary = await wd.createSSRFCanary({
-  routeTemplate: '/api/fetch/:id',
-  test: true, // controlled validation; excluded from production threat metrics
-});
-
-await wd.reportSSRFInitiation(canary);
-await applicationFetch(canary.callbackUrl);
-```
-
-Use the callback URL only as the controlled destination for the fetch you are
-testing. WebDecoy never fetches a supplied URL. A confirmed finding requires
-both the trusted initiation and the matching single-use callback within 15
-minutes; either edge alone is not confirmed SSRF. Open the callback detection
-in WebDecoy to see its **Correlated activity** evidence.
-
 ### Getting an API key
 
 1. Sign up at [app.webdecoy.com](https://app.webdecoy.com)
@@ -344,22 +325,22 @@ in WebDecoy to see its **Correlated activity** evidence.
 
 ## How it works
 
-| Tier                        | What                                                                                                                                                                                                     | Needs a key? |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------: |
-| **0 — Tripwires**           | Requests for decoy and scanner-bait paths match before any scoring (recorded in monitor mode, refused in enforce mode). Deterministic matching; see [false positives](#what-counts-as-a-false-positive). |      No      |
-| **1 — Local analysis**      | Fast on-server heuristics: suspicious/missing headers, datacenter IPs, known bot user-agents, missing `Sec-CH-UA`.                                                                                       |      No      |
-| **2 — Server verification** | Known-bot database, IP reputation, GeoIP (Tor/VPN/proxy), and JA3 TLS fingerprinting with TLS↔UA mismatch when `tls_info` is supplied.                                                                   |     Yes      |
+| Tier | What | Needs a key? |
+|------|------|:---:|
+| **0 — Tripwires** | Requests for decoy and scanner-bait paths match before any scoring (recorded in monitor mode, refused in enforce mode). Deterministic matching; see [false positives](#what-counts-as-a-false-positive). | No |
+| **1 — Local analysis** | Fast on-server heuristics: suspicious/missing headers, datacenter IPs, known bot user-agents, missing `Sec-CH-UA`. | No |
+| **2 — Server verification** | Known-bot database, IP reputation, GeoIP (Tor/VPN/proxy), and JA3 TLS fingerprinting with TLS↔UA mismatch when `tls_info` is supplied. | Yes |
 
 ## Packages
 
-| Package                                                              | Version                                                                                                       | Description                                          |
-| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| [@webdecoy/node](https://www.npmjs.com/package/@webdecoy/node)       | [![npm](https://img.shields.io/npm/v/@webdecoy/node.svg)](https://www.npmjs.com/package/@webdecoy/node)       | Core SDK + local rules (tripwire, rateLimit, filter) |
-| [@webdecoy/express](https://www.npmjs.com/package/@webdecoy/express) | [![npm](https://img.shields.io/npm/v/@webdecoy/express.svg)](https://www.npmjs.com/package/@webdecoy/express) | Express.js middleware                                |
-| [@webdecoy/fastify](https://www.npmjs.com/package/@webdecoy/fastify) | [![npm](https://img.shields.io/npm/v/@webdecoy/fastify.svg)](https://www.npmjs.com/package/@webdecoy/fastify) | Fastify plugin                                       |
-| [@webdecoy/nextjs](https://www.npmjs.com/package/@webdecoy/nextjs)   | [![npm](https://img.shields.io/npm/v/@webdecoy/nextjs.svg)](https://www.npmjs.com/package/@webdecoy/nextjs)   | Next.js middleware                                   |
-| [@webdecoy/hono](https://www.npmjs.com/package/@webdecoy/hono)       | [![npm](https://img.shields.io/npm/v/@webdecoy/hono.svg)](https://www.npmjs.com/package/@webdecoy/hono)       | Hono middleware (Workers, Bun, Deno)                 |
-| [@webdecoy/client](https://www.npmjs.com/package/@webdecoy/client)   | [![npm](https://img.shields.io/npm/v/@webdecoy/client.svg)](https://www.npmjs.com/package/@webdecoy/client)   | Browser-side signal collector                        |
+| Package | Version | Description |
+|---------|---------|-------------|
+| [@webdecoy/node](https://www.npmjs.com/package/@webdecoy/node) | [![npm](https://img.shields.io/npm/v/@webdecoy/node.svg)](https://www.npmjs.com/package/@webdecoy/node) | Core SDK + local rules (tripwire, rateLimit, filter) |
+| [@webdecoy/express](https://www.npmjs.com/package/@webdecoy/express) | [![npm](https://img.shields.io/npm/v/@webdecoy/express.svg)](https://www.npmjs.com/package/@webdecoy/express) | Express.js middleware |
+| [@webdecoy/fastify](https://www.npmjs.com/package/@webdecoy/fastify) | [![npm](https://img.shields.io/npm/v/@webdecoy/fastify.svg)](https://www.npmjs.com/package/@webdecoy/fastify) | Fastify plugin |
+| [@webdecoy/nextjs](https://www.npmjs.com/package/@webdecoy/nextjs) | [![npm](https://img.shields.io/npm/v/@webdecoy/nextjs.svg)](https://www.npmjs.com/package/@webdecoy/nextjs) | Next.js middleware |
+| [@webdecoy/hono](https://www.npmjs.com/package/@webdecoy/hono) | [![npm](https://img.shields.io/npm/v/@webdecoy/hono.svg)](https://www.npmjs.com/package/@webdecoy/hono) | Hono middleware (Workers, Bun, Deno) |
+| [@webdecoy/client](https://www.npmjs.com/package/@webdecoy/client) | [![npm](https://img.shields.io/npm/v/@webdecoy/client.svg)](https://www.npmjs.com/package/@webdecoy/client) | Browser-side signal collector |
 
 ## Browser session clearance
 
@@ -380,7 +361,7 @@ enforces it, from one object — so they cannot drift:
 import { WebDecoy, botPolicy } from '@webdecoy/node';
 
 const policy = botPolicy({
-  deny: ['training_crawler'], // or 'ai', a category, or an agent name
+  deny: ['training_crawler'],     // or 'ai', a category, or an agent name
   allow: ['perplexitybot'],
 });
 
@@ -394,7 +375,7 @@ policy you believe is in force and is not. The reverse — enforcing against a
 crawler the published file invites — is how a site quietly leaves a search index.
 
 `robots.txt` is a request, honoured at the crawler's discretion. The registry
-records whether each operator _documents_ honouring it, and the generated file
+records whether each operator *documents* honouring it, and the generated file
 names the ones in your deny set that do not:
 
 ```
@@ -419,14 +400,12 @@ import { MemoryClientSignalStore, clientSignals, tripwire } from '@webdecoy/node
 const signalStore = new MemoryClientSignalStore();
 
 app.use(webdecoyCaptcha({ secret: process.env.WEBDECOY_SECRET, signalStore }));
-app.use(
-  webdecoy({
-    rules: [
-      tripwire(), // intent — deterministic
-      clientSignals({ store: signalStore, dryRun: true }), // interaction — probabilistic
-    ],
-  })
-);
+app.use(webdecoy({
+  rules: [
+    tripwire(),                                          // intent — deterministic
+    clientSignals({ store: signalStore, dryRun: true }), // interaction — probabilistic
+  ],
+}));
 ```
 
 `@webdecoy/client` collects behavioural, environmental and form signals in the
@@ -447,8 +426,8 @@ what they send:
 
 ```typescript
 attackSignatures({
-  inspect: ['path', 'query'], // default; 'body' and 'headers' are opt-in
-  exclude: ['traversal'], // signature ids
+  inspect: ['path', 'query'],  // default; 'body' and 'headers' are opt-in
+  exclude: ['traversal'],      // signature ids
   dryRun: false,
 });
 ```
@@ -457,7 +436,7 @@ attackSignatures({
 breadth is bought with false positives. This is a small curated set — SQL
 injection, XSS, traversal, command injection, `${jndi:` — chosen because each has
 no innocent reading in a path or query string. It composes with the deterministic
-signals: a request carrying an injection payload _and_ walking into a tripwire is
+signals: a request carrying an injection payload *and* walking into a tripwire is
 much stronger evidence than either alone.
 
 Bodies and headers are off by default, because a CMS saving an article and a URL
@@ -505,18 +484,16 @@ The synchronous `evaluateRules()` cannot consume a networked store, and reports
 Rate limits, IP enrichment and every detection we record are keyed on the caller's address, so it matters that the address is real. `X-Forwarded-For` is written by the client for the first hop — the leftmost value in it is whatever the caller decided to send — so the middleware believes it only as far as you say it should, counted from the **right** of the chain, which is the end your own infrastructure wrote.
 
 ```typescript
-app.use(
-  webdecoy({
-    trustProxy: 1, // one proxy in front of this app
-  })
-);
+app.use(webdecoy({
+  trustProxy: 1,   // one proxy in front of this app
+}));
 ```
 
-| `trustProxy`        | Meaning                                                                                                           |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `false`             | Read no forwarding headers. The socket address is the client.                                                     |
-| `1`, `2`, …         | The number of proxies between the client and this app.                                                            |
-| `'cloudflare'`      | Use `CF-Connecting-IP`. Only safe if the origin is unreachable except through Cloudflare.                         |
+| `trustProxy` | Meaning |
+|---|---|
+| `false` | Read no forwarding headers. The socket address is the client. |
+| `1`, `2`, … | The number of proxies between the client and this app. |
+| `'cloudflare'` | Use `CF-Connecting-IP`. Only safe if the origin is unreachable except through Cloudflare. |
 | `['10.0.0.0/8', …]` | CIDRs of proxies you run. The chain is walked right to left and the first address that isn't yours is the client. |
 
 **Defaults.** Express and Fastify defer to `req.ip` / `request.ip`, which already honour the framework's own trust-proxy setting and otherwise resolve to the socket address — so if you've configured `app.set('trust proxy', …)` there's nothing to do here. Next.js middleware has no socket to fall back on, so it defaults to `1` trusted hop, which is correct on Vercel and on any single-proxy deployment.
@@ -529,13 +506,13 @@ The same option is accepted by `webdecoyCaptcha()` / `createCaptchaHandler()`, a
 
 ```typescript
 const wd = new WebDecoy({
-  apiKey: process.env.WEBDECOY_API_KEY, // optional — only for platform features
-  apiUrl: 'https://in.webdecoy.com', // optional (this is the default)
-  enableTLSFingerprinting: true, // optional (default: true)
-  threatScoreThreshold: 70, // optional, 0–100 (default: 80)
-  timeout: 5000, // optional, ms (default: 5000)
-  debug: false, // optional (default: false)
-  tlsRejectUnauthorized: true, // optional (default: true)
+  apiKey: process.env.WEBDECOY_API_KEY,    // optional — only for platform features
+  apiUrl: 'https://in.webdecoy.com',       // optional (this is the default)
+  enableTLSFingerprinting: true,           // optional (default: true)
+  threatScoreThreshold: 70,                // optional, 0–100 (default: 80)
+  timeout: 5000,                           // optional, ms (default: 5000)
+  debug: false,                            // optional (default: false)
+  tlsRejectUnauthorized: true,             // optional (default: true)
 });
 ```
 
@@ -560,29 +537,29 @@ Full analysis of a request. Returns a typed decision:
 ```typescript
 const d = await wd.protect(metadata);
 
-d.conclusion; // 'ALLOW' | 'DENY' | 'CHALLENGE' | 'ERROR'
-d.allowed; // true for ALLOW and ERROR (fail open)
-d.id; // 'dec_…', correlates with the dashboard
-d.isDenied(); // narrowing helpers
-d.deniedBy('tripwire'); // which rule, without string-matching
-d.results; // every rule, in order, and what it concluded
-d.detection; // the service's response, as before
-d.edge; // what the edge validator said
+d.conclusion            // 'ALLOW' | 'DENY' | 'CHALLENGE' | 'ERROR'
+d.allowed               // true for ALLOW and ERROR (fail open)
+d.id                    // 'dec_…', correlates with the dashboard
+d.isDenied()            // narrowing helpers
+d.deniedBy('tripwire')  // which rule, without string-matching
+d.results               // every rule, in order, and what it concluded
+d.detection             // the service's response, as before
+d.edge                  // what the edge validator said
 ```
 
 `results` is the part worth knowing about. Every configured rule appears, with a
 `state`:
 
-| `state`   | Meaning                                                                                                                             |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `RUN`     | Evaluated, and its conclusion counts.                                                                                               |
-| `DRY_RUN` | Evaluated; conclusion recorded but not enforced.                                                                                    |
+| `state` | Meaning |
+|---|---|
+| `RUN` | Evaluated, and its conclusion counts. |
+| `DRY_RUN` | Evaluated; conclusion recorded but not enforced. |
 | `NOT_RUN` | Could not evaluate — a signal it needs was absent (a `filter()` with no IP enrichment, a `webBotAuth()` on a request with no host). |
-| `CACHED`  | Not evaluated; a prior decision for this key was reused.                                                                            |
+| `CACHED` | Not evaluated; a prior decision for this key was reused. |
 
 `NOT_RUN` is the one that used to be invisible: such a rule reported ALLOW, which
 reads as "checked and fine" rather than "never checked". A dry-run rule that
-matched reports `conclusion: 'DENY'` with `state: 'DRY_RUN'` — what it _would_
+matched reports `conclusion: 'DENY'` with `state: 'DRY_RUN'` — what it *would*
 have done is the reason you turned it on.
 
 `ERROR` is not a synonym for `DENY`. It means no verdict was reached, and the
@@ -637,7 +614,7 @@ Pass any object with `debug`/`info`/`warn`/`error`:
 
 ```typescript
 new WebDecoy({ logger: myLogger });
-new WebDecoy({ logger: fromPino(pino()) }); // pino's argument order is reversed
+new WebDecoy({ logger: fromPino(pino()) });  // pino's argument order is reversed
 ```
 
 `fromPino()` exists because passing a pino instance directly type-checks and then

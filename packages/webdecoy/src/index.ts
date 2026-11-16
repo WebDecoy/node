@@ -35,9 +35,6 @@ export type {
   SDKDetectionResponse,
   ProtectResult,
   ProtectOptions,
-  SSRFCanary,
-  SSRFCanaryOptions,
-  SSRFInitiationReceipt,
 } from './types';
 
 // The decision `protect()` returns. Exported as a value because the class
