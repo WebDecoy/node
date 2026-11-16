@@ -8,7 +8,13 @@
  */
 
 import type { AIReferralBatch } from './referrals/referral-counter';
-import { SDKDetectionRequest, SDKDetectionResponse } from './types';
+import {
+  SDKDetectionRequest,
+  SDKDetectionResponse,
+  SSRFCanary,
+  SSRFCanaryOptions,
+  SSRFInitiationReceipt,
+} from './types';
 import { reportableHeaders } from './report-headers';
 import type { ViolationEvent, IPEnrichmentData } from './rules/types';
 
@@ -78,7 +84,7 @@ export class WebDecoyClient {
     if (config.tlsRejectUnauthorized === false && config.debug) {
       console.warn(
         '[WebDecoy] tlsRejectUnauthorized=false is not supported by the fetch transport and is ignored; ' +
-          'for local self-signed certs, trust your CA via NODE_EXTRA_CA_CERTS=/path/to/ca.pem.',
+          'for local self-signed certs, trust your CA via NODE_EXTRA_CA_CERTS=/path/to/ca.pem.'
       );
     }
   }
@@ -108,7 +114,11 @@ export class WebDecoyClient {
     this.pausedUntil = Date.now() + ms;
   }
 
-  private async request<T>(method: 'GET' | 'POST', path: string, body?: unknown): Promise<ApiResponse<T>> {
+  private async request<T>(
+    method: 'GET' | 'POST',
+    path: string,
+    body?: unknown
+  ): Promise<ApiResponse<T>> {
     if (!this.isAvailable()) {
       throw new WebDecoyUnavailableError(this.pausedUntil);
     }
@@ -176,10 +186,13 @@ export class WebDecoyClient {
       response = await this.request<SDKDetectionResponse & ApiErrorBody>(
         'POST',
         '/api/v1/sdk/detect',
-        toWireDetectionRequest(request),
+        toWireDetectionRequest(request)
       );
     } catch (error) {
-      if (error instanceof Error && (error.name === 'AbortError' || error.name === 'TimeoutError')) {
+      if (
+        error instanceof Error &&
+        (error.name === 'AbortError' || error.name === 'TimeoutError')
+      ) {
         throw new Error('Request timeout. The Web Decoy service did not respond in time.');
       }
       if (error instanceof TypeError) {
@@ -205,6 +218,74 @@ export class WebDecoyClient {
     }
 
     return response.data as SDKDetectionResponse;
+  }
+
+  async createSSRFCanary(options: SSRFCanaryOptions): Promise<SSRFCanary> {
+    const response = await this.request<
+      {
+        marker_id: string;
+        callback_url: string;
+        route_template: string;
+        expires_at: string;
+        test: boolean;
+      } & ApiErrorBody
+    >('POST', '/api/v1/sdk/ssrf/markers', {
+      property_id: options.propertyId,
+      route_template: options.routeTemplate,
+      test: options.test === true,
+    });
+    this.requireSuccess(response);
+    const data = response.data!;
+    if (!data.marker_id || !data.callback_url || !data.route_template || !data.expires_at) {
+      throw new Error('WebDecoy returned an invalid SSRF canary');
+    }
+    return {
+      markerId: data.marker_id,
+      callbackUrl: data.callback_url,
+      routeTemplate: data.route_template,
+      expiresAt: data.expires_at,
+      test: data.test === true,
+    };
+  }
+
+  async reportSSRFInitiation(
+    canary: Pick<SSRFCanary, 'markerId' | 'routeTemplate'>
+  ): Promise<SSRFInitiationReceipt> {
+    const response = await this.request<
+      {
+        detection_id: string;
+        marker_id: string;
+        test: boolean;
+      } & ApiErrorBody
+    >('POST', '/api/v1/sdk/ssrf/initiate', {
+      marker_id: canary.markerId,
+      route_template: canary.routeTemplate,
+    });
+    this.requireSuccess(response);
+    const data = response.data!;
+    if (!data.detection_id || !data.marker_id) {
+      throw new Error('WebDecoy returned an invalid SSRF initiation receipt');
+    }
+    return { detectionId: data.detection_id, markerId: data.marker_id, test: data.test === true };
+  }
+
+  private requireSuccess(response: ApiResponse<ApiErrorBody>): void {
+    if (response.status === 401) {
+      throw new Error('Invalid API key. Please check your Web Decoy configuration.');
+    }
+    if (response.status === 429) {
+      throw new Error('Rate limit exceeded. Please try again later.');
+    }
+    if (response.status >= 400) {
+      throw new Error(
+        response.data?.error ||
+          response.data?.message ||
+          `API request failed: HTTP ${response.status}`
+      );
+    }
+    if (!response.data) {
+      throw new Error('WebDecoy returned an empty response');
+    }
   }
 
   /**
@@ -247,7 +328,7 @@ export class WebDecoyClient {
     try {
       const response = await this.request<IPEnrichmentData>(
         'GET',
-        `/api/v1/sdk/ip/${encodeURIComponent(ip)}/enrichment`,
+        `/api/v1/sdk/ip/${encodeURIComponent(ip)}/enrichment`
       );
       if (response.status >= 400) return null;
       return response.data ?? null;

@@ -17,13 +17,13 @@ Full documentation: [docs.webdecoy.com/sdk-plugins/node-sdk](https://docs.webdec
 
 Most apps should install a framework adapter alongside this package. The adapters handle request mapping, client IP, monitor mode and honeytoken injection for you. Install `@webdecoy/node` too: it is where `tripwire()`, `rateLimit()` and the other rules are imported from.
 
-| Framework | Install |
-|---|---|
-| Express | `npm install @webdecoy/express @webdecoy/node` ([README](https://www.npmjs.com/package/@webdecoy/express)) |
-| Fastify | `npm install @webdecoy/fastify @webdecoy/node` ([README](https://www.npmjs.com/package/@webdecoy/fastify)) |
-| Next.js | `npm install @webdecoy/nextjs @webdecoy/node` ([README](https://www.npmjs.com/package/@webdecoy/nextjs)) |
-| Hono (Workers, Bun, Deno, Node) | `npm install @webdecoy/hono @webdecoy/node` ([README](https://www.npmjs.com/package/@webdecoy/hono)) |
-| Any other server or fetch runtime | `npm install @webdecoy/node` (this page) |
+| Framework                         | Install                                                                                                    |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Express                           | `npm install @webdecoy/express @webdecoy/node` ([README](https://www.npmjs.com/package/@webdecoy/express)) |
+| Fastify                           | `npm install @webdecoy/fastify @webdecoy/node` ([README](https://www.npmjs.com/package/@webdecoy/fastify)) |
+| Next.js                           | `npm install @webdecoy/nextjs @webdecoy/node` ([README](https://www.npmjs.com/package/@webdecoy/nextjs))   |
+| Hono (Workers, Bun, Deno, Node)   | `npm install @webdecoy/hono @webdecoy/node` ([README](https://www.npmjs.com/package/@webdecoy/hono))       |
+| Any other server or fetch runtime | `npm install @webdecoy/node` (this page)                                                                   |
 
 ## Installation
 
@@ -39,23 +39,25 @@ import { WebDecoy } from '@webdecoy/node';
 
 const wd = new WebDecoy({ apiKey: process.env.WEBDECOY_API_KEY });
 
-http.createServer(async (req, res) => {
-  const decision = await wd.protect({
-    method: req.method,
-    path: new URL(req.url, 'http://localhost').pathname,
-    ip: req.socket.remoteAddress ?? '',
-    user_agent: req.headers['user-agent'],
-    headers: Object.fromEntries(
-      Object.entries(req.headers).map(([name, value]) => [name, String(value)])
-    ),
-    timestamp: Date.now(),
-  });
+http
+  .createServer(async (req, res) => {
+    const decision = await wd.protect({
+      method: req.method,
+      path: new URL(req.url, 'http://localhost').pathname,
+      ip: req.socket.remoteAddress ?? '',
+      user_agent: req.headers['user-agent'],
+      headers: Object.fromEntries(
+        Object.entries(req.headers).map(([name, value]) => [name, String(value)])
+      ),
+      timestamp: Date.now(),
+    });
 
-  // protect() returns a decision and blocks nothing itself.
-  // Log decision.conclusion ('ALLOW', 'DENY', 'CHALLENGE' or 'ERROR') first;
-  // refuse with a 403 when decision.allowed is false only once you are ready.
-  res.end('ok');
-}).listen(3000);
+    // protect() returns a decision and blocks nothing itself.
+    // Log decision.conclusion ('ALLOW', 'DENY', 'CHALLENGE' or 'ERROR') first;
+    // refuse with a 403 when decision.allowed is false only once you are ready.
+    res.end('ok');
+  })
+  .listen(3000);
 ```
 
 Behind a proxy, `req.socket.remoteAddress` is the proxy. Use `resolveClientIp()` from this package to read the real client address (see [Client IP behind a proxy](#client-ip-behind-a-proxy)).
@@ -68,6 +70,23 @@ Behind a proxy, `req.socket.remoteAddress` is the proxy. Use `resolveClientIp()`
 
 To get a key: sign up at [app.webdecoy.com](https://app.webdecoy.com), add your site, then create a key on the **API Keys** page. Keys start with `sk_live_` (production) or `sk_test_` (testing); any other prefix throws when the SDK is constructed. Keep the key on the server and out of committed files.
 
+### Confirm an SSRF callback
+
+```ts
+const canary = await wd.createSSRFCanary({
+  routeTemplate: '/api/fetch/:id',
+  test: true,
+});
+await wd.reportSSRFInitiation(canary);
+await applicationFetch(canary.callbackUrl);
+```
+
+The marker is property-scoped, single-use, and expires after 15 minutes. The
+SDK reports only its marker ID and route template on the initiation edge.
+WebDecoy never fetches a supplied URL; a finding is created only after the
+matching callback arrives. Use `test: true` for controlled validation so it is
+kept out of production threat metrics.
+
 ### Monitor first
 
 `protect()` only returns a decision. It never writes a response, so nothing is blocked until your code acts on `decision.allowed`. The framework adapters and `createFetchGuard()` follow the same rule: they start in **monitor mode** (`mode: 'monitor'`), record the decision and serve every request. Set `mode: 'enforce'` only after you have reviewed what would have been blocked.
@@ -79,26 +98,26 @@ To get a key: sign up at [app.webdecoy.com](https://app.webdecoy.com), add your 
 ```ts
 const decision = await wd.protect(metadata);
 
-decision.conclusion            // 'ALLOW' | 'DENY' | 'CHALLENGE' | 'ERROR'
-decision.allowed               // true for ALLOW and ERROR (fails open), false for DENY and CHALLENGE
-decision.id                    // 'dec_...'
-decision.isDenied()            // also isAllowed(), isChallenged(), isErrored()
-decision.deniedBy('tripwire')  // whether a named rule denied the request
-decision.results               // every configured rule, its state and its conclusion
-decision.reason                // the deciding reason, when there is one
-decision.detection             // { decision, confidence, threat_level, bot_detected, bot_type?, detection_id, rule_enforced }
-decision.error                 // set when conclusion is 'ERROR'
-decision.edge                  // what a WebDecoy edge validator said about this request, if one fronted it
+decision.conclusion; // 'ALLOW' | 'DENY' | 'CHALLENGE' | 'ERROR'
+decision.allowed; // true for ALLOW and ERROR (fails open), false for DENY and CHALLENGE
+decision.id; // 'dec_...'
+decision.isDenied(); // also isAllowed(), isChallenged(), isErrored()
+decision.deniedBy('tripwire'); // whether a named rule denied the request
+decision.results; // every configured rule, its state and its conclusion
+decision.reason; // the deciding reason, when there is one
+decision.detection; // { decision, confidence, threat_level, bot_detected, bot_type?, detection_id, rule_enforced }
+decision.error; // set when conclusion is 'ERROR'
+decision.edge; // what a WebDecoy edge validator said about this request, if one fronted it
 ```
 
 Each entry in `results` has a `state`:
 
-| `state` | Meaning |
-|---|---|
-| `RUN` | Evaluated, and its conclusion counts. |
-| `DRY_RUN` | Evaluated; the conclusion is recorded but not enforced. |
+| `state`   | Meaning                                                                                                        |
+| --------- | -------------------------------------------------------------------------------------------------------------- |
+| `RUN`     | Evaluated, and its conclusion counts.                                                                          |
+| `DRY_RUN` | Evaluated; the conclusion is recorded but not enforced.                                                        |
 | `NOT_RUN` | Could not evaluate because a signal it needs was absent (for example a `filter()` rule with no IP enrichment). |
-| `CACHED` | Not evaluated; a prior decision for this key was reused. |
+| `CACHED`  | Not evaluated; a prior decision for this key was reused.                                                       |
 
 `ERROR` is not a denial. It means no verdict was reached (for example WebDecoy could not be reached, or the request had no IP), and `allowed` is `true`.
 
@@ -114,21 +133,21 @@ import { WebDecoy, tripwire, rateLimit, filter } from '@webdecoy/node';
 const wd = new WebDecoy({
   rules: [
     tripwire({ paths: ['/admin-backup.zip'] }), // plus built-in paths such as /.env
-    rateLimit({ max: 100, window: 60 }),        // 100 requests per 60 s per IP
+    rateLimit({ max: 100, window: 60 }), // 100 requests per 60 s per IP
     filter({ expression: 'ip.tor or ip.vpn' }), // needs an apiKey (IP enrichment)
   ],
 });
 ```
 
-| Rule | What it does | Needs an API key? |
-|---|---|---|
-| `tripwire({ paths?, prefixes?, patterns?, includeDefaults?, action?, dryRun? })` | Matches requests for decoy and scanner-bait paths. | No |
-| `honeytoken()` | Returns `{ path, linkHtml }`: a hidden decoy link and the path to arm with `tripwire({ paths: [path] })`. | No |
-| `rateLimit({ max, window, algorithm?, keyBy?, store?, action?, dryRun? })` | Fixed or sliding window, keyed by IP by default. In-memory unless you pass a shared `store` (for example `upstashRateLimitStore()`). | No |
-| `attackSignatures({ inspect?, exclude?, action?, dryRun? })` | Denies requests carrying unambiguous injection payloads. | No |
-| `webBotAuth()` | Verifies Web Bot Auth (RFC 9421) agent signatures and denies impersonators of known agents. | No |
-| `botPolicy({ deny, allow })` | One crawler policy that produces both your `robots.txt` and the rule that enforces it. | No |
-| `filter({ expression, action?, dryRun? })` | Expressions over IP reputation and geo, such as `ip.tor` or `ip.country in ["CN", "RU"]`. | Yes |
+| Rule                                                                             | What it does                                                                                                                         | Needs an API key? |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------- |
+| `tripwire({ paths?, prefixes?, patterns?, includeDefaults?, action?, dryRun? })` | Matches requests for decoy and scanner-bait paths.                                                                                   | No                |
+| `honeytoken()`                                                                   | Returns `{ path, linkHtml }`: a hidden decoy link and the path to arm with `tripwire({ paths: [path] })`.                            | No                |
+| `rateLimit({ max, window, algorithm?, keyBy?, store?, action?, dryRun? })`       | Fixed or sliding window, keyed by IP by default. In-memory unless you pass a shared `store` (for example `upstashRateLimitStore()`). | No                |
+| `attackSignatures({ inspect?, exclude?, action?, dryRun? })`                     | Denies requests carrying unambiguous injection payloads.                                                                             | No                |
+| `webBotAuth()`                                                                   | Verifies Web Bot Auth (RFC 9421) agent signatures and denies impersonators of known agents.                                          | No                |
+| `botPolicy({ deny, allow })`                                                     | One crawler policy that produces both your `robots.txt` and the rule that enforces it.                                               | No                |
+| `filter({ expression, action?, dryRun? })`                                       | Expressions over IP reputation and geo, such as `ip.tor` or `ip.country in ["CN", "RU"]`.                                            | Yes               |
 
 A tripwire match is evidence, not proof of intent: link prefetchers, preview bots and your own security scanners can request a hidden or scanner-bait path. Use `dryRun: true` on a rule to observe it before enforcing.
 
@@ -166,11 +185,11 @@ export const config = {
 };
 ```
 
-| Variable | Turns on | Secret? |
-|---|---|---|
-| `WEBDECOY_API_KEY` | Detection: bots, tripwire hits and agents the bot registry names are reported to your dashboard. From the **API Keys** page. | Yes |
-| `WEBDECOY_SITE_KEY`, `WEBDECOY_SCANNER_ID` | The clearance gate, with the sensor key. From **Enforcement, Setup**. | No |
-| `WEBDECOY_SENSOR_KEY` | The clearance gate. From **Enforcement, Setup**. | Yes |
+| Variable                                   | Turns on                                                                                                                     | Secret? |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ------- |
+| `WEBDECOY_API_KEY`                         | Detection: bots, tripwire hits and agents the bot registry names are reported to your dashboard. From the **API Keys** page. | Yes     |
+| `WEBDECOY_SITE_KEY`, `WEBDECOY_SCANNER_ID` | The clearance gate, with the sensor key. From **Enforcement, Setup**.                                                        | No      |
+| `WEBDECOY_SENSOR_KEY`                      | The clearance gate. From **Enforcement, Setup**.                                                                             | Yes     |
 
 Either half works without the other; with neither, every request passes. Detection starts in monitor mode (the request is served and the verdict rides on the request as `x-webdecoy-decision`, `x-webdecoy-detection-id` and `x-webdecoy-would-block`), and the gate follows the site's mode in WebDecoy, monitor until you switch it. Every failure, WebDecoy unreachable included, lets the request through. Without `WEBDECOY_API_KEY` the middleware is the clearance gate alone, exactly as before.
 
@@ -186,12 +205,12 @@ curl -A "WebDecoy-Test/1.0" https://your-site.vercel.app/
 
 The SDK reads only these, and only in the features named:
 
-| Variable | Read by |
-|---|---|
-| `WEBDECOY_API_KEY` | The Vercel middleware (`@webdecoy/node/vercel`, `createDetectAndGate()`), when `apiKey` is not passed. |
+| Variable                                                          | Read by                                                                                                        |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `WEBDECOY_API_KEY`                                                | The Vercel middleware (`@webdecoy/node/vercel`, `createDetectAndGate()`), when `apiKey` is not passed.         |
 | `WEBDECOY_SITE_KEY`, `WEBDECOY_SCANNER_ID`, `WEBDECOY_SENSOR_KEY` | The clearance gate (`@webdecoy/node/vercel`, `createClearanceGate()`), when the matching option is not passed. |
-| `WEBDECOY_INGEST` | The clearance gate, to override its ingest endpoint. Optional. |
-| `NODE_ENV` | The self-hosted captcha: with `production`, a missing or default `secret` throws. |
+| `WEBDECOY_INGEST`                                                 | The clearance gate, to override its ingest endpoint. Optional.                                                 |
+| `NODE_ENV`                                                        | The self-hosted captcha: with `production`, a missing or default `secret` throws.                              |
 
 Everywhere else `WEBDECOY_API_KEY` is a naming convention used in these docs: pass its value as `apiKey`.
 
@@ -200,14 +219,14 @@ Everywhere else `WEBDECOY_API_KEY` is a naming convention used in these docs: pa
 ```ts
 const wd = new WebDecoy({
   apiKey: process.env.WEBDECOY_API_KEY, // optional; without it, local rules only
-  rules: [tripwire()],                  // optional; default [tripwire()], [] to opt out
-  apiUrl: 'https://in.webdecoy.com',    // optional (default shown)
-  threatScoreThreshold: 80,             // optional, 0-100 (default 80)
-  timeout: 5000,                        // optional, ms (default 5000)
-  enableTLSFingerprinting: true,        // optional (default true)
-  tlsRejectUnauthorized: true,          // optional (default true)
-  countAIReferrals: true,               // optional (default true; aggregate counts, only with an apiKey)
-  debug: false,                         // optional (default false)
+  rules: [tripwire()], // optional; default [tripwire()], [] to opt out
+  apiUrl: 'https://in.webdecoy.com', // optional (default shown)
+  threatScoreThreshold: 80, // optional, 0-100 (default 80)
+  timeout: 5000, // optional, ms (default 5000)
+  enableTLSFingerprinting: true, // optional (default true)
+  tlsRejectUnauthorized: true, // optional (default true)
+  countAIReferrals: true, // optional (default true; aggregate counts, only with an apiKey)
+  debug: false, // optional (default false)
 });
 ```
 

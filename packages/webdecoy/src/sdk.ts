@@ -30,6 +30,9 @@ import {
   ProtectOptions,
   SDKDetectionRequest,
   SDKDetectionResponse,
+  SSRFCanary,
+  SSRFCanaryOptions,
+  SSRFInitiationReceipt,
 } from './types';
 
 export class WebDecoy {
@@ -42,7 +45,11 @@ export class WebDecoy {
   };
   private ruleEngine: RuleEngine | null;
   private referralCounter: AIReferralCounter | null = null;
-  private violationReporter: { report(violations: ViolationEvent[]): void; flush(): Promise<void>; destroy(): Promise<void> } | null = null;
+  private violationReporter: {
+    report(violations: ViolationEvent[]): void;
+    flush(): Promise<void>;
+    destroy(): Promise<void>;
+  } | null = null;
   private ipEnrichmentClient: IPEnrichmentClient | null = null;
   private _hasFilterRules = false;
   private _hasAgentRules = false;
@@ -324,6 +331,27 @@ export class WebDecoy {
     return this.getAgentVerifier().verify(request);
   }
 
+  /** Mint a signed, single-use callback marker for an SSRF test or observation. */
+  async createSSRFCanary(options: SSRFCanaryOptions): Promise<SSRFCanary> {
+    if (!this.client) {
+      throw new Error('An apiKey is required to create an SSRF canary');
+    }
+    return this.client.createSSRFCanary(options);
+  }
+
+  /**
+   * Report the initiating server request immediately before the application's
+   * ordinary fetch. Only the marker ID and route template are sent.
+   */
+  async reportSSRFInitiation(
+    canary: Pick<SSRFCanary, 'markerId' | 'routeTemplate'>
+  ): Promise<SSRFInitiationReceipt> {
+    if (!this.client) {
+      throw new Error('An apiKey is required to report an SSRF initiation');
+    }
+    return this.client.reportSSRFInitiation(canary);
+  }
+
   /**
    * Whether this SDK instance has filter rules that need async enrichment
    */
@@ -347,10 +375,7 @@ export class WebDecoy {
    * @returns The decision — `conclusion`, every rule's outcome, and the
    *   narrowing helpers. Satisfies `ProtectResult`.
    */
-  async protect(
-    metadata: RequestMetadata,
-    options: ProtectOptions = {}
-  ): Promise<Decision> {
+  async protect(metadata: RequestMetadata, options: ProtectOptions = {}): Promise<Decision> {
     // The edge verdict is attached here rather than at each return inside
     // decide(), which has six of them including two fail-open paths. It is
     // information ABOUT the request, not a product of the decision, so it must be
@@ -376,11 +401,7 @@ export class WebDecoy {
       }
       // A detection id that is not the decision id means the verdict came back
       // from ingest rather than being settled locally.
-      setAttribute(
-        span,
-        'webdecoy.remote',
-        decision.detection.detection_id !== decision.id,
-      );
+      setAttribute(span, 'webdecoy.remote', decision.detection.detection_id !== decision.id);
       if (decision.error) {
         setAttribute(span, 'webdecoy.error', decision.error);
       }
@@ -395,10 +416,7 @@ export class WebDecoy {
     }
   }
 
-  private async decide(
-    metadata: RequestMetadata,
-    options: ProtectOptions = {}
-  ): Promise<Decision> {
+  private async decide(metadata: RequestMetadata, options: ProtectOptions = {}): Promise<Decision> {
     // Declared out here so the catch below can stamp the same id and key onto
     // an ERROR decision. An error is still a decision about a caller.
     const id = newDecisionId();
@@ -434,9 +452,7 @@ export class WebDecoy {
         : this.buildContext(metadata);
       key = context.key ?? key;
       const agentVerdict: AgentVerdict | undefined = context.agent;
-      const ruleResult: RuleEngineResult | null = this.ruleEngine
-        ? this.runRules(context)
-        : null;
+      const ruleResult: RuleEngineResult | null = this.ruleEngine ? this.runRules(context) : null;
 
       // Rules denied or throttled: decided locally, no API call. Not cached —
       // a rate limiter has to see every request to advance its window, and a
@@ -561,7 +577,9 @@ export class WebDecoy {
 
       const decision = new Decision({
         conclusion,
-        reason: allowed ? undefined : `Threat score ${detection.confidence} (threshold ${threshold})`,
+        reason: allowed
+          ? undefined
+          : `Threat score ${detection.confidence} (threshold ${threshold})`,
         detection,
         id,
         results: ruleResult?.results ?? [],
@@ -582,7 +600,10 @@ export class WebDecoy {
       // While the client is paused after an outage, every request lands here.
       // The failure that started the pause was already logged as an error;
       // logging each paused request too would flood the operator's logs.
-      const log = error instanceof WebDecoyUnavailableError ? this.log.debug.bind(this.log) : this.log.error.bind(this.log);
+      const log =
+        error instanceof WebDecoyUnavailableError
+          ? this.log.debug.bind(this.log)
+          : this.log.error.bind(this.log);
       log('Protection error', {
         error: error instanceof Error ? error.message : String(error),
       });
@@ -694,7 +715,11 @@ export class WebDecoy {
    * Attach a violation reporter for sending violations to the backend.
    * Called internally when apiKey is present and rules are configured.
    */
-  setViolationReporter(reporter: { report(violations: ViolationEvent[]): void; flush(): Promise<void>; destroy(): Promise<void> }): void {
+  setViolationReporter(reporter: {
+    report(violations: ViolationEvent[]): void;
+    flush(): Promise<void>;
+    destroy(): Promise<void>;
+  }): void {
     this.violationReporter = reporter;
   }
 
@@ -737,10 +762,7 @@ export class WebDecoy {
 function agentInputFromMetadata(metadata: RequestMetadata): AgentRequestInput | null {
   const headers = metadata.headers || {};
   const host =
-    headers['host'] ||
-    headers[':authority'] ||
-    headers['x-forwarded-host'] ||
-    headers['Host'];
+    headers['host'] || headers[':authority'] || headers['x-forwarded-host'] || headers['Host'];
   if (!host) return null;
 
   const proto = headers['x-forwarded-proto'] || headers['X-Forwarded-Proto'];
