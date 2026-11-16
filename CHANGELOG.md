@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.25.0] - 2026-11-16
+
+### Added
+
+- **SSRF canary correlation.** `createSSRFCanary()` makes a marker URL to place where a server-side fetch could be steered, and `reportSSRFInitiation()` records the route that started an outbound request to it. Only the marker ID and route template are sent; the callback token never leaves your server. WebDecoy reports SSRF when a canary callback matches an initiation.
+- **Inert honey credentials.** `createHoneyCredential()` makes a decoy bearer token that grants no access, `reportHoneyCredentialRetrieval()` records when a decoy containing it is read, and `observeHoneyCredentialPresentation()` reports when the same token is later presented. Only a token ID and a keyed fingerprint are registered. Candidate credentials are compared locally in constant time, and nothing is sent unless one is an exact match, so a real credential never reaches WebDecoy.
+- **Ten more agents are recognized (245 in total):** TalarionSearchBot, UnfragileBot, Aranet-SearchBot, CrolBot, SperidLabsResearchCrawler, AbliterantBot, TokenFoundryBot, TernCrawler, and the ARTEX probe and Norma WebFetch client in bot classification.
+
 ## [0.24.1] - 2026-11-15
 
 ### Fixed
