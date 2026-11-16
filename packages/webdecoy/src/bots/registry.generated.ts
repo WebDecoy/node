@@ -77,7 +77,7 @@ export const BOT_CATEGORIES: readonly BotCategory[] = [
 export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "speridlabsresearchcrawler", name: "SperidLabsResearchCrawler", category: "training_crawler", organization: "Speridlabs", baseScore: 75, respectsRobots: false, uaPatterns: ["speridlabsresearchcrawler"] },
   { id: "abliterantbot", name: "AbliterantBot", category: "training_crawler", organization: "Abliterant", baseScore: 75, respectsRobots: false, uaPatterns: ["abliterantbot"] },
-  { id: "tokenfoundrybot", name: "TokenFoundryBot", category: "training_crawler", organization: "Alibaba", baseScore: 75, respectsRobots: false, uaPatterns: ["tokenfoundrybot"] },
+  { id: "tokenfoundrybot", name: "TokenFoundryBot", category: "training_crawler", organization: "Unknown", baseScore: 75, respectsRobots: false, uaPatterns: ["tokenfoundrybot"] },
   { id: "reflectionbot", name: "Reflectionbot", category: "training_crawler", organization: "Reflection AI", baseScore: 70, respectsRobots: true, uaPatterns: ["reflectionbot"] },
   { id: "gptbot", name: "GPTBot", category: "training_crawler", organization: "OpenAI", baseScore: 85, respectsRobots: true, uaPatterns: ["gptbot"] },
   { id: "claudebot", name: "ClaudeBot", category: "training_crawler", organization: "Anthropic", baseScore: 85, respectsRobots: true, uaPatterns: ["claudebot"] },
