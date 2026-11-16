@@ -139,6 +139,31 @@ export interface WebDecoyConfig {
   tracer?: Tracer;
 }
 
+/** Options for one short-lived, property-scoped SSRF canary. */
+export interface SSRFCanaryOptions {
+  /** The application route that will perform the server-side fetch. */
+  routeTemplate: string;
+  /** Required only when an organization-wide API key is used. */
+  propertyId?: string;
+  /** Keep a controlled validation out of production threat metrics. */
+  test?: boolean;
+}
+
+/** A callback marker. Put callbackUrl in the controlled outbound request. */
+export interface SSRFCanary {
+  markerId: string;
+  callbackUrl: string;
+  routeTemplate: string;
+  expiresAt: string;
+  test: boolean;
+}
+
+export interface SSRFInitiationReceipt {
+  detectionId: string;
+  markerId: string;
+  test: boolean;
+}
+
 /**
  * TLS connection information from the request
  */

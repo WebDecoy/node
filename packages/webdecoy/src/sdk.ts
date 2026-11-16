@@ -30,6 +30,9 @@ import {
   ProtectOptions,
   SDKDetectionRequest,
   SDKDetectionResponse,
+  SSRFCanary,
+  SSRFCanaryOptions,
+  SSRFInitiationReceipt,
 } from './types';
 
 export class WebDecoy {
@@ -322,6 +325,27 @@ export class WebDecoy {
    */
   async detectBot(request: AgentRequestInput): Promise<AgentVerdict> {
     return this.getAgentVerifier().verify(request);
+  }
+
+  /** Mint a signed, single-use callback marker for an SSRF test or observation. */
+  async createSSRFCanary(options: SSRFCanaryOptions): Promise<SSRFCanary> {
+    if (!this.client) {
+      throw new Error('An apiKey is required to create an SSRF canary');
+    }
+    return this.client.createSSRFCanary(options);
+  }
+
+  /**
+   * Report the initiating server request immediately before the application's
+   * ordinary fetch. Only the marker ID and route template are sent.
+   */
+  async reportSSRFInitiation(
+    canary: Pick<SSRFCanary, 'markerId' | 'routeTemplate'>,
+  ): Promise<SSRFInitiationReceipt> {
+    if (!this.client) {
+      throw new Error('An apiKey is required to report an SSRF initiation');
+    }
+    return this.client.reportSSRFInitiation(canary);
   }
 
   /**

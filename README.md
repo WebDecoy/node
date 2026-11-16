@@ -317,6 +317,27 @@ if (!result.allowed) {
 }
 ```
 
+### Confirm an SSRF callback
+
+For a route that intentionally performs a server-side fetch, mint a short-lived
+canary and report its initiation immediately before the fetch:
+
+```typescript
+const canary = await wd.createSSRFCanary({
+  routeTemplate: '/api/fetch/:id',
+  test: true, // controlled validation; excluded from production threat metrics
+});
+
+await wd.reportSSRFInitiation(canary);
+await applicationFetch(canary.callbackUrl);
+```
+
+Use the callback URL only as the controlled destination for the fetch you are
+testing. WebDecoy never fetches a supplied URL. A confirmed finding requires
+both the trusted initiation and the matching single-use callback within 15
+minutes; either edge alone is not confirmed SSRF. Open the callback detection
+in WebDecoy to see its **Correlated activity** evidence.
+
 ### Getting an API key
 
 1. Sign up at [app.webdecoy.com](https://app.webdecoy.com)

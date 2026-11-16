@@ -68,6 +68,23 @@ Behind a proxy, `req.socket.remoteAddress` is the proxy. Use `resolveClientIp()`
 
 To get a key: sign up at [app.webdecoy.com](https://app.webdecoy.com), add your site, then create a key on the **API Keys** page. Keys start with `sk_live_` (production) or `sk_test_` (testing); any other prefix throws when the SDK is constructed. Keep the key on the server and out of committed files.
 
+### Confirm an SSRF callback
+
+```ts
+const canary = await wd.createSSRFCanary({
+  routeTemplate: '/api/fetch/:id',
+  test: true,
+});
+await wd.reportSSRFInitiation(canary);
+await applicationFetch(canary.callbackUrl);
+```
+
+The marker is property-scoped, single-use, and expires after 15 minutes. The
+SDK reports only its marker ID and route template on the initiation edge.
+WebDecoy never fetches a supplied URL; a finding is created only after the
+matching callback arrives. Use `test: true` for controlled validation so it is
+kept out of production threat metrics.
+
 ### Monitor first
 
 `protect()` only returns a decision. It never writes a response, so nothing is blocked until your code acts on `decision.allowed`. The framework adapters and `createFetchGuard()` follow the same rule: they start in **monitor mode** (`mode: 'monitor'`), record the decision and serve every request. Set `mode: 'enforce'` only after you have reviewed what would have been blocked.
