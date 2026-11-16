@@ -12,6 +12,30 @@
     "matched": true
   },
   {
+    "userAgent": "artex-enrich/",
+    "id": "artex",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; artex-enrich//1.0; +http://example.com/bot)",
+    "id": "artex",
+    "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "abliterantbot",
+    "id": "abliterantbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; abliterantbot/1.0; +http://example.com/bot)",
+    "id": "abliterantbot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
     "userAgent": "acunetix",
     "id": "acunetix",
     "category": "security_scanner",
@@ -153,6 +177,18 @@
     "userAgent": "Mozilla/5.0 (compatible; applebot-extended/1.0; +http://example.com/bot)",
     "id": "applebot-extended",
     "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "aranet-searchbot",
+    "id": "aranet-searchbot",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; aranet-searchbot/1.0; +http://example.com/bot)",
+    "id": "aranet-searchbot",
+    "category": "ai_search_crawler",
     "matched": true
   },
   {
@@ -633,6 +669,18 @@
     "userAgent": "Mozilla/5.0 (compatible; crawlbase/1.0; +http://example.com/bot)",
     "id": "crawlbase",
     "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "crolbot",
+    "id": "crolbot",
+    "category": "seo_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; crolbot/1.0; +http://example.com/bot)",
+    "id": "crolbot",
+    "category": "seo_crawler",
     "matched": true
   },
   {
@@ -1824,6 +1872,18 @@
     "matched": true
   },
   {
+    "userAgent": "norma/",
+    "id": "norma",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; norma//1.0; +http://example.com/bot)",
+    "id": "norma",
+    "category": "generic_scraper",
+    "matched": true
+  },
+  {
     "userAgent": "nuclei",
     "id": "nuclei",
     "category": "security_scanner",
@@ -2520,6 +2580,18 @@
     "matched": true
   },
   {
+    "userAgent": "speridlabsresearchcrawler",
+    "id": "speridlabsresearchcrawler",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; speridlabsresearchcrawler/1.0; +http://example.com/bot)",
+    "id": "speridlabsresearchcrawler",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
     "userAgent": "splash",
     "id": "splash",
     "category": "headless_browser",
@@ -2580,6 +2652,18 @@
     "matched": true
   },
   {
+    "userAgent": "talarionsearchbot",
+    "id": "talarionsearchbot",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; talarionsearchbot/1.0; +http://example.com/bot)",
+    "id": "talarionsearchbot",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
     "userAgent": "tavily",
     "id": "tavily",
     "category": "ai_search_crawler",
@@ -2604,6 +2688,18 @@
     "matched": true
   },
   {
+    "userAgent": "terncrawler",
+    "id": "terncrawler",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; terncrawler/1.0; +http://example.com/bot)",
+    "id": "terncrawler",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
     "userAgent": "theoldreader",
     "id": "theoldreader",
     "category": "feed_reader",
@@ -2624,6 +2720,18 @@
   {
     "userAgent": "Mozilla/5.0 (compatible; timpibot/1.0; +http://example.com/bot)",
     "id": "timpibot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "tokenfoundrybot",
+    "id": "tokenfoundrybot",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; tokenfoundrybot/1.0; +http://example.com/bot)",
+    "id": "tokenfoundrybot",
     "category": "training_crawler",
     "matched": true
   },
@@ -2661,6 +2769,18 @@
     "userAgent": "Mozilla/5.0 (compatible; undici/1.0; +http://example.com/bot)",
     "id": "undici",
     "category": "generic_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "unfragilebot",
+    "id": "unfragilebot",
+    "category": "ai_search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; unfragilebot/1.0; +http://example.com/bot)",
+    "id": "unfragilebot",
+    "category": "ai_search_crawler",
     "matched": true
   },
   {

@@ -11,7 +11,7 @@
  * agents share User-Agent substrings, so sorting this array changes how real
  * traffic is classified.
  *
- * 235 agents across 15 categories.
+ * 245 agents across 15 categories.
  */
 
 /**
@@ -75,6 +75,9 @@ export const BOT_CATEGORIES: readonly BotCategory[] = [
 
 /** The agent table, in match order. */
 export const BOT_REGISTRY: readonly BotAgent[] = [
+  { id: "speridlabsresearchcrawler", name: "SperidLabsResearchCrawler", category: "training_crawler", organization: "Speridlabs", baseScore: 75, respectsRobots: false, uaPatterns: ["speridlabsresearchcrawler"] },
+  { id: "abliterantbot", name: "AbliterantBot", category: "training_crawler", organization: "Abliterant", baseScore: 75, respectsRobots: false, uaPatterns: ["abliterantbot"] },
+  { id: "tokenfoundrybot", name: "TokenFoundryBot", category: "training_crawler", organization: "Alibaba", baseScore: 75, respectsRobots: false, uaPatterns: ["tokenfoundrybot"] },
   { id: "reflectionbot", name: "Reflectionbot", category: "training_crawler", organization: "Reflection AI", baseScore: 70, respectsRobots: true, uaPatterns: ["reflectionbot"] },
   { id: "gptbot", name: "GPTBot", category: "training_crawler", organization: "OpenAI", baseScore: 85, respectsRobots: true, uaPatterns: ["gptbot"] },
   { id: "claudebot", name: "ClaudeBot", category: "training_crawler", organization: "Anthropic", baseScore: 85, respectsRobots: true, uaPatterns: ["claudebot"] },
@@ -107,6 +110,9 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "kimibot", name: "KimiBot", category: "training_crawler", organization: "Moonshot AI", baseScore: 80, respectsRobots: true, uaPatterns: ["kimibot"] },
   { id: "moonshotbot", name: "MoonshotBot", category: "training_crawler", organization: "Moonshot AI", baseScore: 80, respectsRobots: false, uaPatterns: ["moonshotbot"] },
   { id: "chatglm-spider", name: "ChatGLM-Spider", category: "training_crawler", organization: "Zhipu AI", baseScore: 80, respectsRobots: false, uaPatterns: ["chatglm-spider"] },
+  { id: "talarionsearchbot", name: "TalarionSearchBot", category: "ai_search_crawler", organization: "Talarion", baseScore: 65, respectsRobots: false, uaPatterns: ["talarionsearchbot"] },
+  { id: "unfragilebot", name: "UnfragileBot", category: "ai_search_crawler", organization: "Unfragile", baseScore: 65, respectsRobots: true, uaPatterns: ["unfragilebot"] },
+  { id: "aranet-searchbot", name: "Aranet-SearchBot", category: "ai_search_crawler", organization: "Aranet", baseScore: 65, respectsRobots: false, uaPatterns: ["aranet-searchbot"] },
   { id: "duckassistbot", name: "DuckAssistBot", category: "ai_search_crawler", organization: "DuckDuckGo", baseScore: 65, respectsRobots: true, uaPatterns: ["duckassistbot"] },
   { id: "sofyabot", name: "SofyaBot", category: "ai_search_crawler", organization: "Sofya", baseScore: 65, respectsRobots: true, uaPatterns: ["sofyabot"] },
   { id: "xai-searchbot", name: "xAI-SearchBot", category: "ai_search_crawler", organization: "xAI", baseScore: 70, respectsRobots: true, uaPatterns: ["xai-searchbot"] },
@@ -160,6 +166,7 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "coccocbot", name: "Coc Coc", category: "search_crawler", organization: "Coc Coc", baseScore: 35, respectsRobots: true, uaPatterns: ["coccocbot"] },
   { id: "yisouspider", name: "YisouSpider", category: "search_crawler", organization: "Alibaba", baseScore: 40, respectsRobots: true, uaPatterns: ["yisouspider"] },
   { id: "yepbot", name: "YepBot", category: "search_crawler", organization: "Ahrefs", baseScore: 30, respectsRobots: true, uaPatterns: ["yepbot"] },
+  { id: "crolbot", name: "CrolBot", category: "seo_crawler", organization: "cloro", baseScore: 50, respectsRobots: false, uaPatterns: ["crolbot"] },
   { id: "ahrefsbot", name: "AhrefsBot", category: "seo_crawler", organization: "Ahrefs", baseScore: 50, respectsRobots: true, uaPatterns: ["ahrefsbot", "ahrefs"] },
   { id: "semrushbot", name: "SemrushBot", category: "seo_crawler", organization: "Semrush", baseScore: 50, respectsRobots: true, uaPatterns: ["semrushbot", "semrush"] },
   { id: "mj12bot", name: "MJ12bot", category: "seo_crawler", organization: "Majestic", baseScore: 50, respectsRobots: true, uaPatterns: ["mj12bot"] },
@@ -184,6 +191,7 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "seojuice-searchbot", name: "SEOJuice-SearchBot", category: "seo_crawler", organization: "SEOJuice", baseScore: 50, respectsRobots: true, uaPatterns: ["seojuice-searchbot"] },
   { id: "trendictionbot", name: "trendictionbot", category: "seo_crawler", organization: "Talkwalker", baseScore: 50, respectsRobots: true, uaPatterns: ["trendictionbot"] },
   { id: "hubspot-crawler", name: "HubSpot Crawler", category: "seo_crawler", organization: "HubSpot", baseScore: 45, respectsRobots: true, uaPatterns: ["hubspot crawler"] },
+  { id: "artex", name: "ARTEX", category: "security_scanner", organization: "Open Source", baseScore: 90, respectsRobots: false, uaPatterns: ["artex-enrich/"] },
   { id: "nessus", name: "Nessus", category: "security_scanner", organization: "Tenable", baseScore: 70, respectsRobots: false, uaPatterns: ["nessus"] },
   { id: "qualys", name: "Qualys", category: "security_scanner", organization: "Qualys", baseScore: 70, respectsRobots: false, uaPatterns: ["qualys"] },
   { id: "shodan", name: "Shodan", category: "security_scanner", organization: "Shodan", baseScore: 75, respectsRobots: false, uaPatterns: ["shodan"] },
@@ -201,6 +209,7 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "cloudflare-security-center", name: "Cloudflare Security Center", category: "security_scanner", organization: "Cloudflare", baseScore: 40, respectsRobots: false, uaPatterns: ["developers.cloudflare.com/security-center"] },
   { id: "virustotal-cloud", name: "VirusTotal", category: "security_scanner", organization: "Google", baseScore: 40, respectsRobots: false, uaPatterns: ["virustotalcloud"] },
   { id: "intruder", name: "Intruder", category: "security_scanner", organization: "Intruder", baseScore: 65, respectsRobots: false, uaPatterns: ["intruder"] },
+  { id: "norma", name: "Norma WebFetch", category: "generic_scraper", organization: "Open Source", baseScore: 70, respectsRobots: false, uaPatterns: ["norma/"] },
   { id: "python-requests", name: "Python-Requests", category: "generic_scraper", organization: "Open Source", baseScore: 55, respectsRobots: false, uaPatterns: ["python-requests"] },
   { id: "python-urllib", name: "Python-urllib", category: "generic_scraper", organization: "Python", baseScore: 55, respectsRobots: false, uaPatterns: ["python-urllib"] },
   { id: "python", name: "Python", category: "generic_scraper", organization: "Python", baseScore: 50, respectsRobots: false, uaPatterns: ["python/"] },
@@ -283,6 +292,7 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "miniflux", name: "Miniflux", category: "feed_reader", organization: "Open Source", baseScore: 25, respectsRobots: true, uaPatterns: ["miniflux"] },
   { id: "freshrss", name: "FreshRSS", category: "feed_reader", organization: "Open Source", baseScore: 25, respectsRobots: true, uaPatterns: ["freshrss"] },
   { id: "commafeed", name: "CommaFeed", category: "feed_reader", organization: "Open Source", baseScore: 25, respectsRobots: true, uaPatterns: ["commafeed"] },
+  { id: "terncrawler", name: "TernCrawler", category: "commercial_scraper", organization: "Unknown", baseScore: 60, respectsRobots: false, uaPatterns: ["terncrawler"] },
   { id: "diffbot", name: "Diffbot", category: "commercial_scraper", organization: "Diffbot", baseScore: 70, respectsRobots: true, uaPatterns: ["diffbot"] },
   { id: "import-io", name: "Import.io", category: "commercial_scraper", organization: "Import.io", baseScore: 65, respectsRobots: true, uaPatterns: ["import.io"] },
   { id: "bright-data", name: "Bright Data", category: "commercial_scraper", organization: "Bright Data", baseScore: 70, respectsRobots: false, uaPatterns: ["brightdata", "luminati"] },
