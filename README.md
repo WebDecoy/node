@@ -338,6 +338,32 @@ both the trusted initiation and the matching single-use callback within 15
 minutes; either edge alone is not confirmed SSRF. Open the callback detection
 in WebDecoy to see its **Correlated activity** evidence.
 
+### Correlate an inert decoy credential
+
+Create a credential that grants no access, place its bearer in a decoy, and
+keep only the safe handle after placement:
+
+```typescript
+const created = await wd.createHoneyCredential({ test: true });
+await putInDecoyConfig(created.bearer);
+
+// Call from the decoy's delivery hook, only when that decoy is actually read.
+await wd.reportHoneyCredentialRetrieval(created.handle, '/decoy/config');
+
+// Run only after your application has parsed a credential candidate.
+const result = await wd.observeHoneyCredentialPresentation(
+  candidate,
+  created.handle,
+  '/login',
+);
+```
+
+The bearer and every non-matching candidate remain local. WebDecoy receives
+only the property-scoped token ID and keyed fingerprint, and the presentation
+event is sent only after an exact constant-time local match. Retrieval alone
+does not create a reuse finding. The SDK never authorizes this token, applies a
+block, or gives it access to a provider or financial account.
+
 ### Getting an API key
 
 1. Sign up at [app.webdecoy.com](https://app.webdecoy.com)

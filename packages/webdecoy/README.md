@@ -85,6 +85,24 @@ WebDecoy never fetches a supplied URL; a finding is created only after the
 matching callback arrives. Use `test: true` for controlled validation so it is
 kept out of production threat metrics.
 
+### Correlate an inert decoy credential
+
+```ts
+const created = await wd.createHoneyCredential({ test: true });
+await putInDecoyConfig(created.bearer);
+
+// Call from the decoy's delivery hook, only when that decoy is actually read.
+await wd.reportHoneyCredentialRetrieval(created.handle, '/decoy/config');
+
+const result = await wd.observeHoneyCredentialPresentation(candidate, created.handle, '/login');
+```
+
+Discard `created.bearer` after placing it in the decoy and retain only the
+handle. A keyed fingerprint is registered; neither the bearer nor a candidate
+credential is sent. A presentation request is made only when the candidate is
+an exact local match for the inert token. Retrieval alone remains an ordinary
+decoy event, and this API never blocks or grants access.
+
 ### Monitor first
 
 `protect()` only returns a decision. It never writes a response, so nothing is blocked until your code acts on `decision.allowed`. The framework adapters and `createFetchGuard()` follow the same rule: they start in **monitor mode** (`mode: 'monitor'`), record the decision and serve every request. Set `mode: 'enforce'` only after you have reviewed what would have been blocked.

@@ -38,6 +38,11 @@ export type {
   SSRFCanary,
   SSRFCanaryOptions,
   SSRFInitiationReceipt,
+  CreatedHoneyCredential,
+  HoneyCredentialHandle,
+  HoneyCredentialOptions,
+  HoneyCredentialPresentationResult,
+  HoneyCredentialReceipt,
 } from './types';
 
 // The decision `protect()` returns. Exported as a value because the class

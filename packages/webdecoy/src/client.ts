@@ -14,6 +14,9 @@ import {
   SSRFCanary,
   SSRFCanaryOptions,
   SSRFInitiationReceipt,
+  HoneyCredentialHandle,
+  HoneyCredentialOptions,
+  HoneyCredentialReceipt,
 } from './types';
 import { reportableHeaders } from './report-headers';
 import type { ViolationEvent, IPEnrichmentData } from './rules/types';
@@ -256,6 +259,58 @@ export class WebDecoyClient {
       throw new Error('WebDecoy returned an invalid SSRF initiation receipt');
     }
     return { detectionId: data.detection_id, markerId: data.marker_id, test: data.test === true };
+  }
+
+  async registerHoneyCredential(
+    tokenId: string,
+    keyedFingerprint: string,
+    options: HoneyCredentialOptions,
+  ): Promise<HoneyCredentialHandle> {
+    const response = await this.request<{
+      token_id: string;
+      expires_at: string;
+      test: boolean;
+    } & ApiErrorBody>('POST', '/api/v1/sdk/honey-credentials', {
+      property_id: options.propertyId,
+      token_id: tokenId,
+      keyed_fingerprint: keyedFingerprint,
+      test: options.test === true,
+    });
+    this.requireSuccess(response);
+    const data = response.data!;
+    if (!data.token_id || !data.expires_at) {
+      throw new Error('WebDecoy returned an invalid honey credential handle');
+    }
+    return {
+      tokenId: data.token_id,
+      keyedFingerprint,
+      propertyId: options.propertyId,
+      expiresAt: data.expires_at,
+      test: data.test === true,
+    };
+  }
+
+  async reportHoneyCredentialEvent(
+    event: 'retrieval' | 'presentation',
+    handle: HoneyCredentialHandle,
+    routeTemplate: string,
+  ): Promise<HoneyCredentialReceipt> {
+    const response = await this.request<{
+      detection_id: string;
+      token_id: string;
+      test: boolean;
+    } & ApiErrorBody>('POST', `/api/v1/sdk/honey-credentials/${event}`, {
+      property_id: handle.propertyId,
+      token_id: handle.tokenId,
+      keyed_fingerprint: handle.keyedFingerprint,
+      route_template: routeTemplate,
+    });
+    this.requireSuccess(response);
+    const data = response.data!;
+    if (!data.detection_id || !data.token_id) {
+      throw new Error('WebDecoy returned an invalid honey credential receipt');
+    }
+    return { detectionId: data.detection_id, tokenId: data.token_id, test: data.test === true };
   }
 
   private requireSuccess(response: ApiResponse<ApiErrorBody>): void {
