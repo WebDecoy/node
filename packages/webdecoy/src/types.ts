@@ -164,6 +164,40 @@ export interface SSRFInitiationReceipt {
   test: boolean;
 }
 
+/** Options for an inert, property-scoped decoy credential. */
+export interface HoneyCredentialOptions {
+  /** Required only when an organization-wide API key is used. */
+  propertyId?: string;
+  /** Keep a controlled validation out of production threat metrics. */
+  test?: boolean;
+}
+
+/** Safe material retained after the bearer has been placed in a decoy. */
+export interface HoneyCredentialHandle {
+  tokenId: string;
+  keyedFingerprint: string;
+  propertyId?: string;
+  expiresAt: string;
+  test: boolean;
+}
+
+/** The bearer is returned only at creation and is never sent to WebDecoy. */
+export interface CreatedHoneyCredential {
+  bearer: string;
+  handle: HoneyCredentialHandle;
+}
+
+export interface HoneyCredentialReceipt {
+  detectionId: string;
+  tokenId: string;
+  test: boolean;
+}
+
+export interface HoneyCredentialPresentationResult {
+  matched: boolean;
+  receipt?: HoneyCredentialReceipt;
+}
+
 /**
  * TLS connection information from the request
  */

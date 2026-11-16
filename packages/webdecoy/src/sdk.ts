@@ -33,7 +33,13 @@ import {
   SSRFCanary,
   SSRFCanaryOptions,
   SSRFInitiationReceipt,
+  CreatedHoneyCredential,
+  HoneyCredentialHandle,
+  HoneyCredentialOptions,
+  HoneyCredentialPresentationResult,
+  HoneyCredentialReceipt,
 } from './types';
+import { hmacSha256Hex, randomHex, timingSafeEqualStr } from './webcrypto';
 
 export class WebDecoy {
   private client: WebDecoyClient | null;
@@ -346,6 +352,56 @@ export class WebDecoy {
       throw new Error('An apiKey is required to report an SSRF initiation');
     }
     return this.client.reportSSRFInitiation(canary);
+  }
+
+  /**
+   * Create an inert decoy bearer. WebDecoy receives only a tenant-scoped ID
+   * and keyed fingerprint; the bearer is returned locally exactly once.
+   */
+  async createHoneyCredential(options: HoneyCredentialOptions = {}): Promise<CreatedHoneyCredential> {
+    if (!this.client || !this.config.apiKey) {
+      throw new Error('An apiKey is required to create a honey credential');
+    }
+    const tokenId = crypto.randomUUID();
+    const bearer = `wd_hc_v1_${randomHex(32)}`;
+    const keyedFingerprint = await this.honeyCredentialFingerprint(tokenId, bearer);
+    const handle = await this.client.registerHoneyCredential(tokenId, keyedFingerprint, options);
+    return { bearer, handle };
+  }
+
+  /** Report that the inert credential was exposed by a decoy route. */
+  async reportHoneyCredentialRetrieval(
+    handle: HoneyCredentialHandle,
+    routeTemplate: string,
+  ): Promise<HoneyCredentialReceipt> {
+    if (!this.client) {
+      throw new Error('An apiKey is required to report a honey credential retrieval');
+    }
+    return this.client.reportHoneyCredentialEvent('retrieval', handle, routeTemplate);
+  }
+
+  /**
+   * Compare a presented value locally. A mismatch—including a real
+   * credential—never leaves the process and creates no WebDecoy request.
+   */
+  async observeHoneyCredentialPresentation(
+    candidate: string,
+    handle: HoneyCredentialHandle,
+    routeTemplate: string,
+  ): Promise<HoneyCredentialPresentationResult> {
+    if (!this.client || !this.config.apiKey) {
+      throw new Error('An apiKey is required to observe a honey credential presentation');
+    }
+    const candidateFingerprint = await this.honeyCredentialFingerprint(handle.tokenId, candidate);
+    if (!timingSafeEqualStr(candidateFingerprint, handle.keyedFingerprint)) {
+      return { matched: false };
+    }
+    const receipt = await this.client.reportHoneyCredentialEvent('presentation', handle, routeTemplate);
+    return { matched: true, receipt };
+  }
+
+  private honeyCredentialFingerprint(tokenId: string, bearer: string): Promise<string> {
+    return hmacSha256Hex(this.config.apiKey!, `webdecoy/honey-credential/v1\u0000${tokenId}\u0000${bearer}`);
   }
 
   /**
