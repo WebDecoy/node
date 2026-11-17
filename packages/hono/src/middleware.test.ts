@@ -85,8 +85,27 @@ describe('the Hono middleware', () => {
 describe('honeytoken injection through Hono', () => {
   const withKey = { apiKey: 'sk_live_hono_test', skipLocalAnalysis: true, mode: 'monitor' as const };
   const realFetch = global.fetch;
-  /** The token derives via async HMAC; give it a tick to settle. */
-  const settle = () => new Promise((r) => setTimeout(r, 50));
+
+  /**
+   * The stable trap derives through async WebCrypto. Cold-start requests are
+   * deliberately allowed before it is ready, so wait for the observable
+   * contract instead of assuming a loaded CI runner finishes HMAC in 50 ms.
+   */
+  async function requestUntilInjected(app: ReturnType<typeof appWith>) {
+    let lastBody = '';
+
+    for (let attempts = 1; attempts <= 200; attempts++) {
+      const response = await app.request('/page');
+      const contentLength = response.headers.get('content-length');
+      lastBody = await response.text();
+      if (lastBody.includes('href="/__wd/')) {
+        return { body: lastBody, contentLength, attempts };
+      }
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+
+    throw new Error(`honeytoken was not armed within 2 seconds; last body: ${lastBody}`);
+  }
 
   beforeEach(() => {
     // These are response-decoration tests, not ingest integration tests. A
@@ -113,22 +132,21 @@ describe('honeytoken injection through Hono', () => {
 
   it('injects into an HTML response', async () => {
     const app = appWith(withKey);
-    await settle();
-    const body = await (await app.request('/page')).text();
+    const { body, attempts } = await requestUntilInjected(app);
     expect(body).toMatch(/<a [^>]*href="\/__wd\//);
     expect(body).toContain('<h1>hi</h1>');
-    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch).toHaveBeenCalledTimes(attempts);
   });
 
   it('leaves JSON completely alone', async () => {
     const app = appWith(withKey);
-    await settle();
+    const { attempts } = await requestUntilInjected(app);
     expect(await (await app.request('/api')).json()).toEqual({ ok: true });
+    expect(global.fetch).toHaveBeenCalledTimes(attempts + 1);
   });
 
   it('does nothing without an apiKey, since the token derives from it', async () => {
     const app = appWith({ mode: 'monitor' });
-    await settle();
     expect(await (await app.request('/page')).text()).toBe(
       '<html><body><h1>hi</h1></body></html>',
     );
@@ -136,11 +154,11 @@ describe('honeytoken injection through Hono', () => {
 
   it('does not commit a stale Content-Length', async () => {
     const app = appWith(withKey);
-    await settle();
-    const res = await app.request('/page');
-    const length = res.headers.get('content-length');
-    const body = await res.text();
+    const { body, contentLength, attempts } = await requestUntilInjected(app);
     // Either recomputed or absent. A stale one truncates the body at the client.
-    if (length !== null) expect(Number(length)).toBe(new TextEncoder().encode(body).length);
+    if (contentLength !== null) {
+      expect(Number(contentLength)).toBe(new TextEncoder().encode(body).length);
+    }
+    expect(global.fetch).toHaveBeenCalledTimes(attempts);
   });
 });
