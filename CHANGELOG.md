@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.25.1] - 2026-11-17
+
+### Fixed
+
+- **The Vercel clearance challenge is accessible and matches WebDecoy's other edge validators.** Its status updates are announced through an atomic live region, the page has a named main landmark, the spinner is hidden from assistive technology and stops under reduced-motion preferences, and the protection link has stronger contrast and a visible keyboard focus indicator.
+
 ## [0.25.0] - 2026-11-16
 
 ### Added
