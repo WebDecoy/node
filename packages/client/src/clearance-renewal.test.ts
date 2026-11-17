@@ -109,8 +109,12 @@ test('two pages with different spreads renew at different times', async () => {
     jest.setSystemTime(new Date('2026-10-12T00:00:00Z'));
     cookie = 'wd_clearance=' + token();
     startClearance(opts);
-    await advance(1200);
-    let elapsed = 1200;
+    // Jump to 1500 s in one step: no spread renews before 1620 s (1800 s token,
+    // 120 s margin, at most half the margin earlier). Stepping a second at a
+    // time from zero took thousands of async timer flushes and timed out on CI.
+    await advance(1_500_000);
+    expect(fetchMock).not.toHaveBeenCalled();
+    let elapsed = 1_500_000;
     while (fetchMock.mock.calls.length === 0 && elapsed < 1_800_000) { await advance(1000); elapsed += 1000; }
     return elapsed;
   };
