@@ -11,7 +11,7 @@
  * agents share User-Agent substrings, so sorting this array changes how real
  * traffic is classified.
  *
- * 245 agents across 15 categories.
+ * 251 agents across 15 categories.
  */
 
 /**
@@ -75,6 +75,7 @@ export const BOT_CATEGORIES: readonly BotCategory[] = [
 
 /** The agent table, in match order. */
 export const BOT_REGISTRY: readonly BotAgent[] = [
+  { id: "hunyuan", name: "Hunyuan", category: "training_crawler", organization: "Unknown", baseScore: 70, respectsRobots: false, uaPatterns: ["hunyuan/"] },
   { id: "speridlabsresearchcrawler", name: "SperidLabsResearchCrawler", category: "training_crawler", organization: "Speridlabs", baseScore: 75, respectsRobots: false, uaPatterns: ["speridlabsresearchcrawler"] },
   { id: "abliterantbot", name: "AbliterantBot", category: "training_crawler", organization: "Abliterant", baseScore: 75, respectsRobots: false, uaPatterns: ["abliterantbot"] },
   { id: "tokenfoundrybot", name: "TokenFoundryBot", category: "training_crawler", organization: "Unknown", baseScore: 75, respectsRobots: false, uaPatterns: ["tokenfoundrybot"] },
@@ -145,6 +146,8 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "manus-user", name: "Manus-User", category: "ai_agent", organization: "Manus", baseScore: 70, respectsRobots: false, uaPatterns: ["manus-user"] },
   { id: "multion", name: "MultiOn", category: "ai_agent", organization: "MultiOn", baseScore: 70, respectsRobots: false, uaPatterns: ["multion"] },
   { id: "opencode-user", name: "OpenCode-User", category: "ai_agent", organization: "OpenCode", baseScore: 75, respectsRobots: false, uaPatterns: ["opencode-user"] },
+  { id: "360spider", name: "360Spider", category: "search_crawler", organization: "Qihoo 360", baseScore: 40, respectsRobots: true, uaPatterns: ["360spider"] },
+  { id: "cgmsearchbot", name: "CGMSearchBot", category: "search_crawler", organization: "CGMIMM", baseScore: 40, respectsRobots: true, uaPatterns: ["cgmsearchbot"] },
   { id: "iboubot", name: "IbouBot", category: "search_crawler", organization: "Ibou", baseScore: 30, respectsRobots: true, uaPatterns: ["iboubot", "ibou-search"] },
   { id: "googlebot", name: "Googlebot", category: "search_crawler", organization: "Google", baseScore: 30, respectsRobots: true, uaPatterns: ["googlebot"] },
   { id: "google-inspectiontool", name: "Google-InspectionTool", category: "search_crawler", organization: "Google", baseScore: 30, respectsRobots: true, uaPatterns: ["google-inspectiontool"] },
@@ -292,6 +295,9 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "miniflux", name: "Miniflux", category: "feed_reader", organization: "Open Source", baseScore: 25, respectsRobots: true, uaPatterns: ["miniflux"] },
   { id: "freshrss", name: "FreshRSS", category: "feed_reader", organization: "Open Source", baseScore: 25, respectsRobots: true, uaPatterns: ["freshrss"] },
   { id: "commafeed", name: "CommaFeed", category: "feed_reader", organization: "Open Source", baseScore: 25, respectsRobots: true, uaPatterns: ["commafeed"] },
+  { id: "spiderling", name: "SpiderLing", category: "commercial_scraper", organization: "Lexical Computing", baseScore: 55, respectsRobots: true, uaPatterns: ["spiderling", "sketchengine"] },
+  { id: "netapi", name: "NetAPI Bot", category: "commercial_scraper", organization: "NetAPI", baseScore: 50, respectsRobots: true, uaPatterns: ["netapi/"] },
+  { id: "anticlonebot", name: "AntiCloneBot", category: "commercial_scraper", organization: "AntiClone", baseScore: 45, respectsRobots: true, uaPatterns: ["anticlonebot"] },
   { id: "terncrawler", name: "TernCrawler", category: "commercial_scraper", organization: "Unknown", baseScore: 60, respectsRobots: false, uaPatterns: ["terncrawler"] },
   { id: "diffbot", name: "Diffbot", category: "commercial_scraper", organization: "Diffbot", baseScore: 70, respectsRobots: true, uaPatterns: ["diffbot"] },
   { id: "import-io", name: "Import.io", category: "commercial_scraper", organization: "Import.io", baseScore: 65, respectsRobots: true, uaPatterns: ["import.io"] },

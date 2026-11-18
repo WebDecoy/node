@@ -1,5 +1,17 @@
 [
   {
+    "userAgent": "360spider",
+    "id": "360spider",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; 360spider/1.0; +http://example.com/bot)",
+    "id": "360spider",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
     "userAgent": "ai2bot",
     "id": "ai2bot",
     "category": "training_crawler",
@@ -129,6 +141,18 @@
     "userAgent": "Mozilla/5.0 (compatible; anthropic-ai/1.0; +http://example.com/bot)",
     "id": "anthropic",
     "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "anticlonebot",
+    "id": "anticlonebot",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; anticlonebot/1.0; +http://example.com/bot)",
+    "id": "anticlonebot",
+    "category": "commercial_scraper",
     "matched": true
   },
   {
@@ -465,6 +489,18 @@
     "userAgent": "Mozilla/5.0 (compatible; ccbot/1.0; +http://example.com/bot)",
     "id": "ccbot",
     "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "cgmsearchbot",
+    "id": "cgmsearchbot",
+    "category": "search_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; cgmsearchbot/1.0; +http://example.com/bot)",
+    "id": "cgmsearchbot",
+    "category": "search_crawler",
     "matched": true
   },
   {
@@ -1272,6 +1308,18 @@
     "matched": true
   },
   {
+    "userAgent": "hunyuan/",
+    "id": "hunyuan",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; hunyuan//1.0; +http://example.com/bot)",
+    "id": "hunyuan",
+    "category": "training_crawler",
+    "matched": true
+  },
+  {
     "userAgent": "isscyberriskcrawler",
     "id": "isscyberriskcrawler",
     "category": "training_crawler",
@@ -1797,6 +1845,18 @@
     "userAgent": "Mozilla/5.0 (compatible; nessus/1.0; +http://example.com/bot)",
     "id": "nessus",
     "category": "security_scanner",
+    "matched": true
+  },
+  {
+    "userAgent": "netapi/",
+    "id": "netapi",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; netapi//1.0; +http://example.com/bot)",
+    "id": "netapi",
+    "category": "commercial_scraper",
     "matched": true
   },
   {
@@ -2589,6 +2649,30 @@
     "userAgent": "Mozilla/5.0 (compatible; speridlabsresearchcrawler/1.0; +http://example.com/bot)",
     "id": "speridlabsresearchcrawler",
     "category": "training_crawler",
+    "matched": true
+  },
+  {
+    "userAgent": "spiderling",
+    "id": "spiderling",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; spiderling/1.0; +http://example.com/bot)",
+    "id": "spiderling",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "sketchengine",
+    "id": "spiderling",
+    "category": "commercial_scraper",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; sketchengine/1.0; +http://example.com/bot)",
+    "id": "spiderling",
+    "category": "commercial_scraper",
     "matched": true
   },
   {
