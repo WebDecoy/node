@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.25.2] - 2026-11-18
+
+### Added
+
+- **Six more crawlers are named.** CGMSearchBot and 360Spider (search), SpiderLing, NetAPI Bot and AntiCloneBot (commercial), and Hunyuan (training, operator unconfirmed) are now in the bot registry and in the clearance validator's agent table.
+
 ## [0.25.1] - 2026-11-17
 
 ### Fixed
