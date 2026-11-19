@@ -40,6 +40,8 @@ import {
   HoneyCredentialReceipt,
 } from './types';
 import { hmacSha256Hex, randomHex, timingSafeEqualStr } from './webcrypto';
+import { createOffensiveToolchainEvidence } from './offensive-toolchain';
+import type { OffensiveToolchainEvidenceInput } from './offensive-toolchain';
 
 export class WebDecoy {
   private client: WebDecoyClient | null;
@@ -402,6 +404,41 @@ export class WebDecoy {
 
   private honeyCredentialFingerprint(tokenId: string, bearer: string): Promise<string> {
     return hmacSha256Hex(this.config.apiKey!, `webdecoy/honey-credential/v1\u0000${tokenId}\u0000${bearer}`);
+  }
+
+  /**
+   * Report a privacy-bounded model-plane tool run. The helper sends only
+   * reviewed generic families, counts, and digests; it never sends prompts,
+   * arguments, results, credentials, targets, or the raw run ID.
+   */
+  async reportOffensiveToolchain(
+    input: OffensiveToolchainEvidenceInput
+  ): Promise<SDKDetectionResponse> {
+    if (!this.client) {
+      throw new Error('An apiKey is required to report an offensive toolchain');
+    }
+    const evidence = await createOffensiveToolchainEvidence(input);
+    return this.client.detect({
+      request_metadata: {
+        method: 'MODEL',
+        path: '/model-toolchain',
+        // The existing SDK route requires an address. Model-plane evidence has
+        // no target client IP, so use the unspecified address rather than
+        // inventing an identity that could enter actor correlation.
+        ip: '0.0.0.0',
+        headers: {},
+        timestamp: Date.now(),
+      },
+      local_analysis: {
+        suspicious_headers: false,
+        missing_sec_ch_ua: false,
+        datacenter_ip: false,
+        local_score: 0,
+        needs_verification: true,
+        flags: ['model_plane_toolchain'],
+      },
+      ...evidence,
+    });
   }
 
   /**
