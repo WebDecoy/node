@@ -33,6 +33,9 @@ export type {
   LocalAnalysis,
   SDKDetectionRequest,
   SDKDetectionResponse,
+  OffensiveToolFamily,
+  OffensiveToolchainObservation,
+  FrameworkEvidenceObservation,
   ProtectResult,
   ProtectOptions,
   SSRFCanary,
@@ -44,6 +47,13 @@ export type {
   HoneyCredentialPresentationResult,
   HoneyCredentialReceipt,
 } from './types';
+
+export { createOffensiveToolchainEvidence } from './offensive-toolchain';
+export type {
+  OffensiveToolInvocation,
+  OffensiveToolchainEvidenceInput,
+  OffensiveToolchainEvidence,
+} from './offensive-toolchain';
 
 // The decision `protect()` returns. Exported as a value because the class
 // carries the narrowing helpers (`isDenied()`, `deniedBy()`) that keep an

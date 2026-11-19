@@ -103,6 +103,33 @@ credential is sent. A presentation request is made only when the candidate is
 an exact local match for the inert token. Retrieval alone remains an ordinary
 decoy event, and this API never blocks or grants access.
 
+### Correlate an offensive model toolchain
+
+Instrument an authorized model/MCP gateway with the reviewed helper. It maps
+known tool names into generic families and sends only bounded counts and
+digests. Raw prompts, arguments, results, targets, credentials, and run IDs are
+not included. Use a deployment-held random secret of at least 32 characters for
+`correlationSecret`; do not reuse an API key.
+
+```ts
+const result = await wd.reportOffensiveToolchain({
+  sensor: 'mcp-gateway',
+  runId: internalRunId,
+  correlationSecret: process.env.WEBDECOY_CORRELATION_SECRET!,
+  invocations: [
+    { tool: 'nmap_scan', redactedArgumentCount: 2 },
+    { tool: 'nuclei_scan', redactedArgumentCount: 1 },
+  ],
+});
+```
+
+One tool family is retained for coverage but does not create a correlation.
+Two or more reviewed families can create a generic toolchain association. Set
+`orchestrator: 'hexstrike_ai'` only inside an integration that has independently
+verified the official `hexstrike-ai-mcp` orchestrator; common Nmap or Nuclei use
+alone never becomes HexStrike attribution. This API records evidence and never
+blocks or grants access.
+
 ### Monitor first
 
 `protect()` only returns a decision. It never writes a response, so nothing is blocked until your code acts on `decision.allowed`. The framework adapters and `createFetchGuard()` follow the same rule: they start in **monitor mode** (`mode: 'monitor'`), record the decision and serve every request. Set `mode: 'enforce'` only after you have reviewed what would have been blocked.

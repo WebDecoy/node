@@ -306,6 +306,40 @@ export interface LocalAnalysis {
 export interface SDKDetectionRequest {
   request_metadata: RequestMetadata;
   local_analysis: LocalAnalysis;
+  /** Privacy-bounded model-plane tool orchestration; never raw arguments or results. */
+  offensive_toolchain?: OffensiveToolchainObservation;
+  /** Reviewed framework identity evidence produced by an SDK helper. */
+  framework_evidence?: FrameworkEvidenceObservation;
+}
+
+export type OffensiveToolFamily =
+  | 'network_reconnaissance'
+  | 'vulnerability_scanning'
+  | 'injection_testing'
+  | 'exploitation';
+
+export interface OffensiveToolchainObservation {
+  schema_version: 1;
+  registry_revision: 1;
+  plane: 'model_api';
+  sensor: string;
+  /** HMAC-SHA-256 digest; never the raw run or conversation ID. */
+  run_correlation_id: string;
+  tool_families: OffensiveToolFamily[];
+  invocation_count: number;
+  family_set_sha256: string;
+  sequence_sha256: string;
+  redacted_argument_count: number;
+  dropped_tool_count: number;
+}
+
+export interface FrameworkEvidenceObservation {
+  schema_version: 1;
+  registry_revision: number;
+  framework: string;
+  plane: 'model_api';
+  evidence: Array<{ family_id: string; count: number; sha256: string }>;
+  observation_sha256: string;
 }
 
 /**
