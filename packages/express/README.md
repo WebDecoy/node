@@ -86,7 +86,10 @@ interface WebDecoyMiddlewareOptions {
   // 'monitor' (default) records and serves; 'enforce' blocks.
   mode?: 'monitor' | 'enforce';
 
-  // Threat score above which a request counts as blocked (default: 80)
+  // Opt in to the synchronous unified ingest verdict.
+  decisionMode?: 'legacy' | 'unified_v1';
+
+  // Minimum confidence to act on the verdict (default: 80 in legacy mode).
   threatScoreThreshold?: number;
   // Per-request override of the same threshold
   threshold?: number;

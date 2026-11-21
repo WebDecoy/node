@@ -264,7 +264,8 @@ const wd = new WebDecoy({
   apiKey: process.env.WEBDECOY_API_KEY, // optional; without it, local rules only
   rules: [tripwire()],                  // optional; default [tripwire()], [] to opt out
   apiUrl: 'https://in.webdecoy.com',    // optional (default shown)
-  threatScoreThreshold: 80,             // optional, 0-100 (default 80)
+  decisionMode: 'legacy',               // use 'unified_v1' to opt in
+  threatScoreThreshold: 80,             // optional minimum confidence, default 80 in legacy mode
   timeout: 5000,                        // optional, ms (default 5000)
   enableTLSFingerprinting: true,        // optional (default true)
   tlsRejectUnauthorized: true,          // optional (default true)
@@ -276,6 +277,14 @@ const wd = new WebDecoy({
 Also accepted: `characteristics` (what identifies the same caller for rate limits and caching; default the client IP), `decisionCache`, `webBotAuth`, `logger` (any object with `debug`/`info`/`warn`/`error`; `fromPino()` adapts pino) and `tracer` (an OpenTelemetry tracer).
 
 `protect()` also takes per-request options: `threshold`, `skipLocalAnalysis` and `metadata`.
+
+### Unified cloud decisions
+
+Set `decisionMode: 'unified_v1'` on `WebDecoy`, `createFetchGuard()`, or the Express, Fastify, Hono, and Next.js adapters. Adapter monitor mode exposes the verdict on `webdecoyDecision` while serving the request. `decision.detection.unified_score` is the score at request time. Later enrichment can update the detection in the dashboard.
+
+Ingest applies its own confidence gates. An explicit `threshold`, `threatScoreThreshold`, or Next.js Pages `blockThreshold` can add a minimum confidence. Cloud-eligible requests each get their own unified verdict, including repeats from the same caller. During a cloud outage or an invalid response, the request proceeds with an `ERROR` decision.
+
+Local rules decide first. The cloud gate forwards requests with a local bot signal, TLS material, or an explicit `skipLocalAnalysis` bypass. A datacenter IP or a missing Sec-CH-UA alone stays local. With `tracer` configured, count `webdecoy.cloud.admission` by `webdecoy.cloud.decision_mode`. The `local_gate` outcome includes two booleans for the datacenter and missing Sec-CH-UA observations. `cloud` records requests handed to the client and `backoff` records calls skipped during an outage. These attributes contain only bounded outcomes and booleans.
 
 Without an API key no request leaves your server. With one, a request goes to WebDecoy only when local analysis flags it as needing verification (or carries TLS details); that call is awaited, bounded by `timeout`, and fails open on error.
 

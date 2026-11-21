@@ -28,6 +28,7 @@ export { WebDecoy } from './sdk';
 
 export type {
   WebDecoyConfig,
+  DecisionMode,
   TLSInfo,
   RequestMetadata,
   LocalAnalysis,

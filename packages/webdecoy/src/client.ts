@@ -213,7 +213,18 @@ export class WebDecoyClient {
       throw new Error(`API request failed: HTTP ${response.status}`);
     }
 
-    return response.data as SDKDetectionResponse;
+    const detection = response.data;
+    if (request.decision_mode === 'unified_v1' && (
+      detection?.decision_mode !== 'unified_v1' ||
+      !(typeof detection.unified_score === 'number' && Number.isInteger(detection.unified_score) &&
+        detection.unified_score >= 0 && detection.unified_score <= 100) ||
+      !(Number.isInteger(detection.confidence) && detection.confidence >= 0 && detection.confidence <= 100) ||
+      !['allow', 'challenge', 'block'].includes(detection.decision) ||
+      typeof detection.detection_id !== 'string' || !detection.detection_id
+    )) {
+      throw new Error('WebDecoy did not return a valid unified decision');
+    }
+    return detection as SDKDetectionResponse;
   }
 
   async createSSRFCanary(options: SSRFCanaryOptions): Promise<SSRFCanary> {

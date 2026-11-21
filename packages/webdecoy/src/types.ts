@@ -12,6 +12,8 @@ import type { Tracer } from './tracing';
 
 export type { ProtectResult, Conclusion, RuleState, RuleOutcome } from './decision';
 
+export type DecisionMode = 'legacy' | 'unified_v1';
+
 /**
  * Configuration options for the Web Decoy SDK
  */
@@ -38,9 +40,15 @@ export interface WebDecoyConfig {
   enableTLSFingerprinting?: boolean;
 
   /**
-   * Threat score threshold for blocking (0-100)
-   * Requests with scores above this will be blocked
-   * @default 80
+   * Cloud decision policy. Legacy is the default. Opt in to unified_v1 to
+   * use the ingest verdict based on the same synchronous score as its row.
+   */
+  decisionMode?: DecisionMode;
+
+  /**
+   * Minimum cloud confidence (0–100) required to act on a block or challenge.
+   * Defaults to 80 in legacy mode. Unified mode uses ingest's confidence
+   * gates unless a minimum is explicitly set.
    */
   threatScoreThreshold?: number;
 
@@ -106,7 +114,7 @@ export interface WebDecoyConfig {
   /**
    * Reuse of decisions that cost a network round trip. `false` disables it.
    *
-   * Only server-derived DENY and CHALLENGE verdicts are cached — never ALLOW,
+   * Used in legacy mode. Only server-derived DENY and CHALLENGE verdicts are cached — never ALLOW,
    * and never a rule outcome, because a rate limiter has to see every request.
    * @default { ttl: 60_000, max: 10_000 }
    */
@@ -306,6 +314,8 @@ export interface LocalAnalysis {
 export interface SDKDetectionRequest {
   request_metadata: RequestMetadata;
   local_analysis: LocalAnalysis;
+  /** Sent only when a caller explicitly requests unified admission. */
+  decision_mode?: 'unified_v1';
   /** Privacy-bounded model-plane tool orchestration; never raw arguments or results. */
   offensive_toolchain?: OffensiveToolchainObservation;
   /** Reviewed framework identity evidence produced by an SDK helper. */
@@ -346,6 +356,12 @@ export interface FrameworkEvidenceObservation {
  * Detection response from the ingest service
  */
 export interface SDKDetectionResponse {
+  /** Present for a verdict produced by the unified policy. */
+  decision_mode?: 'unified_v1';
+
+  /** Synchronous ingest score (0–100), before asynchronous enrichment. */
+  unified_score?: number;
+
   /** Decision: "allow", "block", or "challenge" */
   decision: 'allow' | 'block' | 'challenge';
 
@@ -372,7 +388,7 @@ export interface SDKDetectionResponse {
  * Options for the protect() method
  */
 export interface ProtectOptions {
-  /** Custom threat score threshold for this request */
+  /** Minimum cloud confidence required to act on this request */
   threshold?: number;
 
   /** Skip local analysis and only use server-side detection */
