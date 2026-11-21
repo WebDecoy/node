@@ -540,6 +540,18 @@
     "matched": true
   },
   {
+    "userAgent": "checkoutmonitor",
+    "id": "checkoutmonitor",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
+    "userAgent": "Mozilla/5.0 (compatible; checkoutmonitor/1.0; +http://example.com/bot)",
+    "id": "checkoutmonitor",
+    "category": "monitoring",
+    "matched": true
+  },
+  {
     "userAgent": "claude-searchbot",
     "id": "claude-searchbot",
     "category": "ai_search_crawler",
