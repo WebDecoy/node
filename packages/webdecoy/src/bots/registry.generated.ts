@@ -11,7 +11,7 @@
  * agents share User-Agent substrings, so sorting this array changes how real
  * traffic is classified.
  *
- * 252 agents across 15 categories.
+ * 251 agents across 15 categories.
  */
 
 /**
@@ -277,7 +277,6 @@ export const BOT_REGISTRY: readonly BotAgent[] = [
   { id: "pingdom", name: "Pingdom", category: "monitoring", organization: "SolarWinds", baseScore: 20, respectsRobots: true, uaPatterns: ["pingdom"] },
   { id: "statuscake", name: "StatusCake", category: "monitoring", organization: "StatusCake", baseScore: 20, respectsRobots: true, uaPatterns: ["statuscake"] },
   { id: "better-uptime", name: "Better Uptime", category: "monitoring", organization: "Better Stack", baseScore: 20, respectsRobots: true, uaPatterns: ["betteruptime"] },
-  { id: "checkoutmonitor", name: "Checkout Monitor", category: "monitoring", organization: "Checkout Monitor", baseScore: 20, respectsRobots: false, uaPatterns: ["checkoutmonitor"] },
   { id: "datadog-synthetics", name: "Datadog Synthetics", category: "monitoring", organization: "Datadog", baseScore: 25, respectsRobots: true, uaPatterns: ["datadog"] },
   { id: "newrelic", name: "New Relic", category: "monitoring", organization: "New Relic", baseScore: 25, respectsRobots: true, uaPatterns: ["newrelic"] },
   { id: "site24x7", name: "Site24x7", category: "monitoring", organization: "Zoho", baseScore: 20, respectsRobots: true, uaPatterns: ["site24x7"] },
