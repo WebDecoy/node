@@ -263,8 +263,8 @@ export function withWebDecoy(
 
 export interface WithBotProtectionOptions extends WebDecoyMiddlewareOptions {
   /**
-   * Block threshold (0-100). Requests with scores above this are blocked.
-   * Default: 80
+   * Minimum confidence (0–100) required to act on a cloud verdict.
+   * Defaults to 80 in legacy mode. Unified mode uses ingest's confidence gates.
    */
   blockThreshold?: number;
 }
@@ -295,7 +295,7 @@ export function withBotProtection<T extends (...args: any[]) => any>(
   config: WebDecoyConfig & WithBotProtectionOptions
 ): T {
   const sdk = new WebDecoy(config);
-  const threshold = config.blockThreshold ?? 80;
+  const threshold = config.blockThreshold ?? (config.decisionMode === 'unified_v1' ? undefined : 80);
   // Monitor by default, like withWebDecoy and every other adapter: a wrapper
   // that says nothing about mode must never refuse a request.
   const mode = config.mode ?? 'monitor';

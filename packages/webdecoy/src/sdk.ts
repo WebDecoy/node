@@ -15,7 +15,7 @@ import type { AgentRequestInput, AgentVerdict } from './agent/types';
 import { readEdgeVerdict } from './edge';
 import { resolveLogger } from './logger';
 import { startSpan, setAttribute, recordError, endSpan } from './tracing';
-import type { Tracer } from './tracing';
+import type { Span, Tracer } from './tracing';
 import type { Logger } from './logger';
 import { Decision, newDecisionId } from './decision';
 import type { Conclusion } from './decision';
@@ -28,7 +28,6 @@ import {
   WebDecoyConfig,
   RequestMetadata,
   ProtectOptions,
-  SDKDetectionRequest,
   SDKDetectionResponse,
   SSRFCanary,
   SSRFCanaryOptions,
@@ -47,9 +46,10 @@ export class WebDecoy {
   private client: WebDecoyClient | null;
   private config: Omit<
     Required<WebDecoyConfig>,
-    'apiKey' | 'rules' | 'webBotAuth' | 'characteristics' | 'decisionCache' | 'logger' | 'tracer'
+    'apiKey' | 'rules' | 'webBotAuth' | 'characteristics' | 'decisionCache' | 'logger' | 'tracer' | 'threatScoreThreshold'
   > & {
     apiKey?: string;
+    threatScoreThreshold?: number;
   };
   private ruleEngine: RuleEngine | null;
   private referralCounter: AIReferralCounter | null = null;
@@ -84,7 +84,8 @@ export class WebDecoy {
       apiKey: config.apiKey,
       apiUrl: config.apiUrl || 'https://in.webdecoy.com',
       enableTLSFingerprinting: config.enableTLSFingerprinting ?? true,
-      threatScoreThreshold: config.threatScoreThreshold ?? 80,
+      decisionMode: config.decisionMode ?? 'legacy',
+      threatScoreThreshold: config.threatScoreThreshold,
       timeout: config.timeout ?? 5000,
       debug: config.debug ?? false,
       tlsRejectUnauthorized: config.tlsRejectUnauthorized ?? true,
@@ -110,8 +111,11 @@ export class WebDecoy {
 
     this.webBotAuthOptions = config.webBotAuth;
     this.characteristics = config.characteristics ?? DEFAULT_CHARACTERISTICS;
-    this.decisionCache =
-      config.decisionCache === false ? null : new DecisionCache(config.decisionCache ?? {});
+    // Unified admission scores this request's path and headers. An earlier
+    // verdict for the same characteristic key cannot stand in for it.
+    this.decisionCache = config.decisionCache === false || this.config.decisionMode === 'unified_v1'
+      ? null
+      : new DecisionCache(config.decisionCache ?? {});
 
     // Rules. When none are configured, tripwires are switched on rather than
     // leaving the SDK with nothing to detect.
@@ -478,7 +482,8 @@ export class WebDecoy {
 
     const span = startSpan(this.tracer, 'webdecoy.protect');
     try {
-      const decision = (await this.decide(metadata, options)).withEdge(edge);
+      setAttribute(span, 'webdecoy.cloud.decision_mode', this.config.decisionMode);
+      const decision = (await this.decide(metadata, options, span)).withEdge(edge);
 
       // Attributes chosen so a trace answers the questions an operator actually
       // asks: what did we decide, which rule decided it, and did this request
@@ -514,7 +519,8 @@ export class WebDecoy {
 
   private async decide(
     metadata: RequestMetadata,
-    options: ProtectOptions = {}
+    options: ProtectOptions,
+    span: Span,
   ): Promise<Decision> {
     // Declared out here so the catch below can stamp the same id and key onto
     // an ERROR decision. An error is still a decision about a caller.
@@ -538,6 +544,7 @@ export class WebDecoy {
       // and it must never fire the customer's rules — ingest marks the row
       // is_test and keeps it out of stats, billing, and enforcement.
       if (isTestTriggerUserAgent(metadata.user_agent)) {
+        setAttribute(span, 'webdecoy.cloud.admission', 'test_trigger');
         return this.reportTestTrigger(metadata, id);
       }
 
@@ -559,6 +566,7 @@ export class WebDecoy {
       // a rate limiter has to see every request to advance its window, and a
       // cached tripwire hit would stop the violation being reported.
       if (ruleResult && ruleResult.action !== 'ALLOW') {
+        setAttribute(span, 'webdecoy.cloud.admission', 'local_rule');
         const throttled = ruleResult.action === 'THROTTLE';
         return new Decision({
           conclusion: 'DENY',
@@ -581,6 +589,7 @@ export class WebDecoy {
 
       // No API client — local rules are all there is, and they allowed.
       if (!this.client) {
+        setAttribute(span, 'webdecoy.cloud.admission', 'no_api_key');
         return new Decision({
           conclusion: 'ALLOW',
           detection: {
@@ -603,7 +612,10 @@ export class WebDecoy {
       // at the top of the method so the rules still run: the limiter has to see
       // every request, and a tripwire hit still has to be reported.
       const cached = this.decisionCache?.get(key);
-      if (cached) return cached.asCached();
+      if (cached) {
+        setAttribute(span, 'webdecoy.cloud.admission', 'cached');
+        return cached.asCached();
+      }
 
       // Perform local analysis (unless explicitly skipped)
       const localAnalysis = options.skipLocalAnalysis
@@ -619,18 +631,15 @@ export class WebDecoy {
 
       this.log.debug('Local analysis', { ...localAnalysis });
 
-      // Build detection request
-      const detectionRequest: SDKDetectionRequest = {
-        request_metadata: metadata,
-        local_analysis: localAnalysis,
-      };
-
       // Send to server if verification is needed or TLS fingerprinting is enabled
       const shouldCallServer =
         localAnalysis.needs_verification ||
         (this.config.enableTLSFingerprinting && metadata.tls_info);
 
       if (!shouldCallServer) {
+        setAttribute(span, 'webdecoy.cloud.admission', 'local_gate');
+        setAttribute(span, 'webdecoy.cloud.gate_datacenter_ip', localAnalysis.datacenter_ip);
+        setAttribute(span, 'webdecoy.cloud.gate_missing_sec_ch_ua', localAnalysis.missing_sec_ch_ua);
         // No local bot signal and nothing to fingerprint: a legitimate
         // request. Allow it locally and never touch the server — only bot
         // traffic reaches ingest. (A datacenter/VPN IP or a missing Sec-CH-UA
@@ -654,11 +663,18 @@ export class WebDecoy {
         });
       }
 
-      // Call the detection API
-      const detection = await this.client.detect(detectionRequest);
+      const unified = this.config.decisionMode === 'unified_v1';
+      setAttribute(span, 'webdecoy.cloud.admission', 'cloud');
+      const detection = await this.client.detect({
+        request_metadata: metadata,
+        local_analysis: localAnalysis,
+        ...(unified && { decision_mode: 'unified_v1' }),
+      });
 
-      // Determine if request should be allowed
-      const threshold = options.threshold ?? this.config.threatScoreThreshold;
+      // Unified admission already includes confidence gates. An explicitly
+      // configured client minimum can still make the local policy stricter
+      // about when to act on a cloud verdict.
+      const threshold = options.threshold ?? this.config.threatScoreThreshold ?? (unified ? 0 : 80);
       const allowed = detection.decision === 'allow' || detection.confidence < threshold;
 
       this.log.debug('Server detection', {
@@ -667,9 +683,8 @@ export class WebDecoy {
         allowed,
       });
 
-      // A server verdict of "challenge" is the one case that can route to the
-      // captcha, and it only counts when the score cleared the threshold —
-      // below it, the request is allowed and there is nothing to challenge.
+      // Only a server challenge can route to CAPTCHA. The configured
+      // confidence minimum can suppress both challenges and denials.
       const conclusion: Conclusion = allowed
         ? 'ALLOW'
         : detection.decision === 'challenge'
@@ -678,7 +693,9 @@ export class WebDecoy {
 
       const decision = new Decision({
         conclusion,
-        reason: allowed ? undefined : `Threat score ${detection.confidence} (threshold ${threshold})`,
+        reason: allowed ? undefined : unified
+          ? `Unified verdict ${detection.decision} (score ${detection.unified_score}, confidence ${detection.confidence})`
+          : `Threat score ${detection.confidence} (threshold ${threshold})`,
         detection,
         id,
         results: ruleResult?.results ?? [],
@@ -699,6 +716,9 @@ export class WebDecoy {
       // While the client is paused after an outage, every request lands here.
       // The failure that started the pause was already logged as an error;
       // logging each paused request too would flood the operator's logs.
+      if (error instanceof WebDecoyUnavailableError) {
+        setAttribute(span, 'webdecoy.cloud.admission', 'backoff');
+      }
       const log = error instanceof WebDecoyUnavailableError ? this.log.debug.bind(this.log) : this.log.error.bind(this.log);
       log('Protection error', {
         error: error instanceof Error ? error.message : String(error),
@@ -760,6 +780,7 @@ export class WebDecoy {
     try {
       const detection = await this.client.detect({
         request_metadata: metadata,
+        ...(this.config.decisionMode === 'unified_v1' && { decision_mode: 'unified_v1' }),
         local_analysis: {
           suspicious_headers: false,
           missing_sec_ch_ua: false,
