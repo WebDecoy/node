@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.0] - 2026-11-21
+
+### Added
+
+- Opt-in unified ingest verdicts for the Node SDK, fetch guard, and framework adapters, with request-time scores and traces for local admission.
+- Bounded model-plane toolchain observations for defensive correlation.
+
 ## [0.25.2] - 2026-11-18
 
 ### Added
