@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.27.0] - 2026-11-22
+
+### Added
+
+- Inspect acknowledged, failed, discarded, and queued rule violations with `getViolationDeliveryStats()`.
+
+### Fixed
+
+- Keep unattempted violation batches queued during ingest cooldown and finish pending sends on graceful shutdown.
+- Send Next.js middleware violations through the request lifecycle. Framework monitor mode records dry-run violations and omits tripwire clearance tokens.
+
 ## [0.26.0] - 2026-11-21
 
 ### Added
