@@ -268,9 +268,7 @@ describe('Captcha end-to-end', () => {
     expect(result.detections.some((d) => d.reason.includes('No PoW solution'))).toBe(true);
   });
 
-  it('does not block on "no PoW" alone — pushes to challenge, not block', async () => {
-    // A single maxed category cannot cross the 0.5 success threshold; missing
-    // PoW on an otherwise-clean request yields a "challenge" recommendation.
+  it('requires verified proof of work before issuing a token', async () => {
     const captcha = new Captcha({ secret: SECRET });
     const result = await captcha.verify({
       siteKey: 'site',
@@ -279,7 +277,9 @@ describe('Captcha end-to-end', () => {
       headers: { 'user-agent': 'curl/8.0' },
       signals: {},
     });
-    expect(result.recommendation).not.toBe('allow');
+    expect(result.success).toBe(false);
+    expect(result.token).toBeNull();
+    expect(result.recommendation).toBe('challenge');
     expect(result.detections.some((d) => d.reason.includes('No PoW solution'))).toBe(true);
   });
 

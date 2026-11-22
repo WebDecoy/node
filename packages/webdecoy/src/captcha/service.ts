@@ -84,6 +84,10 @@ export class Captcha {
    * signals, and issues a session token on success. Mirrors `runVerification`.
    */
   async verify(input: VerifyInput): Promise<VerifyResult> {
+    return this.verifySubmission(input, true);
+  }
+
+  private async verifySubmission(input: VerifyInput, widgetInteraction: boolean): Promise<VerifyResult> {
     const { siteKey, ip, userAgent } = input;
     const headers = input.headers ?? {};
     let signals: Signals = input.signals ?? {};
@@ -136,19 +140,25 @@ export class Captcha {
       headers,
       ja3Hash: input.ja3Hash ?? null,
       trustedJA4Headers: this.trustedJA4Headers,
+      widgetInteraction,
       pow,
       extraDetections,
     });
 
-    // 5. Issue a token on success.
-    const token = verdict.success ? await this.tokens.issue(ip, siteKey, verdict.score) : null;
+    // 5. Token issuance requires both a verified proof and a passing score.
+    const proofVerified = pow.valid === true;
+    const success = proofVerified && verdict.success;
+    const token = success ? await this.tokens.issue(ip, siteKey, verdict.score) : null;
+    const recommendation = !proofVerified && verdict.recommendation === 'allow'
+      ? 'challenge'
+      : verdict.recommendation;
 
-    return { ...verdict, token };
+    return { ...verdict, success, recommendation, token };
   }
 
   /** Invisible-mode scoring — same pipeline, returns a compact result + action. */
   async score(input: VerifyInput & { action?: string }): Promise<ScoreResult> {
-    const result = await this.verify(input);
+    const result = await this.verifySubmission(input, false);
     return {
       success: result.success,
       score: result.score,

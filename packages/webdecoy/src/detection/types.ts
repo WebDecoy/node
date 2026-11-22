@@ -280,6 +280,8 @@ export interface DetectionContext {
    * change the score.
    */
   trustedJA4Headers?: string[];
+  /** Whether the server requested a widget click. Defaults to true. */
+  widgetInteraction?: boolean;
   /** Proof-of-work verification outcome (supplied by the PoW subsystem). */
   pow?: PoWOutcome;
   /**

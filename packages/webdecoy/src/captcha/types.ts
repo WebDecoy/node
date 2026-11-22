@@ -78,12 +78,15 @@ export interface VerifyInput {
 
 /** A verdict plus an issued token (present only on success). */
 export interface VerifyResult extends Verdict {
+  /** True when the proof verified and the score passed. */
+  success: boolean;
   /** base64url session token, or null when the request did not pass. */
   token: string | null;
 }
 
 /** Invisible-mode (`score`) result. */
 export interface ScoreResult {
+  /** True when the proof verified and the score passed. */
   success: boolean;
   score: number;
   token: string | null;

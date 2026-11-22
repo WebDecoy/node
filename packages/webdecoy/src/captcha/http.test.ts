@@ -106,18 +106,47 @@ describe('captcha HTTP endpoints', () => {
     expect((tRes!.body as { valid: boolean }).valid).toBe(true);
   });
 
-  it('scores in invisible mode on POST /__webdecoy/score', async () => {
-    const { handle } = createCaptchaEndpoints({ secret: 's' });
-    const res = await handle(
-      req({
-        method: 'POST',
-        pathname: '/__webdecoy/score',
-        headers: HEADERS,
-        body: { siteKey: 'site', action: 'login', signals: { behavioral: HUMAN, environmental: ENV } },
-      }),
-    );
-    expect(res?.status).toBe(200);
-    expect((res!.body as { action: string }).action).toBe('login');
+  it.each(['verify', 'score'])('applies route-specific interaction checks on /%s', async (route) => {
+    const { captcha, handle } = createCaptchaEndpoints({ secret: 's' });
+    const ip = '73.15.22.100';
+    const now = Date.now();
+    const clock = jest.spyOn(Date, 'now').mockReturnValue(now);
+    try {
+      const challenge = await captcha.issueChallenge('site', ip, 2);
+      clock.mockReturnValue(now + 90_000);
+      const res = await handle(
+        req({
+          method: 'POST',
+          pathname: '/__webdecoy/' + route,
+          ip,
+          headers: HEADERS,
+          body: {
+            siteKey: 'site',
+            action: 'login',
+            powSolution: solve(challenge),
+            signals: {
+              behavioral: { ...HUMAN, interactionDuration: 90_000 },
+              environmental: ENV,
+              meta: { challengeNonce: challenge.nonce, invisible: true },
+            },
+          },
+        }),
+      );
+
+      expect(res?.status).toBe(200);
+      expect(res?.body).toMatchObject({ success: true, token: expect.any(String) });
+      if (route === 'verify') {
+        expect(res?.body).toMatchObject({
+          detections: expect.arrayContaining([
+            expect.objectContaining({ reason: 'Unusually long interaction time' }),
+          ]),
+        });
+      } else {
+        expect(res?.body).toMatchObject({ action: 'login', score: 0 });
+      }
+    } finally {
+      clock.mockRestore();
+    }
   });
 
   it('400s a token verify with no token', async () => {
