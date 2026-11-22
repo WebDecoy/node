@@ -2,7 +2,7 @@
 
 import type { Detection, Signals } from '../types';
 
-export function detectVisionAI(signals: Signals): Detection[] {
+export function detectVisionAI(signals: Signals, widgetInteraction = true): Detection[] {
   const detections: Detection[] = [];
   const b = signals.behavioral ?? {};
   const t = signals.temporal ?? {};
@@ -25,7 +25,7 @@ export function detectVisionAI(signals: Signals): Detection[] {
     });
   }
 
-  if (approachPts === 0 && !isTouchUser && !isKeyboardUser) {
+  if (widgetInteraction && approachPts === 0 && !isTouchUser && !isKeyboardUser) {
     detections.push({
       category: 'vision_ai',
       score: 0.7,
@@ -66,7 +66,7 @@ export function detectVisionAI(signals: Signals): Detection[] {
     });
   }
 
-  if ((b.approachDirectness ?? 0) > 0.95) {
+  if (widgetInteraction && (b.approachDirectness ?? 0) > 0.95) {
     detections.push({
       category: 'vision_ai',
       score: 0.5,
@@ -76,7 +76,7 @@ export function detectVisionAI(signals: Signals): Detection[] {
   }
 
   const precision = b.clickPrecision ?? 10;
-  if (precision > 0 && precision < 2) {
+  if (widgetInteraction && precision > 0 && precision < 2) {
     detections.push({
       category: 'vision_ai',
       score: 0.4,
@@ -86,7 +86,7 @@ export function detectVisionAI(signals: Signals): Detection[] {
   }
 
   const exploration = b.explorationRatio ?? 0.3;
-  if (exploration < 0.05 && trajectory > 50) {
+  if (widgetInteraction && exploration < 0.05 && trajectory > 50) {
     detections.push({
       category: 'vision_ai',
       score: 0.4,

@@ -116,12 +116,13 @@ export class DetectionEngine {
     }
 
     // --- Behavioral / environmental detectors ---------------------------------
+    const widgetInteraction = context.widgetInteraction !== false;
     detections.push(
-      ...detectVisionAI(signals),
+      ...detectVisionAI(signals, widgetInteraction),
       ...detectHeadless(signals, userAgent),
       ...detectAutomation(signals),
       ...detectCDP(signals),
-      ...detectBehavioral(signals),
+      ...detectBehavioral(signals, widgetInteraction),
       ...detectTouchAuthenticity(signals, userAgent),
       ...detectSensorEntropy(signals, userAgent),
       ...detectTouchKinematics(signals),

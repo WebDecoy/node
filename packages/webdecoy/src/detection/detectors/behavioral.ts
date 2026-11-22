@@ -2,7 +2,7 @@
 
 import type { Detection, Signals } from '../types';
 
-export function detectBehavioral(signals: Signals): Detection[] {
+export function detectBehavioral(signals: Signals, widgetInteraction = true): Detection[] {
   const detections: Detection[] = [];
   const b = signals.behavioral ?? {};
   const t = signals.temporal ?? {};
@@ -42,7 +42,7 @@ export function detectBehavioral(signals: Signals): Detection[] {
   }
 
   const overshoots = b.overshootCorrections ?? 0;
-  if (overshoots === 0 && trajectory > 200) {
+  if (widgetInteraction && overshoots === 0 && trajectory > 200) {
     detections.push({
       category: 'behavioral',
       score: 0.4,
@@ -59,7 +59,7 @@ export function detectBehavioral(signals: Signals): Detection[] {
       confidence: 0.7,
       reason: 'Interaction completed too quickly',
     });
-  } else if (interactionTime > 60000) {
+  } else if (widgetInteraction && interactionTime > 60000) {
     detections.push({
       category: 'captcha_farm',
       score: 0.3,

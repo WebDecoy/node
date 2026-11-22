@@ -22,6 +22,7 @@ interface ScoreOpts {
   ip?: string;
   headers?: Record<string, string>;
   ja3Hash?: string;
+  widgetInteraction?: boolean;
 }
 
 function score(signals: Signals, opts: ScoreOpts = {}): Verdict {
@@ -33,6 +34,7 @@ function score(signals: Signals, opts: ScoreOpts = {}): Verdict {
     userAgent: ua,
     headers: { 'user-agent': ua, ...(opts.headers ?? {}) },
     ja3Hash: opts.ja3Hash,
+    widgetInteraction: opts.widgetInteraction,
   };
   return engine.score(signals, context);
 }
@@ -185,6 +187,40 @@ describe('behavioral signals', () => {
       { ua: UA_CHROME_MAC, headers: GOOD_HEADERS },
     );
     expect(v.score).toBeLessThanOrEqual(0.3);
+  });
+});
+
+describe('widget and invisible interaction modes', () => {
+  it('uses widget-only checks only for widget interaction and keeps shared checks', () => {
+    const signals: Signals = {
+      behavioral: {
+        ...HUMAN_BEHAVIOR,
+        approachPoints: 0,
+        approachDirectness: 0.98,
+        clickPrecision: 1,
+        explorationRatio: 0.01,
+        overshootCorrections: 0,
+        interactionDuration: 90_000,
+        velocityVariance: 0.01,
+      },
+    };
+    const widgetOnly = [
+      'No approach trajectory to target',
+      'Mouse path to target is unnaturally direct',
+      'Click precision is unnaturally accurate',
+      'No exploratory mouse movement before click',
+      'No overshoot corrections on long trajectory',
+      'Unusually long interaction time',
+    ];
+    const widget = score(signals);
+    const invisible = score(signals, { widgetInteraction: false });
+
+    for (const reason of widgetOnly) {
+      expect(hasReasonIncluding(widget, reason)).toBe(true);
+      expect(hasReasonIncluding(invisible, reason)).toBe(false);
+    }
+    expect(hasReasonIncluding(widget, 'Mouse velocity too consistent')).toBe(true);
+    expect(hasReasonIncluding(invisible, 'Mouse velocity too consistent')).toBe(true);
   });
 });
 
