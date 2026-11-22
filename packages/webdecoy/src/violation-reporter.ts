@@ -21,13 +21,29 @@ export interface ViolationReporterConfig {
  */
 export const MAX_BUFFERED_VIOLATIONS = 1_000;
 
+/** Delivery counters for this SDK instance. */
+export interface ViolationDeliveryStats {
+  /** Events in batches acknowledged by ingest. */
+  acknowledgedEvents: number;
+  /** HTTP or transport failures for attempted batches. */
+  failedBatches: number;
+  /** Events discarded after failure, overflow, or shutdown. */
+  droppedEvents: number;
+  /** Events waiting for an attempt. */
+  bufferedEvents: number;
+}
+
 export class ViolationReporter {
   private client: WebDecoyClient;
   private buffer: ViolationEvent[] = [];
   private flushTimer: ReturnType<typeof setInterval>;
   private maxBufferSize: number;
   private debug: boolean;
-  private flushing = false;
+  private flushPromise: Promise<void> | undefined;
+  private queuedFlush: Promise<void> | undefined;
+  private acknowledgedEvents = 0;
+  private failedBatches = 0;
+  private droppedEvents = 0;
 
   constructor(client: WebDecoyClient, config: ViolationReporterConfig = {}) {
     this.client = client;
@@ -50,7 +66,9 @@ export class ViolationReporter {
   report(violations: ViolationEvent[]): void {
     this.buffer.push(...violations);
     if (this.buffer.length > MAX_BUFFERED_VIOLATIONS) {
-      this.buffer.splice(0, this.buffer.length - MAX_BUFFERED_VIOLATIONS);
+      const overflow = this.buffer.length - MAX_BUFFERED_VIOLATIONS;
+      this.buffer.splice(0, overflow);
+      this.droppedEvents += overflow;
     }
 
     if (this.buffer.length >= this.maxBufferSize) {
@@ -59,43 +77,61 @@ export class ViolationReporter {
     }
   }
 
-  /**
-   * Flush buffered violations to the backend
-   */
-  async flush(): Promise<void> {
-    // While the client is paused, hold the buffer (capped above) rather than
-    // drain it into requests that cannot be made.
-    if (this.flushing || this.buffer.length === 0 || !this.client.isAvailable()) return;
-    this.flushing = true;
+  /** Flush the buffer, coalescing requests that arrive during an active send. */
+  flush(): Promise<void> {
+    if (this.queuedFlush) return this.queuedFlush;
+    if (this.flushPromise) {
+      if (this.buffer.length === 0 || !this.client.isAvailable()) return this.flushPromise;
+      this.queuedFlush = this.flushPromise.then(() => {
+        this.queuedFlush = undefined;
+        return this.flush();
+      });
+      return this.queuedFlush;
+    }
+    if (this.buffer.length === 0 || !this.client.isAvailable()) return Promise.resolve();
 
-    // Drain the buffer
-    const events = this.buffer.splice(0, this.buffer.length);
+    const size = this.buffer.length;
+    this.flushPromise = Promise.resolve()
+      .then(() => this.flushBatches(size))
+      .finally(() => { this.flushPromise = undefined; });
+    return this.flushPromise;
+  }
 
-    try {
-      // Split into batches of 100 (API limit)
-      for (let i = 0; i < events.length; i += 100) {
-        const batch = events.slice(i, i + 100);
-        await this.client.sendViolations(batch);
-
+  private async flushBatches(remaining: number): Promise<void> {
+    // Keep unattempted events buffered when an HTTP or transport failure pauses
+    // the client. Each request respects the ingest limit of 100 events.
+    while (remaining > 0 && this.buffer.length > 0 && this.client.isAvailable()) {
+      const batch = this.buffer.splice(0, Math.min(100, remaining));
+      remaining -= batch.length;
+      if (await this.client.sendViolationBatch(batch)) {
+        this.acknowledgedEvents += batch.length;
         if (this.debug) {
           console.log(`[WebDecoy] Flushed ${batch.length} violation events`);
         }
+      } else {
+        // A failed response can follow a successful server write. Replaying
+        // an attempted batch would duplicate violations and tripwire effects.
+        this.failedBatches++;
+        this.droppedEvents += batch.length;
       }
-    } catch (error) {
-      if (this.debug) {
-        console.error('[WebDecoy] Failed to flush violations:', error);
-      }
-      // Violations are dropped on failure — no retry, no user impact
-    } finally {
-      this.flushing = false;
     }
   }
 
-  /**
-   * Flush remaining events and stop the timer
-   */
+  getDeliveryStats(): ViolationDeliveryStats {
+    return {
+      acknowledgedEvents: this.acknowledgedEvents,
+      failedBatches: this.failedBatches,
+      droppedEvents: this.droppedEvents,
+      bufferedEvents: this.buffer.length,
+    };
+  }
+
+  /** Stop the timer and give remaining events one final flush. */
   async destroy(): Promise<void> {
     clearInterval(this.flushTimer);
+    if (this.flushPromise) await this.flushPromise;
     await this.flush();
+    this.droppedEvents += this.buffer.length;
+    this.buffer.length = 0;
   }
 }

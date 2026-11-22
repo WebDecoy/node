@@ -396,4 +396,10 @@ export interface ProtectOptions {
 
   /** Additional metadata to include in the detection */
   metadata?: Record<string, any>;
+
+  /** How the caller handles local violations and keeps a background report alive. */
+  violationReporting?: {
+    mode: 'monitor' | 'enforce';
+    waitUntil?: (delivery: Promise<void>) => void;
+  };
 }

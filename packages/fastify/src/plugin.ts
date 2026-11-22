@@ -272,6 +272,7 @@ async function webdecoyPluginImpl(
         threshold: options.threshold,
         skipLocalAnalysis: options.skipLocalAnalysis,
         metadata: options.metadata,
+        violationReporting: { mode },
       });
 
       // Monitor mode: record the verdict, change nothing. Checked before the

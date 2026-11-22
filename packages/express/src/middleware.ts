@@ -239,6 +239,7 @@ export function webdecoy(
         threshold: config.threshold,
         skipLocalAnalysis: config.skipLocalAnalysis,
         metadata: config.metadata,
+        violationReporting: { mode },
       });
 
       // Honeytoken injection.

@@ -77,6 +77,8 @@ To get a key: sign up at [app.webdecoy.com](https://app.webdecoy.com), add your 
 
 ### Monitor mode
 
+When Next.js supplies a middleware event, `withWebDecoy` uses its `waitUntil` hook to send rule violations after the request decision. Pass that event through if you wrap the middleware with your own function.
+
 `withWebDecoy` starts in **monitor mode**: it serves every request and passes the verdict to your app as request headers, which route handlers and server components can read:
 
 | Request header | Value |

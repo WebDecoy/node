@@ -8,6 +8,7 @@ import { analyzeRequest } from './local-analysis';
 import { RuleEngine } from './rules/rule-engine';
 import { tripwire } from './rules';
 import { ViolationReporter } from './violation-reporter';
+import type { ViolationDeliveryStats } from './violation-reporter';
 import { AIReferralCounter } from './referrals/referral-counter';
 import { IPEnrichmentClient } from './ip-enrichment';
 import { AgentVerifier } from './agent/verifier';
@@ -23,7 +24,7 @@ import { deriveKey, DEFAULT_CHARACTERISTICS } from './characteristics';
 import { DecisionCache } from './decision-cache';
 import { classifyUserAgent } from './bots';
 import { isTestTriggerUserAgent } from './test-trigger';
-import type { Rule, RuleContext, RuleEngineResult, ViolationEvent } from './rules/types';
+import type { Rule, RuleContext, RuleEngineResult } from './rules/types';
 import {
   WebDecoyConfig,
   RequestMetadata,
@@ -42,6 +43,9 @@ import { hmacSha256Hex, randomHex, timingSafeEqualStr } from './webcrypto';
 import { createOffensiveToolchainEvidence } from './offensive-toolchain';
 import type { OffensiveToolchainEvidenceInput } from './offensive-toolchain';
 
+type ConfiguredViolationReporter = Pick<ViolationReporter, 'report' | 'flush' | 'destroy'> &
+  Partial<Pick<ViolationReporter, 'getDeliveryStats'>>;
+
 export class WebDecoy {
   private client: WebDecoyClient | null;
   private config: Omit<
@@ -53,7 +57,7 @@ export class WebDecoy {
   };
   private ruleEngine: RuleEngine | null;
   private referralCounter: AIReferralCounter | null = null;
-  private violationReporter: { report(violations: ViolationEvent[]): void; flush(): Promise<void>; destroy(): Promise<void> } | null = null;
+  private violationReporter: ConfiguredViolationReporter | null = null;
   private ipEnrichmentClient: IPEnrichmentClient | null = null;
   private _hasFilterRules = false;
   private _hasAgentRules = false;
@@ -280,7 +284,10 @@ export class WebDecoy {
   }
 
   /** Evaluate rules against a prepared context and report any violations. */
-  private runRules(context: RuleContext): RuleEngineResult | null {
+  private runRules(
+    context: RuleContext,
+    reporting?: ProtectOptions['violationReporting'],
+  ): RuleEngineResult | null {
     if (!this.ruleEngine) return null;
 
     const span = startSpan(this.tracer, 'webdecoy.rules');
@@ -291,8 +298,21 @@ export class WebDecoy {
     if (result.rule) setAttribute(span, 'webdecoy.rules.deciding', result.rule);
     endSpan(span);
 
-    if (result.violations.length > 0 && this.violationReporter) {
-      this.violationReporter.report(result.violations);
+    const reporter = this.violationReporter;
+    if (reporter && result.violations.length > 0) {
+      const violations = reporting?.mode === 'monitor'
+        ? result.violations.map((event) => ({ ...event, dryRun: true, clearance: undefined }))
+        : result.violations;
+      reporter.report(violations);
+
+      if (reporting?.waitUntil) {
+        const delivery = Promise.resolve().then(() => reporter.flush()).catch(() => undefined);
+        try {
+          reporting.waitUntil(delivery);
+        } catch {
+          // A lifecycle hook failure must not alter the request decision.
+        }
+      }
     }
     return result;
   }
@@ -559,7 +579,7 @@ export class WebDecoy {
       key = context.key ?? key;
       const agentVerdict: AgentVerdict | undefined = context.agent;
       const ruleResult: RuleEngineResult | null = this.ruleEngine
-        ? this.runRules(context)
+        ? this.runRules(context, options.violationReporting)
         : null;
 
       // Rules denied or throttled: decided locally, no API call. Not cached —
@@ -832,8 +852,13 @@ export class WebDecoy {
    * Attach a violation reporter for sending violations to the backend.
    * Called internally when apiKey is present and rules are configured.
    */
-  setViolationReporter(reporter: { report(violations: ViolationEvent[]): void; flush(): Promise<void>; destroy(): Promise<void> }): void {
+  setViolationReporter(reporter: ConfiguredViolationReporter): void {
     this.violationReporter = reporter;
+  }
+
+  /** Snapshot of this instance's violation delivery, when reporting is enabled. */
+  getViolationDeliveryStats(): ViolationDeliveryStats | undefined {
+    return this.violationReporter?.getDeliveryStats?.();
   }
 
   /**

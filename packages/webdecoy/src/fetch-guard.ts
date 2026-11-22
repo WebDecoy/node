@@ -173,6 +173,7 @@ export function createFetchGuard(options: FetchGuardOptions = {}): FetchGuard {
         threshold: options.threshold,
         skipLocalAnalysis: options.skipLocalAnalysis,
         metadata: options.metadata,
+        violationReporting: { mode },
       });
 
       // Monitor mode records the verdict and serves the request anyway. The

@@ -117,6 +117,7 @@ export type { BotVerdict, BotAgent, BotCategory } from './bots';
 export { consoleLogger, silentLogger, fromPino } from './logger';
 export type { Tracer, Span } from './tracing';
 export type { Logger, LogFields } from './logger';
+export type { ViolationDeliveryStats } from './violation-reporter';
 
 // Browser signals, joined to the requests that follow them. See client-signals.ts
 // for why this is not a threat judgement about a client that sends none.

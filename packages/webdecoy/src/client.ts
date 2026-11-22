@@ -347,14 +347,23 @@ export class WebDecoyClient {
    * Send violation events to the ingest service
    */
   async sendViolations(events: ViolationEvent[]): Promise<void> {
+    await this.sendViolationBatch(events);
+  }
+
+  /** Acknowledgment from ingest for one batch. Transport failures resolve false. */
+  async sendViolationBatch(events: ViolationEvent[]): Promise<boolean> {
     try {
-      await this.request('POST', '/api/v1/sdk/violations/batch', { events });
+      const { status } = await this.request('POST', '/api/v1/sdk/violations/batch', { events });
+      if (status >= 200 && status < 300) return true;
+      if (this.config.debug) {
+        console.warn(`[WebDecoy] Violation batch returned HTTP ${status}`);
+      }
     } catch (error) {
       if (this.config.debug) {
         console.error('[WebDecoy] Failed to send violations:', error);
       }
-      // Silently fail — violations are best-effort
     }
+    return false;
   }
 
   /**
