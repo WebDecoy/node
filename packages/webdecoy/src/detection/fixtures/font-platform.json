@@ -1,0 +1,85 @@
+{
+  "reference": {
+    "version": "v1.51.1",
+    "commit": "b769817ffa4069a80217dc5b4cef9ce597077c07"
+  },
+  "cases": [
+    {
+      "name": "a Windows font on a reported Mac platform",
+      "platform": "MacIntel",
+      "fonts": {
+        "supported": true,
+        "count": 12,
+        "hasSegoeUI": false,
+        "hasCalibri": true,
+        "hasSFPro": false,
+        "hasMenlo": false
+      },
+      "reasons": [
+        "Font set contradicts platform (Windows faces while claiming MacIntel)"
+      ]
+    },
+    {
+      "name": "a Mac font on a reported Windows platform",
+      "platform": "Win32",
+      "fonts": {
+        "supported": true,
+        "count": 12,
+        "hasSegoeUI": false,
+        "hasCalibri": false,
+        "hasSFPro": false,
+        "hasMenlo": true
+      },
+      "reasons": [
+        "Font set contradicts platform (macOS faces while claiming Win32)"
+      ]
+    },
+    {
+      "name": "a Mac with both native and cross-platform fonts",
+      "platform": "MacIntel",
+      "fonts": {
+        "supported": true,
+        "count": 12,
+        "hasSegoeUI": true,
+        "hasCalibri": true,
+        "hasSFPro": false,
+        "hasMenlo": true
+      },
+      "reasons": []
+    },
+    {
+      "name": "a small visible font inventory",
+      "platform": "MacIntel",
+      "fonts": {
+        "supported": true,
+        "count": 2,
+        "hasSegoeUI": true,
+        "hasCalibri": false,
+        "hasSFPro": false,
+        "hasMenlo": false
+      },
+      "reasons": []
+    },
+    {
+      "name": "a browser with font probing unavailable",
+      "platform": "MacIntel",
+      "fonts": {
+        "supported": false
+      },
+      "reasons": []
+    },
+    {
+      "name": "a Windows device missing stock fonts",
+      "platform": "Win32",
+      "fonts": {
+        "supported": true,
+        "count": 8,
+        "hasSegoeUI": false,
+        "hasCalibri": false,
+        "hasSFPro": false,
+        "hasMenlo": false
+      },
+      "reasons": []
+    }
+  ]
+}

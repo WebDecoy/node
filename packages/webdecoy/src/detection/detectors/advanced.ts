@@ -130,56 +130,37 @@ export function analyzeCSSMediaQueries(cssMedia: CSSMediaQueriesInfo | undefined
   return detections;
 }
 
-export function analyzeFonts(fontsInfo: FontsInfo | undefined, userAgent: string): Detection[] {
-  if (!fontsInfo || !fontsInfo.supported) return [];
-  const detections: Detection[] = [];
+export function analyzeFonts(fontsInfo: FontsInfo, platform?: string): Detection[] {
   const count = fontsInfo.count ?? 0;
+  if (fontsInfo.supported !== true || !Number.isInteger(count) || count < 3 || typeof platform !== 'string') {
+    return [];
+  }
 
-  if (count < 3) {
-    detections.push({
-      category: 'headless',
+  // A missing flag on an older payload means the font was not reported.
+  const hasWindowsFonts = fontsInfo.hasSegoeUI === true || fontsInfo.hasCalibri === true;
+  const hasMacFonts = fontsInfo.hasSFPro === true || fontsInfo.hasMenlo === true;
+  const noWindowsFonts = fontsInfo.hasSegoeUI === false && fontsInfo.hasCalibri === false;
+  const noMacFonts = fontsInfo.hasSFPro === false && fontsInfo.hasMenlo === false;
+
+  if (/^(mac|iphone|ipad|ipod)/i.test(platform) && hasWindowsFonts && noMacFonts) {
+    return [{
+      category: 'automation',
       score: 0.5,
       confidence: 0.5,
-      reason: `Very few fonts detected (${count})`,
-    });
+      reason: `Font set contradicts platform (Windows faces while claiming ${platform})`,
+    }];
   }
 
-  const ua = (userAgent || '').toLowerCase();
-
-  if (ua.includes('windows') && fontsInfo.hasSegoeUI === false && count > 5) {
-    detections.push({
-      category: 'bot',
+  if (/^win/i.test(platform) && hasMacFonts && noWindowsFonts) {
+    return [{
+      category: 'automation',
       score: 0.5,
-      confidence: 0.6,
-      reason: 'Windows UA but Segoe UI font not detected',
-    });
-  }
-
-  if (
-    (ua.includes('mac os x') || ua.includes('macintosh')) &&
-    fontsInfo.hasSFPro === false &&
-    !ua.includes('10_15') &&
-    !ua.includes('10_14') &&
-    count > 5
-  ) {
-    detections.push({
-      category: 'bot',
-      score: 0.3,
-      confidence: 0.4,
-      reason: 'Modern macOS UA but SF Pro font not detected',
-    });
-  }
-
-  if (ua.includes('linux') && !ua.includes('android') && fontsInfo.hasDejaVuSans === false && count > 5) {
-    detections.push({
-      category: 'bot',
-      score: 0.4,
       confidence: 0.5,
-      reason: 'Linux UA but DejaVu Sans font not detected',
-    });
+      reason: `Font set contradicts platform (macOS faces while claiming ${platform})`,
+    }];
   }
 
-  return detections;
+  return [];
 }
 
 const PERMISSION_API_KEYS = [
@@ -239,7 +220,7 @@ export function analyzeDOMRect(domRectInfo?: DOMRectInfo): Detection[] {
 }
 
 /** Run every advanced-fingerprint detector present in the signals. */
-export function analyzeAdvancedSignals(signals: Signals, userAgent: string): Detection[] {
+export function analyzeAdvancedSignals(signals: Signals): Detection[] {
   const detections: Detection[] = [];
   const env = signals.environmental ?? {};
 
@@ -247,7 +228,7 @@ export function analyzeAdvancedSignals(signals: Signals, userAgent: string): Det
   if (env.speechInfo) detections.push(...analyzeSpeechAPI(env.speechInfo));
   if (env.workerConsistency) detections.push(...analyzeWorkerConsistency(env.workerConsistency));
   if (env.cssMediaQueries) detections.push(...analyzeCSSMediaQueries(env.cssMediaQueries, signals));
-  if (env.fontsInfo) detections.push(...analyzeFonts(env.fontsInfo, userAgent));
+  if (env.fontsInfo) detections.push(...analyzeFonts(env.fontsInfo, env.navigator?.platform));
   if (env.permissionsInfo) detections.push(...analyzePermissions(env.permissionsInfo));
   if (env.domRectFingerprint) detections.push(...analyzeDOMRect(env.domRectFingerprint));
   if (env.audioInfo) detections.push(...analyzeAudioContext(env.audioInfo));

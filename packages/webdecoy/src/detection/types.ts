@@ -167,7 +167,9 @@ export interface FontsInfo {
   supported?: boolean;
   count?: number;
   hasSegoeUI?: boolean;
+  hasCalibri?: boolean;
   hasSFPro?: boolean;
+  hasMenlo?: boolean;
   hasDejaVuSans?: boolean;
   [key: string]: unknown;
 }
