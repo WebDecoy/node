@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { tripwire } from '@webdecoy/node';
 import { withWebDecoy } from './middleware';
 import { getEdgeVerdict } from './edge-verdict';
 
@@ -147,5 +148,39 @@ describe('monitor mode', () => {
     );
     // Whatever we concluded, never what the client asserted.
     expect(forwardedToApp(res, 'x-webdecoy-would-block')).toMatch(/^(true|false)$/);
+  });
+});
+
+describe('Next.js rule violation delivery', () => {
+  it.each([
+    { mode: 'monitor', status: 200, dryRun: true, clearance: undefined },
+    { mode: 'enforce', status: 403, dryRun: false, clearance: 'fixture-clearance' },
+  ] as const)('flushes $mode reports through the request lifecycle', async ({ mode, status, dryRun, clearance }) => {
+    const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 201 }));
+    const waitUntil = jest.fn<void, [Promise<void>]>();
+    const middleware = withWebDecoy({
+      apiKey: 'sk_test_middleware_delivery',
+      apiUrl: 'https://ingest.example',
+      countAIReferrals: false,
+      mode,
+      rules: [tripwire({ paths: ['/fixture-path'], includeDefaults: false })],
+    });
+
+    try {
+      const response = await middleware(new NextRequest('https://shop.example/fixture-path', {
+        headers: { cookie: 'wd_clearance=fixture-clearance' },
+      }), { waitUntil });
+      expect(response.status).toBe(status);
+      expect(waitUntil).toHaveBeenCalledTimes(1);
+      await waitUntil.mock.calls[0][0];
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      const [url, request] = fetchMock.mock.calls[0];
+      expect(url).toBe('https://ingest.example/api/v1/sdk/violations/batch');
+      const { events } = JSON.parse(String(request?.body));
+      expect(events).toEqual([expect.objectContaining({ rule: 'tripwire', action: 'DENY', dryRun })]);
+      expect(events[0].clearance).toBe(clearance);
+    } finally {
+      fetchMock.mockRestore();
+    }
   });
 });

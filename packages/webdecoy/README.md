@@ -194,6 +194,12 @@ const wd = new WebDecoy({
 
 A tripwire match is evidence, not proof of intent: link prefetchers, preview bots and your own security scanners can request a hidden or scanner-bait path. Use `dryRun: true` on a rule to observe it before enforcing.
 
+### Rule violation delivery
+
+Local rules decide the request before the SDK reports their events. With an API key, the SDK sends rule violations to ingest in batches. Rate limits and rule dry runs are violation events. Framework adapters mark monitor-mode violations as dry runs and omit tripwire clearance tokens. An enforced tripwire denial can also appear in Detections.
+
+For a long-lived SDK instance, call `getViolationDeliveryStats()` for counts of events acknowledged by ingest, failed batches, discarded events, and events waiting for an attempt. Call `await sdk.destroy()` during graceful shutdown to finish an in-flight send and attempt the remaining queue. Reporting has a fixed in-memory buffer. When the client pauses after a failure, unattempted events stay buffered. An attempted batch with an uncertain acknowledgment is discarded to avoid replaying its server-side effects.
+
 ## Fetch runtimes (Bun, Deno, Workers, Astro, SvelteKit, Remix)
 
 `createFetchGuard()` wraps the SDK for any runtime that hands you a WHATWG `Request`. It is the same implementation `@webdecoy/hono` uses.

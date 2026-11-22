@@ -3,6 +3,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import type { NextFetchEvent } from 'next/server';
 import {
   WebDecoy,
   WebDecoyConfig,
@@ -153,7 +154,7 @@ function defaultOnError(req: NextRequest, error: Error): NextResponse | null {
  */
 export function withWebDecoy(
   config: WebDecoyConfig & WebDecoyMiddlewareOptions
-): (req: NextRequest) => Promise<NextResponse> {
+): (req: NextRequest, event?: Pick<NextFetchEvent, 'waitUntil'>) => Promise<NextResponse> {
   const sdk = new WebDecoy(config);
 
   const getIP = config.getIP || ((req: NextRequest) => resolveIP(req, config.trustProxy));
@@ -162,7 +163,7 @@ export function withWebDecoy(
   const onError = config.onError || defaultOnError;
   const skipPaths = config.skipPaths;
 
-  return async (req: NextRequest): Promise<NextResponse> => {
+  return async (req, event): Promise<NextResponse> => {
     try {
       const pathname = req.nextUrl.pathname;
 
@@ -194,6 +195,7 @@ export function withWebDecoy(
         threshold: config.threshold,
         skipLocalAnalysis: config.skipLocalAnalysis,
         metadata: config.metadata,
+        violationReporting: { mode, waitUntil: event?.waitUntil?.bind(event) },
       });
 
       // Monitor mode: record the verdict, change nothing. Checked before the
@@ -329,6 +331,7 @@ export function withBotProtection<T extends (...args: any[]) => any>(
         threshold,
         skipLocalAnalysis: config.skipLocalAnalysis,
         metadata: config.metadata,
+        violationReporting: { mode },
       });
 
       if (!result.allowed && mode === 'enforce') {
