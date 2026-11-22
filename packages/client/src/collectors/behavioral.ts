@@ -66,6 +66,11 @@ interface ClickData {
   holdDuration?: number;
 }
 
+const MAX_PENDING_KEY_HOLDS = 64;
+const MAX_KEY_HOLD_SAMPLES = 200;
+const MAX_KEY_HOLD_MS = 2_000;
+const KEY_HOLD_MODIFIERS = new Set(['Alt', 'CapsLock', 'Control', 'Meta', 'NumLock', 'ScrollLock', 'Shift']);
+
 export class BehavioralCollector {
   mousePositions: MousePosition[];
   mouseVelocities: VelocitySample[];
@@ -83,8 +88,12 @@ export class BehavioralCollector {
   lastMouseTime: number | null;
   lastVelocity: number | null;
   eventDeltas: number[];
+  private readonly pendingKeyHolds?: Map<string, number>;
+  private keyHoldSamples = 0;
+  private keyHoldTotalMs = 0;
 
-  constructor() {
+  constructor(options: { collectKeyHolds?: boolean } = {}) {
+    if (options.collectKeyHolds) this.pendingKeyHolds = new Map();
     this.mousePositions = [];
     this.mouseVelocities = [];
     this.mouseAccelerations = [];
@@ -166,11 +175,42 @@ export class BehavioralCollector {
   }
 
   recordKeyEvent(e: KeyboardEvent): void {
+    const now = performance.now();
     this.keyEvents.push({
       type: e.type,
       keyLength: e.key ? e.key.length : 0, // Don't store actual keys
-      t: performance.now()
+      t: now
     });
+    this.recordKeyHold(e, now);
+  }
+
+  private recordKeyHold(e: KeyboardEvent, now: number): void {
+    const pending = this.pendingKeyHolds;
+    const code = e.code;
+    if (!pending || this.keyHoldSamples >= MAX_KEY_HOLD_SAMPLES || !code || code === 'Unidentified') {
+      return;
+    }
+
+    const target = e.composedPath?.()[0] ?? e.target;
+    const excluded = e.isComposing || KEY_HOLD_MODIFIERS.has(e.key)
+      || (target instanceof Element && target.matches('textarea, input[type="password"]'));
+
+    if (e.type === 'keydown' && !e.repeat) {
+      // Use the physical code to pair events. Only the count and average leave the browser.
+      pending.delete(code);
+      if (!excluded && pending.size < MAX_PENDING_KEY_HOLDS) pending.set(code, now);
+    } else if (e.type === 'keyup') {
+      const started = pending.get(code);
+      pending.delete(code);
+      if (started === undefined || excluded) return;
+
+      const duration = now - started;
+      if (duration > 0 && duration < MAX_KEY_HOLD_MS) {
+        this.keyHoldSamples++;
+        this.keyHoldTotalMs += duration;
+        if (this.keyHoldSamples === MAX_KEY_HOLD_SAMPLES) pending.clear();
+      }
+    }
   }
 
   recordTouch(e: TouchEvent): void {
@@ -223,8 +263,11 @@ export class BehavioralCollector {
     const velocities = this.mouseVelocities;
     const accelerations = this.mouseAccelerations;
 
+    const keyHolds = this.keyHoldSamples > 0
+      ? { keyHoldSamples: this.keyHoldSamples, keyHoldAvg: this.keyHoldTotalMs / this.keyHoldSamples }
+      : {};
     if (positions.length < 10) {
-      return this._getEmptyAnalysis();
+      return { ...this._getEmptyAnalysis(), ...keyHolds };
     }
 
     // Velocity statistics
@@ -309,7 +352,8 @@ export class BehavioralCollector {
       clickData: this.clickData,
       interactionDuration: Date.now() - this.startTime,
       ...touchAnalysis,
-      ...pointerAnalysis
+      ...pointerAnalysis,
+      ...keyHolds
     };
   }
 

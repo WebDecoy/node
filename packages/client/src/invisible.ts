@@ -48,7 +48,7 @@ export class InvisibleSession {
     ) as Required<InvisibleOptions>;
 
     this.id = 'webdecoy_inv_' + Math.random().toString(36).slice(2, 11);
-    this.behavioral = new BehavioralCollector();
+    this.behavioral = new BehavioralCollector({ collectKeyHolds: true });
     this.environmental = new EnvironmentalCollector();
     this.temporal = new TemporalCollector();
     this.sensor = new SensorCollector();

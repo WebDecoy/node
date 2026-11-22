@@ -574,6 +574,36 @@ describe('keyboard-only textarea timing', () => {
   });
 });
 
+describe('CAPTCHA key-hold summaries', () => {
+  const keyboard = { keyEvents: 12, totalPoints: 0, interactionDuration: 1500 };
+
+  it('uses valid summaries from outside textareas', () => {
+    const verdict = score({
+      behavioral: { ...keyboard, keyHoldSamples: 4, keyHoldAvg: 8 },
+    });
+    expect(hasReasonIncluding(verdict, 'unusually short key holds')).toBe(true);
+  });
+
+  it('combines the timing sources by sample count', () => {
+    const verdict = score({
+      behavioral: { ...keyboard, keyHoldSamples: 4, keyHoldAvg: 80 },
+      formAnalysis: { textareaKeyboard: { message: { dwellTimes: [5, 8, 7] } } },
+    });
+    expect(hasCategory(verdict, 'behavioral')).toBe(false);
+    expect(hasCategory(verdict, 'vision_ai')).toBe(false);
+  });
+
+  it.each([
+    { keyHoldSamples: 7, keyHoldAvg: 8 },
+    { keyHoldSamples: 4, keyHoldAvg: 0 },
+    { keyHoldSamples: 3.5, keyHoldAvg: 8 },
+  ])('ignores an invalid summary %j', summary => {
+    const verdict = score({ behavioral: { ...keyboard, ...summary } });
+    expect(hasCategory(verdict, 'behavioral')).toBe(false);
+    expect(hasCategory(verdict, 'vision_ai')).toBe(false);
+  });
+});
+
 describe('mobile touch authenticity', () => {
   it('flags synthetic force=1 touches on mobile UA', () => {
     const v = score(
