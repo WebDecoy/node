@@ -532,6 +532,48 @@ describe('accessibility exemptions', () => {
   });
 });
 
+describe('keyboard-only textarea timing', () => {
+  const behavioral = { keyEvents: 12, totalPoints: 0, interactionDuration: 1500 };
+
+  it.each([
+    { name: 'ordinary holds', dwellTimes: [65, 80, 75] },
+    { name: 'sparse short holds', dwellTimes: [8, 11] },
+    { name: 'out-of-range durations mixed with sparse samples', dwellTimes: [8, 11, 0, -1, Infinity, 2_000] },
+  ])('keeps the keyboard exemption with $name', ({ dwellTimes }) => {
+    const verdict = score({
+      behavioral,
+      formAnalysis: { textareaKeyboard: { message: { dwellTimes } } },
+    });
+
+    expect(hasCategory(verdict, 'behavioral')).toBe(false);
+    expect(hasCategory(verdict, 'vision_ai')).toBe(false);
+  });
+
+  it.each([true, false])('reports repeated short holds with widget mode %s', (widgetInteraction) => {
+    const verdict = score({
+      behavioral,
+      formAnalysis: { textareaKeyboard: {
+        message: { dwellTimes: [4, 6] },
+        notes: { dwellTimes: [5, 8] },
+      } },
+    }, { widgetInteraction });
+
+    expect(hasReasonIncluding(verdict, 'Keyboard-only input has unusually short key holds')).toBe(true);
+    expect(hasReasonIncluding(verdict, 'No mouse movement detected')).toBe(true);
+    expect(hasReasonIncluding(verdict, 'Zero mouse, touch, or keyboard events')).toBe(false);
+  });
+
+  it('keeps the touch exemption when keyboard and touch are both used', () => {
+    const verdict = score({
+      behavioral: { ...behavioral, touchEvents: 1, pointerHasNonMouseType: true },
+      formAnalysis: { textareaKeyboard: { message: { dwellTimes: [4, 6, 8] } } },
+    });
+
+    expect(hasCategory(verdict, 'behavioral')).toBe(false);
+    expect(hasCategory(verdict, 'vision_ai')).toBe(false);
+  });
+});
+
 describe('mobile touch authenticity', () => {
   it('flags synthetic force=1 touches on mobile UA', () => {
     const v = score(

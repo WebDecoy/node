@@ -1,6 +1,7 @@
 /** Vision-AI agent detection: missing natural mouse behavior + PoW timing. */
 
 import type { Detection, Signals } from '../types';
+import { classifyKeyboardInput } from './keyboard-input';
 import { hasHumanMovementMarkers, isTouchModality } from './pointer-evidence';
 
 export function detectVisionAI(signals: Signals, widgetInteraction = true): Detection[] {
@@ -13,7 +14,7 @@ export function detectVisionAI(signals: Signals, widgetInteraction = true): Dete
   const trajectory = b.trajectoryLength ?? 0;
   const approachPts = b.approachPoints ?? 0;
   const isTouchUser = isTouchModality(b);
-  const isKeyboardUser = (b.keyEvents ?? 0) >= 2 && totalPoints === 0;
+  const isKeyboardUser = classifyKeyboardInput(signals) === 'keyboard-only';
   const usesMouse = !isTouchUser && !isKeyboardUser;
 
   if (totalPoints < 5 && trajectory < 10 && usesMouse) {
