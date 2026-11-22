@@ -37,6 +37,7 @@ export interface BehavioralSignals {
   trajectoryLength?: number;
   approachPoints?: number;
   touchEvents?: number;
+  pointerHasNonMouseType?: boolean;
   keyEvents?: number;
   microTremorScore?: number;
   approachDirectness?: number;

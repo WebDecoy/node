@@ -1,6 +1,7 @@
 /** Core behavioral detection: mouse data sufficiency, velocity, timing. */
 
 import type { Detection, Signals } from '../types';
+import { hasHumanMovementMarkers, isTouchModality } from './pointer-evidence';
 
 export function detectBehavioral(signals: Signals, widgetInteraction = true): Detection[] {
   const detections: Detection[] = [];
@@ -10,19 +11,18 @@ export function detectBehavioral(signals: Signals, widgetInteraction = true): De
   // Exempt touch and keyboard-only users from mouse-movement heuristics.
   const totalPoints = b.totalPoints ?? 0;
   const trajectory = b.trajectoryLength ?? 0;
-  const touchEvts = b.touchEvents ?? 0;
-  const keyEvts = b.keyEvents ?? 0;
-  const isTouchUsr = touchEvts >= 3;
-  const isKbdUser = keyEvts >= 2 && totalPoints === 0;
+  const isTouchUser = isTouchModality(b);
+  const isKeyboardUser = (b.keyEvents ?? 0) >= 2 && totalPoints === 0;
+  const humanMovement = hasHumanMovementMarkers(b);
 
-  if (totalPoints === 0 && !isTouchUsr && !isKbdUser) {
+  if (totalPoints === 0 && !isTouchUser && !isKeyboardUser) {
     detections.push({
       category: 'behavioral',
       score: 0.8,
       confidence: 0.9,
       reason: 'Zero mouse, touch, or keyboard events recorded',
     });
-  } else if (totalPoints < 10 && !isTouchUsr && !isKbdUser && trajectory < 30) {
+  } else if (totalPoints < 10 && !isTouchUser && !isKeyboardUser && trajectory < 30) {
     detections.push({
       category: 'behavioral',
       score: 0.6,
@@ -32,7 +32,7 @@ export function detectBehavioral(signals: Signals, widgetInteraction = true): De
   }
 
   const velVar = b.velocityVariance ?? 1;
-  if (velVar < 0.02 && trajectory > 50) {
+  if (velVar < 0.02 && trajectory > 50 && !humanMovement) {
     detections.push({
       category: 'behavioral',
       score: 0.6,
@@ -42,7 +42,7 @@ export function detectBehavioral(signals: Signals, widgetInteraction = true): De
   }
 
   const overshoots = b.overshootCorrections ?? 0;
-  if (widgetInteraction && overshoots === 0 && trajectory > 200) {
+  if (widgetInteraction && overshoots === 0 && trajectory > 200 && !humanMovement) {
     detections.push({
       category: 'behavioral',
       score: 0.4,
@@ -86,7 +86,7 @@ export function detectBehavioral(signals: Signals, widgetInteraction = true): De
       confidence: 0.5,
       reason: 'Mouse event rate abnormally high',
     });
-  } else if (eventRate > 0 && eventRate < 10) {
+  } else if (eventRate > 0 && eventRate < 10 && !humanMovement) {
     detections.push({
       category: 'behavioral',
       score: 0.4,
