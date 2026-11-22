@@ -9,6 +9,7 @@
  */
 
 import { DetectionEngine } from './engine';
+import inputModalityFixtures from './fixtures/input-modality.json';
 import type { DetectionContext, Signals, Verdict } from './types';
 
 const UA_CHROME_WIN = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0';
@@ -195,9 +196,9 @@ describe('widget and invisible interaction modes', () => {
     const signals: Signals = {
       behavioral: {
         ...HUMAN_BEHAVIOR,
-        approachPoints: 0,
+        approachPoints: 12,
         approachDirectness: 0.98,
-        clickPrecision: 1,
+        microTremorScore: 0.3,
         explorationRatio: 0.01,
         overshootCorrections: 0,
         interactionDuration: 90_000,
@@ -205,9 +206,7 @@ describe('widget and invisible interaction modes', () => {
       },
     };
     const widgetOnly = [
-      'No approach trajectory to target',
       'Mouse path to target is unnaturally direct',
-      'Click precision is unnaturally accurate',
       'No exploratory mouse movement before click',
       'No overshoot corrections on long trajectory',
       'Unusually long interaction time',
@@ -219,6 +218,9 @@ describe('widget and invisible interaction modes', () => {
       expect(hasReasonIncluding(widget, reason)).toBe(true);
       expect(hasReasonIncluding(invisible, reason)).toBe(false);
     }
+    const withoutApproach = { behavioral: { ...signals.behavioral, approachPoints: 0 } };
+    expect(hasReasonIncluding(score(withoutApproach), 'No approach trajectory to target')).toBe(true);
+    expect(hasReasonIncluding(score(withoutApproach, { widgetInteraction: false }), 'No approach trajectory to target')).toBe(false);
     expect(hasReasonIncluding(widget, 'Mouse velocity too consistent')).toBe(true);
     expect(hasReasonIncluding(invisible, 'Mouse velocity too consistent')).toBe(true);
   });
@@ -236,7 +238,7 @@ describe('vision AI detection', () => {
   });
 
   it('detects lack of micro-tremor', () => {
-    const v = score({ behavioral: { microTremorScore: 0.05, trajectoryLength: 200 } });
+    const v = score({ behavioral: { totalPoints: 40, microTremorScore: 0.05, trajectoryLength: 200 } });
     expect(hasReasonIncluding(v, 'micro-tremor')).toBe(true);
   });
 });
@@ -484,6 +486,25 @@ describe('PoW outcome', () => {
       },
     );
     expect(hasReasonIncluding(v, 'solved too fast')).toBe(true);
+  });
+});
+
+describe('input modality controls from FCaptcha ' + inputModalityFixtures.reference.version, () => {
+  it.each(inputModalityFixtures.cases)('$name', ({ behavioral, reasons }) => {
+    const engine = new DetectionEngine();
+    const verdict = engine.score({ behavioral }, {
+      ip: '203.0.113.9',
+      siteKey: 'test',
+      userAgent: UA_CHROME_MAC,
+      headers: GOOD_HEADERS,
+      pow: { provided: true, valid: true, serverElapsed: 3000 },
+    });
+    const inputReasons = verdict.detections
+      .filter(({ category }) => category === 'vision_ai' || category === 'behavioral')
+      .map(({ reason }) => reason)
+      .sort();
+    expect(inputReasons).toEqual([...reasons].sort());
+    expect(verdict.recommendation).toBe('allow');
   });
 });
 

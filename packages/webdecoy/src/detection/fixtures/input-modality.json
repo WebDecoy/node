@@ -1,0 +1,88 @@
+{
+  "reference": {
+    "version": "v1.51.1",
+    "commit": "b769817ffa4069a80217dc5b4cef9ce597077c07"
+  },
+  "cases": [
+    {
+      "name": "mobile user taps once without scrolling",
+      "behavioral": {
+        "totalPoints": 0,
+        "trajectoryLength": 0,
+        "approachPoints": 0,
+        "approachDirectness": 1,
+        "touchEvents": 1,
+        "touchTotalPoints": 1,
+        "pointerHasNonMouseType": true,
+        "interactionDuration": 1500
+      },
+      "reasons": []
+    },
+    {
+      "name": "keyboard user activates the widget with no mouse path",
+      "behavioral": {
+        "totalPoints": 0,
+        "trajectoryLength": 0,
+        "approachPoints": 0,
+        "approachDirectness": 1,
+        "keyEvents": 8,
+        "interactionDuration": 4000
+      },
+      "reasons": []
+    },
+    {
+      "name": "screen reader user navigates before activation",
+      "behavioral": {
+        "totalPoints": 0,
+        "trajectoryLength": 0,
+        "approachPoints": 0,
+        "approachDirectness": 1,
+        "keyEvents": 12,
+        "interactionDuration": 12000
+      },
+      "reasons": []
+    },
+    {
+      "name": "trackpad user clicks near the center",
+      "behavioral": {
+        "totalPoints": 45,
+        "trajectoryLength": 150,
+        "approachPoints": 12,
+        "approachDirectness": 0.8,
+        "clickPrecision": 1.62,
+        "mouseEventRate": 30,
+        "interactionDuration": 4000
+      },
+      "reasons": []
+    },
+    {
+      "name": "slow pointer movement has natural corrections",
+      "behavioral": {
+        "totalPoints": 46,
+        "trajectoryLength": 270,
+        "approachPoints": 14,
+        "approachDirectness": 0.97,
+        "microTremorScore": 0.8,
+        "directionChanges": 18,
+        "mouseEventRate": 7,
+        "velocityVariance": 0.01,
+        "overshootCorrections": 0,
+        "interactionDuration": 4500
+      },
+      "reasons": []
+    },
+    {
+      "name": "measured straight path still produces a directness finding",
+      "behavioral": {
+        "totalPoints": 40,
+        "trajectoryLength": 180,
+        "approachPoints": 20,
+        "approachDirectness": 0.99,
+        "interactionDuration": 2000
+      },
+      "reasons": [
+        "Mouse path to target is unnaturally direct"
+      ]
+    }
+  ]
+}

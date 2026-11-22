@@ -1,6 +1,7 @@
 /** Vision-AI agent detection: missing natural mouse behavior + PoW timing. */
 
 import type { Detection, Signals } from '../types';
+import { hasHumanMovementMarkers, isTouchModality } from './pointer-evidence';
 
 export function detectVisionAI(signals: Signals, widgetInteraction = true): Detection[] {
   const detections: Detection[] = [];
@@ -11,12 +12,11 @@ export function detectVisionAI(signals: Signals, widgetInteraction = true): Dete
   const totalPoints = b.totalPoints ?? 0;
   const trajectory = b.trajectoryLength ?? 0;
   const approachPts = b.approachPoints ?? 0;
-  const touchEvents = b.touchEvents ?? 0;
-  const keyEvents = b.keyEvents ?? 0;
-  const isTouchUser = touchEvents >= 3;
-  const isKeyboardUser = keyEvents >= 2 && totalPoints === 0;
+  const isTouchUser = isTouchModality(b);
+  const isKeyboardUser = (b.keyEvents ?? 0) >= 2 && totalPoints === 0;
+  const usesMouse = !isTouchUser && !isKeyboardUser;
 
-  if (totalPoints < 5 && trajectory < 10 && !isTouchUser && !isKeyboardUser) {
+  if (totalPoints < 5 && trajectory < 10 && usesMouse) {
     detections.push({
       category: 'vision_ai',
       score: 0.9,
@@ -25,7 +25,7 @@ export function detectVisionAI(signals: Signals, widgetInteraction = true): Dete
     });
   }
 
-  if (widgetInteraction && approachPts === 0 && !isTouchUser && !isKeyboardUser) {
+  if (widgetInteraction && approachPts === 0 && usesMouse) {
     detections.push({
       category: 'vision_ai',
       score: 0.7,
@@ -57,7 +57,7 @@ export function detectVisionAI(signals: Signals, widgetInteraction = true): Dete
   }
 
   const microTremor = b.microTremorScore ?? 0.5;
-  if (microTremor < 0.15) {
+  if (usesMouse && totalPoints >= 5 && microTremor < 0.15) {
     detections.push({
       category: 'vision_ai',
       score: 0.7,
@@ -66,22 +66,18 @@ export function detectVisionAI(signals: Signals, widgetInteraction = true): Dete
     });
   }
 
-  if (widgetInteraction && (b.approachDirectness ?? 0) > 0.95) {
+  if (
+    widgetInteraction &&
+    usesMouse &&
+    approachPts >= 5 &&
+    (b.approachDirectness ?? 0) > 0.95 &&
+    !hasHumanMovementMarkers(b)
+  ) {
     detections.push({
       category: 'vision_ai',
       score: 0.5,
       confidence: 0.5,
       reason: 'Mouse path to target is unnaturally direct',
-    });
-  }
-
-  const precision = b.clickPrecision ?? 10;
-  if (widgetInteraction && precision > 0 && precision < 2) {
-    detections.push({
-      category: 'vision_ai',
-      score: 0.4,
-      confidence: 0.5,
-      reason: 'Click precision is unnaturally accurate',
     });
   }
 
