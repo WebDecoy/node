@@ -4,6 +4,7 @@
     "commit": "2ed3b473ea2f0b8efe5900827fef1444cd66a194",
     "engineSha256": "5ace5e1e7a4a777a2ee16b31b3458313f24ff3973db7dee718461ca94cd551f5",
     "detectionSha256": "8bfbd56c765ae47edee083e5e3c20512c16a1cca1dc18f7fb88d162f36d67682",
+    "inputForensicsSha256": "28c90a5d442eb3a1db5d7922129c7369fe998ae66b6554a087e0ac68de002d32",
     "cadenceFixtureSha256": "c11c199504aaae979acdaecaa8918615b08b4310c1e311c275b4c53a625c69ce"
   },
   "referenceEvolutionCases": [

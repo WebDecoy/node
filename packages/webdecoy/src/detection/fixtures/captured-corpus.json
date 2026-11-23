@@ -1,0 +1,261 @@
+{
+  "reference": {
+    "version": "v1.51.3",
+    "commit": "2ed3b473ea2f0b8efe5900827fef1444cd66a194"
+  },
+  "notes": "A balanced captured regression slice, not a population false-positive or true-positive estimate.",
+  "files": [
+    {
+      "path": "bench/corpus/captured/human-keyboard-only.json",
+      "sha256": "0febeba668a8a080df4fdd66c38e8f145a05802c460f4d07605c8e4df234d879"
+    },
+    {
+      "path": "bench/corpus/captured/human-touch.json",
+      "sha256": "136c5479bf3e33f3084ca171caa3289562958e2505a068a2eba30279bc695519"
+    },
+    {
+      "path": "bench/corpus/captured/human-devtools-open.json",
+      "sha256": "e855da43fc7ceb15a0f2dc00f909d60724c3f916169e514b550911a8e96fdea8"
+    },
+    {
+      "path": "bench/corpus/captured/human-privacy-extension.json",
+      "sha256": "4874c01c3c77a15e16568961a79b5feeea9fdc9aace320c60069f340719cdfad"
+    },
+    {
+      "path": "bench/corpus/captured/agent-linear-approach.json",
+      "sha256": "82c37e8657be69b785dded0b8a08d94e34c2716b0741527561dc44352e53e817"
+    },
+    {
+      "path": "bench/corpus/captured/agent-teleport-click.json",
+      "sha256": "794810618f1c2c369a9b29e526c56173b75340510f39273ace652f3c382d6d45"
+    },
+    {
+      "path": "bench/corpus/captured/agent-instant-keyboard.json",
+      "sha256": "2d802773c1e8b066d33048710e3cdcdcbe66e727c35357a43cad13efc8a4aeb0"
+    },
+    {
+      "path": "bench/corpus/captured/agent-scripted-typing.json",
+      "sha256": "136e2f7fdbc92acac683fe36da339ca58a5f9b0c1c072d721c1bd8351983e795"
+    }
+  ],
+  "expected": {
+    "human/keyboard-only/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["webrtc.local_ip_missing"]
+      },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+    },
+    "human/touch/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.js_execution_fast", "webrtc.local_ip_missing"]
+      },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+    },
+    "human/devtools-open/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": [
+          "timing.js_execution_fast",
+          "timing.raf_consistent",
+          "webrtc.local_ip_missing"
+        ]
+      },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["pointer.uncoalesced", "timing.raf_consistent"]
+      }
+    },
+    "human/privacy-extension/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["webrtc.local_ip_missing"]
+      },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["pointer.uncoalesced"]
+      }
+    },
+    "agent/linear-approach/0000": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "browser.chrome_object_missing",
+          "input.first_interaction_early",
+          "notifications.pre_denied",
+          "plugin.none",
+          "pointer.direct_approach",
+          "pointer.low_tremor",
+          "pointer.overshoot_missing",
+          "pointer.straight_motion",
+          "timing.first_interaction_fast",
+          "timing.js_execution_fast",
+          "viewport.exact_window",
+          "webdriver.detected",
+          "webrtc.local_ip_missing",
+          "webgl.software_renderer"
+        ]
+      },
+      "candidate": { "recommendation": "block", "success": false },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": [
+          "browser.chrome_object_missing",
+          "notifications.permission_contradiction",
+          "notifications.pre_denied",
+          "plugin.none",
+          "pointer.direct_approach",
+          "pointer.low_tremor",
+          "pointer.overshoot_missing",
+          "pointer.straight_motion",
+          "pointer.uncoalesced",
+          "timing.first_interaction_fast",
+          "viewport.exact_window",
+          "webdriver.detected",
+          "webgl.software_renderer"
+        ]
+      }
+    },
+    "agent/teleport-click/0000": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "browser.chrome_object_missing",
+          "input.missing",
+          "interaction.too_fast",
+          "notifications.pre_denied",
+          "plugin.none",
+          "pointer.approach_missing",
+          "pointer.missing",
+          "timing.first_interaction_fast",
+          "timing.js_execution_fast",
+          "timing.raf_consistent",
+          "viewport.exact_window",
+          "webdriver.detected",
+          "webrtc.local_ip_missing",
+          "webgl.software_renderer"
+        ]
+      },
+      "candidate": { "recommendation": "block", "success": false },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": [
+          "browser.chrome_object_missing",
+          "input.missing",
+          "interaction.too_fast",
+          "notifications.permission_contradiction",
+          "notifications.pre_denied",
+          "plugin.none",
+          "pointer.approach_missing",
+          "pointer.missing",
+          "timing.first_interaction_fast",
+          "timing.raf_consistent",
+          "viewport.exact_window",
+          "webdriver.detected",
+          "webgl.software_renderer"
+        ]
+      }
+    },
+    "agent/instant-keyboard/0000": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "browser.chrome_object_missing",
+          "input.first_interaction_early",
+          "input.missing",
+          "interaction.too_fast",
+          "notifications.pre_denied",
+          "plugin.none",
+          "pointer.approach_missing",
+          "pointer.missing",
+          "timing.first_interaction_fast",
+          "timing.js_execution_fast",
+          "viewport.exact_window",
+          "webdriver.detected",
+          "webrtc.local_ip_missing",
+          "webgl.software_renderer"
+        ]
+      },
+      "candidate": { "recommendation": "block", "success": false },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": [
+          "browser.chrome_object_missing",
+          "input.missing",
+          "interaction.too_fast",
+          "notifications.permission_contradiction",
+          "notifications.pre_denied",
+          "plugin.none",
+          "pointer.approach_missing",
+          "pointer.missing",
+          "timing.first_interaction_fast",
+          "viewport.exact_window",
+          "webdriver.detected",
+          "webgl.software_renderer"
+        ]
+      }
+    },
+    "agent/scripted-typing/0000": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "browser.chrome_object_missing",
+          "input.first_interaction_early",
+          "notifications.pre_denied",
+          "plugin.none",
+          "pointer.approach_missing",
+          "pointer.missing",
+          "timing.first_interaction_fast",
+          "typing.consistent_rhythm",
+          "typing.impossibly_fast",
+          "typing.non_human_cadence",
+          "typing.short_holds",
+          "viewport.exact_window",
+          "webdriver.detected",
+          "webrtc.local_ip_missing",
+          "webgl.software_renderer"
+        ]
+      },
+      "candidate": { "recommendation": "block", "success": false },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": [
+          "browser.chrome_object_missing",
+          "input.missing",
+          "notifications.permission_contradiction",
+          "notifications.pre_denied",
+          "plugin.none",
+          "pointer.approach_missing",
+          "pointer.missing",
+          "timing.first_interaction_fast",
+          "typing.consistent_rhythm",
+          "typing.impossibly_fast",
+          "typing.mechanical_cadence",
+          "typing.non_human_cadence",
+          "viewport.exact_window",
+          "webdriver.detected",
+          "webgl.software_renderer"
+        ]
+      }
+    }
+  }
+}
