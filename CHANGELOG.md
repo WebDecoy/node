@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.29.0] - 2026-11-23
+
+### Added
+
+- Connect verified invisible CAPTCHA scores to subsequent same-origin requests through a short-lived HTTPS session cookie and the configured client signal store.
+- Use completed key-hold summaries and textarea timing in the embedded keyboard modality check.
+
+### Fixed
+
+- Request a fresh proof challenge for each invisible CAPTCHA score.
+- Preserve application cookies when the Express CAPTCHA route adds a receipt.
+
 ## [0.28.0] - 2026-11-22
 
 ### Added
