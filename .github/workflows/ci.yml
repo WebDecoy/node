@@ -39,8 +39,15 @@ jobs:
           curl --fail --silent --show-error --retry 3 --max-time 30 \
             "https://raw.githubusercontent.com/WebDecoy/FCaptcha/$reference_commit/server-node/engine.js" \
             --output "$replay_dir/fcaptcha-engine.cjs"
+          curl --fail --silent --show-error --retry 3 --max-time 30 \
+            "https://raw.githubusercontent.com/WebDecoy/FCaptcha/$reference_commit/server-node/detection.js" \
+            --output "$replay_dir/fcaptcha-detection.cjs"
+          curl --fail --silent --show-error --retry 3 --max-time 30 \
+            "https://raw.githubusercontent.com/WebDecoy/FCaptcha/$reference_commit/test/fixtures/keystroke-cadence.json" \
+            --output "$replay_dir/keystroke-cadence.json"
 
           docker run --rm --network none --read-only --cap-drop=ALL --security-opt no-new-privileges \
             --pids-limit 128 --cpus 2 --memory 384m --memory-swap 384m --user 1000:1000 --log-driver none \
             --mount "type=bind,source=$replay_dir,target=/replay,readonly" \
-            node:22-alpine timeout -k 3s 30s node /replay/scripts/check-captcha-score-parity.cjs /replay/fcaptcha-engine.cjs
+            node:22-alpine timeout -k 3s 30s node /replay/scripts/check-captcha-score-parity.cjs \
+              /replay/fcaptcha-engine.cjs /replay/fcaptcha-detection.cjs /replay/keystroke-cadence.json
