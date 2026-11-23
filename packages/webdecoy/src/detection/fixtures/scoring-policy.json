@@ -1,11 +1,36 @@
 {
   "reference": {
-    "version": "v1.51.1",
-    "commit": "b769817ffa4069a80217dc5b4cef9ce597077c07",
-    "engineSha256": "2da0e61e8efcc9022f0cdeaa22740dfc2ba1ee1fb2b0157c491294008616bd1a",
+    "version": "v1.51.3",
+    "commit": "2ed3b473ea2f0b8efe5900827fef1444cd66a194",
+    "engineSha256": "5ace5e1e7a4a777a2ee16b31b3458313f24ff3973db7dee718461ca94cd551f5",
     "detectionSha256": "8bfbd56c765ae47edee083e5e3c20512c16a1cca1dc18f7fb88d162f36d67682",
     "cadenceFixtureSha256": "c11c199504aaae979acdaecaa8918615b08b4310c1e311c275b4c53a625c69ce"
   },
+  "referenceEvolutionCases": [
+    {
+      "name": "continuous human pointer movement during navigation",
+      "signals": {
+        "behavioral": {
+          "totalPoints": 80,
+          "trajectoryLength": 350,
+          "approachPoints": 12,
+          "microTremorScore": 0.6,
+          "overshootCorrections": 3,
+          "touchEvents": 0,
+          "inputForensics": {
+            "pointerMoveSamples": 30,
+            "coalescedSamples": 30,
+            "coalescedMax": 2,
+            "pointerMoveZeroRatio": 0.049
+          }
+        },
+        "environmental": { "cdpRuntime": { "consoleAttached": true } },
+        "temporal": { "pageLoadToFirstInteraction": 249 }
+      },
+      "reasonIds": [],
+      "decisions": { "node": "allow", "fcaptcha": "allow" }
+    }
+  ],
   "cases": [
     {
       "name": "ordinary input with no findings",

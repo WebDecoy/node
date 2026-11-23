@@ -192,6 +192,13 @@ for (const { name, behavioral, reasonIds: expectedIds } of inputModality.cases) 
   console.log(name + ' — matching reason IDs and allow outcomes');
 }
 
+for (const { name, signals: input, reasonIds: expectedIds, decisions } of fixtures.referenceEvolutionCases) {
+  const signals = withOrdinaryBrowser(input);
+  const detections = reference.detectCDP(signals);
+  compareSignalFixture(name, signals, detections, expectedIds, decisions);
+  console.log(name + ' — matching clear result after the reference false-positive fix');
+}
+
 for (const { name, environmental, referenceFloor, reasonIds: expectedIds, decisions } of fixtures.decisiveFloorCases) {
   if (referenceFloor === undefined) continue;
   const signals = withOrdinaryBrowser({ environmental, behavioral: ordinaryPointer });
