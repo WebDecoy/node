@@ -38,3 +38,12 @@ for (const fixture of fixtures.cases) {
   assertOutcome(referenceScore, recommendation, fixture.reference, name + ' (FCaptcha)');
   console.log(name + ' — Node ' + fixture.embedded.recommendation + ', FCaptcha ' + recommendation);
 }
+
+for (const { name, environmental, referenceFloor } of fixtures.decisiveFloorCases) {
+  if (referenceFloor === undefined) continue;
+  const signals = { environmental };
+  const detections = [...reference.detectHeadless(signals, ''), ...reference.detectCDP(signals)];
+  const floor = reference.applyDispositiveFloor(0, detections);
+  assert.equal(floor, referenceFloor, name + ' (FCaptcha decisive floor)');
+  console.log(name + ' — FCaptcha decisive floor ' + floor);
+}

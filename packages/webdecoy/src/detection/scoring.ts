@@ -1,6 +1,21 @@
 /** Per-category score aggregation and weighted totals. */
 
-import type { CategoryScores, Detection, Recommendation } from './types';
+import { hasDriverInjection } from './detectors/cdp';
+import type { CategoryScores, Detection, EnvironmentalSignals, Recommendation } from './types';
+
+/** Minimum candidate score for an explicit automation declaration or driver injection. */
+export function applyDecisiveScoreFloor(
+  score: number,
+  env: EnvironmentalSignals | undefined,
+  weights: Record<string, number>,
+): number {
+  // The collector's top-level WebDriver flag includes indirect hints.
+  const declaresWebDriver = (weights.headless ?? 0) > 0 &&
+    env?.webdriver === true && env.automationFlags?.webdriver === true;
+  const hasInjectedDriver = (weights.cdp ?? 0) > 0 &&
+    env?.cdp?.detected === true && hasDriverInjection(env.cdp.signals ?? []);
+  return declaresWebDriver || hasInjectedDriver ? Math.max(0.9, score) : score;
+}
 
 /**
  * Aggregate detections into per-category scores. Each category's score is the

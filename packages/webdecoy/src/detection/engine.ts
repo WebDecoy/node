@@ -18,6 +18,7 @@ import {
   type RateLimiter,
 } from './stores';
 import {
+  applyDecisiveScoreFloor,
   calculateCategoryScores,
   calculateFinalScore,
   calculateNoisyOrCategoryScores,
@@ -44,7 +45,7 @@ import {
 } from './detectors';
 
 export interface ScoringComparison {
-  policy: 'noisy-or-v1';
+  policy: 'noisy-or-decisive-v1';
   current: { score: number; recommendation: Recommendation };
   candidate: { score: number; recommendation: Recommendation };
 }
@@ -184,10 +185,12 @@ export class DetectionEngine {
     const onScoringComparison = this.onScoringComparison;
     if (onScoringComparison) {
       const candidateScores = calculateNoisyOrCategoryScores(detections, this.weights);
-      const candidateScore = calculateFinalScore(candidateScores, this.weights);
+      const candidateScore = applyDecisiveScoreFloor(
+        calculateFinalScore(candidateScores, this.weights), signals.environmental, this.weights,
+      );
       try {
         const pending = onScoringComparison({
-          policy: 'noisy-or-v1',
+          policy: 'noisy-or-decisive-v1',
           current: { score, recommendation },
           candidate: { score: candidateScore, recommendation: recommend(candidateScore) },
         });

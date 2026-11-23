@@ -95,6 +95,8 @@ export interface EnvironmentalSignals {
     [key: string]: unknown;
   };
   automationFlags?: {
+    /** Explicit browser-declared WebDriver flag from navigator.webdriver. */
+    webdriver?: boolean;
     plugins?: number;
     languages?: boolean;
     chrome?: boolean;

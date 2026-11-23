@@ -149,7 +149,7 @@ describe('captcha HTTP endpoints', () => {
       expect(res?.status).toBe(200);
       const decision = res!.body as { score: number; recommendation: string };
       expect(onScoringComparison.mock.calls).toEqual([[{
-        policy: 'noisy-or-v1',
+        policy: 'noisy-or-decisive-v1',
         current: { score: decision.score, recommendation: decision.recommendation },
         candidate: { score: expect.any(Number), recommendation: 'allow' },
       }]]);
