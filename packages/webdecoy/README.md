@@ -318,7 +318,7 @@ Mount the endpoints with your adapter (`webdecoyCaptcha` in Express, `webdecoyCa
 
 When the browser provides usable scroll samples, `/verify` and `/score` return an `observations` entry with the ID `large-scroll-step-v1`. It summarizes the sample count and largest step in CSS pixels for diagnostics.
 
-Pass `onScoringComparison` to the server adapter, `Captcha`, or `DetectionEngine` to receive the current and candidate scores and recommendations on the server. Both scores use your configured category weights. The `noisy-or-decisive-v1` candidate uses noisy-OR aggregation and applies FCaptcha's decisive score floor to explicit WebDriver declarations and known driver injection signals in enabled categories. Verification and token issuance continue to use the current policy.
+Pass `onScoringComparison` to the server adapter, `Captcha`, or `DetectionEngine` to receive the current and candidate scores and recommendations on the server. Both scores use your configured category weights. The `noisy-or-floors-v1` candidate uses noisy-OR aggregation and applies a decisive score floor to explicit WebDriver declarations and known driver injection signals in enabled categories. It also applies a corroboration floor when measured interaction and known driver findings agree. Verification and token issuance use the current policy.
 
 ```ts
 import express from 'express';

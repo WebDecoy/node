@@ -252,5 +252,84 @@
       "weights": { "headless": 1.1, "cdp": 0 },
       "candidate": { "score": 0.99275, "recommendation": "block" }
     }
+  ],
+  "corroborationFloorCases": [
+    {
+      "name": "measured movement with an independent driver finding",
+      "signals": {
+        "behavioral": { "totalPoints": 80, "trajectoryLength": 350, "approachPoints": 12, "microTremorScore": 0.1, "overshootCorrections": 1 },
+        "environmental": { "cdp": { "detected": true, "signals": ["selenium_evaluate"] } }
+      },
+      "candidate": { "score": 0.6, "recommendation": "block" },
+      "referenceFloor": 0.6
+    },
+    {
+      "name": "a weak movement finding with an independent driver finding",
+      "signals": {
+        "behavioral": { "totalPoints": 80, "trajectoryLength": 350, "approachPoints": 12, "approachDirectness": 0.97, "overshootCorrections": 1 },
+        "environmental": { "cdp": { "detected": true, "signals": ["selenium_evaluate"] } }
+      },
+      "candidate": { "score": 0.0879, "recommendation": "allow" },
+      "referenceFloor": 0
+    },
+    {
+      "name": "two categories reacting to the same movement trace",
+      "signals": {
+        "behavioral": { "totalPoints": 80, "trajectoryLength": 350, "approachPoints": 12, "microTremorScore": 0.1, "overshootCorrections": 1, "velocityVariance": 0.01, "straightLineRatio": 0.9 }
+      },
+      "candidate": { "score": 0.1566, "recommendation": "allow" },
+      "referenceFloor": 0.6
+    },
+    {
+      "name": "missing interaction data with a driver finding",
+      "signals": { "environmental": { "cdp": { "detected": true, "signals": ["selenium_evaluate"] } } },
+      "candidate": { "score": 0.31449, "recommendation": "challenge" },
+      "referenceFloor": 0.6
+    },
+    {
+      "name": "measured movement with a DevTools console observation",
+      "signals": {
+        "behavioral": { "totalPoints": 80, "trajectoryLength": 350, "approachPoints": 12, "microTremorScore": 0.1, "overshootCorrections": 1 },
+        "environmental": { "cdpRuntime": { "consoleAttached": true } }
+      },
+      "candidate": { "score": 0.063, "recommendation": "allow" },
+      "referenceFloor": 0
+    },
+    {
+      "name": "measured movement with a mixed CDP finding",
+      "signals": {
+        "behavioral": { "totalPoints": 80, "trajectoryLength": 350, "approachPoints": 12, "microTremorScore": 0.1, "overshootCorrections": 1 },
+        "environmental": { "cdp": { "detected": true, "signals": ["selenium_evaluate", "webdriver_getter_modified"] } }
+      },
+      "candidate": { "score": 0.1446, "recommendation": "allow" },
+      "referenceFloor": 0.6
+    },
+    {
+      "name": "ordinary keyboard use with a driver finding",
+      "signals": {
+        "behavioral": { "keyEvents": 6, "keyHoldSamples": 3, "keyHoldAvg": 80 },
+        "environmental": { "cdp": { "detected": true, "signals": ["selenium_evaluate"] } }
+      },
+      "candidate": { "score": 0.0504, "recommendation": "allow" },
+      "referenceFloor": 0
+    },
+    {
+      "name": "a corroborating driver category disabled by custom weights",
+      "signals": {
+        "behavioral": { "totalPoints": 80, "trajectoryLength": 350, "approachPoints": 12, "microTremorScore": 0.1, "overshootCorrections": 1 },
+        "environmental": { "cdp": { "detected": true, "signals": ["selenium_evaluate"] } }
+      },
+      "weights": { "vision_ai": 0.15, "behavioral": 0.18, "cdp": 0 },
+      "candidate": { "score": 0.063, "recommendation": "allow" }
+    },
+    {
+      "name": "the decisive floor also applies",
+      "signals": {
+        "behavioral": { "totalPoints": 80, "trajectoryLength": 350, "approachPoints": 12, "microTremorScore": 0.1, "overshootCorrections": 1 },
+        "environmental": { "cdp": { "detected": true, "signals": ["chromedriver_cdc"] } }
+      },
+      "candidate": { "score": 0.9, "recommendation": "block" },
+      "referenceFloor": 0.6
+    }
   ]
 }

@@ -278,7 +278,7 @@ describe('scoring comparison', () => {
       observations: [{ id: 'large-scroll-step-v1', mode: 'observe', status: 'detected', samples: 3, maxStep: 680 }],
     });
     expect(onScoringComparison.mock.calls).toEqual([[{
-      policy: 'noisy-or-decisive-v1',
+      policy: 'noisy-or-floors-v1',
       current: { score: expect.closeTo(0.295, 10), recommendation: 'allow' },
       candidate: { score: expect.closeTo(0.336875, 10), recommendation: 'challenge' },
     }]]);
@@ -302,7 +302,35 @@ describe('scoring comparison', () => {
 
     expect(verdict).toEqual({ ...current, timestamp: verdict.timestamp });
     expect(onScoringComparison.mock.calls).toEqual([[{
-      policy: 'noisy-or-decisive-v1',
+      policy: 'noisy-or-floors-v1',
+      current: { score: current.score, recommendation: current.recommendation },
+      candidate: {
+        score: expect.closeTo(candidate.score, 10),
+        recommendation: candidate.recommendation,
+      },
+    }]]);
+  });
+});
+
+describe('corroboration floor', () => {
+  it.each(scoringPolicyFixtures.corroborationFloorCases)('compares independent evidence for $name', ({
+    signals, weights, candidate,
+  }) => {
+    const onScoringComparison = jest.fn();
+    const options = { weights: weights ?? { vision_ai: 0.15, behavioral: 0.18, cdp: 0.12 } };
+    const context = {
+      ip: '203.0.113.9',
+      siteKey: 'test',
+      userAgent: UA_CHROME_MAC,
+      headers: GOOD_HEADERS,
+      pow: { provided: true, valid: true, serverElapsed: 3000 },
+    };
+    const current = new DetectionEngine(options).score(signals, context);
+    const verdict = new DetectionEngine({ ...options, onScoringComparison }).score(signals, context);
+
+    expect(verdict).toEqual({ ...current, timestamp: verdict.timestamp });
+    expect(onScoringComparison.mock.calls).toEqual([[{
+      policy: 'noisy-or-floors-v1',
       current: { score: current.score, recommendation: current.recommendation },
       candidate: {
         score: expect.closeTo(candidate.score, 10),

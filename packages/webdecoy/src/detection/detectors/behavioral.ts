@@ -1,10 +1,13 @@
 /** Core behavioral detection: mouse data sufficiency, velocity, timing. */
 
 import type { Detection, Signals } from '../types';
+import { addCorroboratingDetection } from './corroborating-detection';
 import { classifyKeyboardInput } from './keyboard-input';
 import { hasHumanMovementMarkers, isTouchModality } from './pointer-evidence';
 
-export function detectBehavioral(signals: Signals, widgetInteraction = true): Detection[] {
+export function detectBehavioral(
+  signals: Signals, widgetInteraction = true, corroborating?: Detection[],
+): Detection[] {
   const detections: Detection[] = [];
   const b = signals.behavioral ?? {};
   const t = signals.temporal ?? {};
@@ -17,7 +20,7 @@ export function detectBehavioral(signals: Signals, widgetInteraction = true): De
   const humanMovement = hasHumanMovementMarkers(b);
 
   if (keyboard === 'short-key-holds' && !isTouchUser) {
-    detections.push({
+    addCorroboratingDetection(detections, corroborating, {
       category: 'behavioral',
       score: 0.8,
       confidence: 0.9,
@@ -41,7 +44,7 @@ export function detectBehavioral(signals: Signals, widgetInteraction = true): De
 
   const velVar = b.velocityVariance ?? 1;
   if (velVar < 0.02 && trajectory > 50 && !humanMovement) {
-    detections.push({
+    addCorroboratingDetection(detections, corroborating, {
       category: 'behavioral',
       score: 0.6,
       confidence: 0.6,
@@ -105,7 +108,7 @@ export function detectBehavioral(signals: Signals, widgetInteraction = true): De
 
   const straight = b.straightLineRatio ?? 0;
   if (straight > 0.8 && trajectory > 100) {
-    detections.push({
+    addCorroboratingDetection(detections, corroborating, {
       category: 'behavioral',
       score: 0.5,
       confidence: 0.5,
@@ -115,7 +118,7 @@ export function detectBehavioral(signals: Signals, widgetInteraction = true): De
 
   const dirChanges = b.directionChanges ?? 10;
   if (totalPoints > 50 && dirChanges < 3) {
-    detections.push({
+    addCorroboratingDetection(detections, corroborating, {
       category: 'behavioral',
       score: 0.4,
       confidence: 0.4,

@@ -47,3 +47,15 @@ for (const { name, environmental, referenceFloor } of fixtures.decisiveFloorCase
   assert.equal(floor, referenceFloor, name + ' (FCaptcha decisive floor)');
   console.log(name + ' — FCaptcha decisive floor ' + floor);
 }
+
+for (const { name, signals, referenceFloor } of fixtures.corroborationFloorCases) {
+  if (referenceFloor === undefined) continue;
+  const detections = [
+    ...reference.detectVisionAI(signals),
+    ...reference.detectBehavioral(signals),
+    ...reference.detectCDP(signals),
+  ];
+  const floor = reference.applyCorroborationFloor(0, detections);
+  assert.equal(floor, referenceFloor, name + ' (FCaptcha corroboration floor)');
+  console.log(name + ' — FCaptcha corroboration floor ' + floor);
+}
