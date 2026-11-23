@@ -52,7 +52,7 @@ export class InvisibleSession {
     this.environmental = new EnvironmentalCollector();
     this.temporal = new TemporalCollector();
     this.sensor = new SensorCollector();
-    this.powManager = new PoWManager();
+    this.powManager = new PoWManager(() => this.serverOrigin());
     this.startTime = Date.now();
 
     this._init();
@@ -70,6 +70,10 @@ export class InvisibleSession {
     if (this.options.autoScore) this._attachToForms();
 
     void this._fetchChallenge();
+  }
+
+  private serverOrigin(): string | null {
+    return this.options.serverUrl || getServerUrl();
   }
 
   private async _fetchChallenge(): Promise<void> {
@@ -216,7 +220,7 @@ export class InvisibleSession {
     signalsHash: string | null,
     powTiming: Record<string, unknown> | null,
   ): Promise<VerifyResponse> {
-    const url = this.options.serverUrl || getServerUrl();
+    const url = this.serverOrigin();
     if (!url) return this._clientSideScore(signals);
 
     try {
