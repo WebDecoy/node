@@ -310,6 +310,51 @@ describe('scoring comparison', () => {
       },
     }]]);
   });
+
+  it('can enforce the candidate policy without changing the default', () => {
+    const onScoringComparison = jest.fn();
+    const context = {
+      ip: '203.0.113.9',
+      siteKey: 'test',
+      userAgent: UA_CHROME_MAC,
+      headers: GOOD_HEADERS,
+      pow: { provided: true, valid: true, serverElapsed: 3000 },
+    };
+    const signals = {
+      behavioral: HUMAN_BEHAVIOR,
+      environmental: {
+        ...CHROME_MAC_ENV,
+        webdriver: true,
+        automationFlags: { ...CHROME_MAC_ENV.automationFlags, webdriver: true },
+      },
+    };
+
+    const current = new DetectionEngine().score(signals, context);
+    const explicitCurrent = new DetectionEngine({ scoringPolicy: 'weighted-mean-v1' }).score(
+      signals,
+      context,
+    );
+    const enforced = new DetectionEngine({
+      scoringPolicy: 'noisy-or-floors-v1',
+      onScoringComparison,
+    }).score(signals, context);
+
+    expect(current).toMatchObject({ success: true, recommendation: 'allow' });
+    expect(current.score).toBeLessThan(0.5);
+    expect(explicitCurrent).toEqual({ ...current, timestamp: explicitCurrent.timestamp });
+    expect(enforced).toMatchObject({ success: false, score: 0.9, recommendation: 'block' });
+    expect(onScoringComparison).toHaveBeenCalledWith({
+      policy: 'noisy-or-floors-v1',
+      current: { score: current.score, recommendation: current.recommendation },
+      candidate: { score: enforced.score, recommendation: enforced.recommendation },
+    });
+  });
+
+  it('rejects an unknown enforcement policy instead of silently falling back', () => {
+    expect(() => new DetectionEngine({ scoringPolicy: 'future-policy' as never })).toThrow(
+      'Unknown detection scoring policy: future-policy',
+    );
+  });
 });
 
 describe('corroboration floor', () => {

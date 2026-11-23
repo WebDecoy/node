@@ -318,7 +318,9 @@ Mount the endpoints with your adapter (`webdecoyCaptcha` in Express, `webdecoyCa
 
 When the browser provides usable scroll samples, `/verify` and `/score` return an `observations` entry with the ID `large-scroll-step-v1`. It summarizes the sample count and largest step in CSS pixels for diagnostics.
 
-Pass `onScoringComparison` to the server adapter, `Captcha`, or `DetectionEngine` to receive the current and candidate scores and recommendations on the server. Both scores use your configured category weights. The `noisy-or-floors-v1` candidate uses noisy-OR aggregation and applies a decisive score floor to explicit WebDriver declarations and known driver injection signals in enabled categories. It also applies a corroboration floor when measured interaction and known driver findings agree. Verification and token issuance use the current policy.
+The default `weighted-mean-v1` policy preserves the original SDK behavior. Pass `onScoringComparison` to the server adapter, `Captcha`, or `DetectionEngine` to receive that baseline and the `noisy-or-floors-v1` score and recommendation on the server. Both scores use your configured category weights. The noisy-OR policy applies a decisive score floor to explicit WebDriver declarations and known driver injection signals in enabled categories. It also applies a corroboration floor when measured interaction and known driver findings agree.
+
+After validating the comparison in your traffic, pass `scoringPolicy: 'noisy-or-floors-v1'` to enforce it for verification and token issuance. The option is available on `DetectionEngine`, `Captcha`, and every CAPTCHA server adapter; unknown policy names throw instead of silently falling back.
 
 ```ts
 import express from 'express';
@@ -336,6 +338,15 @@ app.post('/login', async (req, res) => {
   if (!result.valid) return res.status(403).json({ error: 'captcha failed' });
   // ...proceed
 });
+```
+
+To enforce the noisy-OR policy, replace the adapter registration above with:
+
+```ts
+app.use(webdecoyCaptcha({
+  secret: process.env.WEBDECOY_SECRET,
+  scoringPolicy: 'noisy-or-floors-v1',
+}));
 ```
 
 `WEBDECOY_SECRET` is just the variable name used here; pass the value as `secret`. Generate one with `openssl rand -hex 32`. Challenge and token stores are in memory by default; for serverless or multi-instance deployments, pass shared `challengeStore` and `tokenStore` implementations.

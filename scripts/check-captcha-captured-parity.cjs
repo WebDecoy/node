@@ -193,25 +193,35 @@ for (const [index, sample] of samples.entries()) {
     ...sample.headers,
   });
   const userAgent = headers['user-agent'];
+  const context = {
+    ip: '192.0.2.' + (index + 1),
+    siteKey: 'captured-parity-' + index,
+    userAgent,
+    headers,
+    widgetInteraction: sample.capture?.endpoint !== '/api/score',
+  };
   let comparison;
   const node = new embedded.DetectionEngine({
     requirePoW: false,
     onScoringComparison(value) {
       comparison = value;
     },
-  }).score(structuredClone(sample.signals), {
-    ip: '192.0.2.' + (index + 1),
-    siteKey: 'captured-parity-' + index,
-    userAgent,
-    headers,
-    widgetInteraction: sample.capture?.endpoint !== '/api/score',
-  });
+  }).score(structuredClone(sample.signals), context);
+  const enforced = new embedded.DetectionEngine({
+    requirePoW: false,
+    scoringPolicy: 'noisy-or-floors-v1',
+  }).score(structuredClone(sample.signals), context);
   const fcaptcha = referenceVerdict(sample, headers, userAgent);
   const expected = manifest.expected[sample.id];
   assert.ok(comparison, sample.id + ' emitted a candidate scoring comparison');
   assertOutcome(node, expected.node, sample.id + ' (Node current)');
   assertOutcome(comparison.candidate, expected.candidate, sample.id + ' (Node candidate)');
+  assertOutcome(enforced, expected.candidate, sample.id + ' (Node enforced)');
   assertOutcome(fcaptcha, expected.reference, sample.id + ' (FCaptcha)');
+  assert.ok(
+    Math.abs(enforced.score - comparison.candidate.score) < 1e-10,
+    sample.id + ' enforced score matches the observed candidate'
+  );
   assert.deepEqual(
     getReasonIds(node.detections, sample.id + ' (Node)'),
     [...expected.node.reasonIds].sort(),
@@ -226,8 +236,8 @@ for (const [index, sample] of samples.entries()) {
     sample.id +
       ' — Node ' +
       node.recommendation +
-      ', candidate ' +
-      comparison.candidate.recommendation +
+      ', enforced ' +
+      enforced.recommendation +
       ', FCaptcha ' +
       fcaptcha.recommendation
   );

@@ -313,9 +313,9 @@ export interface ScrollJumpObservation {
 
 /** Final verdict returned by {@link DetectionEngine.score}. */
 export interface Verdict {
-  /** True when the weighted score is below the success threshold (< 0.5). */
+  /** True when the selected policy's score is below the success threshold (< 0.5). */
   success: boolean;
-  /** Weighted final score, 0..1. */
+  /** Selected policy's final score, 0..1. */
   score: number;
   /** Recommended action. */
   recommendation: Recommendation;

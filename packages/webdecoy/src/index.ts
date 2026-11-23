@@ -234,6 +234,7 @@ export {
 
 export type {
   DetectionEngineOptions,
+  DetectionScoringPolicy,
   ScoringComparison,
   Detection,
   ScrollJumpObservation,
