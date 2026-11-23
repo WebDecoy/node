@@ -265,6 +265,42 @@ describe('form interaction', () => {
     expect(hasReasonIncluding(v, 'no user interaction events')).toBe(true);
   });
 
+  it.each([
+    { name: 'mouse movement', behavioral: HUMAN_BEHAVIOR },
+    { name: 'touch input', behavioral: { touchEvents: 1 } },
+  ])('keeps a recorded textarea paste neutral with $name', ({ behavioral }) => {
+    const verdict = score({
+      behavioral,
+      formAnalysis: { textareaKeyboard: {
+        message: { keyCount: 0, pasteCount: 1, contentLength: 40, noKeyboardEvents: true },
+      } },
+    });
+
+    expect(hasReasonIncluding(verdict, 'DOM manipulation')).toBe(false);
+    expect(hasReasonIncluding(verdict, 'filled mostly by paste')).toBe(false);
+  });
+
+  it('keeps the paste-heavy finding for sessions with no pointer or touch evidence', () => {
+    const verdict = score({
+      formAnalysis: { textareaKeyboard: {
+        message: { keyCount: 0, pasteCount: 3, contentLength: 40, noKeyboardEvents: true },
+      } },
+    });
+
+    expect(hasReasonIncluding(verdict, 'filled mostly by paste')).toBe(true);
+    expect(hasReasonIncluding(verdict, 'DOM manipulation')).toBe(false);
+  });
+
+  it('continues to report textarea content with no recorded typing or paste', () => {
+    const verdict = score({
+      formAnalysis: { textareaKeyboard: {
+        message: { keyCount: 0, contentLength: 40, noKeyboardEvents: true },
+      } },
+    });
+
+    expect(hasReasonIncluding(verdict, 'DOM manipulation')).toBe(true);
+  });
+
   it('detects impossibly fast textarea typing', () => {
     const v = score({
       formAnalysis: {
