@@ -1,0 +1,202 @@
+{
+  "reference": {
+    "version": "v1.51.1",
+    "commit": "b769817ffa4069a80217dc5b4cef9ce597077c07",
+    "engineSha256": "2da0e61e8efcc9022f0cdeaa22740dfc2ba1ee1fb2b0157c491294008616bd1a"
+  },
+  "cases": [
+    {
+      "name": "ordinary input with no findings",
+      "detections": [],
+      "embedded": {
+        "score": 0,
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "score": 0,
+        "recommendation": "allow",
+        "success": true
+      }
+    },
+    {
+      "name": "one weak behavior finding",
+      "detections": [
+        {
+          "reason": "weak behavior fixture observation",
+          "category": "behavioral",
+          "score": 0.3,
+          "confidence": 0.4
+        }
+      ],
+      "embedded": {
+        "score": 0.054,
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "score": 0.0216,
+        "recommendation": "allow",
+        "success": true
+      }
+    },
+    {
+      "name": "one stronger observation",
+      "detections": [
+        {
+          "reason": "primary fixture observation",
+          "category": "vision_ai",
+          "score": 0.75,
+          "confidence": 0.85
+        }
+      ],
+      "embedded": {
+        "score": 0.1125,
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "score": 0.095625,
+        "recommendation": "allow",
+        "success": true
+      }
+    },
+    {
+      "name": "two observations in one category",
+      "detections": [
+        {
+          "reason": "primary fixture observation",
+          "category": "vision_ai",
+          "score": 0.75,
+          "confidence": 0.85
+        },
+        {
+          "reason": "secondary fixture observation",
+          "category": "vision_ai",
+          "score": 0.25,
+          "confidence": 0.4
+        }
+      ],
+      "embedded": {
+        "score": 0.0885,
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "score": 0.1010625,
+        "recommendation": "allow",
+        "success": true
+      }
+    },
+    {
+      "name": "decisive evidence",
+      "detections": [
+        {
+          "reason": "decisive fixture observation",
+          "category": "headless",
+          "score": 0.9,
+          "confidence": 1,
+          "dispositive": true
+        }
+      ],
+      "embedded": {
+        "score": 0.135,
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "score": 0.9,
+        "recommendation": "block",
+        "success": false
+      }
+    },
+    {
+      "name": "corroborated evidence",
+      "detections": [
+        {
+          "reason": "behavior fixture observation",
+          "category": "behavioral",
+          "score": 0.75,
+          "confidence": 0.8
+        },
+        {
+          "reason": "separate vision fixture observation",
+          "category": "vision_ai",
+          "score": 0.7,
+          "confidence": 0.7
+        }
+      ],
+      "embedded": {
+        "score": 0.24,
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "score": 0.6,
+        "recommendation": "block",
+        "success": false
+      }
+    },
+    {
+      "name": "debug context contributes without corroborating",
+      "detections": [
+        {
+          "reason": "behavior fixture observation",
+          "category": "behavioral",
+          "score": 0.75,
+          "confidence": 0.8
+        },
+        {
+          "reason": "developer context fixture observation",
+          "category": "cdp",
+          "score": 0.72,
+          "confidence": 0.8,
+          "nonCorroborating": true
+        }
+      ],
+      "embedded": {
+        "score": 0.2214,
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "score": 0.17712,
+        "recommendation": "allow",
+        "success": true
+      }
+    },
+    {
+      "name": "challenge boundary with independent ambient categories",
+      "detections": [
+        {
+          "reason": "environment fixture observation",
+          "category": "headless",
+          "score": 0.9,
+          "confidence": 0.95
+        },
+        {
+          "reason": "device fixture observation",
+          "category": "fingerprint",
+          "score": 0.9,
+          "confidence": 0.95
+        },
+        {
+          "reason": "request fixture observation",
+          "category": "bot",
+          "score": 0.9,
+          "confidence": 0.95
+        }
+      ],
+      "embedded": {
+        "score": 0.342,
+        "recommendation": "challenge",
+        "success": true
+      },
+      "reference": {
+        "score": 0.3078,
+        "recommendation": "challenge",
+        "success": true
+      }
+    }
+  ]
+}
