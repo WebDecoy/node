@@ -158,13 +158,15 @@ export function createFetchGuard(options: FetchGuardOptions = {}): FetchGuard {
 
     async check(request: Request, peer?: string): Promise<GuardOutcome> {
       const url = new URL(request.url);
+      const headers = headerRecord(request.headers);
+      if (!headers.host && !headers[':authority']) headers.host = url.host;
 
       const metadata: RequestMetadata = {
         method: request.method,
         path: url.pathname,
         ip: resolveIP(request, peer),
         user_agent: request.headers.get('user-agent') ?? undefined,
-        headers: headerRecord(request.headers),
+        headers,
         query: url.search ? url.search.slice(1) : undefined,
         timestamp: Date.now(),
       };

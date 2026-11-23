@@ -13,7 +13,14 @@
 
 import { Captcha, type CaptchaOptions } from './service';
 import type { Signals } from '../detection/types';
-import type { ClientSignalStore } from '../client-signals';
+import {
+  CLIENT_RECEIPT_COOKIE,
+  CLIENT_RECEIPT_PREFIX,
+  CLIENT_RECEIPT_TTL_MS,
+  getClientSignalHost,
+  type ClientSignalStore,
+} from '../client-signals';
+import { randomHex } from '../webcrypto';
 
 /** Normalized inbound request the adapters construct. */
 export interface CaptchaRequest {
@@ -55,7 +62,7 @@ interface VerifyBody {
   powTiming?: { duration?: number; iterations?: number } | null;
   action?: string;
   token?: string;
-  /** The browser widget's session id, sent by `@webdecoy/client`. */
+  /** Session ID supplied by an existing application integration. */
   sessionId?: string;
 }
 
@@ -115,8 +122,9 @@ export function createCaptchaEndpoints(options: CaptchaEndpointsOptions = {}) {
     // POST {base}/score (invisible mode)
     if (sub === '/score' && method === 'POST') {
       const b = (req.body ?? {}) as VerifyBody;
-      const result = await captcha.score({
-        siteKey: b.siteKey ?? 'default',
+      const siteKey = b.siteKey ?? 'default';
+      const { result, verifiedSignals } = await captcha.scoreForSession({
+        siteKey,
         ip: req.ip,
         userAgent,
         headers: req.headers,
@@ -128,25 +136,35 @@ export function createCaptchaEndpoints(options: CaptchaEndpointsOptions = {}) {
         action: b.action,
       });
 
-      // Remember the verdict against the browser's session, so the requests
-      // that follow can act on it. Without this the score goes back to the
-      // browser and the origin never learns anything from it — which was the
-      // gap: all the parts existed and nothing joined them.
-      if (signalStore && b.sessionId) {
-        await signalStore.set({
-          sessionId: b.sessionId,
-          score: result.score,
-          recommendation: result.recommendation,
-          at: Date.now(),
-        });
+      const legacyId = typeof b.sessionId === 'string' && !b.sessionId.startsWith(CLIENT_RECEIPT_PREFIX)
+        ? b.sessionId || null
+        : null;
+      const response = json(200, { ...result, sessionId: legacyId });
+      if (!signalStore) return response;
+
+      const at = Date.now();
+      const verdict = { score: result.score, recommendation: result.recommendation, at };
+      if (legacyId) {
+        await signalStore.set({ ...verdict, sessionId: legacyId });
+        return response;
       }
 
-      return json(200, {
-        ...result,
-        // Echoed so the widget can set the cookie the rule reads, without the
-        // developer wiring a second endpoint to hand it one.
-        sessionId: b.sessionId ?? null,
-      });
+      const host = getClientSignalHost(req.headers);
+      const origin = req.headers.origin;
+      if (
+        verifiedSignals && host && (!origin || origin === 'https://' + host)
+        && typeof siteKey === 'string' && siteKey.length <= 128
+      ) {
+        const receipt = randomHex(24);
+        await signalStore.set({
+          ...verdict,
+          sessionId: CLIENT_RECEIPT_PREFIX + receipt,
+          receipt: { host, siteKey, expiresAt: at + CLIENT_RECEIPT_TTL_MS },
+        });
+        response.headers['set-cookie'] = `${CLIENT_RECEIPT_COOKIE}=${receipt}; Path=/; Max-Age=${CLIENT_RECEIPT_TTL_MS / 1000}; Secure; HttpOnly; SameSite=Lax`;
+        response.headers['cache-control'] = 'private, no-store';
+      }
+      return response;
     }
 
     // POST {base}/token/verify

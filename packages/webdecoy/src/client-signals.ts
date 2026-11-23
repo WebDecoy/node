@@ -33,8 +33,10 @@ import type { Recommendation } from './detection';
 
 /** The engine's verdict on one browser session. */
 export interface ClientVerdict {
-  /** Session id supplied by the browser widget. */
+  /** Identifier used by the store. */
   sessionId: string;
+  /** Scope of a receipt issued by the embedded score endpoint. */
+  receipt?: { host: string; siteKey: string; expiresAt: number };
   /** 0–1, higher is more bot-like. */
   score: number;
   /** What the engine recommends doing about it. */
@@ -99,30 +101,53 @@ export class MemoryClientSignalStore implements ClientSignalStore {
   }
 }
 
-/** The cookie the widget sets, and the header it will also accept. */
+/** Session references supplied by an existing application integration. */
 export const CLIENT_SESSION_COOKIE = 'wd_cs';
 export const CLIENT_SESSION_HEADER = 'x-wd-session';
 
-/** Read the browser session id off a request, cookie first then header. */
-export function readClientSession(headers: Record<string, string>): string | undefined {
-  const cookie = headers['cookie'];
-  if (cookie) {
-    for (const part of cookie.split(';')) {
-      const eq = part.indexOf('=');
-      if (eq < 0) continue;
-      if (part.slice(0, eq).trim() === CLIENT_SESSION_COOKIE) {
-        const value = part.slice(eq + 1).trim();
-        if (value) return value;
-      }
+export const CLIENT_RECEIPT_COOKIE = '__Host-wd_cs';
+export const CLIENT_RECEIPT_PREFIX = 'receipt:';
+export const CLIENT_RECEIPT_TTL_MS = 15 * 60_000;
+
+/** Normalize the request authority for receipt scope checks. */
+export function getClientSignalHost(headers: Record<string, string>): string | undefined {
+  const value = headers.host ?? headers[':authority'];
+  if (typeof value !== 'string' || value.length > 255 || !/^[a-z0-9.:[\]-]+$/i.test(value)) {
+    return undefined;
+  }
+  try {
+    return new URL('https://' + value).host || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function readCookie(header: string | undefined, name: string): string | undefined {
+  if (!header) return undefined;
+  for (const part of header.split(';')) {
+    const eq = part.indexOf('=');
+    if (eq >= 0 && part.slice(0, eq).trim() === name) {
+      return part.slice(eq + 1).trim();
     }
   }
-  const header = headers[CLIENT_SESSION_HEADER];
-  return header || undefined;
+  return undefined;
+}
+
+/** Read the server receipt or an application-supplied legacy session id. */
+export function readClientSession(headers: Record<string, string>): string | undefined {
+  const receipt = readCookie(headers.cookie, CLIENT_RECEIPT_COOKIE);
+  if (receipt !== undefined) {
+    return /^[0-9a-f]{48}$/.test(receipt) ? CLIENT_RECEIPT_PREFIX + receipt : undefined;
+  }
+  const legacy = readCookie(headers.cookie, CLIENT_SESSION_COOKIE) || headers[CLIENT_SESSION_HEADER];
+  return legacy && !legacy.startsWith(CLIENT_RECEIPT_PREFIX) ? legacy : undefined;
 }
 
 export interface ClientSignalConfig {
   /** Where verdicts are read from. Must be the store `/score` writes to. */
   store: ClientSignalStore;
+  /** Site key expected by this rule when several site keys share a request host. */
+  siteKey?: string;
   /**
    * Deny at or above this score, 0–1. The engine's own `recommendation` is used
    * when this is omitted.
@@ -143,12 +168,14 @@ export interface ClientSignalConfig {
 export class ClientSignalRule implements Rule {
   readonly name = 'client-signals';
   private readonly store: ClientSignalStore;
+  private readonly siteKey?: string;
   private readonly minScore?: number;
   private readonly action: 'DENY' | 'THROTTLE';
   private readonly dryRun: boolean;
 
   constructor(config: ClientSignalConfig) {
     this.store = config.store;
+    this.siteKey = config.siteKey;
     this.minScore = config.minScore;
     this.action = config.action ?? 'DENY';
     this.dryRun = config.dryRun ?? false;
@@ -180,7 +207,12 @@ export class ClientSignalRule implements Rule {
       ? (this.store.get(sessionId) as ClientVerdict | undefined)
       : (context.prepared?.[this.name] as ClientVerdict | undefined);
 
-    if (!verdict) {
+    const issuedReceipt = sessionId.startsWith(CLIENT_RECEIPT_PREFIX);
+    const receipt = verdict?.receipt;
+    const usableReceipt = receipt && Date.now() < receipt.expiresAt
+      && getClientSignalHost(context.headers) === receipt.host
+      && (this.siteKey === undefined || this.siteKey === receipt.siteKey);
+    if (!verdict || verdict.sessionId !== sessionId || ((issuedReceipt || this.siteKey !== undefined) && !usableReceipt)) {
       return {
         action: 'ALLOW',
         rule: this.name,
@@ -209,7 +241,7 @@ export class ClientSignalRule implements Rule {
       metadata: {
         score: verdict.score,
         recommendation: verdict.recommendation,
-        sessionId,
+        ...(issuedReceipt ? {} : { sessionId }),
         dryRun: this.dryRun,
       },
     };
