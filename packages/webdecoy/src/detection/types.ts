@@ -39,6 +39,10 @@ export interface BehavioralSignals {
   touchEvents?: number;
   pointerHasNonMouseType?: boolean;
   keyEvents?: number;
+  /** Number of completed key holds in the browser's timing summary. */
+  keyHoldSamples?: number;
+  /** Average hold duration in milliseconds for those samples. */
+  keyHoldAvg?: number;
   /** Count of recent scroll events and largest CSS pixel step between them. */
   scrollMorphology?: { samples?: number; maxStep?: number };
   microTremorScore?: number;

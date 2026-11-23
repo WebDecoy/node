@@ -52,7 +52,7 @@ export class CaptchaWidget {
     );
 
     this.id = 'webdecoy_' + Math.random().toString(36).slice(2, 11);
-    this.behavioral = new BehavioralCollector();
+    this.behavioral = new BehavioralCollector({ collectKeyHolds: true });
     this.environmental = new EnvironmentalCollector();
     this.temporal = new TemporalCollector();
     this.sensor = new SensorCollector();
@@ -360,7 +360,7 @@ export class CaptchaWidget {
   reset(): void {
     this.verified = false;
     this.token = null;
-    this.behavioral = new BehavioralCollector();
+    this.behavioral = new BehavioralCollector({ collectKeyHolds: true });
     this.temporal = new TemporalCollector();
     if (this.sensor) this.sensor.detach();
     this.sensor = new SensorCollector();
