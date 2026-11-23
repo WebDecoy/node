@@ -7,7 +7,7 @@
  * supplies a {@link PoWOutcome} and the engine emits the matching detections.
  */
 
-import type { Detection, DetectionContext, Signals, Verdict } from './types';
+import type { Detection, DetectionContext, Recommendation, Signals, Verdict } from './types';
 import { DEFAULT_WEIGHTS } from './weights';
 import { observeScrollJump } from './scroll-observation';
 import { isDatacenterIP } from './ip';
@@ -17,7 +17,12 @@ import {
   type FingerprintStore,
   type RateLimiter,
 } from './stores';
-import { calculateCategoryScores, calculateFinalScore, recommend } from './scoring';
+import {
+  calculateCategoryScores,
+  calculateFinalScore,
+  calculateNoisyOrCategoryScores,
+  recommend,
+} from './scoring';
 import {
   detectVisionAI,
   detectHeadless,
@@ -38,6 +43,12 @@ import {
   analyzeAdvancedSignals,
 } from './detectors';
 
+export interface ScoringComparison {
+  policy: 'noisy-or-v1';
+  current: { score: number; recommendation: Recommendation };
+  candidate: { score: number; recommendation: Recommendation };
+}
+
 export interface DetectionEngineOptions {
   /** Override the per-category weights (defaults to {@link DEFAULT_WEIGHTS}). */
   weights?: Record<string, number>;
@@ -51,6 +62,8 @@ export interface DetectionEngineOptions {
   fingerprintStore?: FingerprintStore;
   /** Rate limiter for rate-abuse detection (defaults to in-memory). */
   rateLimiter?: RateLimiter;
+  /** Receive a server-side comparison of the two aggregation methods using the same weights. */
+  onScoringComparison?: (comparison: ScoringComparison) => void | Promise<void>;
 }
 
 export class DetectionEngine {
@@ -58,12 +71,14 @@ export class DetectionEngine {
   private readonly requirePoW: boolean;
   private readonly fingerprintStore: FingerprintStore;
   private readonly rateLimiter: RateLimiter;
+  private readonly onScoringComparison: DetectionEngineOptions['onScoringComparison'];
 
   constructor(options: DetectionEngineOptions = {}) {
     this.weights = options.weights ?? DEFAULT_WEIGHTS;
     this.requirePoW = options.requirePoW ?? true;
     this.fingerprintStore = options.fingerprintStore ?? new InMemoryFingerprintStore();
     this.rateLimiter = options.rateLimiter ?? new InMemoryRateLimiter();
+    this.onScoringComparison = options.onScoringComparison;
   }
 
   /** Score `signals` for the given request context and return a verdict. */
@@ -163,12 +178,29 @@ export class DetectionEngine {
     // --- Aggregate -------------------------------------------------------------
     const categoryScores = calculateCategoryScores(detections, this.weights);
     const score = calculateFinalScore(categoryScores, this.weights);
+    const recommendation = recommend(score);
     const scrollObservation = observeScrollJump(signals.behavioral);
+
+    const onScoringComparison = this.onScoringComparison;
+    if (onScoringComparison) {
+      const candidateScores = calculateNoisyOrCategoryScores(detections, this.weights);
+      const candidateScore = calculateFinalScore(candidateScores, this.weights);
+      try {
+        const pending = onScoringComparison({
+          policy: 'noisy-or-v1',
+          current: { score, recommendation },
+          candidate: { score: candidateScore, recommendation: recommend(candidateScore) },
+        });
+        void pending?.catch(() => {});
+      } catch {
+        // An application observer must not interrupt CAPTCHA verification.
+      }
+    }
 
     return {
       success: score < 0.5,
       score,
-      recommendation: recommend(score),
+      recommendation,
       categoryScores,
       detections,
       ...(scrollObservation ? { observations: [scrollObservation] } : {}),

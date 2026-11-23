@@ -109,9 +109,13 @@ describe('captcha HTTP endpoints', () => {
     expect((tRes!.body as { valid: boolean }).valid).toBe(true);
   });
 
-  it.each(['verify', 'score'])('applies route-specific interaction checks on /%s', async (route) => {
+  it.each([
+    { route: 'verify', fail: () => { throw new Error('observer failed'); } },
+    { route: 'score', fail: () => Promise.reject(new Error('observer failed')) },
+  ])('applies route-specific interaction checks on /$route even when the observer fails', async ({ route, fail }) => {
     const signalStore = new MemoryClientSignalStore();
-    const { captcha, handle } = createCaptchaEndpoints({ secret: 's', signalStore });
+    const onScoringComparison = jest.fn(fail);
+    const { captcha, handle } = createCaptchaEndpoints({ secret: 's', signalStore, onScoringComparison });
     const ip = '73.15.22.100';
     const now = Date.now();
     const clock = jest.spyOn(Date, 'now').mockReturnValue(now);
@@ -143,6 +147,13 @@ describe('captcha HTTP endpoints', () => {
       );
 
       expect(res?.status).toBe(200);
+      const decision = res!.body as { score: number; recommendation: string };
+      expect(onScoringComparison.mock.calls).toEqual([[{
+        policy: 'noisy-or-v1',
+        current: { score: decision.score, recommendation: decision.recommendation },
+        candidate: { score: expect.any(Number), recommendation: 'allow' },
+      }]]);
+      expect(res?.body).not.toHaveProperty('scoringComparison');
       expect(res?.body).toMatchObject({
         success: true,
         token: expect.any(String),
