@@ -16,7 +16,8 @@
         "pointerHasNonMouseType": true,
         "interactionDuration": 1500
       },
-      "reasons": []
+      "reasons": [],
+      "reasonIds": []
     },
     {
       "name": "keyboard user activates the widget with no mouse path",
@@ -28,7 +29,8 @@
         "keyEvents": 8,
         "interactionDuration": 4000
       },
-      "reasons": []
+      "reasons": [],
+      "reasonIds": []
     },
     {
       "name": "screen reader user navigates before activation",
@@ -40,7 +42,8 @@
         "keyEvents": 12,
         "interactionDuration": 12000
       },
-      "reasons": []
+      "reasons": [],
+      "reasonIds": []
     },
     {
       "name": "trackpad user clicks near the center",
@@ -53,7 +56,8 @@
         "mouseEventRate": 30,
         "interactionDuration": 4000
       },
-      "reasons": []
+      "reasons": [],
+      "reasonIds": []
     },
     {
       "name": "slow pointer movement has natural corrections",
@@ -69,7 +73,21 @@
         "overshootCorrections": 0,
         "interactionDuration": 4500
       },
-      "reasons": []
+      "reasons": [],
+      "reasonIds": []
+    },
+    {
+      "name": "pointer makes a natural correction while tremor data is unavailable",
+      "behavioral": {
+        "totalPoints": 80,
+        "trajectoryLength": 350,
+        "approachPoints": 12,
+        "approachDirectness": 0.97,
+        "overshootCorrections": 1,
+        "interactionDuration": 4500
+      },
+      "reasons": [],
+      "reasonIds": []
     },
     {
       "name": "measured straight path still produces a directness finding",
@@ -82,7 +100,8 @@
       },
       "reasons": [
         "Mouse path to target is unnaturally direct"
-      ]
+      ],
+      "reasonIds": ["pointer.direct_approach"]
     }
   ]
 }

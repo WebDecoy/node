@@ -204,36 +204,48 @@
       "name": "an explicit WebDriver declaration",
       "environmental": { "webdriver": true, "automationFlags": { "webdriver": true } },
       "candidate": { "score": 0.9, "recommendation": "block" },
+      "reasonIds": ["webdriver.detected"],
+      "decisions": { "node": "allow", "fcaptcha": "block" },
       "referenceFloor": 0.9
     },
     {
       "name": "an older aggregate WebDriver flag",
       "environmental": { "webdriver": true },
       "candidate": { "score": 0.135375, "recommendation": "allow" },
+      "reasonIds": ["webdriver.detected"],
+      "decisions": { "node": "allow", "fcaptcha": "block" },
       "referenceFloor": 0.9
     },
     {
       "name": "an indirect WebDriver hint with a false explicit flag",
       "environmental": { "webdriver": true, "automationFlags": { "webdriver": false } },
       "candidate": { "score": 0.135375, "recommendation": "allow" },
+      "reasonIds": ["webdriver.detected"],
+      "decisions": { "node": "allow", "fcaptcha": "block" },
       "referenceFloor": 0.9
     },
     {
       "name": "a known injected driver marker",
       "environmental": { "cdp": { "detected": true, "signals": ["chromedriver_cdc"] } },
       "candidate": { "score": 0.9, "recommendation": "block" },
+      "reasonIds": ["cdp.known_driver"],
+      "decisions": { "node": "allow", "fcaptcha": "block" },
       "referenceFloor": 0.9
     },
     {
       "name": "a generic CDP finding",
       "environmental": { "cdp": { "detected": true, "signals": ["selenium_evaluate"] } },
       "candidate": { "score": 0.0504, "recommendation": "allow" },
+      "reasonIds": ["cdp.single_indicator"],
+      "decisions": { "node": "allow", "fcaptcha": "allow" },
       "referenceFloor": 0
     },
     {
       "name": "a DevTools console observation",
       "environmental": { "cdpRuntime": { "consoleAttached": true } },
       "candidate": { "score": 0, "recommendation": "allow" },
+      "reasonIds": [],
+      "decisions": { "node": "allow", "fcaptcha": "allow" },
       "referenceFloor": 0
     },
     {
@@ -261,15 +273,19 @@
         "environmental": { "cdp": { "detected": true, "signals": ["selenium_evaluate"] } }
       },
       "candidate": { "score": 0.6, "recommendation": "block" },
+      "reasonIds": ["cdp.single_indicator", "pointer.low_tremor"],
+      "decisions": { "node": "allow", "fcaptcha": "block" },
       "referenceFloor": 0.6
     },
     {
       "name": "a weak movement finding with an independent driver finding",
       "signals": {
-        "behavioral": { "totalPoints": 80, "trajectoryLength": 350, "approachPoints": 12, "approachDirectness": 0.97, "overshootCorrections": 1 },
+        "behavioral": { "totalPoints": 80, "trajectoryLength": 350, "approachPoints": 12, "approachDirectness": 0.97, "microTremorScore": 0.3, "overshootCorrections": 1 },
         "environmental": { "cdp": { "detected": true, "signals": ["selenium_evaluate"] } }
       },
       "candidate": { "score": 0.0879, "recommendation": "allow" },
+      "reasonIds": ["cdp.single_indicator", "pointer.direct_approach"],
+      "decisions": { "node": "allow", "fcaptcha": "allow" },
       "referenceFloor": 0
     },
     {
@@ -278,12 +294,16 @@
         "behavioral": { "totalPoints": 80, "trajectoryLength": 350, "approachPoints": 12, "microTremorScore": 0.1, "overshootCorrections": 1, "velocityVariance": 0.01, "straightLineRatio": 0.9 }
       },
       "candidate": { "score": 0.1566, "recommendation": "allow" },
+      "reasonIds": ["pointer.consistent_velocity", "pointer.low_tremor", "pointer.straight_motion"],
+      "decisions": { "node": "allow", "fcaptcha": "block" },
       "referenceFloor": 0.6
     },
     {
       "name": "missing interaction data with a driver finding",
       "signals": { "environmental": { "cdp": { "detected": true, "signals": ["selenium_evaluate"] } } },
       "candidate": { "score": 0.31449, "recommendation": "challenge" },
+      "reasonIds": ["cdp.single_indicator", "input.missing", "pointer.approach_missing", "pointer.missing"],
+      "decisions": { "node": "challenge", "fcaptcha": "block" },
       "referenceFloor": 0.6
     },
     {
@@ -293,6 +313,8 @@
         "environmental": { "cdpRuntime": { "consoleAttached": true } }
       },
       "candidate": { "score": 0.063, "recommendation": "allow" },
+      "reasonIds": ["pointer.low_tremor"],
+      "decisions": { "node": "allow", "fcaptcha": "allow" },
       "referenceFloor": 0
     },
     {
@@ -302,6 +324,8 @@
         "environmental": { "cdp": { "detected": true, "signals": ["selenium_evaluate", "webdriver_getter_modified"] } }
       },
       "candidate": { "score": 0.1446, "recommendation": "allow" },
+      "reasonIds": ["cdp.multiple_indicators", "pointer.low_tremor"],
+      "decisions": { "node": "allow", "fcaptcha": "block" },
       "referenceFloor": 0.6
     },
     {
@@ -311,6 +335,8 @@
         "environmental": { "cdp": { "detected": true, "signals": ["selenium_evaluate"] } }
       },
       "candidate": { "score": 0.0504, "recommendation": "allow" },
+      "reasonIds": ["cdp.single_indicator"],
+      "decisions": { "node": "allow", "fcaptcha": "allow" },
       "referenceFloor": 0
     },
     {
@@ -329,6 +355,8 @@
         "environmental": { "cdp": { "detected": true, "signals": ["chromedriver_cdc"] } }
       },
       "candidate": { "score": 0.9, "recommendation": "block" },
+      "reasonIds": ["cdp.known_driver", "pointer.low_tremor"],
+      "decisions": { "node": "allow", "fcaptcha": "block" },
       "referenceFloor": 0.6
     }
   ]
