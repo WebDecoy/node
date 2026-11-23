@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.30.0] - 2026-11-23
+
 ### Added
 
+- Compare the original embedded CAPTCHA score with the FCaptcha-aligned noisy-OR and score-floor policy through the server-side `onScoringComparison` callback.
 - Opt into FCaptcha-aligned noisy-OR scoring and decisive/corroboration floors for embedded CAPTCHA verification and token issuance with `scoringPolicy: 'noisy-or-floors-v1'`.
 
 ## [0.29.0] - 2026-11-23
