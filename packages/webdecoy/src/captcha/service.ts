@@ -33,6 +33,8 @@ export interface CaptchaOptions {
   secret?: string;
   /** Override per-category detection weights. */
   weights?: Record<string, number>;
+  /** Aggregation policy used for scoring, verification, and token issuance. */
+  scoringPolicy?: DetectionEngineOptions['scoringPolicy'];
   /** Receive score and recommendation comparisons on the server without affecting verification. */
   onScoringComparison?: DetectionEngineOptions['onScoringComparison'];
   /**
@@ -67,6 +69,7 @@ export class Captcha {
 
     this.engine = new DetectionEngine({
       weights: options.weights,
+      scoringPolicy: options.scoringPolicy,
       requirePoW: true,
       fingerprintStore,
       rateLimiter,

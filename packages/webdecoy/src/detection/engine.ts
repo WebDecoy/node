@@ -7,7 +7,14 @@
  * supplies a {@link PoWOutcome} and the engine emits the matching detections.
  */
 
-import type { Detection, DetectionContext, Recommendation, Signals, Verdict } from './types';
+import type {
+  CategoryScores,
+  Detection,
+  DetectionContext,
+  Recommendation,
+  Signals,
+  Verdict,
+} from './types';
 import { DEFAULT_WEIGHTS } from './weights';
 import { observeScrollJump } from './scroll-observation';
 import { isDatacenterIP } from './ip';
@@ -45,6 +52,8 @@ import {
   analyzeAdvancedSignals,
 } from './detectors';
 
+export type DetectionScoringPolicy = 'weighted-mean-v1' | 'noisy-or-floors-v1';
+
 export interface ScoringComparison {
   policy: 'noisy-or-floors-v1';
   current: { score: number; recommendation: Recommendation };
@@ -54,6 +63,12 @@ export interface ScoringComparison {
 export interface DetectionEngineOptions {
   /** Override the per-category weights (defaults to {@link DEFAULT_WEIGHTS}). */
   weights?: Record<string, number>;
+  /**
+   * Aggregation policy used for the returned verdict and CAPTCHA token decision.
+   * Defaults to `weighted-mean-v1`; opt in to `noisy-or-floors-v1` to enforce
+   * the FCaptcha-aligned noisy-OR, decisive-floor, and corroboration-floor policy.
+   */
+  scoringPolicy?: DetectionScoringPolicy;
   /**
    * When true (default), a request with no PoW outcome emits a hard-fail "No PoW
    * solution provided" detection — matching the reference server. Set false to
@@ -70,13 +85,22 @@ export interface DetectionEngineOptions {
 
 export class DetectionEngine {
   private readonly weights: Record<string, number>;
+  private readonly scoringPolicy: DetectionScoringPolicy;
   private readonly requirePoW: boolean;
   private readonly fingerprintStore: FingerprintStore;
   private readonly rateLimiter: RateLimiter;
   private readonly onScoringComparison: DetectionEngineOptions['onScoringComparison'];
 
   constructor(options: DetectionEngineOptions = {}) {
+    if (
+      options.scoringPolicy !== undefined &&
+      options.scoringPolicy !== 'weighted-mean-v1' &&
+      options.scoringPolicy !== 'noisy-or-floors-v1'
+    ) {
+      throw new TypeError('Unknown detection scoring policy: ' + String(options.scoringPolicy));
+    }
     this.weights = options.weights ?? DEFAULT_WEIGHTS;
+    this.scoringPolicy = options.scoringPolicy ?? 'weighted-mean-v1';
     this.requirePoW = options.requirePoW ?? true;
     this.fingerprintStore = options.fingerprintStore ?? new InMemoryFingerprintStore();
     this.rateLimiter = options.rateLimiter ?? new InMemoryRateLimiter();
@@ -89,7 +113,8 @@ export class DetectionEngine {
     const headers = context.headers ?? {};
     const detections: Detection[] = [];
     const onScoringComparison = this.onScoringComparison;
-    const corroborating: Detection[] | undefined = onScoringComparison ? [] : undefined;
+    const useCandidate = this.scoringPolicy === 'noisy-or-floors-v1';
+    const corroborating: Detection[] | undefined = onScoringComparison || useCandidate ? [] : undefined;
 
     // Orchestrator-supplied detections (e.g. signals-tampering check).
     if (context.extraDetections) detections.push(...context.extraDetections);
@@ -180,28 +205,43 @@ export class DetectionEngine {
     detections.push(...analyzeAdvancedSignals(signals));
 
     // --- Aggregate -------------------------------------------------------------
-    const categoryScores = calculateCategoryScores(detections, this.weights);
-    const score = calculateFinalScore(categoryScores, this.weights);
-    const recommendation = recommend(score);
+    const currentCategoryScores = calculateCategoryScores(detections, this.weights);
+    const currentScore = calculateFinalScore(currentCategoryScores, this.weights);
+    const currentRecommendation = recommend(currentScore);
     const scrollObservation = observeScrollJump(signals.behavioral);
 
-    if (onScoringComparison && corroborating) {
-      const candidateScores = calculateNoisyOrCategoryScores(detections, this.weights);
+    let candidateCategoryScores: CategoryScores | undefined;
+    let candidateScore: number | undefined;
+    let candidateRecommendation: Recommendation | undefined;
+    if (corroborating) {
+      candidateCategoryScores = calculateNoisyOrCategoryScores(detections, this.weights);
       const decisiveScore = applyDecisiveScoreFloor(
-        calculateFinalScore(candidateScores, this.weights), signals.environmental, this.weights,
+        calculateFinalScore(candidateCategoryScores, this.weights), signals.environmental, this.weights,
       );
-      const candidateScore = applyCorroborationScoreFloor(decisiveScore, corroborating, this.weights);
+      candidateScore = applyCorroborationScoreFloor(decisiveScore, corroborating, this.weights);
+      candidateRecommendation = recommend(candidateScore);
+    }
+
+    if (
+      onScoringComparison &&
+      candidateScore !== undefined &&
+      candidateRecommendation !== undefined
+    ) {
       try {
         const pending = onScoringComparison({
           policy: 'noisy-or-floors-v1',
-          current: { score, recommendation },
-          candidate: { score: candidateScore, recommendation: recommend(candidateScore) },
+          current: { score: currentScore, recommendation: currentRecommendation },
+          candidate: { score: candidateScore, recommendation: candidateRecommendation },
         });
         void pending?.catch(() => {});
       } catch {
         // An application observer must not interrupt CAPTCHA verification.
       }
     }
+
+    const categoryScores = useCandidate ? candidateCategoryScores! : currentCategoryScores;
+    const score = useCandidate ? candidateScore! : currentScore;
+    const recommendation = useCandidate ? candidateRecommendation! : currentRecommendation;
 
     return {
       success: score < 0.5,

@@ -249,6 +249,51 @@ describe('Captcha end-to-end', () => {
     expect((await captcha.verifyToken(token!, ip)).reason).toBe('token_already_used');
   });
 
+  it('withholds a token when the noisy-OR floors policy blocks explicit automation', async () => {
+    const current = new Captcha({ secret: SECRET });
+    const enforced = new Captcha({ secret: SECRET, scoringPolicy: 'noisy-or-floors-v1' });
+    const ip = '73.15.22.100';
+    const realNow = Date.now();
+    const clock = jest.spyOn(Date, 'now').mockReturnValue(realNow);
+
+    try {
+      const currentChallenge = await current.issueChallenge('site', ip, 2);
+      const enforcedChallenge = await enforced.issueChallenge('site', ip, 2);
+      clock.mockReturnValue(realNow + 3000);
+
+      const submit = (captcha: Captcha, challenge: ChallengeData) => captcha.verify({
+        siteKey: 'site',
+        ip,
+        userAgent: UA_CHROME_MAC,
+        headers: GOOD_HEADERS,
+        signals: {
+          behavioral: HUMAN_BEHAVIOR,
+          environmental: {
+            ...CHROME_MAC_ENV,
+            webdriver: true,
+            automationFlags: { ...CHROME_MAC_ENV.automationFlags, webdriver: true },
+          },
+          meta: { challengeNonce: challenge.nonce },
+        },
+        powSolution: solve(challenge),
+      });
+
+      const currentResult = await submit(current, currentChallenge);
+      const enforcedResult = await submit(enforced, enforcedChallenge);
+
+      expect(currentResult).toMatchObject({ success: true, recommendation: 'allow' });
+      expect(currentResult.token).toEqual(expect.any(String));
+      expect(enforcedResult).toMatchObject({
+        success: false,
+        score: 0.9,
+        recommendation: 'block',
+        token: null,
+      });
+    } finally {
+      clock.mockRestore();
+    }
+  });
+
   it('fails a clear bot (headless + CDP + datacenter, no PoW) and issues no token', async () => {
     const captcha = new Captcha({ secret: SECRET });
     const result = await captcha.verify({
