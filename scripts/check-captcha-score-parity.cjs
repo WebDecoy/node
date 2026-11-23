@@ -1,6 +1,6 @@
 /**
  * Compare scoring policy and detector reason IDs using fixtures and an accepted proof.
- * Pass the engine.js file from the FCaptcha commit recorded in the fixture.
+ * Pass engine.js, detection.js, and keystroke-cadence.json from the pinned FCaptcha commit.
  * Build @webdecoy/node first so this uses its packaged scoring exports.
  */
 const assert = require('node:assert/strict');
@@ -11,11 +11,24 @@ const { resolve } = require('node:path');
 const fixtures = require('../packages/webdecoy/src/detection/fixtures/scoring-policy.json');
 const inputModality = require('../packages/webdecoy/src/detection/fixtures/input-modality.json');
 const enginePath = process.argv[2];
+const detectionPath = process.argv[3];
+const cadenceFixturePath = process.argv[4];
 assert.ok(enginePath, 'Pass the pinned FCaptcha server-node/engine.js path');
-const hash = createHash('sha256').update(readFileSync(resolve(enginePath))).digest('hex');
-assert.equal(hash, fixtures.reference.engineSha256, 'Use FCaptcha ' + fixtures.reference.commit);
+assert.ok(detectionPath, 'Pass the pinned FCaptcha server-node/detection.js path');
+assert.ok(cadenceFixturePath, 'Pass the pinned FCaptcha keystroke-cadence.json path');
+
+function assertDigest(path, expected, label) {
+  const hash = createHash('sha256').update(readFileSync(resolve(path))).digest('hex');
+  assert.equal(hash, expected, 'Use pinned ' + label + ' from FCaptcha ' + fixtures.reference.commit);
+}
+
+assertDigest(enginePath, fixtures.reference.engineSha256, 'engine.js');
+assertDigest(detectionPath, fixtures.reference.detectionSha256, 'detection.js');
+assertDigest(cadenceFixturePath, fixtures.reference.cadenceFixtureSha256, 'cadence fixture');
 
 const reference = require(resolve(enginePath));
+const referenceDetection = require(resolve(detectionPath));
+const cadenceFixtures = require(resolve(cadenceFixturePath));
 const embedded = require('../packages/webdecoy/dist/index.js');
 
 const reasonIds = {
@@ -108,6 +121,55 @@ function assertOutcome(score, recommendation, expected, label) {
   assert.ok(Math.abs(score - expected.score) < 1e-10, label + ' score');
   assert.equal(recommendation, expected.recommendation, label + ' recommendation');
   assert.equal(score < 0.5, expected.success, label + ' success with accepted proof');
+}
+
+const cadenceReasonId = 'typing.non_human_cadence';
+const cadenceReason = 'Keystroke cadence analysis indicates non-human typing pattern';
+function cadenceDetection(detections, label) {
+  const matched = detections.filter(({ reason }) => reason === cadenceReason);
+  assert.ok(matched.length <= 1, label + ' emitted duplicate ' + cadenceReasonId);
+  return matched[0];
+}
+
+function assertClose(actual, expected, label) {
+  assert.ok(Math.abs(actual - expected) < 1e-9, label + ': ' + actual + ', expected ' + expected);
+}
+
+for (const fixture of cadenceFixtures.cases) {
+  const form = { textareaKeyboard: { message: fixture.stats } };
+  const embeddedSignals = withOrdinaryBrowser({ behavioral: ordinaryPointer, formAnalysis: form });
+  const embeddedDetections = new embedded.DetectionEngine().score(embeddedSignals, context).detections;
+  const embeddedDetection = cadenceDetection(embeddedDetections, fixture.name + ' (Node)');
+  const referenceResult = cadenceDetection(
+    referenceDetection.analyzeFormInteraction(form, { humanPresent: true }),
+    fixture.name + ' (FCaptcha)',
+  );
+
+  if (fixture.expected === null) {
+    assert.equal(embeddedDetection, undefined, fixture.name + ' (Node) reason IDs');
+    assert.equal(referenceResult, undefined, fixture.name + ' (FCaptcha) reason IDs');
+    console.log(fixture.name + ' — no cadence reason ID in either engine');
+    continue;
+  }
+
+  assert.ok(embeddedDetection, fixture.name + ' (Node) missing ' + cadenceReasonId);
+  assert.ok(referenceResult, fixture.name + ' (FCaptcha) missing ' + cadenceReasonId);
+  for (const [label, detection] of [['Node', embeddedDetection], ['FCaptcha', referenceResult]]) {
+    assert.equal(detection.category, 'bot', fixture.name + ' (' + label + ') category');
+    assertClose(detection.score, fixture.expected.score, fixture.name + ' (' + label + ') score');
+    assertClose(detection.confidence, fixture.expected.confidence, fixture.name + ' (' + label + ') confidence');
+    assertClose(
+      detection.details.cadenceHumanScore,
+      fixture.expected.cadenceHumanScore,
+      fixture.name + ' (' + label + ') human score',
+    );
+    assert.deepEqual(
+      Object.keys(detection.details.metrics).sort(),
+      Object.keys(fixture.expected.metrics).sort(),
+      fixture.name + ' (' + label + ') metric IDs',
+    );
+  }
+  console.log(fixture.name + ' — matching ' + cadenceReasonId + ' and metric IDs');
 }
 
 for (const fixture of fixtures.cases) {

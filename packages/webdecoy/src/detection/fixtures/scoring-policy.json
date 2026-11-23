@@ -2,7 +2,9 @@
   "reference": {
     "version": "v1.51.1",
     "commit": "b769817ffa4069a80217dc5b4cef9ce597077c07",
-    "engineSha256": "2da0e61e8efcc9022f0cdeaa22740dfc2ba1ee1fb2b0157c491294008616bd1a"
+    "engineSha256": "2da0e61e8efcc9022f0cdeaa22740dfc2ba1ee1fb2b0157c491294008616bd1a",
+    "detectionSha256": "8bfbd56c765ae47edee083e5e3c20512c16a1cca1dc18f7fb88d162f36d67682",
+    "cadenceFixtureSha256": "c11c199504aaae979acdaecaa8918615b08b4310c1e311c275b4c53a625c69ce"
   },
   "cases": [
     {
