@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Select CAPTCHA detectors by the server's interaction mode and require verified proof of work for session tokens.
 - Improve scoring for single taps, keyboard navigation, slow pointer movement, and precise trackpad clicks.
 - Check measured font families against the reported platform and record the first textarea paste.
+- Accept embedded CAPTCHA challenge IDs in the browser and use the configured invisible session origin for proof requests.
 
 ## [0.27.0] - 2026-11-22
 

@@ -9,6 +9,8 @@
 import { getServerUrl, getBasePath } from './config';
 import type { Challenge, PoWSolution } from './types';
 
+type ChallengeResponse = Omit<Challenge, 'challengeId'> & { challengeId?: string; id?: string };
+
 export class PoWManager {
   private workers: Worker[] = [];
   challenge: Challenge | null = null;
@@ -16,6 +18,8 @@ export class PoWManager {
   private solving = false;
   private solvePromise: Promise<PoWSolution> | null = null;
   private startTime: number | null = null;
+
+  constructor(private readonly challengeOrigin: () => string | null = getServerUrl) {}
 
   /**
    * Inline Web Worker for PoW computation. Each worker scans a disjoint nonce
@@ -88,7 +92,7 @@ export class PoWManager {
   }
 
   async fetchChallenge(siteKey?: string | null): Promise<Challenge> {
-    const serverUrl = getServerUrl();
+    const serverUrl = this.challengeOrigin();
     if (!serverUrl) {
       return this._generateLocalChallenge();
     }
@@ -101,7 +105,12 @@ export class PoWManager {
         console.warn(`PoW challenge fetch failed (status ${response.status}), using local challenge`);
         return this._generateLocalChallenge();
       }
-      this.challenge = (await response.json()) as Challenge;
+      const { id, challengeId: legacyId, ...data } = await response.json() as ChallengeResponse;
+      const challengeId = legacyId ?? id;
+      if (typeof challengeId !== 'string' || challengeId.length === 0) {
+        throw new Error('PoW challenge response is missing an ID');
+      }
+      this.challenge = { ...data, challengeId };
       return this.challenge;
     } catch (e) {
       console.warn('PoW challenge fetch failed, using local challenge:', e);
