@@ -71,6 +71,7 @@ export function createCaptchaHandler(options?: NextCaptchaOptions): NextCaptchaH
     }
 
     const headers = headersToRecord(req.headers);
+    if (!headers.host && !headers[':authority']) headers.host = url.host;
     const result = await endpoints.handle({
       method: req.method,
       pathname: url.pathname,

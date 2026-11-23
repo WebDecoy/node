@@ -455,10 +455,12 @@ app.use(webdecoy({
 }));
 ```
 
-`@webdecoy/client` collects behavioural, environmental and form signals in the
-browser; `/score` records the verdict against the session; `clientSignals()` acts
-on it for the requests that follow. Before this the score went back to the
-browser and the origin never learned anything from it.
+Configure the browser client to score against the same HTTPS origin as the
+protected application. After verifying the browser's proof and committed signals,
+`/score` stores the verdict and sends a host-only, HttpOnly cookie. Subsequent
+requests can use the verdict through `clientSignals()` for up to 15 minutes.
+Set `clientSignals({ store: signalStore, siteKey })` when multiple site keys
+share one request host.
 
 **A request with no session is `NOT_RUN`, never a denial** — curl and Googlebot
 both send nothing, and scoring silence would deny exactly the crawlers you most

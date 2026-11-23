@@ -1,6 +1,9 @@
+import { EnvironmentalCollector } from './collectors/environment';
 import { getServerUrl, setServerUrl } from './config';
 import { InvisibleSession } from './invisible';
 import { PoWManager } from './pow';
+
+jest.mock('./sha256', () => ({ sha256: async () => 'fixture-hash' }));
 
 const globalFetch = globalThis.fetch;
 const originalOrigin = getServerUrl();
@@ -45,5 +48,52 @@ it('fetches the invisible session challenge from its configured origin', () => {
     expect(fetch).toHaveBeenCalledWith('https://session.example.test/__webdecoy/challenge?siteKey=test-site');
   } finally {
     session.destroy();
+  }
+});
+
+
+it('binds consecutive invisible scores to their own challenges', async () => {
+  const instance = 'https://session.example.test';
+  const posted: Array<{ signalsJson: string; powSolution: { challengeId: string } }> = [];
+  let challengeCount = 0;
+  globalThis.fetch = jest.fn(async (url: unknown, init?: RequestInit) => {
+    if (String(url).includes('/challenge?')) {
+      const id = String(++challengeCount);
+      return { ok: true, json: async () => ({
+        ...challengeData, id, nonce: 'nonce-' + id, expiresAt: Date.now() + 60_000,
+      }) } as Response;
+    }
+
+    expect(init?.credentials).toBe('same-origin');
+    posted.push(JSON.parse(init?.body as string));
+    return { ok: true, json: async () => ({ success: true, token: 'fixture-token' }) } as Response;
+  });
+
+  const collect = jest.spyOn(EnvironmentalCollector.prototype, 'collect').mockReturnValue({});
+  const asyncCollect = jest.spyOn(EnvironmentalCollector.prototype, 'collectAsync').mockResolvedValue({});
+  const frames = jest.spyOn(EnvironmentalCollector.prototype, 'measureRAFConsistency').mockResolvedValue({});
+  const solve = jest.spyOn(PoWManager.prototype, 'solveWithSignalsHash').mockImplementation(async function (this: PoWManager) {
+    return {
+      challengeId: this.challenge!.challengeId,
+      nonce: 2, hash: 'test-hash', iterations: 10, duration: 25, difficulty: 2,
+      signalsHash: 'fixture-hash', local: false,
+    };
+  });
+  const session = new InvisibleSession({ serverUrl: instance, autoScore: false, minCollectionTime: 0 });
+  try {
+    await Promise.all([session.execute('first'), session.execute('second')]);
+
+    expect(challengeCount).toBe(2);
+    expect(posted.map(({ signalsJson, powSolution }) => ({
+      action: JSON.parse(signalsJson).meta.action,
+      challengeNonce: JSON.parse(signalsJson).meta.challengeNonce,
+      challengeId: powSolution.challengeId,
+    }))).toEqual([
+      { action: 'first', challengeNonce: 'nonce-1', challengeId: '1' },
+      { action: 'second', challengeNonce: 'nonce-2', challengeId: '2' },
+    ]);
+  } finally {
+    session.destroy();
+    for (const spy of [collect, asyncCollect, frames, solve]) spy.mockRestore();
   }
 });
