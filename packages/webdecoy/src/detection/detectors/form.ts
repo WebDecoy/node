@@ -1,9 +1,12 @@
 /** Form-interaction analysis: credential stuffing & spam patterns. */
 
-import type { Detection, FormAnalysisSignals } from '../types';
+import type { BehavioralSignals, Detection, FormAnalysisSignals } from '../types';
 import { analyzeKeystrokeCadence } from './keystroke';
 
-export function analyzeFormInteraction(formAnalysis?: FormAnalysisSignals): Detection[] {
+export function analyzeFormInteraction(
+  formAnalysis?: FormAnalysisSignals,
+  behavioral?: BehavioralSignals,
+): Detection[] {
   if (!formAnalysis) return [];
 
   const detections: Detection[] = [];
@@ -66,6 +69,7 @@ export function analyzeFormInteraction(formAnalysis?: FormAnalysisSignals): Dete
 
   const textareaData = formAnalysis.textareaKeyboard;
   if (textareaData) {
+    const hasPointerOrTouch = (behavioral?.totalPoints ?? 0) >= 5 || (behavioral?.touchEvents ?? 0) > 0;
     for (const [fieldId, stats] of Object.entries(textareaData)) {
       const keyCount = stats.keyCount ?? 0;
       const pasteCount = stats.pasteCount ?? 0;
@@ -73,7 +77,7 @@ export function analyzeFormInteraction(formAnalysis?: FormAnalysisSignals): Dete
       const keyIntervalVariance = stats.keyIntervalVariance ?? 0;
       const keydownUpRatio = stats.keydownUpRatio ?? 1;
 
-      if (pasteCount > 0 && keyCount < 5) {
+      if (pasteCount > 0 && keyCount < 5 && !hasPointerOrTouch) {
         detections.push({
           category: 'bot',
           score: 0.6,
@@ -109,7 +113,7 @@ export function analyzeFormInteraction(formAnalysis?: FormAnalysisSignals): Dete
         });
       }
 
-      if (stats.noKeyboardEvents && (stats.contentLength ?? 0) > 0) {
+      if (stats.noKeyboardEvents && keyCount === 0 && pasteCount === 0 && (stats.contentLength ?? 0) > 0) {
         detections.push({
           category: 'bot',
           score: 0.75,

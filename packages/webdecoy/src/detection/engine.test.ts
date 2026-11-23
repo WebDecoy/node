@@ -9,6 +9,7 @@
  */
 
 import { DetectionEngine } from './engine';
+import fontPlatformFixtures from './fixtures/font-platform.json';
 import inputModalityFixtures from './fixtures/input-modality.json';
 import type { DetectionContext, Signals, Verdict } from './types';
 
@@ -226,6 +227,32 @@ describe('widget and invisible interaction modes', () => {
   });
 });
 
+describe('observe-only scroll diagnostics', () => {
+  it.each([
+    { maxStep: 80, status: 'clear' },
+    { maxStep: 680, status: 'detected' },
+  ])('reports $status for a $maxStep pixel step without folding it into scoring', ({ maxStep, status }) => {
+    const baseline = score({ behavioral: HUMAN_BEHAVIOR });
+    const verdict = score({ behavioral: { ...HUMAN_BEHAVIOR, scrollMorphology: { samples: 3, maxStep } } });
+
+    expect(verdict).toEqual({
+      ...baseline,
+      timestamp: verdict.timestamp,
+      observations: [{ id: 'large-scroll-step-v1', mode: 'observe', status, samples: 3, maxStep }],
+    });
+  });
+
+  it.each([
+    { name: 'a legacy payload', behavioral: HUMAN_BEHAVIOR },
+    { name: 'one scroll event', behavioral: { scrollMorphology: { samples: 1, maxStep: 680 } } },
+    { name: 'an invalid distance', behavioral: { scrollMorphology: { samples: 3, maxStep: Infinity } } },
+    { name: 'keyboard navigation', behavioral: { keyEvents: 2, scrollMorphology: { samples: 3, maxStep: 680 } } },
+    { name: 'touch navigation', behavioral: { touchEvents: 1, scrollMorphology: { samples: 3, maxStep: 680 } } },
+  ])('omits the measurement for $name', ({ behavioral }) => {
+    expect(score({ behavioral })).not.toHaveProperty('observations');
+  });
+});
+
 describe('vision AI detection', () => {
   it('detects impossibly fast PoW', () => {
     const v = score({ temporal: { pow: { duration: 10, iterations: 100000 } } });
@@ -262,6 +289,42 @@ describe('form interaction', () => {
       },
     });
     expect(hasReasonIncluding(v, 'no user interaction events')).toBe(true);
+  });
+
+  it.each([
+    { name: 'mouse movement', behavioral: HUMAN_BEHAVIOR },
+    { name: 'touch input', behavioral: { touchEvents: 1 } },
+  ])('keeps a recorded textarea paste neutral with $name', ({ behavioral }) => {
+    const verdict = score({
+      behavioral,
+      formAnalysis: { textareaKeyboard: {
+        message: { keyCount: 0, pasteCount: 1, contentLength: 40, noKeyboardEvents: true },
+      } },
+    });
+
+    expect(hasReasonIncluding(verdict, 'DOM manipulation')).toBe(false);
+    expect(hasReasonIncluding(verdict, 'filled mostly by paste')).toBe(false);
+  });
+
+  it('keeps the paste-heavy finding for sessions with no pointer or touch evidence', () => {
+    const verdict = score({
+      formAnalysis: { textareaKeyboard: {
+        message: { keyCount: 0, pasteCount: 3, contentLength: 40, noKeyboardEvents: true },
+      } },
+    });
+
+    expect(hasReasonIncluding(verdict, 'filled mostly by paste')).toBe(true);
+    expect(hasReasonIncluding(verdict, 'DOM manipulation')).toBe(false);
+  });
+
+  it('continues to report textarea content with no recorded typing or paste', () => {
+    const verdict = score({
+      formAnalysis: { textareaKeyboard: {
+        message: { keyCount: 0, contentLength: 40, noKeyboardEvents: true },
+      } },
+    });
+
+    expect(hasReasonIncluding(verdict, 'DOM manipulation')).toBe(true);
   });
 
   it('detects impossibly fast textarea typing', () => {
@@ -394,11 +457,21 @@ describe('advanced fingerprint detection', () => {
     expect(hasReasonIncluding(v, 'Worker/main thread mismatch')).toBe(true);
   });
 
-  it('detects Windows UA without Segoe UI', () => {
-    const v = score({
-      environmental: { fontsInfo: { supported: true, count: 10, hasSegoeUI: false, hasSFPro: false, hasDejaVuSans: false } },
+  it.each(fontPlatformFixtures.cases)('matches the reference for $name', ({ fonts, platform, reasons }) => {
+    const verdict = score({ environmental: { fontsInfo: fonts, navigator: { platform } } });
+    expect(verdict.detections.filter(({ reason }) => /font/i.test(reason))).toEqual(
+      reasons.map(reason => ({ category: 'automation', score: 0.5, confidence: 0.5, reason })),
+    );
+  });
+
+  it('keeps legacy font summaries neutral when a native font flag was not reported', () => {
+    const verdict = score({
+      environmental: {
+        fontsInfo: { supported: true, count: 12, hasSegoeUI: true, hasSFPro: false },
+        navigator: { platform: 'MacIntel' },
+      },
     });
-    expect(hasReasonIncluding(v, 'Segoe UI')).toBe(true);
+    expect(verdict.detections.filter(({ reason }) => /font/i.test(reason))).toEqual([]);
   });
 
   it('detects CSS pointer/touch mismatch', () => {

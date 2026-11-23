@@ -5,6 +5,8 @@
  */
 
 import { createHash } from 'crypto';
+import { clientSignals, MemoryClientSignalStore } from '../client-signals';
+import { createTestHarness, expectRuleState, request } from '../testing';
 import { createCaptchaEndpoints, type CaptchaRequest } from './http';
 import type { ChallengeData, PoWSolution } from './types';
 
@@ -32,11 +34,12 @@ const ENV = {
   navigator: { platform: 'MacIntel', maxTouchPoints: 0 },
 };
 
-function solve(challenge: ChallengeData): PoWSolution {
+function solve(challenge: ChallengeData, signalsHash?: string): PoWSolution {
   const target = '0'.repeat(challenge.difficulty);
+  const prefix = signalsHash ? `${challenge.prefix}:${signalsHash}` : challenge.prefix;
   for (let n = 0; ; n++) {
-    const hash = createHash('sha256').update(`${challenge.prefix}:${n}`).digest('hex');
-    if (hash.startsWith(target)) return { challengeId: challenge.id, nonce: n, hash };
+    const hash = createHash('sha256').update(`${prefix}:${n}`).digest('hex');
+    if (hash.startsWith(target)) return { challengeId: challenge.id, nonce: n, hash, signalsHash };
   }
 }
 
@@ -107,7 +110,8 @@ describe('captcha HTTP endpoints', () => {
   });
 
   it.each(['verify', 'score'])('applies route-specific interaction checks on /%s', async (route) => {
-    const { captcha, handle } = createCaptchaEndpoints({ secret: 's' });
+    const signalStore = new MemoryClientSignalStore();
+    const { captcha, handle } = createCaptchaEndpoints({ secret: 's', signalStore });
     const ip = '73.15.22.100';
     const now = Date.now();
     const clock = jest.spyOn(Date, 'now').mockReturnValue(now);
@@ -123,9 +127,14 @@ describe('captcha HTTP endpoints', () => {
           body: {
             siteKey: 'site',
             action: 'login',
+            sessionId: 'scroll-session',
             powSolution: solve(challenge),
             signals: {
-              behavioral: { ...HUMAN, interactionDuration: 90_000 },
+              behavioral: {
+                ...HUMAN,
+                interactionDuration: 90_000,
+                scrollMorphology: { samples: 3, maxStep: 680 },
+              },
               environmental: ENV,
               meta: { challengeNonce: challenge.nonce, invisible: true },
             },
@@ -134,7 +143,17 @@ describe('captcha HTTP endpoints', () => {
       );
 
       expect(res?.status).toBe(200);
-      expect(res?.body).toMatchObject({ success: true, token: expect.any(String) });
+      expect(res?.body).toMatchObject({
+        success: true,
+        token: expect.any(String),
+        observations: [{
+          id: 'large-scroll-step-v1',
+          mode: 'observe',
+          status: 'detected',
+          samples: 3,
+          maxStep: 680,
+        }],
+      });
       if (route === 'verify') {
         expect(res?.body).toMatchObject({
           detections: expect.arrayContaining([
@@ -143,10 +162,85 @@ describe('captcha HTTP endpoints', () => {
         });
       } else {
         expect(res?.body).toMatchObject({ action: 'login', score: 0 });
+        expect(signalStore.get('scroll-session')).toEqual({
+          sessionId: 'scroll-session',
+          score: 0,
+          recommendation: 'allow',
+          at: now + 90_000,
+        });
       }
     } finally {
       clock.mockRestore();
     }
+  });
+
+  it('connects a verified invisible score to the next request with a scoped receipt', async () => {
+    const host = 'captcha.example.test';
+    const ip = '203.0.113.9';
+    const signalStore = new MemoryClientSignalStore({ ttl: 3_600_000 });
+    const { captcha, handle } = createCaptchaEndpoints({ secret: 'test-secret', signalStore });
+    const rule = clientSignals({ store: signalStore, siteKey: 'site' });
+    const dryRun = clientSignals({ store: signalStore, siteKey: 'site', minScore: 0, dryRun: true });
+    const sdk = createTestHarness({ rules: [rule] });
+    const dryRunSdk = createTestHarness({ rules: [dryRun] });
+    const now = Date.now();
+    const clock = jest.spyOn(Date, 'now').mockReturnValue(now);
+
+    try {
+      const challenge = await captcha.issueChallenge('site', ip, 2);
+      const signalsJson = JSON.stringify({
+        behavioral: HUMAN,
+        environmental: ENV,
+        meta: { sessionId: 'browser-session', challengeNonce: challenge.nonce },
+      });
+      const signalsHash = createHash('sha256').update(signalsJson).digest('hex');
+      clock.mockReturnValue(now + 3000);
+      const res = await handle(req({
+        method: 'POST',
+        pathname: '/__webdecoy/score',
+        ip,
+        headers: { ...HEADERS, host, origin: 'https://' + host },
+        body: { siteKey: 'site', action: 'login', signalsJson, powSolution: solve(challenge, signalsHash) },
+      }));
+
+      expect(res?.body).toMatchObject({ success: true, action: 'login', sessionId: null });
+      expect(res?.headers['cache-control']).toBe('private, no-store');
+      const cookie = res?.headers['set-cookie'] ?? '';
+      expect(cookie).toMatch(/^__Host-wd_cs=[a-f0-9]{48}; Path=\/; Max-Age=900; Secure; HttpOnly; SameSite=Lax$/);
+      const receipt = cookie.split(';')[0];
+      const followup = request({ ip, headers: { host, cookie: receipt } });
+
+      expectRuleState(await sdk.protect(followup), 'client-signals', 'RUN');
+      const monitored = await dryRunSdk.protect(followup);
+      expectRuleState(monitored, 'client-signals', 'DRY_RUN');
+      expect(JSON.stringify(monitored)).not.toContain(receipt.split('=')[1]);
+
+      const otherHost = request({ ip, headers: { host: 'other.example.test', cookie: receipt } });
+      expectRuleState(await sdk.protect(otherHost), 'client-signals', 'NOT_RUN');
+      expectRuleState(await sdk.protect(request({ ip, headers: { host } })), 'client-signals', 'NOT_RUN');
+
+      const wrongSite = createTestHarness({ rules: [clientSignals({ store: signalStore, siteKey: 'other' })] });
+      expectRuleState(await wrongSite.protect(followup), 'client-signals', 'NOT_RUN');
+
+      clock.mockReturnValue(now + 903_000);
+      expect(signalStore.size).toBe(1);
+      expectRuleState(await sdk.protect(followup), 'client-signals', 'NOT_RUN');
+    } finally {
+      clock.mockRestore();
+    }
+  });
+
+  it('omits the receipt when there is no verified browser proof', async () => {
+    const signalStore = new MemoryClientSignalStore();
+    const { handle } = createCaptchaEndpoints({ secret: 'test-secret', signalStore });
+    const res = await handle(req({
+      method: 'POST',
+      pathname: '/__webdecoy/score',
+      headers: { ...HEADERS, host: 'captcha.example.test', origin: 'https://captcha.example.test' },
+      body: { siteKey: 'site', signals: { behavioral: HUMAN, environmental: ENV } },
+    }));
+    expect(res?.headers).not.toHaveProperty('set-cookie');
+    expect(signalStore.size).toBe(0);
   });
 
   it('400s a token verify with no token', async () => {

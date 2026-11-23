@@ -345,7 +345,7 @@ export class BehavioralCollector {
       eventDeltas: this.eventDeltas.slice(-50),
       eventDeltaVariance,
       mouseEventRate,
-      scrollEvents: this.scrollEvents.length,
+      ...this.analyzeScrolling(),
       keyEvents: this.keyEvents.length,
       touchEvents: this.touchEvents.length,
       focusEvents: this.focusEvents.length,
@@ -355,6 +355,21 @@ export class BehavioralCollector {
       ...pointerAnalysis,
       ...keyHolds
     };
+  }
+
+  private analyzeScrolling(): { scrollEvents: number; scrollMorphology?: { samples: number; maxStep: number } } {
+    const events = this.scrollEvents;
+    const samples = events.length;
+    if (samples < 2) return { scrollEvents: samples };
+
+    let maxStep = 0;
+    for (let i = 1; i < samples; i++) {
+      const previous = events[i - 1];
+      const current = events[i];
+      const step = Math.abs(current.x - previous.x) + Math.abs(current.y - previous.y);
+      maxStep = Math.max(maxStep, step);
+    }
+    return { scrollEvents: samples, scrollMorphology: { samples, maxStep } };
   }
 
   _analyzeTouchPoints(touches: TouchSample[]): Record<string, unknown> {
@@ -625,7 +640,8 @@ export class BehavioralCollector {
       avgAcceleration: 0, accelerationChanges: 0, microTremorScore: 0.5,
       straightLineRatio: 0, microMovements: 0, directionChanges: 0,
       eventDeltas: [], eventDeltaVariance: 0, mouseEventRate: 0,
-      scrollEvents: this.scrollEvents.length, keyEvents: this.keyEvents.length,
+      ...this.analyzeScrolling(),
+      keyEvents: this.keyEvents.length,
       touchEvents: this.touchEvents.length, focusEvents: this.focusEvents.length,
       clickData: this.clickData, interactionDuration: Date.now() - this.startTime,
       ...this._analyzeTouchPoints(this.touchEvents),

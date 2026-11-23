@@ -235,6 +235,7 @@ export {
 export type {
   DetectionEngineOptions,
   Detection,
+  ScrollJumpObservation,
   CategoryScores,
   Recommendation,
   Signals,

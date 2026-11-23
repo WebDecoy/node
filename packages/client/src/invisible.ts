@@ -14,7 +14,7 @@ import { TemporalCollector } from './temporal';
 import { PoWManager } from './pow';
 import { getServerUrl, getBasePath } from './config';
 import { sha256 } from './sha256';
-import type { CollectedSignals, InvisibleOptions, PoWSolution, VerifyResponse } from './types';
+import type { Challenge, CollectedSignals, InvisibleOptions, PoWSolution, VerifyResponse } from './types';
 
 interface Listener {
   event: string;
@@ -33,6 +33,8 @@ export class InvisibleSession {
   private startTime: number;
   private lastScore: (VerifyResponse & { timestamp: number }) | null = null;
   private listeners: Listener[] = [];
+  private challengeRequest: Promise<Challenge> | null = null;
+  private scoring: Promise<VerifyResponse> | null = null;
 
   constructor(options?: InvisibleOptions) {
     this.options = Object.assign(
@@ -52,7 +54,7 @@ export class InvisibleSession {
     this.environmental = new EnvironmentalCollector();
     this.temporal = new TemporalCollector();
     this.sensor = new SensorCollector();
-    this.powManager = new PoWManager();
+    this.powManager = new PoWManager(() => this.serverOrigin());
     this.startTime = Date.now();
 
     this._init();
@@ -69,15 +71,11 @@ export class InvisibleSession {
 
     if (this.options.autoScore) this._attachToForms();
 
-    void this._fetchChallenge();
+    this.challengeRequest = this.powManager.fetchChallenge(this.options.siteKey);
   }
 
-  private async _fetchChallenge(): Promise<void> {
-    try {
-      await this.powManager.fetchChallenge(this.options.siteKey);
-    } catch (e) {
-      console.warn('PoW challenge fetch failed:', e);
-    }
+  private serverOrigin(): string | null {
+    return this.options.serverUrl || getServerUrl();
   }
 
   private _attachListeners(): void {
@@ -157,6 +155,17 @@ export class InvisibleSession {
   }
 
   async execute(action = ''): Promise<VerifyResponse> {
+    const run = () => this._collectAndScore(action);
+    const score = this.scoring ? this.scoring.then(run, run) : run();
+    this.scoring = score;
+    try {
+      return await score;
+    } finally {
+      if (this.scoring === score) this.scoring = null;
+    }
+  }
+
+  private async _collectAndScore(action: string): Promise<VerifyResponse> {
     const elapsed = Date.now() - this.startTime;
     if (elapsed < this.options.minCollectionTime) {
       await new Promise((r) => setTimeout(r, this.options.minCollectionTime - elapsed));
@@ -174,6 +183,12 @@ export class InvisibleSession {
     const formAnalysis = getFormAnalyzer().analyze();
     const sensorData = this.sensor.analyze();
 
+    let challenge = await (this.challengeRequest ?? this.powManager.fetchChallenge(this.options.siteKey));
+    this.challengeRequest = null;
+    if (challenge.expiresAt <= Date.now()) {
+      challenge = await this.powManager.fetchChallenge(this.options.siteKey);
+    }
+
     const signals: CollectedSignals = {
       behavioral: behavioralData,
       environmental: { ...envData, rafConsistency: rafData, ...asyncEnvData, sensor: sensorData },
@@ -183,7 +198,7 @@ export class InvisibleSession {
         sessionId: this.id,
         siteKey: this.options.siteKey,
         action,
-        challengeNonce: this.powManager.challenge?.nonce || null,
+        challengeNonce: challenge.nonce || null,
         timestamp: Date.now(),
         userAgent: navigator.userAgent,
         screenSize: `${screen.width}x${screen.height}`,
@@ -196,7 +211,12 @@ export class InvisibleSession {
 
     const signalsJson = JSON.stringify(signals);
     const signalsHash = await sha256(signalsJson);
-    const powSolution = await this.powManager.solveWithSignalsHash(this.options.siteKey, signalsHash);
+    let powSolution: PoWSolution;
+    try {
+      powSolution = await this.powManager.solveWithSignalsHash(this.options.siteKey, signalsHash);
+    } finally {
+      this.powManager.reset();
+    }
     const powTiming = {
       duration: powSolution.duration,
       iterations: powSolution.iterations,
@@ -216,12 +236,13 @@ export class InvisibleSession {
     signalsHash: string | null,
     powTiming: Record<string, unknown> | null,
   ): Promise<VerifyResponse> {
-    const url = this.options.serverUrl || getServerUrl();
+    const url = this.serverOrigin();
     if (!url) return this._clientSideScore(signals);
 
     try {
       const response = await fetch(url + getBasePath() + '/score', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           siteKey: this.options.siteKey,

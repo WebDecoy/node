@@ -86,7 +86,10 @@ export function webdecoyCaptcha(options?: ExpressCaptchaOptions): RequestHandler
     }
 
     res.status(result.status);
-    for (const [k, v] of Object.entries(result.headers)) res.setHeader(k, v);
+    for (const [name, value] of Object.entries(result.headers)) {
+      if (name === 'set-cookie') res.append(name, value);
+      else res.setHeader(name, value);
+    }
     res.json(result.body);
   }
 }

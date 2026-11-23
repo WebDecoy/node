@@ -43,6 +43,8 @@ export interface BehavioralSignals {
   keyHoldSamples?: number;
   /** Average hold duration in milliseconds for those samples. */
   keyHoldAvg?: number;
+  /** Count of recent scroll events and largest CSS pixel step between them. */
+  scrollMorphology?: { samples?: number; maxStep?: number };
   microTremorScore?: number;
   approachDirectness?: number;
   clickPrecision?: number;
@@ -171,7 +173,9 @@ export interface FontsInfo {
   supported?: boolean;
   count?: number;
   hasSegoeUI?: boolean;
+  hasCalibri?: boolean;
   hasSFPro?: boolean;
+  hasMenlo?: boolean;
   hasDejaVuSans?: boolean;
   [key: string]: unknown;
 }
@@ -296,6 +300,15 @@ export interface DetectionContext {
   extraDetections?: Detection[];
 }
 
+/** A diagnostic based on recent page scroll movement. */
+export interface ScrollJumpObservation {
+  id: 'large-scroll-step-v1';
+  mode: 'observe';
+  status: 'detected' | 'clear';
+  samples: number;
+  maxStep: number;
+}
+
 /** Final verdict returned by {@link DetectionEngine.score}. */
 export interface Verdict {
   /** True when the weighted score is below the success threshold (< 0.5). */
@@ -308,6 +321,8 @@ export interface Verdict {
   categoryScores: CategoryScores;
   /** Every triggered detection. */
   detections: Detection[];
+  /** Scroll diagnostics returned when the browser supplied enough usable evidence. */
+  observations?: ScrollJumpObservation[];
   /** Unix seconds at evaluation time. */
   timestamp: number;
 }

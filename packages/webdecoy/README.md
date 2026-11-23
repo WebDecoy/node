@@ -316,6 +316,8 @@ The SDK also ships an in-process captcha: it scores behavioral, environmental an
 
 Mount the endpoints with your adapter (`webdecoyCaptcha` in Express, `webdecoyCaptchaPlugin` in Fastify, `createCaptchaHandler` in Next.js) or with `createCaptchaEndpoints()`. They serve `GET /__webdecoy/challenge`, `POST /__webdecoy/verify`, `POST /__webdecoy/score` and `POST /__webdecoy/token/verify`.
 
+When the browser provides usable scroll samples, `/verify` and `/score` return an `observations` entry with the ID `large-scroll-step-v1`. It summarizes the sample count and largest step in CSS pixels for diagnostics.
+
 ```ts
 import express from 'express';
 import { webdecoyCaptcha } from '@webdecoy/express';

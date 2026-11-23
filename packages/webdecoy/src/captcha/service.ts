@@ -84,16 +84,20 @@ export class Captcha {
    * signals, and issues a session token on success. Mirrors `runVerification`.
    */
   async verify(input: VerifyInput): Promise<VerifyResult> {
-    return this.verifySubmission(input, true);
+    return (await this.verifySubmission(input, true)).result;
   }
 
-  private async verifySubmission(input: VerifyInput, widgetInteraction: boolean): Promise<VerifyResult> {
+  private async verifySubmission(input: VerifyInput, widgetInteraction: boolean): Promise<{
+    result: VerifyResult;
+    verifiedSignals: boolean;
+  }> {
     const { siteKey, ip, userAgent } = input;
     const headers = input.headers ?? {};
     let signals: Signals = input.signals ?? {};
     const extraDetections: Detection[] = [];
 
     // 1. Signals commitment: the solution may bind a hash of the raw signals.
+    let committedSignals = false;
     const clientSignalsHash = input.powSolution?.signalsHash ?? null;
     if (input.signalsJson && clientSignalsHash) {
       const computed = await sha256Hex(input.signalsJson);
@@ -106,7 +110,11 @@ export class Captcha {
         });
       }
       try {
-        signals = JSON.parse(input.signalsJson);
+        const parsed: unknown = JSON.parse(input.signalsJson);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+          signals = parsed as Signals;
+          committedSignals = computed === clientSignalsHash;
+        }
       } catch {
         // Keep the parsed signals if the raw JSON is unusable.
       }
@@ -153,18 +161,33 @@ export class Captcha {
       ? 'challenge'
       : verdict.recommendation;
 
-    return { ...verdict, success, recommendation, token };
+    return {
+      result: { ...verdict, success, recommendation, token },
+      verifiedSignals: proofVerified && committedSignals && !!pow.nonce && signals.meta?.challengeNonce === pow.nonce,
+    };
   }
 
   /** Invisible-mode scoring — same pipeline, returns a compact result + action. */
   async score(input: VerifyInput & { action?: string }): Promise<ScoreResult> {
-    const result = await this.verifySubmission(input, false);
+    return (await this.scoreForSession(input)).result;
+  }
+
+  /** @internal Return the score and whether the server verified the committed signals. */
+  async scoreForSession(input: VerifyInput & { action?: string }): Promise<{
+    result: ScoreResult;
+    verifiedSignals: boolean;
+  }> {
+    const { result, verifiedSignals } = await this.verifySubmission(input, false);
     return {
-      success: result.success,
-      score: result.score,
-      token: result.token,
-      action: input.action ?? '',
-      recommendation: result.recommendation,
+      result: {
+        success: result.success,
+        score: result.score,
+        token: result.token,
+        action: input.action ?? '',
+        recommendation: result.recommendation,
+        ...(result.observations ? { observations: result.observations } : {}),
+      },
+      verifiedSignals,
     };
   }
 
