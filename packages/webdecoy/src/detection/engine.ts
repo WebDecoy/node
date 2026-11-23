@@ -9,6 +9,7 @@
 
 import type { Detection, DetectionContext, Signals, Verdict } from './types';
 import { DEFAULT_WEIGHTS } from './weights';
+import { observeScrollJump } from './scroll-observation';
 import { isDatacenterIP } from './ip';
 import {
   InMemoryFingerprintStore,
@@ -162,6 +163,7 @@ export class DetectionEngine {
     // --- Aggregate -------------------------------------------------------------
     const categoryScores = calculateCategoryScores(detections, this.weights);
     const score = calculateFinalScore(categoryScores, this.weights);
+    const scrollObservation = observeScrollJump(signals.behavioral);
 
     return {
       success: score < 0.5,
@@ -169,6 +171,7 @@ export class DetectionEngine {
       recommendation: recommend(score),
       categoryScores,
       detections,
+      ...(scrollObservation ? { observations: [scrollObservation] } : {}),
       timestamp: Math.floor(Date.now() / 1000),
     };
   }

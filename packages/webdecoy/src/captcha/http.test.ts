@@ -5,6 +5,7 @@
  */
 
 import { createHash } from 'crypto';
+import { MemoryClientSignalStore } from '../client-signals';
 import { createCaptchaEndpoints, type CaptchaRequest } from './http';
 import type { ChallengeData, PoWSolution } from './types';
 
@@ -107,7 +108,8 @@ describe('captcha HTTP endpoints', () => {
   });
 
   it.each(['verify', 'score'])('applies route-specific interaction checks on /%s', async (route) => {
-    const { captcha, handle } = createCaptchaEndpoints({ secret: 's' });
+    const signalStore = new MemoryClientSignalStore();
+    const { captcha, handle } = createCaptchaEndpoints({ secret: 's', signalStore });
     const ip = '73.15.22.100';
     const now = Date.now();
     const clock = jest.spyOn(Date, 'now').mockReturnValue(now);
@@ -123,9 +125,14 @@ describe('captcha HTTP endpoints', () => {
           body: {
             siteKey: 'site',
             action: 'login',
+            sessionId: 'scroll-session',
             powSolution: solve(challenge),
             signals: {
-              behavioral: { ...HUMAN, interactionDuration: 90_000 },
+              behavioral: {
+                ...HUMAN,
+                interactionDuration: 90_000,
+                scrollMorphology: { samples: 3, maxStep: 680 },
+              },
               environmental: ENV,
               meta: { challengeNonce: challenge.nonce, invisible: true },
             },
@@ -134,7 +141,17 @@ describe('captcha HTTP endpoints', () => {
       );
 
       expect(res?.status).toBe(200);
-      expect(res?.body).toMatchObject({ success: true, token: expect.any(String) });
+      expect(res?.body).toMatchObject({
+        success: true,
+        token: expect.any(String),
+        observations: [{
+          id: 'large-scroll-step-v1',
+          mode: 'observe',
+          status: 'detected',
+          samples: 3,
+          maxStep: 680,
+        }],
+      });
       if (route === 'verify') {
         expect(res?.body).toMatchObject({
           detections: expect.arrayContaining([
@@ -143,6 +160,12 @@ describe('captcha HTTP endpoints', () => {
         });
       } else {
         expect(res?.body).toMatchObject({ action: 'login', score: 0 });
+        expect(signalStore.get('scroll-session')).toEqual({
+          sessionId: 'scroll-session',
+          score: 0,
+          recommendation: 'allow',
+          at: now + 90_000,
+        });
       }
     } finally {
       clock.mockRestore();

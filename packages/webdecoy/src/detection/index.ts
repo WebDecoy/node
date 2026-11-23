@@ -30,6 +30,7 @@ export * from './detectors';
 
 export type {
   Detection,
+  ScrollJumpObservation,
   CategoryScores,
   Recommendation,
   Signals,

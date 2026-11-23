@@ -92,4 +92,5 @@ export interface ScoreResult {
   token: string | null;
   action: string;
   recommendation: Recommendation;
+  observations?: Verdict['observations'];
 }
