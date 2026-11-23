@@ -4,6 +4,10 @@ import type { Detection, Signals } from '../types';
 
 const HIGH_CONFIDENCE_SIGNALS = ['chromedriver_cdc', 'puppeteer_eval', 'cdp_script_injection'];
 
+export function hasDriverInjection(signals: readonly string[]): boolean {
+  return signals.some((signal) => HIGH_CONFIDENCE_SIGNALS.includes(signal));
+}
+
 export function detectCDP(signals: Signals): Detection[] {
   const detections: Detection[] = [];
   const cdp = signals.environmental?.cdp ?? {};
@@ -12,9 +16,8 @@ export function detectCDP(signals: Signals): Detection[] {
 
   const signalList = cdp.signals ?? [];
   const signalCount = signalList.length;
-  const hasHighConf = signalList.some((s) => HIGH_CONFIDENCE_SIGNALS.includes(s));
 
-  if (hasHighConf) {
+  if (hasDriverInjection(signalList)) {
     detections.push({
       category: 'cdp',
       score: 0.9,

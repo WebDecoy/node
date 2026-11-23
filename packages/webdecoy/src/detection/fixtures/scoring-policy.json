@@ -198,5 +198,59 @@
         "success": true
       }
     }
+  ],
+  "decisiveFloorCases": [
+    {
+      "name": "an explicit WebDriver declaration",
+      "environmental": { "webdriver": true, "automationFlags": { "webdriver": true } },
+      "candidate": { "score": 0.9, "recommendation": "block" },
+      "referenceFloor": 0.9
+    },
+    {
+      "name": "an older aggregate WebDriver flag",
+      "environmental": { "webdriver": true },
+      "candidate": { "score": 0.135375, "recommendation": "allow" },
+      "referenceFloor": 0.9
+    },
+    {
+      "name": "an indirect WebDriver hint with a false explicit flag",
+      "environmental": { "webdriver": true, "automationFlags": { "webdriver": false } },
+      "candidate": { "score": 0.135375, "recommendation": "allow" },
+      "referenceFloor": 0.9
+    },
+    {
+      "name": "a known injected driver marker",
+      "environmental": { "cdp": { "detected": true, "signals": ["chromedriver_cdc"] } },
+      "candidate": { "score": 0.9, "recommendation": "block" },
+      "referenceFloor": 0.9
+    },
+    {
+      "name": "a generic CDP finding",
+      "environmental": { "cdp": { "detected": true, "signals": ["selenium_evaluate"] } },
+      "candidate": { "score": 0.0504, "recommendation": "allow" },
+      "referenceFloor": 0
+    },
+    {
+      "name": "a DevTools console observation",
+      "environmental": { "cdpRuntime": { "consoleAttached": true } },
+      "candidate": { "score": 0, "recommendation": "allow" },
+      "referenceFloor": 0
+    },
+    {
+      "name": "decisive findings in disabled categories",
+      "environmental": {
+        "webdriver": true,
+        "automationFlags": { "webdriver": true },
+        "cdp": { "detected": true, "signals": ["chromedriver_cdc"] }
+      },
+      "weights": { "headless": 0, "cdp": 0 },
+      "candidate": { "score": 0, "recommendation": "allow" }
+    },
+    {
+      "name": "a weighted score above the floor",
+      "environmental": { "webdriver": true, "automationFlags": { "webdriver": true } },
+      "weights": { "headless": 1.1, "cdp": 0 },
+      "candidate": { "score": 0.99275, "recommendation": "block" }
+    }
   ]
 }
