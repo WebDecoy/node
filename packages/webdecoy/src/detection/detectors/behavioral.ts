@@ -1,6 +1,7 @@
 /** Core behavioral detection: mouse data sufficiency, velocity, timing. */
 
 import type { Detection, Signals } from '../types';
+import { classifyKeyboardInput } from './keyboard-input';
 import { hasHumanMovementMarkers, isTouchModality } from './pointer-evidence';
 
 export function detectBehavioral(signals: Signals, widgetInteraction = true): Detection[] {
@@ -12,17 +13,24 @@ export function detectBehavioral(signals: Signals, widgetInteraction = true): De
   const totalPoints = b.totalPoints ?? 0;
   const trajectory = b.trajectoryLength ?? 0;
   const isTouchUser = isTouchModality(b);
-  const isKeyboardUser = (b.keyEvents ?? 0) >= 2 && totalPoints === 0;
+  const keyboard = classifyKeyboardInput(signals);
   const humanMovement = hasHumanMovementMarkers(b);
 
-  if (totalPoints === 0 && !isTouchUser && !isKeyboardUser) {
+  if (keyboard === 'short-key-holds' && !isTouchUser) {
+    detections.push({
+      category: 'behavioral',
+      score: 0.8,
+      confidence: 0.9,
+      reason: 'Keyboard-only input has unusually short key holds',
+    });
+  } else if (totalPoints === 0 && !isTouchUser && keyboard === null) {
     detections.push({
       category: 'behavioral',
       score: 0.8,
       confidence: 0.9,
       reason: 'Zero mouse, touch, or keyboard events recorded',
     });
-  } else if (totalPoints < 10 && !isTouchUser && !isKeyboardUser && trajectory < 30) {
+  } else if (totalPoints < 10 && !isTouchUser && keyboard === null && trajectory < 30) {
     detections.push({
       category: 'behavioral',
       score: 0.6,
