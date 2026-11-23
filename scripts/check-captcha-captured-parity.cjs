@@ -1,5 +1,5 @@
 /**
- * Replay a small, labeled slice of FCaptcha's captured browser corpus through
+ * Replay a labeled slice of FCaptcha's captured browser corpus through
  * the embedded Node engine and the pinned FCaptcha detector modules.
  */
 const assert = require('node:assert/strict');
@@ -171,13 +171,13 @@ function referenceVerdict(sample, headers, userAgent) {
 }
 
 const samples = manifest.files.flatMap(readSamples);
-assert.equal(samples.length, 8, 'Captured parity slice sample count');
+assert.equal(samples.length, 28, 'Captured parity slice sample count');
 assert.equal(
   samples.filter(({ label }) => label === 'human').length,
-  4,
+  14,
   'Captured human control count'
 );
-assert.equal(samples.filter(({ label }) => label === 'agent').length, 4, 'Captured agent count');
+assert.equal(samples.filter(({ label }) => label === 'agent').length, 14, 'Captured agent count');
 assert.deepEqual(
   Object.keys(manifest.expected).sort(),
   samples.map(({ id }) => id).sort(),

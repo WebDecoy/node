@@ -3,7 +3,7 @@
     "version": "v1.51.3",
     "commit": "2ed3b473ea2f0b8efe5900827fef1444cd66a194"
   },
-  "notes": "A balanced captured regression slice, not a population false-positive or true-positive estimate.",
+  "notes": "A balanced captured regression slice, including paired browser-internal agent sessions and manual controls for widget and invisible modes; not a population false-positive or true-positive estimate.",
   "files": [
     {
       "path": "bench/corpus/captured/human-keyboard-only.json",
@@ -22,6 +22,46 @@
       "sha256": "4874c01c3c77a15e16568961a79b5feeea9fdc9aace320c60069f340719cdfad"
     },
     {
+      "path": "bench/corpus/captured/human-browser-internal-control-widget-0000.json",
+      "sha256": "c5d0b92025147e864b79f13d7c380768867b56c70be016b18e2a888b8d86f9df"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-widget-0001.json",
+      "sha256": "101410c002fc8f781e0fbad2b32f52e5d9fc74e0bacb129ba3966d41d745fc9b"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-widget-0002.json",
+      "sha256": "60e65b2b8d77094376e8c59d10314d52fe96f5d4ef14c3c147ce6ffb4885d726"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-widget-0003.json",
+      "sha256": "85f2791830f44afc03836883a51368fbb77cb813e10664d9f7e10488d17a7048"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-widget-0004.json",
+      "sha256": "bc78bfd311f2575282b2ba94c6d733f57b9781fcbd305655a9fb5c79e1db0be9"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-invisible-0000.json",
+      "sha256": "cc8fd069e55cade68b061d3907754f7657437c79ce50355e1dfb3166d34f5534"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-invisible-0001.json",
+      "sha256": "d1cdbe809c70e3e948fa936bb333af8a19c8dde235020fdf78ddc3d238af329b"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-invisible-0002.json",
+      "sha256": "96e50d32fd81cd111db3ad7ae34d10ee4119dc755fe96f6e0759e4e8af5cc842"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-invisible-0003.json",
+      "sha256": "c4f8e30c7615be6c63860952ca03f24d658eab7ea936895b6120a21541f4a897"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-invisible-0004.json",
+      "sha256": "7f356c34750e1f2b349bd21935d141f298705fa501dbb2fdbf162cbc0480de34"
+    },
+    {
       "path": "bench/corpus/captured/agent-linear-approach.json",
       "sha256": "82c37e8657be69b785dded0b8a08d94e34c2716b0741527561dc44352e53e817"
     },
@@ -36,6 +76,46 @@
     {
       "path": "bench/corpus/captured/agent-scripted-typing.json",
       "sha256": "136e2f7fdbc92acac683fe36da339ca58a5f9b0c1c072d721c1bd8351983e795"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-widget-0000.json",
+      "sha256": "b8b97e96edaca6d95df5c17d6819f098a189958cbee8205e8de16975425abdf7"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-widget-0001.json",
+      "sha256": "fb80e9c2e6338dadfb7426c6214f66d575adbe8159dbf9f8d4a9988aee20c9fc"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-widget-0002.json",
+      "sha256": "42d1bb32a38fa008153b0c5bee43d9db2e4763501d1502606c23b01603aa62de"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-widget-0003.json",
+      "sha256": "0258de7f2c9c55ccb5ad7435edb2156add9c5ebda976885e8534c4eee53f32a8"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-widget-0004.json",
+      "sha256": "29135f2cbc87eda1dce26cf00382e10430769ba4a1a07a6566027316fb5cbb78"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-invisible-0000.json",
+      "sha256": "ff9e4ca177c8d0cc247216f9b4bc25d4b6ad79a8665c10eeb5a3e3cfab1c2cc1"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-invisible-0001.json",
+      "sha256": "9ec0b2d08c3ebdccfbdab6b36aa4e35ffb550959ed1809395a64ae42ab0b2aee"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-invisible-0002.json",
+      "sha256": "332e21a28196d8fd1eb81493f3f8afd571270425c83cdb16a2c4808aad7f58c7"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-invisible-0003.json",
+      "sha256": "e195494b088590e10c02ee781a40d0532e8106c680a23c4592aa1e29ca6644c8"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-invisible-0004.json",
+      "sha256": "95476785009f3ecb400c0d9b3a3b3f07c6ac1f2cef716f99acd66c94977cb02f"
     }
   ],
   "expected": {
@@ -256,6 +336,106 @@
           "webgl.software_renderer"
         ]
       }
+    },
+    "human/chrome-auto-browse-widget-control/0000": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": ["input.first_interaction_early", "timing.js_execution_fast"] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+    },
+    "human/chrome-auto-browse-widget-control/0001": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": ["timing.js_execution_fast", "timing.raf_consistent"] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": ["timing.raf_consistent"] }
+    },
+    "human/chrome-auto-browse-widget-control/0002": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": ["input.first_interaction_early"] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+    },
+    "human/chrome-auto-browse-widget-control/0003": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": ["timing.raf_consistent"] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": ["timing.raf_consistent"] }
+    },
+    "human/chrome-auto-browse-widget-control/0004": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": [] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+    },
+    "human/chrome-auto-browse-invisible-control/0000": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": ["timing.js_execution_fast"] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+    },
+    "human/chrome-auto-browse-invisible-control/0001": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": [] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+    },
+    "human/chrome-auto-browse-invisible-control/0002": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": ["timing.js_execution_fast"] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+    },
+    "human/chrome-auto-browse-invisible-control/0003": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": [] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+    },
+    "human/chrome-auto-browse-invisible-control/0004": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": ["timing.js_execution_fast"] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+    },
+    "agent/chrome-auto-browse-widget/0000": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": [] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+    },
+    "agent/chrome-auto-browse-widget/0001": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": ["timing.raf_consistent"] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": ["timing.raf_consistent"] }
+    },
+    "agent/chrome-auto-browse-widget/0002": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": [] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+    },
+    "agent/chrome-auto-browse-widget/0003": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": [] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+    },
+    "agent/chrome-auto-browse-widget/0004": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": ["timing.js_execution_fast", "timing.raf_consistent"] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": ["timing.raf_consistent"] }
+    },
+    "agent/chrome-auto-browse-invisible/0000": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": ["timing.js_execution_fast"] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+    },
+    "agent/chrome-auto-browse-invisible/0001": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": ["input.first_interaction_early", "timing.js_execution_fast"] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+    },
+    "agent/chrome-auto-browse-invisible/0002": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": ["timing.raf_consistent"] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": ["timing.raf_consistent"] }
+    },
+    "agent/chrome-auto-browse-invisible/0003": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": ["timing.raf_consistent"] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": ["timing.raf_consistent"] }
+    },
+    "agent/chrome-auto-browse-invisible/0004": {
+      "node": { "recommendation": "allow", "success": true, "reasonIds": ["input.first_interaction_early", "timing.js_execution_fast"] },
+      "candidate": { "recommendation": "allow", "success": true },
+      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
     }
   }
 }
