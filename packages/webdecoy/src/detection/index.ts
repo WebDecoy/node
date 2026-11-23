@@ -8,7 +8,7 @@
  */
 
 export { DetectionEngine } from './engine';
-export type { DetectionEngineOptions } from './engine';
+export type { DetectionEngineOptions, ScoringComparison } from './engine';
 
 export {
   calculateCategoryScores,

@@ -11,6 +11,7 @@
 import { DetectionEngine } from './engine';
 import fontPlatformFixtures from './fixtures/font-platform.json';
 import inputModalityFixtures from './fixtures/input-modality.json';
+import scoringPolicyFixtures from './fixtures/scoring-policy.json';
 import type { DetectionContext, Signals, Verdict } from './types';
 
 const UA_CHROME_WIN = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0';
@@ -250,6 +251,37 @@ describe('observe-only scroll diagnostics', () => {
     { name: 'touch navigation', behavioral: { touchEvents: 1, scrollMorphology: { samples: 3, maxStep: 680 } } },
   ])('omits the measurement for $name', ({ behavioral }) => {
     expect(score({ behavioral })).not.toHaveProperty('observations');
+  });
+});
+
+describe('scoring comparison', () => {
+  it('uses custom weights for both scores and preserves the current verdict when they disagree', () => {
+    const onScoringComparison = jest.fn();
+    const weights = { vision_ai: 0.5 };
+    const observations = scoringPolicyFixtures.cases.find(({ name }) => name === 'two observations in one category')!;
+    const context = {
+      ip: '203.0.113.9',
+      siteKey: 'test',
+      userAgent: UA_CHROME_MAC,
+      headers: GOOD_HEADERS,
+      pow: { provided: true, valid: true, serverElapsed: 3000 },
+      extraDetections: observations.detections,
+    };
+    const baseline = new DetectionEngine({ weights }).score({ behavioral: HUMAN_BEHAVIOR }, context);
+    const verdict = new DetectionEngine({ weights, onScoringComparison }).score({
+      behavioral: { ...HUMAN_BEHAVIOR, scrollMorphology: { samples: 3, maxStep: 680 } },
+    }, context);
+
+    expect(verdict).toEqual({
+      ...baseline,
+      timestamp: verdict.timestamp,
+      observations: [{ id: 'large-scroll-step-v1', mode: 'observe', status: 'detected', samples: 3, maxStep: 680 }],
+    });
+    expect(onScoringComparison.mock.calls).toEqual([[{
+      policy: 'noisy-or-v1',
+      current: { score: expect.closeTo(0.295, 10), recommendation: 'allow' },
+      candidate: { score: expect.closeTo(0.336875, 10), recommendation: 'challenge' },
+    }]]);
   });
 });
 
@@ -564,7 +596,8 @@ describe('PoW outcome', () => {
 
 describe('input modality controls from FCaptcha ' + inputModalityFixtures.reference.version, () => {
   it.each(inputModalityFixtures.cases)('$name', ({ behavioral, reasons }) => {
-    const engine = new DetectionEngine();
+    const onScoringComparison = jest.fn();
+    const engine = new DetectionEngine({ onScoringComparison });
     const verdict = engine.score({ behavioral }, {
       ip: '203.0.113.9',
       siteKey: 'test',
@@ -578,6 +611,9 @@ describe('input modality controls from FCaptcha ' + inputModalityFixtures.refere
       .sort();
     expect(inputReasons).toEqual([...reasons].sort());
     expect(verdict.recommendation).toBe('allow');
+    expect(onScoringComparison).toHaveBeenCalledWith(expect.objectContaining({
+      candidate: { score: expect.any(Number), recommendation: 'allow' },
+    }));
   });
 });
 

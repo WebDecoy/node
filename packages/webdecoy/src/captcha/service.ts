@@ -9,7 +9,7 @@
  */
 
 import { sha256Hex } from '../webcrypto';
-import { DetectionEngine } from '../detection/engine';
+import { DetectionEngine, type DetectionEngineOptions } from '../detection/engine';
 import type { Detection, PoWOutcome, Signals } from '../detection/types';
 import {
   InMemoryFingerprintStore,
@@ -33,6 +33,8 @@ export interface CaptchaOptions {
   secret?: string;
   /** Override per-category detection weights. */
   weights?: Record<string, number>;
+  /** Receive score and recommendation comparisons on the server without affecting verification. */
+  onScoringComparison?: DetectionEngineOptions['onScoringComparison'];
   /**
    * Trusted reverse-proxy header names carrying a JA4 fingerprint, matched
    * against the lower-cased request header keys (e.g. `['x-ja4']`).
@@ -68,6 +70,7 @@ export class Captcha {
       requirePoW: true,
       fingerprintStore,
       rateLimiter,
+      onScoringComparison: options.onScoringComparison,
     });
     this.pow = new PoWManager({ secret, store: options.challengeStore, rateLimiter });
     this.tokens = new TokenManager({ secret, store: options.tokenStore });

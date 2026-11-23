@@ -1,4 +1,4 @@
-/** Score aggregation: per-category confidence-weighted means → weighted total. */
+/** Per-category score aggregation and weighted totals. */
 
 import type { CategoryScores, Detection, Recommendation } from './types';
 
@@ -33,6 +33,25 @@ export function calculateCategoryScores(
   }
 
   return result;
+}
+
+/** Combine confidence-scaled evidence so adding a finding cannot lower its category score. */
+export function calculateNoisyOrCategoryScores(
+  detections: Detection[],
+  weights: Record<string, number>,
+): CategoryScores {
+  const remaining = new Map<string, number>();
+  for (const { category, score, confidence } of detections) {
+    if (!Number.isFinite(score) || !Number.isFinite(confidence) || score <= 0 || confidence <= 0) {
+      continue;
+    }
+    const evidence = Math.min(1, score * confidence);
+    remaining.set(category, (remaining.get(category) ?? 1) * (1 - evidence));
+  }
+
+  return Object.fromEntries(
+    Object.keys(weights).map((category) => [category, 1 - (remaining.get(category) ?? 1)]),
+  );
 }
 
 /** Combine category scores into the final weighted score (capped at 1.0). */
