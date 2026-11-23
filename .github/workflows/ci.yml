@@ -24,3 +24,23 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run check:edge
+      - name: Compare embedded CAPTCHA with pinned FCaptcha
+        if: matrix.node-version == 22
+        run: |
+          replay_dir=$(mktemp -d)
+          chmod 755 "$replay_dir"
+          mkdir -p "$replay_dir/scripts" "$replay_dir/packages/webdecoy/dist" "$replay_dir/packages/webdecoy/src/detection/fixtures"
+          cp scripts/check-captcha-score-parity.cjs "$replay_dir/scripts/"
+          cp packages/webdecoy/dist/index.js "$replay_dir/packages/webdecoy/dist/"
+          cp packages/webdecoy/src/detection/fixtures/{scoring-policy,input-modality}.json "$replay_dir/packages/webdecoy/src/detection/fixtures/"
+
+          reference_commit=$(node -p "require('./packages/webdecoy/src/detection/fixtures/scoring-policy.json').reference.commit")
+          [[ "$reference_commit" =~ ^[0-9a-f]{40}$ ]]
+          curl --fail --silent --show-error --retry 3 --max-time 30 \
+            "https://raw.githubusercontent.com/WebDecoy/FCaptcha/$reference_commit/server-node/engine.js" \
+            --output "$replay_dir/fcaptcha-engine.cjs"
+
+          docker run --rm --network none --read-only --cap-drop=ALL --security-opt no-new-privileges \
+            --pids-limit 128 --cpus 2 --memory 384m --memory-swap 384m --user 1000:1000 --log-driver none \
+            --mount "type=bind,source=$replay_dir,target=/replay,readonly" \
+            node:22-alpine timeout -k 3s 30s node /replay/scripts/check-captcha-score-parity.cjs /replay/fcaptcha-engine.cjs
