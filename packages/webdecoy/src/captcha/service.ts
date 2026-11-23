@@ -165,6 +165,7 @@ export class Captcha {
       token: result.token,
       action: input.action ?? '',
       recommendation: result.recommendation,
+      ...(result.observations ? { observations: result.observations } : {}),
     };
   }
 

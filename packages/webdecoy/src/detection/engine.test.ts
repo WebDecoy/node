@@ -227,6 +227,32 @@ describe('widget and invisible interaction modes', () => {
   });
 });
 
+describe('observe-only scroll diagnostics', () => {
+  it.each([
+    { maxStep: 80, status: 'clear' },
+    { maxStep: 680, status: 'detected' },
+  ])('reports $status for a $maxStep pixel step without folding it into scoring', ({ maxStep, status }) => {
+    const baseline = score({ behavioral: HUMAN_BEHAVIOR });
+    const verdict = score({ behavioral: { ...HUMAN_BEHAVIOR, scrollMorphology: { samples: 3, maxStep } } });
+
+    expect(verdict).toEqual({
+      ...baseline,
+      timestamp: verdict.timestamp,
+      observations: [{ id: 'large-scroll-step-v1', mode: 'observe', status, samples: 3, maxStep }],
+    });
+  });
+
+  it.each([
+    { name: 'a legacy payload', behavioral: HUMAN_BEHAVIOR },
+    { name: 'one scroll event', behavioral: { scrollMorphology: { samples: 1, maxStep: 680 } } },
+    { name: 'an invalid distance', behavioral: { scrollMorphology: { samples: 3, maxStep: Infinity } } },
+    { name: 'keyboard navigation', behavioral: { keyEvents: 2, scrollMorphology: { samples: 3, maxStep: 680 } } },
+    { name: 'touch navigation', behavioral: { touchEvents: 1, scrollMorphology: { samples: 3, maxStep: 680 } } },
+  ])('omits the measurement for $name', ({ behavioral }) => {
+    expect(score({ behavioral })).not.toHaveProperty('observations');
+  });
+});
+
 describe('vision AI detection', () => {
   it('detects impossibly fast PoW', () => {
     const v = score({ temporal: { pow: { duration: 10, iterations: 100000 } } });
