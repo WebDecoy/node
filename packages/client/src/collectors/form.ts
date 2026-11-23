@@ -58,9 +58,10 @@ export class FormAnalyzer {
       document.addEventListener(eventType, (e: Event) => this._recordInteraction(e), { passive: true });
     });
 
-    // Track textarea keyboard patterns (spam detection)
+    // Track textarea key and paste events.
     document.addEventListener('keydown', (e: KeyboardEvent) => this._recordTextareaKey(e), { passive: true });
     document.addEventListener('keyup', (e: KeyboardEvent) => this._recordTextareaKey(e), { passive: true });
+    document.addEventListener('paste', (e: ClipboardEvent) => this.recordPaste(e), { passive: true });
 
     // Track form submissions
     document.addEventListener('submit', (e: SubmitEvent) => this._recordSubmit(e), { capture: true });
@@ -94,23 +95,7 @@ export class FormAnalyzer {
     const target = e.target as (HTMLTextAreaElement & Element) | null;
     if (target?.tagName !== 'TEXTAREA') return;
 
-    const textareaId = target.id || target.name || 'unnamed';
-    if (!this.textareaStats.has(textareaId)) {
-      this.textareaStats.set(textareaId, {
-        keydowns: [],
-        keyups: [],
-        intervals: [],
-        lastKeyTime: null,
-        inputWithoutKey: 0,
-        pasteCount: 0,
-        dwellTimes: [],
-        rollovers: 0,
-        activeKeyCount: 0,
-        pendingKeydowns: []
-      });
-    }
-
-    const stats = this.textareaStats.get(textareaId) as TextareaStats;
+    const stats = this.getTextareaStats(target);
     const now = performance.now();
 
     // Modifier keys excluded from dwell/rollover tracking
@@ -246,7 +231,7 @@ export class FormAnalyzer {
       };
     });
 
-    // Check for textareas with content but no keyboard events (DOM manipulation)
+    // Report textarea content length alongside observed input events.
     const textareas = document.querySelectorAll('textarea');
     textareas.forEach((ta: HTMLTextAreaElement) => {
       const id = ta.id || ta.name || 'unnamed';
@@ -254,7 +239,7 @@ export class FormAnalyzer {
 
       if (contentLength > 0) {
         if (!textareaAnalysis[id]) {
-          // Textarea has content but we never saw any keyboard events - DOM manipulation!
+          // This field has content and no recorded input events.
           textareaAnalysis[id] = {
             keyCount: 0,
             avgKeyInterval: 0,
@@ -290,15 +275,32 @@ export class FormAnalyzer {
     };
   }
 
-  // Track paste events on textareas
+  private getTextareaStats(target: HTMLTextAreaElement): TextareaStats {
+    const id = target.id || target.name || 'unnamed';
+    const existing = this.textareaStats.get(id);
+    if (existing) return existing;
+
+    const stats: TextareaStats = {
+      keydowns: [],
+      keyups: [],
+      intervals: [],
+      lastKeyTime: null,
+      inputWithoutKey: 0,
+      pasteCount: 0,
+      dwellTimes: [],
+      rollovers: 0,
+      activeKeyCount: 0,
+      pendingKeydowns: []
+    };
+    this.textareaStats.set(id, stats);
+    return stats;
+  }
+
   recordPaste(e: ClipboardEvent): void {
-    const target = e.target as (HTMLTextAreaElement & Element) | null;
+    const target = e.target as HTMLTextAreaElement | null;
     if (target?.tagName !== 'TEXTAREA') return;
 
-    const textareaId = target.id || target.name || 'unnamed';
-    if (this.textareaStats.has(textareaId)) {
-      (this.textareaStats.get(textareaId) as TextareaStats).pasteCount++;
-    }
+    this.getTextareaStats(target).pasteCount++;
   }
 }
 
@@ -307,8 +309,6 @@ let globalFormAnalyzer: FormAnalyzer | null = null;
 export function getFormAnalyzer(): FormAnalyzer {
   if (!globalFormAnalyzer) {
     globalFormAnalyzer = new FormAnalyzer();
-    // Also track paste events
-    document.addEventListener('paste', (e: ClipboardEvent) => (globalFormAnalyzer as FormAnalyzer).recordPaste(e), { passive: true });
   }
   return globalFormAnalyzer;
 }

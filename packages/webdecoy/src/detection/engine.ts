@@ -155,7 +155,7 @@ export class DetectionEngine {
 
     // --- Form interaction + advanced fingerprints -----------------------------
     if (signals.formAnalysis) {
-      detections.push(...analyzeFormInteraction(signals.formAnalysis));
+      detections.push(...analyzeFormInteraction(signals.formAnalysis, signals.behavioral));
     }
     detections.push(...analyzeAdvancedSignals(signals));
 
