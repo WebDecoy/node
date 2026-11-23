@@ -29,10 +29,10 @@ jobs:
         run: |
           replay_dir=$(mktemp -d)
           chmod 755 "$replay_dir"
-          mkdir -p "$replay_dir/scripts" "$replay_dir/packages/webdecoy/dist" "$replay_dir/packages/webdecoy/src/detection/fixtures"
-          cp scripts/check-captcha-score-parity.cjs "$replay_dir/scripts/"
+          mkdir -p "$replay_dir/scripts" "$replay_dir/captured" "$replay_dir/packages/webdecoy/dist" "$replay_dir/packages/webdecoy/src/detection/fixtures"
+          cp scripts/check-captcha-{score,captured}-parity.cjs "$replay_dir/scripts/"
           cp packages/webdecoy/dist/index.js "$replay_dir/packages/webdecoy/dist/"
-          cp packages/webdecoy/src/detection/fixtures/{scoring-policy,input-modality}.json "$replay_dir/packages/webdecoy/src/detection/fixtures/"
+          cp packages/webdecoy/src/detection/fixtures/{scoring-policy,input-modality,captured-corpus}.json "$replay_dir/packages/webdecoy/src/detection/fixtures/"
 
           reference_commit=$(node -p "require('./packages/webdecoy/src/detection/fixtures/scoring-policy.json').reference.commit")
           [[ "$reference_commit" =~ ^[0-9a-f]{40}$ ]]
@@ -43,11 +43,27 @@ jobs:
             "https://raw.githubusercontent.com/WebDecoy/FCaptcha/$reference_commit/server-node/detection.js" \
             --output "$replay_dir/fcaptcha-detection.cjs"
           curl --fail --silent --show-error --retry 3 --max-time 30 \
+            "https://raw.githubusercontent.com/WebDecoy/FCaptcha/$reference_commit/server-node/inputforensics.js" \
+            --output "$replay_dir/fcaptcha-inputforensics.cjs"
+          curl --fail --silent --show-error --retry 3 --max-time 30 \
             "https://raw.githubusercontent.com/WebDecoy/FCaptcha/$reference_commit/test/fixtures/keystroke-cadence.json" \
             --output "$replay_dir/keystroke-cadence.json"
+          node -e "for (const file of require('./packages/webdecoy/src/detection/fixtures/captured-corpus.json').files) console.log(file.path)" |
+            while IFS= read -r corpus_path; do
+              curl --fail --silent --show-error --retry 3 --max-time 30 \
+                "https://raw.githubusercontent.com/WebDecoy/FCaptcha/$reference_commit/$corpus_path" \
+                --output "$replay_dir/captured/${corpus_path##*/}"
+            done
 
           docker run --rm --network none --read-only --cap-drop=ALL --security-opt no-new-privileges \
             --pids-limit 128 --cpus 2 --memory 384m --memory-swap 384m --user 1000:1000 --log-driver none \
+            --tmpfs /tmp:rw,noexec,nosuid,nodev,size=32m,mode=1777 \
             --mount "type=bind,source=$replay_dir,target=/replay,readonly" \
-            node:22-alpine timeout -k 3s 30s node /replay/scripts/check-captcha-score-parity.cjs \
-              /replay/fcaptcha-engine.cjs /replay/fcaptcha-detection.cjs /replay/keystroke-cadence.json
+            node:22-alpine env -i PATH=/usr/local/bin:/usr/bin:/bin HOME=/tmp TMPDIR=/tmp \
+              timeout -k 3s 30s sh -eu -c '
+                node /replay/scripts/check-captcha-score-parity.cjs \
+                  /replay/fcaptcha-engine.cjs /replay/fcaptcha-detection.cjs /replay/keystroke-cadence.json
+                node /replay/scripts/check-captcha-captured-parity.cjs \
+                  /replay/fcaptcha-engine.cjs /replay/fcaptcha-detection.cjs \
+                  /replay/fcaptcha-inputforensics.cjs /replay/captured
+              '
