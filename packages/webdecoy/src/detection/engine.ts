@@ -157,7 +157,7 @@ export class DetectionEngine {
     if (signals.formAnalysis) {
       detections.push(...analyzeFormInteraction(signals.formAnalysis));
     }
-    detections.push(...analyzeAdvancedSignals(signals, userAgent));
+    detections.push(...analyzeAdvancedSignals(signals));
 
     // --- Aggregate -------------------------------------------------------------
     const categoryScores = calculateCategoryScores(detections, this.weights);

@@ -707,7 +707,9 @@ export class EnvironmentalCollector {
         hasArial: detectedFonts.includes('Arial'),
         hasTimesNewRoman: detectedFonts.includes('Times New Roman'),
         hasSegoeUI: detectedFonts.includes('Segoe UI'),
+        hasCalibri: detectedFonts.includes('Calibri'),
         hasSFPro: detectedFonts.includes('SF Pro'),
+        hasMenlo: detectedFonts.includes('Menlo'),
         hasDejaVuSans: detectedFonts.includes('DejaVu Sans'),
         supported: true
       };

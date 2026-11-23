@@ -9,6 +9,7 @@
  */
 
 import { DetectionEngine } from './engine';
+import fontPlatformFixtures from './fixtures/font-platform.json';
 import inputModalityFixtures from './fixtures/input-modality.json';
 import type { DetectionContext, Signals, Verdict } from './types';
 
@@ -394,11 +395,21 @@ describe('advanced fingerprint detection', () => {
     expect(hasReasonIncluding(v, 'Worker/main thread mismatch')).toBe(true);
   });
 
-  it('detects Windows UA without Segoe UI', () => {
-    const v = score({
-      environmental: { fontsInfo: { supported: true, count: 10, hasSegoeUI: false, hasSFPro: false, hasDejaVuSans: false } },
+  it.each(fontPlatformFixtures.cases)('matches the reference for $name', ({ fonts, platform, reasons }) => {
+    const verdict = score({ environmental: { fontsInfo: fonts, navigator: { platform } } });
+    expect(verdict.detections.filter(({ reason }) => /font/i.test(reason))).toEqual(
+      reasons.map(reason => ({ category: 'automation', score: 0.5, confidence: 0.5, reason })),
+    );
+  });
+
+  it('keeps legacy font summaries neutral when a native font flag was not reported', () => {
+    const verdict = score({
+      environmental: {
+        fontsInfo: { supported: true, count: 12, hasSegoeUI: true, hasSFPro: false },
+        navigator: { platform: 'MacIntel' },
+      },
     });
-    expect(hasReasonIncluding(v, 'Segoe UI')).toBe(true);
+    expect(verdict.detections.filter(({ reason }) => /font/i.test(reason))).toEqual([]);
   });
 
   it('detects CSS pointer/touch mismatch', () => {
