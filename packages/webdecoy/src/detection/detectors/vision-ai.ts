@@ -1,10 +1,13 @@
 /** Vision-AI agent detection: missing natural mouse behavior + PoW timing. */
 
 import type { Detection, Signals } from '../types';
+import { addCorroboratingDetection } from './corroborating-detection';
 import { classifyKeyboardInput } from './keyboard-input';
 import { hasHumanMovementMarkers, isTouchModality } from './pointer-evidence';
 
-export function detectVisionAI(signals: Signals, widgetInteraction = true): Detection[] {
+export function detectVisionAI(
+  signals: Signals, widgetInteraction = true, corroborating?: Detection[],
+): Detection[] {
   const detections: Detection[] = [];
   const b = signals.behavioral ?? {};
   const t = signals.temporal ?? {};
@@ -59,7 +62,7 @@ export function detectVisionAI(signals: Signals, widgetInteraction = true): Dete
 
   const microTremor = b.microTremorScore ?? 0.5;
   if (usesMouse && totalPoints >= 5 && microTremor < 0.15) {
-    detections.push({
+    addCorroboratingDetection(detections, corroborating, {
       category: 'vision_ai',
       score: 0.7,
       confidence: 0.6,
@@ -74,7 +77,7 @@ export function detectVisionAI(signals: Signals, widgetInteraction = true): Dete
     (b.approachDirectness ?? 0) > 0.95 &&
     !hasHumanMovementMarkers(b)
   ) {
-    detections.push({
+    addCorroboratingDetection(detections, corroborating, {
       category: 'vision_ai',
       score: 0.5,
       confidence: 0.5,
@@ -84,7 +87,7 @@ export function detectVisionAI(signals: Signals, widgetInteraction = true): Dete
 
   const exploration = b.explorationRatio ?? 0.3;
   if (widgetInteraction && exploration < 0.05 && trajectory > 50) {
-    detections.push({
+    addCorroboratingDetection(detections, corroborating, {
       category: 'vision_ai',
       score: 0.4,
       confidence: 0.4,

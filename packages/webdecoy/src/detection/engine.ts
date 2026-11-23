@@ -18,6 +18,7 @@ import {
   type RateLimiter,
 } from './stores';
 import {
+  applyCorroborationScoreFloor,
   applyDecisiveScoreFloor,
   calculateCategoryScores,
   calculateFinalScore,
@@ -45,7 +46,7 @@ import {
 } from './detectors';
 
 export interface ScoringComparison {
-  policy: 'noisy-or-decisive-v1';
+  policy: 'noisy-or-floors-v1';
   current: { score: number; recommendation: Recommendation };
   candidate: { score: number; recommendation: Recommendation };
 }
@@ -87,6 +88,8 @@ export class DetectionEngine {
     const { ip, siteKey, userAgent } = context;
     const headers = context.headers ?? {};
     const detections: Detection[] = [];
+    const onScoringComparison = this.onScoringComparison;
+    const corroborating: Detection[] | undefined = onScoringComparison ? [] : undefined;
 
     // Orchestrator-supplied detections (e.g. signals-tampering check).
     if (context.extraDetections) detections.push(...context.extraDetections);
@@ -135,11 +138,11 @@ export class DetectionEngine {
     // --- Behavioral / environmental detectors ---------------------------------
     const widgetInteraction = context.widgetInteraction !== false;
     detections.push(
-      ...detectVisionAI(signals, widgetInteraction),
+      ...detectVisionAI(signals, widgetInteraction, corroborating),
       ...detectHeadless(signals, userAgent),
       ...detectAutomation(signals),
-      ...detectCDP(signals),
-      ...detectBehavioral(signals, widgetInteraction),
+      ...detectCDP(signals, corroborating),
+      ...detectBehavioral(signals, widgetInteraction, corroborating),
       ...detectTouchAuthenticity(signals, userAgent),
       ...detectSensorEntropy(signals, userAgent),
       ...detectTouchKinematics(signals),
@@ -182,15 +185,15 @@ export class DetectionEngine {
     const recommendation = recommend(score);
     const scrollObservation = observeScrollJump(signals.behavioral);
 
-    const onScoringComparison = this.onScoringComparison;
-    if (onScoringComparison) {
+    if (onScoringComparison && corroborating) {
       const candidateScores = calculateNoisyOrCategoryScores(detections, this.weights);
-      const candidateScore = applyDecisiveScoreFloor(
+      const decisiveScore = applyDecisiveScoreFloor(
         calculateFinalScore(candidateScores, this.weights), signals.environmental, this.weights,
       );
+      const candidateScore = applyCorroborationScoreFloor(decisiveScore, corroborating, this.weights);
       try {
         const pending = onScoringComparison({
-          policy: 'noisy-or-decisive-v1',
+          policy: 'noisy-or-floors-v1',
           current: { score, recommendation },
           candidate: { score: candidateScore, recommendation: recommend(candidateScore) },
         });

@@ -17,6 +17,20 @@ export function applyDecisiveScoreFloor(
   return declaresWebDriver || hasInjectedDriver ? Math.max(0.9, score) : score;
 }
 
+/** Require agreement between measured interaction and a separate driver finding. */
+export function applyCorroborationScoreFloor(
+  score: number,
+  detections: Detection[],
+  weights: Record<string, number>,
+): number {
+  if (score >= 0.6 || detections.length < 2) return score;
+
+  const support = calculateNoisyOrCategoryScores(detections, weights);
+  const agrees = (category: string) => (weights[category] ?? 0) > 0 &&
+    (support[category] ?? 0) >= 0.4 - 1e-9;
+  return agrees('cdp') && (agrees('vision_ai') || agrees('behavioral')) ? 0.6 : score;
+}
+
 /**
  * Aggregate detections into per-category scores. Each category's score is the
  * confidence-weighted mean of its detections' scores, capped at 1.0. Categories
