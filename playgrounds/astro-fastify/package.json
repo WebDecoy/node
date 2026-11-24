@@ -1,0 +1,20 @@
+{
+  "name": "webdecoy-astro-fastify-playground",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "build": "astro build",
+    "start": "node server.mjs",
+    "test": "npm run build && node --test"
+  },
+  "dependencies": {
+    "@astrojs/node": "11.1.14",
+    "@webdecoy/fastify": "0.30.0",
+    "@webdecoy/node": "0.30.0",
+    "astro": "7.4.13",
+    "fastify": "5.12.8"
+  }
+}
