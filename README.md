@@ -727,6 +727,8 @@ request path down is worse than none.
 
 See [examples](./examples) for complete working setups — e.g. [express-basic](./examples/express-basic).
 
+The [Astro SSR and Fastify playground](./playgrounds/astro-fastify) shows which requests reach the Node origin and how to verify monitor-mode decisions locally.
+
 ## FAQ
 
 **Will this slow down my app?** Local rules (tripwires, in-memory rate limiting) run in-process and make no network calls. With an API key, a request goes to WebDecoy only when local analysis flags it for verification; that call is awaited, bounded by `timeout` (default 5000 ms), and fails open. Requests local analysis does not flag make no call.

@@ -1,0 +1,16 @@
+---
+const generatedAt = new Date().toISOString();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Astro SSR origin</title>
+  </head>
+  <body>
+    <main>
+      <h1>Astro rendered this page on demand</h1>
+      <p>Rendered at <time datetime={generatedAt}>{generatedAt}</time>.</p>
+    </main>
+  </body>
+</html>
