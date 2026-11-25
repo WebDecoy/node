@@ -70,9 +70,13 @@ const exactReasonIds = new Map(
   Object.entries({
     'automation\0JS execution unusually fast': 'timing.js_execution_fast',
     'automation\0RequestAnimationFrame timing too consistent': 'timing.raf_consistent',
+    'automation\0Field populated without keystrokes or paste (synthetic input event)':
+      'input.synthetic_fill',
     'behavioral\0First interaction too soon after page load': 'input.first_interaction_early',
+    'behavioral\0Insufficient mouse movement before interaction': 'pointer.insufficient_movement',
     'behavioral\0Interaction completed too quickly': 'interaction.too_fast',
     'behavioral\0Keyboard-only input has unusually short key holds': 'typing.short_holds',
+    'behavioral\0Mouse event rate abnormally low': 'pointer.low_event_rate',
     'behavioral\0Mouse movements too straight': 'pointer.straight_motion',
     'behavioral\0No overshoot corrections on long trajectory': 'pointer.overshoot_missing',
     'behavioral\0Typing cadence is mechanical (inter-key and hold both below human range)':
@@ -84,6 +88,8 @@ const exactReasonIds = new Map(
     'cdp\0Pointer moves never coalesced across many samples (synthetic/CDP input)':
       'pointer.uncoalesced',
     'headless\0No browser plugins detected': 'plugin.none',
+    'headless\0No media devices detected (typical of headless browsers)': 'media.devices_missing',
+    'headless\0No speech synthesis voices available': 'speech.voices_missing',
     'headless\0No local IP addresses detected via WebRTC': 'webrtc.local_ip_missing',
     'headless\0Notification permission contradicts Permissions API (headless/stealth tell)':
       'notifications.permission_contradiction',
@@ -92,6 +98,8 @@ const exactReasonIds = new Map(
     'headless\0Software/virtualized WebGL renderer detected': 'webgl.software_renderer',
     'headless\0Viewport equals window size': 'viewport.exact_window',
     'headless\0WebDriver detected': 'webdriver.detected',
+    'vision_ai\0Interaction cadence matches agent act/think loop (bursts + dead air)':
+      'interaction.agent_cadence',
     'vision_ai\0Mouse movement lacks natural micro-tremor': 'pointer.low_tremor',
     'vision_ai\0Mouse path to target is unnaturally direct': 'pointer.direct_approach',
     'vision_ai\0No approach trajectory to target': 'pointer.approach_missing',
@@ -171,13 +179,13 @@ function referenceVerdict(sample, headers, userAgent) {
 }
 
 const samples = manifest.files.flatMap(readSamples);
-assert.equal(samples.length, 8, 'Captured parity slice sample count');
+assert.equal(samples.length, 67, 'Captured parity slice sample count');
 assert.equal(
   samples.filter(({ label }) => label === 'human').length,
-  4,
+  36,
   'Captured human control count'
 );
-assert.equal(samples.filter(({ label }) => label === 'agent').length, 4, 'Captured agent count');
+assert.equal(samples.filter(({ label }) => label === 'agent').length, 31, 'Captured agent count');
 assert.deepEqual(
   Object.keys(manifest.expected).sort(),
   samples.map(({ id }) => id).sort(),
