@@ -41,7 +41,7 @@ dashboard.
 
 ## Packages
 
-- `@webdecoy/node` — core SDK, all rules, `createFetchGuard()`
+- `@webdecoy/node` — core SDK, all rules, `createFetchGuard()` and `createNodeHttpGuard()`
 - `@webdecoy/express` — Express middleware
 - `@webdecoy/fastify` — Fastify plugin
 - `@webdecoy/nextjs` — Next.js middleware
@@ -60,6 +60,13 @@ or replay application fetch/XHR requests. See packages/client/README.md.
 
 For Bun, Deno, Astro, Nitro, SvelteKit or Remix use `createFetchGuard()` from
 `@webdecoy/node` directly — no adapter package needed.
+
+For a native `node:http` server use `createNodeHttpGuard({ rules, mode, trustProxy, skipPaths })`.
+Call `await guard.check(req)` before handling the request. A skipped path returns
+`undefined`. Other requests return `decision` and, for enforce-mode refusals,
+`response` with `status`, `headers`, and a JSON `body`. The handler writes the
+response and still owns the incoming body stream. Forwarded addresses require
+explicit `trustProxy` configuration.
 
 ## Rules
 

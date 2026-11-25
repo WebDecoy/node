@@ -145,6 +145,14 @@ export type { BlockResponse, HoneytokenArmingOptions } from './adapter-core';
 export { createFetchGuard } from './fetch-guard';
 export type { FetchGuard, FetchGuardOptions, GuardOutcome } from './fetch-guard';
 
+export { createNodeHttpGuard } from './node-http-guard';
+export type {
+  NodeHttpGuard,
+  NodeHttpGuardOptions,
+  NodeHttpGuardOutcome,
+  NodeHttpRequest,
+} from './node-http-guard';
+
 // Rules engine exports
 export {
   rateLimit,

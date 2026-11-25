@@ -65,7 +65,7 @@ WebDecoy works alongside Cloudflare and other CDN protections. Server middleware
 | Next.js | [Next.js middleware](packages/nextjs/README.md) |
 | Hono, Cloudflare Workers, Bun or Deno | [Hono middleware](packages/hono/README.md) |
 | Astro, SvelteKit, Remix or another fetch handler | [`createFetchGuard()`](#any-other-fetch-runtime--no-package-needed) |
-| A custom Node.js server | [Core SDK](packages/webdecoy/README.md) |
+| Native `node:http` server | [`createNodeHttpGuard()`](#native-nodehttp-server) |
 
 The middleware starts in **monitor mode**: it records verdicts without blocking requests. A local rules setup needs no cloud connection; an API key is needed to send detections to the WebDecoy dashboard.
 
@@ -205,6 +205,35 @@ export default {
   },
 };
 ```
+
+### Native `node:http` server
+
+Use `createNodeHttpGuard()` from `@webdecoy/node` in a plain Node.js server.
+The guard defaults to monitor mode and returns the verdict to your handler.
+
+```typescript
+import { createServer } from 'node:http';
+import { createNodeHttpGuard, tripwire } from '@webdecoy/node';
+
+const guard = createNodeHttpGuard({ rules: [tripwire()], skipPaths: ['/health'] });
+
+createServer(async (req, res) => {
+  const outcome = await guard.check(req);
+  if (outcome?.response) {
+    const { status, headers, body } = outcome.response;
+    res.writeHead(status, headers).end(JSON.stringify(body));
+    return;
+  }
+  if (outcome?.decision.deniedBy('tripwire')) {
+    console.info('Tripwire matched', outcome.decision.id);
+  }
+  res.end('OK');
+}).listen(3000);
+```
+
+The request body stays available to your application. Set `mode: 'enforce'`
+once you've reviewed the verdicts. When a trusted reverse proxy sits in front
+of your server, configure [`trustProxy`](#client-ip-behind-a-proxy) for that proxy.
 
 ## More local rules
 
