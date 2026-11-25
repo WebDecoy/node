@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.31.0] - 2026-11-25
+
+### Added
+
+- Guard servers built directly on `node:http` with `createNodeHttpGuard()`. Native requests run through the rules pipeline in monitor mode by default; enforce mode returns typed 403 or 429 response descriptors for the handler to write, and forwarded addresses are trusted only when configured.
+- Name 26 more bots and crawlers in the bundled agent registry (277 agents, up from 251), including GeneralRetrievalBot, Andi, BitSightBot and LeakIX.
+
 ## [0.30.0] - 2026-11-23
 
 ### Added
