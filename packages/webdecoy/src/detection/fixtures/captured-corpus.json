@@ -1,9 +1,9 @@
 {
   "reference": {
-    "version": "v1.51.3",
-    "commit": "2ed3b473ea2f0b8efe5900827fef1444cd66a194"
+    "version": "v1.51.4+ebc8738",
+    "commit": "ebc8738af3014dd09c9f2cdf2e021725e30218e7"
   },
-  "notes": "A balanced captured regression slice, not a population false-positive or true-positive estimate.",
+  "notes": "A captured regression slice pinned to one FCaptcha commit: the original human and agent samples, paired agent/manual-control cohorts for browser-internal agents (widget, invisible and form modes) and external CDP drivers, and accessibility-workflow humans. It records current scoring outcomes; it is not a population false-positive or true-positive estimate.",
   "files": [
     {
       "path": "bench/corpus/captured/human-keyboard-only.json",
@@ -36,6 +36,242 @@
     {
       "path": "bench/corpus/captured/agent-scripted-typing.json",
       "sha256": "136e2f7fdbc92acac683fe36da339ca58a5f9b0c1c072d721c1bd8351983e795"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-widget-0000.json",
+      "sha256": "b8b97e96edaca6d95df5c17d6819f098a189958cbee8205e8de16975425abdf7"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-widget-0001.json",
+      "sha256": "fb80e9c2e6338dadfb7426c6214f66d575adbe8159dbf9f8d4a9988aee20c9fc"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-widget-0002.json",
+      "sha256": "42d1bb32a38fa008153b0c5bee43d9db2e4763501d1502606c23b01603aa62de"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-widget-0003.json",
+      "sha256": "0258de7f2c9c55ccb5ad7435edb2156add9c5ebda976885e8534c4eee53f32a8"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-widget-0004.json",
+      "sha256": "29135f2cbc87eda1dce26cf00382e10430769ba4a1a07a6566027316fb5cbb78"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-widget-0000.json",
+      "sha256": "c5d0b92025147e864b79f13d7c380768867b56c70be016b18e2a888b8d86f9df"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-widget-0001.json",
+      "sha256": "101410c002fc8f781e0fbad2b32f52e5d9fc74e0bacb129ba3966d41d745fc9b"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-widget-0002.json",
+      "sha256": "60e65b2b8d77094376e8c59d10314d52fe96f5d4ef14c3c147ce6ffb4885d726"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-widget-0003.json",
+      "sha256": "85f2791830f44afc03836883a51368fbb77cb813e10664d9f7e10488d17a7048"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-widget-0004.json",
+      "sha256": "bc78bfd311f2575282b2ba94c6d733f57b9781fcbd305655a9fb5c79e1db0be9"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-invisible-0000.json",
+      "sha256": "ff9e4ca177c8d0cc247216f9b4bc25d4b6ad79a8665c10eeb5a3e3cfab1c2cc1"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-invisible-0001.json",
+      "sha256": "9ec0b2d08c3ebdccfbdab6b36aa4e35ffb550959ed1809395a64ae42ab0b2aee"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-invisible-0002.json",
+      "sha256": "332e21a28196d8fd1eb81493f3f8afd571270425c83cdb16a2c4808aad7f58c7"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-invisible-0003.json",
+      "sha256": "e195494b088590e10c02ee781a40d0532e8106c680a23c4592aa1e29ca6644c8"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-invisible-0004.json",
+      "sha256": "95476785009f3ecb400c0d9b3a3b3f07c6ac1f2cef716f99acd66c94977cb02f"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-invisible-0000.json",
+      "sha256": "cc8fd069e55cade68b061d3907754f7657437c79ce50355e1dfb3166d34f5534"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-invisible-0001.json",
+      "sha256": "d1cdbe809c70e3e948fa936bb333af8a19c8dde235020fdf78ddc3d238af329b"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-invisible-0002.json",
+      "sha256": "96e50d32fd81cd111db3ad7ae34d10ee4119dc755fe96f6e0759e4e8af5cc842"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-invisible-0003.json",
+      "sha256": "c4f8e30c7615be6c63860952ca03f24d658eab7ea936895b6120a21541f4a897"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-control-invisible-0004.json",
+      "sha256": "7f356c34750e1f2b349bd21935d141f298705fa501dbb2fdbf162cbc0480de34"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-claude-form-0000.json",
+      "sha256": "7af56d3a4596d7059b90737313dc6c63f7e41c22be24c59d0ad882cd70d1feb0"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-claude-form-0001.json",
+      "sha256": "469da3c529655156f2a637a47adb5bb7148fcf2b9db4f8443f9061b6606cd711"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-claude-form-0002.json",
+      "sha256": "dc84449df503c3280a7d521bbe7721c22d60993b6716a3bbaaa1c80fec7e63d3"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-claude-form-0003.json",
+      "sha256": "3fa0cc75922c1bd561e397577cceb5fc03c859e92631b211e59d442afb80c457"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-internal-claude-form-0004.json",
+      "sha256": "565e745a0e1864314fcffc169ee0f3f49f89182ad8c494c50db4b2b1b1babd39"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-claude-form-control-0000.json",
+      "sha256": "f128141a79612b85be6e6906b0b497edea9a7b2193b73a1267e7c534002806c7"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-claude-form-control-0001.json",
+      "sha256": "d35286af60cd3345b9b050372a461e1266a68d1f54b861385f1e0dc6e1f0a0d7"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-claude-form-control-0002.json",
+      "sha256": "8ffdcc50229c786c47f26b315f05446057d6f40fbbe80f34c4d750e3e740b756"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-claude-form-control-0003.json",
+      "sha256": "80ca12b6b55b116ba2c86b9d538f2fd6d5f1a5a88b9122f581fd44c597c06431"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-internal-claude-form-control-0004.json",
+      "sha256": "eb88760d68b062c3fdd4b607513011d3ce09690176f502dd1e3e5007b6ed5671"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-harness-cdp-form-0000.json",
+      "sha256": "e6cef5d9464269f7c9f9e3b5025dd4f5b68143cdc22a4850ae58b9774abe93a0"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-harness-cdp-form-0001.json",
+      "sha256": "0f89377361cc0125e6e040af0524912b38ed08cbd0cf1b3d1ab514bab4ee33e2"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-harness-cdp-form-0002.json",
+      "sha256": "622f4a51d3cb8e273767b3b89a60b371fbdebf6c1e2464b83d870de8e6b43db2"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-harness-cdp-form-0003.json",
+      "sha256": "4c6507aaaa5af49a258b27c9bbfab17d9d5b5d37f634ba901d1cdeb339a88d87"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-harness-cdp-form-0004.json",
+      "sha256": "ae1f09b788291f707cb811c1e2fc9ee4650eb323e539a241136f5dcb49df34a7"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-harness-cdp-form-control-0000.json",
+      "sha256": "41c835cb3fb1904b119f581671078b5a154c83617c31e46f775fd8b12c32b286"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-harness-cdp-form-control-0001.json",
+      "sha256": "8029a981c4cbe9875123d5e3cbdfc12575faad1905d0abe72ca9381e48a1ffbe"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-harness-cdp-form-control-0002.json",
+      "sha256": "a622e5dfe21b48290249c658351bae0df397b694f6fe387985b4d5c100492782"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-harness-cdp-form-control-0003.json",
+      "sha256": "ca814cccc86e07458420e1d40f815251cec4c8119a8a2958d828a91d41dd7b0c"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-harness-cdp-form-control-0004.json",
+      "sha256": "8c9a19d9fc95bc2f98425feae5322e755f48f458a173385829f1eea192dbc6de"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-harness-macbook-cdp-form-0000.json",
+      "sha256": "31cf9ac24d6a03fe9123fe493de93ed0dbf94b146a996af3b2cd6090ac69a6a6"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-harness-macbook-cdp-form-0001.json",
+      "sha256": "c07270c3c2b8d0e057978218135adb309faf107bfdf071191575e44bd0a69902"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-harness-macbook-cdp-form-0002.json",
+      "sha256": "520e58cb8626e6411a8be3e69b12c6425208927c6664c8927020ce6528ee70a8"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-harness-macbook-cdp-form-0003.json",
+      "sha256": "919cc1267b5a1dc4a323dde4bdbf7effe4f4e3fa3a46241dbae0597800b3dd15"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-harness-macbook-cdp-form-0004.json",
+      "sha256": "8c0e6729a07ea9eae4b6e5baf4dbd2ee171e7535899c73651e9975e5d241fcf7"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-harness-macbook-cdp-invisible-0000.json",
+      "sha256": "487a238144379c04f87ac968c5b9190ce219fa0c3ff1819889bec56eb7e922a6"
+    },
+    {
+      "path": "bench/corpus/captured/agent-browser-harness-macbook-cdp-widget-0000.json",
+      "sha256": "b19e8983a1b104b93e4005432105ab03692aa051d59e28ee5659743ef265ea4b"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-harness-macbook-cdp-form-0000.json",
+      "sha256": "220fd8c96bb448eee988ce85322e2f2c2994dbb57643b116695dd8455daa3b7a"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-harness-macbook-cdp-form-0001.json",
+      "sha256": "5758e47704427d412d3bc8661f6d4ca60f4d768a2b1d67acc3558605166ba11d"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-harness-macbook-cdp-form-0002.json",
+      "sha256": "6028c414f75e9de15196de74d8fe1f7b2bb5f98e4516877feaba5b0ae0ee3fd5"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-harness-macbook-cdp-form-0003.json",
+      "sha256": "d4471935ec203a8e80dd3cd0eb58b807c76eb937c4b7f45de161c1a4f3456219"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-harness-macbook-cdp-form-0004.json",
+      "sha256": "320415362dd119999d5cad99ad50925da341810029e68f03097f9ccdca45df43"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-harness-macbook-cdp-invisible-0000.json",
+      "sha256": "7b9ae1f88b90d3421d3a7ea0f4a1ee8077c033411b6d5aa04c605a0c78fdd4aa"
+    },
+    {
+      "path": "bench/corpus/captured/human-browser-harness-macbook-cdp-widget-0000.json",
+      "sha256": "71d7cdd83634672fe034fb046af44c848983fc008818234ac973bc8f08514472"
+    },
+    {
+      "path": "bench/corpus/captured/human-accessibility-browser-autofill-0000.json",
+      "sha256": "8ad71f37ebeecafe90fec3e1d30e32afd7decdd04aea69479841d7fb75991522"
+    },
+    {
+      "path": "bench/corpus/captured/human-accessibility-explicit-paste-0000.json",
+      "sha256": "2bdf1ab4e175921374b82163623b7aa2ec1e49de00bc24ca84e97c6b56d9cc79"
+    },
+    {
+      "path": "bench/corpus/captured/human-accessibility-keyboard-navigation-0000.json",
+      "sha256": "70a9e65f6375f49e09d236c868791067ffd02e33acf0184cf44c78de06b59bbd"
+    },
+    {
+      "path": "bench/corpus/captured/human-accessibility-password-manager-0000.json",
+      "sha256": "813dc7c11b300f62751ecd4d608ec5078c6b71d36c50997f6c6cfb9b81604865"
+    },
+    {
+      "path": "bench/corpus/captured/human-accessibility-reduced-motion-anchor-0000.json",
+      "sha256": "dc3b7eabdc55a0a9bb82f02142050f5db42794eda77d26f6126c77d144b98854"
     }
   ],
   "expected": {
@@ -45,8 +281,15 @@
         "success": true,
         "reasonIds": ["webrtc.local_ip_missing"]
       },
-      "candidate": { "recommendation": "allow", "success": true },
-      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
     },
     "human/touch/0000": {
       "node": {
@@ -54,8 +297,15 @@
         "success": true,
         "reasonIds": ["timing.js_execution_fast", "webrtc.local_ip_missing"]
       },
-      "candidate": { "recommendation": "allow", "success": true },
-      "reference": { "recommendation": "allow", "success": true, "reasonIds": [] }
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
     },
     "human/devtools-open/0000": {
       "node": {
@@ -67,7 +317,10 @@
           "webrtc.local_ip_missing"
         ]
       },
-      "candidate": { "recommendation": "allow", "success": true },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
       "reference": {
         "recommendation": "allow",
         "success": true,
@@ -80,7 +333,10 @@
         "success": true,
         "reasonIds": ["webrtc.local_ip_missing"]
       },
-      "candidate": { "recommendation": "allow", "success": true },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
       "reference": {
         "recommendation": "allow",
         "success": true,
@@ -104,11 +360,14 @@
           "timing.js_execution_fast",
           "viewport.exact_window",
           "webdriver.detected",
-          "webrtc.local_ip_missing",
-          "webgl.software_renderer"
+          "webgl.software_renderer",
+          "webrtc.local_ip_missing"
         ]
       },
-      "candidate": { "recommendation": "block", "success": false },
+      "candidate": {
+        "recommendation": "block",
+        "success": false
+      },
       "reference": {
         "recommendation": "block",
         "success": false,
@@ -146,11 +405,14 @@
           "timing.raf_consistent",
           "viewport.exact_window",
           "webdriver.detected",
-          "webrtc.local_ip_missing",
-          "webgl.software_renderer"
+          "webgl.software_renderer",
+          "webrtc.local_ip_missing"
         ]
       },
-      "candidate": { "recommendation": "block", "success": false },
+      "candidate": {
+        "recommendation": "block",
+        "success": false
+      },
       "reference": {
         "recommendation": "block",
         "success": false,
@@ -188,11 +450,14 @@
           "timing.js_execution_fast",
           "viewport.exact_window",
           "webdriver.detected",
-          "webrtc.local_ip_missing",
-          "webgl.software_renderer"
+          "webgl.software_renderer",
+          "webrtc.local_ip_missing"
         ]
       },
-      "candidate": { "recommendation": "block", "success": false },
+      "candidate": {
+        "recommendation": "block",
+        "success": false
+      },
       "reference": {
         "recommendation": "block",
         "success": false,
@@ -230,11 +495,14 @@
           "typing.short_holds",
           "viewport.exact_window",
           "webdriver.detected",
-          "webrtc.local_ip_missing",
-          "webgl.software_renderer"
+          "webgl.software_renderer",
+          "webrtc.local_ip_missing"
         ]
       },
-      "candidate": { "recommendation": "block", "success": false },
+      "candidate": {
+        "recommendation": "block",
+        "success": false
+      },
       "reference": {
         "recommendation": "block",
         "success": false,
@@ -255,6 +523,1026 @@
           "webdriver.detected",
           "webgl.software_renderer"
         ]
+      }
+    },
+    "agent/chrome-auto-browse-widget/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "agent/chrome-auto-browse-widget/0001": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      }
+    },
+    "agent/chrome-auto-browse-widget/0002": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "agent/chrome-auto-browse-widget/0003": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "agent/chrome-auto-browse-widget/0004": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.js_execution_fast", "timing.raf_consistent"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      }
+    },
+    "human/chrome-auto-browse-widget-control/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["input.first_interaction_early", "timing.js_execution_fast"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/chrome-auto-browse-widget-control/0001": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.js_execution_fast", "timing.raf_consistent"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      }
+    },
+    "human/chrome-auto-browse-widget-control/0002": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["input.first_interaction_early"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/chrome-auto-browse-widget-control/0003": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      }
+    },
+    "human/chrome-auto-browse-widget-control/0004": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "agent/chrome-auto-browse-invisible/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.js_execution_fast"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "agent/chrome-auto-browse-invisible/0001": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["input.first_interaction_early", "timing.js_execution_fast"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "agent/chrome-auto-browse-invisible/0002": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      }
+    },
+    "agent/chrome-auto-browse-invisible/0003": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      }
+    },
+    "agent/chrome-auto-browse-invisible/0004": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["input.first_interaction_early", "timing.js_execution_fast"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/chrome-auto-browse-invisible-control/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.js_execution_fast"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/chrome-auto-browse-invisible-control/0001": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/chrome-auto-browse-invisible-control/0002": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.js_execution_fast"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/chrome-auto-browse-invisible-control/0003": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/chrome-auto-browse-invisible-control/0004": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.js_execution_fast"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "agent/claude-in-chrome-form/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["interaction.agent_cadence", "timing.raf_consistent"]
+      }
+    },
+    "agent/claude-in-chrome-form/0001": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["pointer.low_event_rate"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["interaction.agent_cadence", "pointer.low_event_rate"]
+      }
+    },
+    "agent/claude-in-chrome-form/0002": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["pointer.insufficient_movement", "timing.raf_consistent"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": [
+          "interaction.agent_cadence",
+          "pointer.insufficient_movement",
+          "timing.raf_consistent"
+        ]
+      }
+    },
+    "agent/claude-in-chrome-form/0003": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["pointer.low_event_rate"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["interaction.agent_cadence", "pointer.low_event_rate"]
+      }
+    },
+    "agent/claude-in-chrome-form/0004": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["pointer.low_event_rate", "timing.js_execution_fast", "timing.raf_consistent"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": [
+          "interaction.agent_cadence",
+          "pointer.low_event_rate",
+          "timing.raf_consistent"
+        ]
+      }
+    },
+    "human/claude-in-chrome-form-control/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/claude-in-chrome-form-control/0001": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/claude-in-chrome-form-control/0002": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      }
+    },
+    "human/claude-in-chrome-form-control/0003": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/claude-in-chrome-form-control/0004": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      }
+    },
+    "agent/browser-harness-real-chrome-form/0000": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "media.devices_missing",
+          "pointer.missing",
+          "speech.voices_missing",
+          "typing.short_holds"
+        ]
+      },
+      "candidate": {
+        "recommendation": "challenge",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": ["input.missing", "input.synthetic_fill", "pointer.missing"]
+      }
+    },
+    "agent/browser-harness-real-chrome-form/0001": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "media.devices_missing",
+          "pointer.missing",
+          "speech.voices_missing",
+          "timing.js_execution_fast",
+          "typing.short_holds"
+        ]
+      },
+      "candidate": {
+        "recommendation": "challenge",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": ["input.missing", "input.synthetic_fill", "pointer.missing"]
+      }
+    },
+    "agent/browser-harness-real-chrome-form/0002": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "media.devices_missing",
+          "pointer.missing",
+          "speech.voices_missing",
+          "typing.short_holds"
+        ]
+      },
+      "candidate": {
+        "recommendation": "challenge",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": ["input.missing", "input.synthetic_fill", "pointer.missing"]
+      }
+    },
+    "agent/browser-harness-real-chrome-form/0003": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "media.devices_missing",
+          "pointer.missing",
+          "speech.voices_missing",
+          "timing.js_execution_fast",
+          "typing.short_holds"
+        ]
+      },
+      "candidate": {
+        "recommendation": "challenge",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": ["input.missing", "input.synthetic_fill", "pointer.missing"]
+      }
+    },
+    "agent/browser-harness-real-chrome-form/0004": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "media.devices_missing",
+          "pointer.missing",
+          "speech.voices_missing",
+          "typing.short_holds"
+        ]
+      },
+      "candidate": {
+        "recommendation": "challenge",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": ["input.missing", "input.synthetic_fill", "pointer.missing"]
+      }
+    },
+    "human/browser-harness-real-chrome-form-control/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing", "timing.js_execution_fast"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/browser-harness-real-chrome-form-control/0001": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing", "timing.js_execution_fast"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/browser-harness-real-chrome-form-control/0002": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/browser-harness-real-chrome-form-control/0003": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/browser-harness-real-chrome-form-control/0004": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "agent/browser-harness-macbook-form/0000": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "media.devices_missing",
+          "pointer.missing",
+          "speech.voices_missing",
+          "typing.short_holds"
+        ]
+      },
+      "candidate": {
+        "recommendation": "challenge",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": ["input.missing", "input.synthetic_fill", "pointer.missing"]
+      }
+    },
+    "agent/browser-harness-macbook-form/0001": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "media.devices_missing",
+          "pointer.missing",
+          "speech.voices_missing",
+          "typing.short_holds"
+        ]
+      },
+      "candidate": {
+        "recommendation": "challenge",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": ["input.missing", "input.synthetic_fill", "pointer.missing"]
+      }
+    },
+    "agent/browser-harness-macbook-form/0002": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "media.devices_missing",
+          "pointer.missing",
+          "speech.voices_missing",
+          "typing.short_holds"
+        ]
+      },
+      "candidate": {
+        "recommendation": "challenge",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": ["input.missing", "input.synthetic_fill", "pointer.missing"]
+      }
+    },
+    "agent/browser-harness-macbook-form/0003": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "media.devices_missing",
+          "pointer.missing",
+          "speech.voices_missing",
+          "typing.short_holds"
+        ]
+      },
+      "candidate": {
+        "recommendation": "challenge",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": ["input.missing", "input.synthetic_fill", "pointer.missing"]
+      }
+    },
+    "agent/browser-harness-macbook-form/0004": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "media.devices_missing",
+          "pointer.missing",
+          "speech.voices_missing",
+          "typing.short_holds"
+        ]
+      },
+      "candidate": {
+        "recommendation": "challenge",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": ["input.missing", "input.synthetic_fill", "pointer.missing"]
+      }
+    },
+    "agent/browser-harness-macbook-invisible/0000": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "media.devices_missing",
+          "pointer.missing",
+          "speech.voices_missing",
+          "typing.short_holds"
+        ]
+      },
+      "candidate": {
+        "recommendation": "challenge",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": ["input.missing", "input.synthetic_fill", "pointer.missing"]
+      }
+    },
+    "agent/browser-harness-macbook-widget/0000": {
+      "node": {
+        "recommendation": "challenge",
+        "success": true,
+        "reasonIds": [
+          "media.devices_missing",
+          "pointer.approach_missing",
+          "pointer.missing",
+          "speech.voices_missing",
+          "typing.short_holds"
+        ]
+      },
+      "candidate": {
+        "recommendation": "challenge",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "block",
+        "success": false,
+        "reasonIds": [
+          "input.missing",
+          "input.synthetic_fill",
+          "pointer.approach_missing",
+          "pointer.missing"
+        ]
+      }
+    },
+    "human/browser-harness-macbook-form/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/browser-harness-macbook-form/0001": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/browser-harness-macbook-form/0002": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/browser-harness-macbook-form/0003": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/browser-harness-macbook-form/0004": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/browser-harness-macbook-invisible/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/browser-harness-macbook-widget/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing", "timing.js_execution_fast"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/accessibility-browser-autofill/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/accessibility-explicit-paste/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing", "timing.raf_consistent"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["timing.raf_consistent"]
+      }
+    },
+    "human/accessibility-keyboard-navigation/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/accessibility-password-manager/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
+      }
+    },
+    "human/accessibility-reduced-motion-anchor/0000": {
+      "node": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": ["media.devices_missing", "speech.voices_missing"]
+      },
+      "candidate": {
+        "recommendation": "allow",
+        "success": true
+      },
+      "reference": {
+        "recommendation": "allow",
+        "success": true,
+        "reasonIds": []
       }
     }
   }
