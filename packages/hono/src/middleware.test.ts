@@ -1,3 +1,5 @@
+import { createServer } from 'node:http';
+import type { AddressInfo } from 'node:net';
 import { Hono } from 'hono';
 import { tripwire, rateLimit } from '@webdecoy/node';
 import { webdecoy } from './index';
@@ -160,5 +162,38 @@ describe('honeytoken injection through Hono', () => {
       expect(Number(contentLength)).toBe(new TextEncoder().encode(body).length);
     }
     expect(global.fetch).toHaveBeenCalledTimes(attempts);
+  });
+});
+
+describe('violation delivery on Workers', () => {
+  // Workers can freeze the isolate once the response is returned, so the
+  // report has to be handed to the execution context, not left to a timer.
+  it('hands the report to executionCtx.waitUntil', async () => {
+    const received: { path?: string; eventId?: string }[] = [];
+    const server = createServer(async (request, response) => {
+      let body = '';
+      for await (const chunk of request) body += chunk;
+      if (request.url === '/api/v1/sdk/violations/batch') received.push(...JSON.parse(body).events);
+      response.writeHead(201).end('{}');
+    });
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+    const apiUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+    const tasks: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (task: Promise<unknown>) => { tasks.push(task); }, passThroughOnException() {}, props: {} };
+
+    try {
+      const app = appWith({
+        apiKey: 'sk_test_hono_delivery', apiUrl, countAIReferrals: false, honeytoken: false,
+        rules: [tripwire({ includeDefaults: false, paths: ['/trap'] })],
+      });
+      const res = await app.fetch(new Request('https://worker.example/trap'), {}, ctx);
+      expect(res.status).toBe(403);
+      expect(tasks).toHaveLength(1);
+      await Promise.all(tasks);
+      expect(received).toEqual([expect.objectContaining({ path: '/trap', eventId: expect.any(String) })]);
+    } finally {
+      server.closeAllConnections();
+      await new Promise<void>((resolve) => server.close(() => resolve()));
+    }
   });
 });

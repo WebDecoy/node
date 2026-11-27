@@ -143,7 +143,7 @@ export { shouldSkipPath, ruleBlockResponse, armSiteHoneytoken, deriveAndArm } fr
 export type { BlockResponse, HoneytokenArmingOptions } from './adapter-core';
 
 export { createFetchGuard } from './fetch-guard';
-export type { FetchGuard, FetchGuardOptions, GuardOutcome } from './fetch-guard';
+export type { FetchGuard, FetchGuardOptions, GuardLifecycle, GuardOutcome } from './fetch-guard';
 
 export { createNodeHttpGuard } from './node-http-guard';
 export type {

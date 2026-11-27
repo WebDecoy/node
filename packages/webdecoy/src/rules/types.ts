@@ -225,6 +225,12 @@ export interface ViolationEvent {
   dryRun: boolean;
   /** When the violation occurred (ISO 8601) */
   timestamp: string;
+  /**
+   * Unique id for this event (a UUID), assigned by the reporter when absent.
+   * Ingest stores an event once per id, so a batch that reaches it twice adds
+   * no second violation and no second tripwire detection.
+   */
+  eventId?: string;
 }
 
 /**
