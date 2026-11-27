@@ -17,7 +17,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "test": "turbo run test && npm run test:playground && npm run test:signed-agent",
+    "test": "turbo run test && npm run test:playground && npm run test:signed-agent && node --test scripts/publish-plan.test.mjs",
     "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "check:edge": "npm run check:edge -w @webdecoy/node -w @webdecoy/nextjs -w @webdecoy/hono",
