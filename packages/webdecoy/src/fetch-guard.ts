@@ -69,9 +69,19 @@ export interface GuardOutcome {
   response?: Response;
 }
 
+/** The host runtime's request lifecycle, where it has one. */
+export interface GuardLifecycle {
+  /**
+   * Keeps violation delivery alive after the response, as Workers'
+   * `ctx.waitUntil`. Without it a runtime that freezes after responding can
+   * drop the report.
+   */
+  waitUntil?: (delivery: Promise<void>) => void;
+}
+
 export interface FetchGuard {
   /** Evaluate one request. */
-  check(request: Request, peer?: string): Promise<GuardOutcome>;
+  check(request: Request, peer?: string, lifecycle?: GuardLifecycle): Promise<GuardOutcome>;
   /**
    * Rewrite an HTML response to carry the honeytoken link. Returns the response
    * unchanged when there is no token yet, or the body is not injectable HTML.
@@ -156,7 +166,7 @@ export function createFetchGuard(options: FetchGuardOptions = {}): FetchGuard {
       return shouldSkipPath(pathname, options.skipPaths);
     },
 
-    async check(request: Request, peer?: string): Promise<GuardOutcome> {
+    async check(request: Request, peer?: string, lifecycle?: GuardLifecycle): Promise<GuardOutcome> {
       const url = new URL(request.url);
       const headers = headerRecord(request.headers);
       if (!headers.host && !headers[':authority']) headers.host = url.host;
@@ -175,7 +185,7 @@ export function createFetchGuard(options: FetchGuardOptions = {}): FetchGuard {
         threshold: options.threshold,
         skipLocalAnalysis: options.skipLocalAnalysis,
         metadata: options.metadata,
-        violationReporting: { mode },
+        violationReporting: { mode, waitUntil: lifecycle?.waitUntil },
       });
 
       // Monitor mode records the verdict and serves the request anyway. The

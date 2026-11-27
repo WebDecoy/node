@@ -200,6 +200,8 @@ Local rules decide the request before the SDK reports their events. With an API 
 
 For a long-lived SDK instance, call `getViolationDeliveryStats()` for counts of events acknowledged by ingest, failed batches, discarded events, and events waiting for an attempt. Call `await sdk.destroy()` during graceful shutdown to finish an in-flight send and attempt the remaining queue. Reporting has a fixed in-memory buffer. When the client pauses after a failure, unattempted events stay buffered. An attempted batch with an uncertain acknowledgment is discarded to avoid replaying its server-side effects.
 
+Each event carries a unique `eventId`. Ingest stores an event once per id, so a batch that reaches it twice, for example through a proxy retry, adds no second violation and no second detection, and the repeat is still acknowledged. If the process exits without `destroy()`, the reporter keeps it open for at most one flush interval plus the request timeout to attempt the events it holds. It never keeps the process open while the client is paused after a failure. The Fastify plugin sends its remaining events when `fastify.close()` runs, and the Hono middleware hands each send to `executionCtx.waitUntil` on runtimes that provide one, such as Cloudflare Workers.
+
 ## Fetch runtimes (Bun, Deno, Workers, Astro, SvelteKit, Remix)
 
 `createFetchGuard()` wraps the SDK for any runtime that hands you a WHATWG `Request`. It is the same implementation `@webdecoy/hono` uses.

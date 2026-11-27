@@ -231,6 +231,12 @@ async function webdecoyPluginImpl(
     enabled: options.honeytoken,
   });
 
+  // fastify.close() is the app's shutdown: send what the reporter still holds
+  // and stop its timers, so the last violations are delivered or counted.
+  fastify.addHook('onClose', async () => {
+    await sdk.destroy();
+  });
+
   // Add decorator for webdecoy property
   fastify.decorateRequest('webdecoy', null);
   // The edge validator's verdict, typed, so a handler can branch on

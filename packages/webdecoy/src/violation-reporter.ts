@@ -37,6 +37,8 @@ export class ViolationReporter {
   private client: WebDecoyClient;
   private buffer: ViolationEvent[] = [];
   private flushTimer: ReturnType<typeof setInterval>;
+  private deliveryTimer: ReturnType<typeof setTimeout> | undefined;
+  private flushInterval: number;
   private maxBufferSize: number;
   private debug: boolean;
   private flushPromise: Promise<void> | undefined;
@@ -51,6 +53,7 @@ export class ViolationReporter {
     this.debug = config.debug ?? false;
 
     const flushInterval = config.flushInterval ?? 5000;
+    this.flushInterval = flushInterval;
     // flush() catches everything internally and never rejects, so `void` is the
     // whole handling. Said out loud because a timer whose callback rejects
     // keeps firing and every tick adds another unhandled rejection.
@@ -64,7 +67,11 @@ export class ViolationReporter {
    * Add violations to the buffer. Auto-flushes when buffer reaches maxBufferSize.
    */
   report(violations: ViolationEvent[]): void {
-    this.buffer.push(...violations);
+    // A per-event id lets ingest store each event once, however many times
+    // the batch carrying it arrives.
+    for (const violation of violations) {
+      this.buffer.push(violation.eventId ? violation : { ...violation, eventId: crypto.randomUUID() });
+    }
     if (this.buffer.length > MAX_BUFFERED_VIOLATIONS) {
       const overflow = this.buffer.length - MAX_BUFFERED_VIOLATIONS;
       this.buffer.splice(0, overflow);
@@ -74,7 +81,33 @@ export class ViolationReporter {
     if (this.buffer.length >= this.maxBufferSize) {
       // Fire-and-forget flush
       this.flush().catch(() => {});
+    } else {
+      this.scheduleDelivery();
     }
+  }
+
+  /**
+   * Give buffered events one delivery attempt before the process can exit.
+   *
+   * The interval above is unref'd so an idle reporter never holds a process
+   * open. On its own that meant a server shut down gracefully (Express after
+   * server.close(), Fastify after close(), Hono on Node) exited with its last
+   * events unsent and uncounted. This one-shot timer is left ref'd, so a
+   * natural exit waits at most one flush interval plus the request timeout.
+   * It is not re-armed while the client is paused, so an outage cannot keep
+   * the process alive.
+   */
+  private cancelDelivery(): void {
+    clearTimeout(this.deliveryTimer);
+    this.deliveryTimer = undefined;
+  }
+
+  private scheduleDelivery(): void {
+    if (this.deliveryTimer) return;
+    this.deliveryTimer = setTimeout(() => {
+      this.deliveryTimer = undefined;
+      void this.flush();
+    }, this.flushInterval);
   }
 
   /** Flush the buffer, coalescing requests that arrive during an active send. */
@@ -93,7 +126,11 @@ export class ViolationReporter {
     const size = this.buffer.length;
     this.flushPromise = Promise.resolve()
       .then(() => this.flushBatches(size))
-      .finally(() => { this.flushPromise = undefined; });
+      .finally(() => {
+        this.flushPromise = undefined;
+        // Nothing left to deliver: stop holding the process open.
+        if (this.buffer.length === 0) this.cancelDelivery();
+      });
     return this.flushPromise;
   }
 
@@ -129,6 +166,7 @@ export class ViolationReporter {
   /** Stop the timer and give remaining events one final flush. */
   async destroy(): Promise<void> {
     clearInterval(this.flushTimer);
+    this.cancelDelivery();
     if (this.flushPromise) await this.flushPromise;
     await this.flush();
     this.droppedEvents += this.buffer.length;

@@ -49,6 +49,22 @@ declare module 'hono' {
   }
 }
 
+/**
+ * The runtime's waitUntil (Workers and other runtimes with an execution
+ * context), so violation delivery outlives the response. Hono throws when the
+ * runtime has no execution context, as on Node or Bun, where the reporter's
+ * own timer delivers instead.
+ */
+function executionWaitUntil(c: Context): ((delivery: Promise<void>) => void) | undefined {
+  try {
+    const ctx = c.executionCtx;
+    if (typeof ctx?.waitUntil !== 'function') return undefined;
+    return (delivery) => ctx.waitUntil(delivery);
+  } catch {
+    return undefined;
+  }
+}
+
 export function webdecoy(options: WebDecoyHonoOptions = {}): MiddlewareHandler {
   const { onBlocked, ...guardOptions } = options;
   const guard = createFetchGuard(guardOptions);
@@ -63,7 +79,7 @@ export function webdecoy(options: WebDecoyHonoOptions = {}): MiddlewareHandler {
     // there is no portable accessor across Hono's runtimes — so the guard's
     // trusted-hops default over X-Forwarded-For is what resolves the client,
     // and `trustProxy: 'cloudflare'` is the stronger choice behind Cloudflare.
-    const { decision, response } = await guard.check(c.req.raw);
+    const { decision, response } = await guard.check(c.req.raw, undefined, { waitUntil: executionWaitUntil(c) });
     c.set(WEBDECOY_CONTEXT_KEY, decision);
     // The same value under the name the Node adapters use, so documentation and
     // application code do not have to branch on which framework they are in.
