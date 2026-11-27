@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.32.0] - 2026-11-27
+
+### Added
+
+- Every reported rule violation carries a unique `eventId`, so ingest stores it once even when a batch is delivered twice.
+- `FetchGuard.check()` accepts an optional lifecycle with `waitUntil`.
+
+### Fixed
+
+- Buffered violations are delivered before a process exits. The reporter holds the process open for at most one flush interval while events are waiting, and never while ingest is unreachable.
+- `fastify.close()` sends the violations the plugin still holds.
+- The Hono middleware passes `executionCtx.waitUntil` to the reporter on Workers.
+
 ## [0.31.0] - 2026-11-25
 
 ### Added
