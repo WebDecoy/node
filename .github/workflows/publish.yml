@@ -1,16 +1,33 @@
 name: Publish
 
+# Publishes to npm when a version bump lands on main. Merging a "Prepare Node
+# SDK x.y.z" PR is the release: this job publishes every package whose version
+# npm does not have yet, then tags vX.Y.Z and creates the GitHub release.
+#
+# Authentication is npm trusted publishing (OIDC from this workflow), so there
+# is no token to expire. NPM_TOKEN is the fallback until every package has a
+# trusted publisher configured on npmjs.com.
+#
+# Safe to re-run: packages already on npm are skipped, and the tag and release
+# are created only if they are missing.
+
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [main]
+    paths:
+      - 'packages/*/package.json'
+  workflow_dispatch:
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
 
 jobs:
   publish:
     name: Publish to npm
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       id-token: write
     steps:
       - uses: actions/checkout@v5
@@ -19,8 +36,58 @@ jobs:
           node-version: 22
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
-      - run: npm run build
-      - run: npm publish --workspaces --access public
+      # Trusted publishing needs npm 11.5.1 or later.
+      - run: npm install -g npm@^11.5.1
+
+      - name: Find versions npm does not have
+        id: plan
+        run: |
+          node scripts/publish-plan.mjs > "$RUNNER_TEMP/plan.json"
+          cat "$RUNNER_TEMP/plan.json"
+          echo "version=$(node -p "require(process.env.RUNNER_TEMP + '/plan.json').version")" >> "$GITHUB_OUTPUT"
+          echo "dirs=$(node -p "require(process.env.RUNNER_TEMP + '/plan.json').packages.map(p => p.dir).join(' ')")" >> "$GITHUB_OUTPUT"
+
+      - name: Build and test
+        if: steps.plan.outputs.dirs != ''
+        run: |
+          npm ci
+          npm run build
+          npm test
+
+      - name: Publish
+        if: steps.plan.outputs.dirs != ''
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          DIRS: ${{ steps.plan.outputs.dirs }}
+        run: |
+          for dir in $DIRS; do
+            echo "::group::publish $dir"
+            npm publish --workspace "$dir" --access public --provenance
+            echo "::endgroup::"
+          done
+
+      - name: Confirm the registry has every package
+        run: |
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            left=$(node scripts/publish-plan.mjs | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).packages.length")
+            [ "$left" = "0" ] && exit 0
+            echo "$left package(s) not visible yet; waiting"
+            sleep 30
+          done
+          node scripts/publish-plan.mjs
+          exit 1
+
+      - name: Tag and release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.plan.outputs.version }}
+        run: |
+          tag="v$VERSION"
+          if ! git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null; then
+            git tag "$tag" "$GITHUB_SHA"
+            git push origin "$tag"
+          fi
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            notes=$(awk -v v="$VERSION" '$0 ~ "^## \\[" v "\\]" {on=1; next} on && /^## \[/ {exit} on' CHANGELOG.md)
+            gh release create "$tag" --title "$tag" --notes "${notes:-All packages at $VERSION.}" --verify-tag
+          fi

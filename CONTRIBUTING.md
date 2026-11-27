@@ -215,11 +215,10 @@ export function analyzeRequest(metadata: RequestMetadata): LocalAnalysis {
 
 (For maintainers only)
 
-1. Update version in all package.json files
-2. Update CHANGELOG.md
-3. Create a git tag
-4. Push to GitHub
-5. Publish to npm
+1. Open a "Prepare Node SDK x.y.z" pull request that sets the same version in every `packages/*/package.json` (and the `@webdecoy/node` dependency ranges) and adds the CHANGELOG entry.
+2. Merge it. The Publish workflow runs on the push to `main`, builds and tests, publishes every package whose version npm does not have yet, checks the registry, then tags `vx.y.z` and creates the GitHub release from the CHANGELOG entry.
+
+Publishing authenticates with npm trusted publishing from `.github/workflows/publish.yml`. If a run fails partway, re-run it: packages already on npm are skipped.
 
 ## Getting Help
 
