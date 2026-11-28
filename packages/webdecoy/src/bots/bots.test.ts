@@ -81,7 +81,7 @@ describe('matchUserAgent', () => {
 
 describe('registry integrity', () => {
   it('carries the full generated table', () => {
-    expect(BOT_REGISTRY.length).toBe(277);
+    expect(BOT_REGISTRY.length).toBe(403);
     expect(BOT_CATEGORIES).toContain('training_crawler');
     expect(BOT_CATEGORIES).toContain('search_crawler');
   });
