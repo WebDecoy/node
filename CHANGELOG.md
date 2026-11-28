@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.33.0] - 2026-11-27
+
+### Added
+
+- The Vercel clearance gate reports which service credential admitted each request, so the dashboard can show when a credential was last used.
+
 ## [0.32.0] - 2026-11-27
 
 ### Added
